@@ -25,7 +25,7 @@ namespace AAPTForUWP
 
         protected AAPTool()
         {
-            StartInfo.FileName = AppPath + @"\tool\aapt.exe";
+            StartInfo.FileName = AppPath + @"\AAPTForUWP\tool\aapt.exe";
             StartInfo.CreateNoWindow = true;
             StartInfo.UseShellExecute = false; // For read output data
             StartInfo.RedirectStandardError = true;

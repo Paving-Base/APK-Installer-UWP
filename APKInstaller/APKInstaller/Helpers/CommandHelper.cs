@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using DataReceivedEventArgs = ProcessForUWP.UWP端.DataReceivedEventArgs;
-using Process = ProcessForUWP.UWP端.Process;
+using DataReceivedEventArgs = ProcessForUWP.UWP.DataReceivedEventArgs;
+using Process = ProcessForUWP.UWP.Process;
 
 namespace APKInstaller.Helpers
 {

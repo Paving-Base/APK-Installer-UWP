@@ -1108,7 +1108,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.12</Version>
+      <Version>6.2.13</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Connectivity">
       <Version>7.1.2</Version>
@@ -1124,9 +1124,6 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="ProcessForUWP.UWP端">
-      <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="SharpCompress">
       <Version>0.30.1</Version>
@@ -2008,7 +2005,7 @@
       <Name>ProcessForUWP.UWP</Name>
     </ProjectReference>
     <ProjectReference Include="..\AAPTForUWP\AAPTForUWP.csproj">
-      <Project>{5f6e97ba-734e-42ab-b91b-00b02a3afa10}</Project>
+      <Project>{691dc506-e415-49fa-8895-fd96dc06c69f}</Project>
       <Name>AAPTForUWP</Name>
     </ProjectReference>
   </ItemGroup>
