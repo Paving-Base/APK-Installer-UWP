@@ -152,7 +152,7 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\APKInstaller (Delegate)\APKInstaller (Delegate).csproj" />
     <ProjectReference Include="..\APKInstaller\APKInstaller.csproj" />
-    <ProjectReference Include="..\远程代理\远程代理.vbproj" />
   </ItemGroup>
 </Project>

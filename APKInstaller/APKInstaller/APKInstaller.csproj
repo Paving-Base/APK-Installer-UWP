@@ -2003,6 +2003,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.UWP\ProcessForUWP.UWP.csproj">
+      <Project>{cb6b70e7-1f4b-49c9-b1cd-a73c082d359e}</Project>
+      <Name>ProcessForUWP.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AAPTForUWP\AAPTForUWP.csproj">
       <Project>{5f6e97ba-734e-42ab-b91b-00b02a3afa10}</Project>
       <Name>AAPTForUWP</Name>

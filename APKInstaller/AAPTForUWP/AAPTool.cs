@@ -1,9 +1,11 @@
 ﻿using AAPTForUWP.Models;
-using ProcessForUWP.UWP端;
+using ProcessForUWP.UWP;
+using ProcessForUWP.UWP.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace AAPTForUWP
 {
@@ -45,6 +47,11 @@ namespace AAPTForUWP
             string msg = string.Empty;
             AAPTool aapt = new AAPTool();
             List<string> output = new List<string>();    // Messages from output stream
+            CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            System.Timers.Timer timer = new System.Timers.Timer(1000)
+            {
+                AutoReset = false
+            };
 
             switch (type)
             {
@@ -63,7 +70,15 @@ namespace AAPTForUWP
 
             void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                msg = e.Data;
+                timer.Stop();
+                timer.Start();
+                if (e.Data == null)
+                {
+                    terminated = true;
+                    cancellationToken.Cancel();
+                    return;
+                }
+                msg = e.Data ?? string.Empty;
 
                 if (callback(msg, index))
                 {
@@ -71,6 +86,7 @@ namespace AAPTForUWP
                     try
                     {
                         aapt.Kill();
+                        cancellationToken.Cancel();
                     }
                     catch { }
                 }
@@ -88,11 +104,21 @@ namespace AAPTForUWP
             try
             {
                 aapt.OutputDataReceived += OnOutputDataReceived;
-                aapt.WaitForExit();
-                aapt.Close();
+                timer.Elapsed += (_, __) => cancellationToken.Cancel();
+                timer.Start();
+                while (!aapt.IsExited)
+                {
+                    cancellationToken.Token.ThrowIfCancellationRequested();
+                }
             }
             catch (Exception)
             {
+                aapt.Kill();
+            }
+            finally
+            {
+                aapt.Close();
+                timer.Dispose();
                 aapt.OutputDataReceived -= OnOutputDataReceived;
             }
 
@@ -130,7 +156,8 @@ namespace AAPTForUWP
         /// <returns>Filled apk if dump process is not failed</returns>
         public static ApkInfo Decompile(string path)
         {
-            DumpModel manifest = ApkExtractor.ExtractManifest(path);
+            string temppath = createTempApk(path);
+            DumpModel manifest = ApkExtractor.ExtractManifest(temppath);
             if (!manifest.isSuccess)
             {
                 return new ApkInfo();
@@ -142,15 +169,38 @@ namespace AAPTForUWP
             if (apk.Icon.isImage)
             {
                 // Included icon in manifest, extract it from apk
-                apk.Icon.RealPath = ApkExtractor.ExtractIconImage(path, apk.Icon);
+                apk.Icon.RealPath = ApkExtractor.ExtractIconImage(temppath, apk.Icon);
                 if (apk.Icon.isHighDensity)
                 {
                     return apk;
                 }
             }
 
-            apk.Icon = ApkExtractor.ExtractLargestIcon(path);
+            apk.Icon = ApkExtractor.ExtractLargestIcon(temppath);
             return apk;
+        }
+
+        private static string createTempApk(string sourceFile)
+        {
+            string tempFile = string.Empty;
+            try
+            {
+                tempFile = Path.GetTempFileName();
+            }
+            catch (IOException)
+            {
+                tempFile = Path.Combine(Path.GetTempPath(), $"AAPToolTempAPK.tmp");
+            }
+
+            try
+            {
+                ProcessHelper.CopyFile(sourceFile, tempFile, true);
+                return tempFile;
+            }
+            catch
+            {
+                return sourceFile;
+            }
         }
     }
 }

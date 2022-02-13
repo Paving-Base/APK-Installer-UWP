@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<LangVersion>9.0</LangVersion>
+		<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
+	</ItemGroup>
+
+</Project>

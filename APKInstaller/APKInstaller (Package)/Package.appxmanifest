@@ -53,11 +53,10 @@
           <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
 		<Extensions>
-			<desktop:Extension Category="windows.fullTrustProcess" Executable="远程代理\远程代理.exe">
-				<desktop:FullTrustProcess>
-					<desktop:ParameterGroup GroupId="环回配置" Parameters="wherewhere.AndroidAppInstaller.UWP_d0s2e6z6qkbn0 32768"  />
-				</desktop:FullTrustProcess>
-			</desktop:Extension>
+			<uap:Extension Category="windows.appService">
+				<uap:AppService Name="ProcessForUWP.Delegate"/>
+			</uap:Extension>
+			<desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller (Delegate).exe" />
 		</Extensions>
     </Application>
   </Applications>
