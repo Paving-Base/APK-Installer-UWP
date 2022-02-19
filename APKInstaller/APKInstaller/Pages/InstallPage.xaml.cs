@@ -1,4 +1,7 @@
-﻿using APKInstaller.ViewModels;
+﻿using AdvancedSharpAdbClient;
+using APKInstaller.Helpers;
+using APKInstaller.Pages.SettingsPages;
+using APKInstaller.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +31,7 @@ namespace APKInstaller.Pages
 
         public InstallPage() => InitializeComponent();
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             string _path = string.Empty;
@@ -70,10 +73,10 @@ namespace APKInstaller.Pages
                     Provider.OpenAPK();
                     break;
                 case "DeviceSelectButton":
-                    //Frame.Navigate(typeof(SettingsPage));
+                    _ = Frame.Navigate(typeof(SettingsPage));
                     break;
                 case "SecondaryActionButton":
-                    //Provider.OpenAPP();
+                    Provider.OpenAPP();
                     break;
                 case "CancelOperationButton":
                     Application.Current.Exit();

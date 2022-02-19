@@ -48,10 +48,6 @@ namespace AAPTForUWP
             AAPTool aapt = new AAPTool();
             List<string> output = new List<string>();    // Messages from output stream
             CancellationTokenSource cancellationToken = new CancellationTokenSource();
-            System.Timers.Timer timer = new System.Timers.Timer(1000)
-            {
-                AutoReset = false
-            };
 
             switch (type)
             {
@@ -70,8 +66,6 @@ namespace AAPTForUWP
 
             void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                timer.Stop();
-                timer.Start();
                 if (e.Data == null)
                 {
                     terminated = true;
@@ -104,8 +98,6 @@ namespace AAPTForUWP
             try
             {
                 aapt.OutputDataReceived += OnOutputDataReceived;
-                timer.Elapsed += (_, __) => cancellationToken.Cancel();
-                timer.Start();
                 while (!aapt.IsExited)
                 {
                     cancellationToken.Token.ThrowIfCancellationRequested();
@@ -118,7 +110,6 @@ namespace AAPTForUWP
             finally
             {
                 aapt.Close();
-                timer.Dispose();
                 aapt.OutputDataReceived -= OnOutputDataReceived;
             }
 

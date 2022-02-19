@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessForUWP.UWP", "..\Pro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessForUWP.Desktop", "..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj", "{6FE46220-B582-4F47-8289-C3AF15B0CD98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAPTForUWP", "APKInstaller\AAPTForUWP\AAPTForUWP.csproj", "{691DC506-E415-49FA-8895-FD96DC06C69F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AAPTForUWP", "APKInstaller\AAPTForUWP\AAPTForUWP.csproj", "{691DC506-E415-49FA-8895-FD96DC06C69F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

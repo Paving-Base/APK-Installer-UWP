@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using DataReceivedEventArgs = ProcessForUWP.UWP.DataReceivedEventArgs;
 using Process = ProcessForUWP.UWP.Process;
 
@@ -15,11 +16,11 @@ namespace APKInstaller.Helpers
         /// </param>
         /// <param name="command">The command to execute</param>
         /// <param name="rcvr">The shell output receiver</param>
-        public static void ExecuteShellCommand(string command)
+        public static async Task<List<string>> ExecuteShellCommand(string command)
         {
             try
             {
-                ExecuteShellCommandAsync(command, CancellationToken.None);
+                return await ExecuteShellCommandAsync(command, CancellationToken.None);
             }
             catch (AggregateException ex)
             {
@@ -35,37 +36,35 @@ namespace APKInstaller.Helpers
         }
 
         /// <inheritdoc/>
-        public static void ExecuteShellCommandAsync(string command, CancellationToken cancellationToken)
+        public static async Task<List<string>> ExecuteShellCommandAsync(string command, CancellationToken cancellationToken)
         {
+            CancellationTokenSource Token = new CancellationTokenSource();
+
             ProcessStartInfo start = new ProcessStartInfo
             {
-                FileName = @"C:\Users\qq251\Downloads\Github\APK-Installer-UWP\ApkInstallHost\bin\x64\Debug\AppX\AAPTForUWP\tool\aapt.exe",
-                Arguments = @"dump badging ""C:\Users\qq251\Downloads\Programs\Minecraft_1.17.40.06_sign.apk""",
-                CreateNoWindow = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
+                FileName = "powershell.exe",
+                UseShellExecute = false,
                 RedirectStandardOutput = true,
-                UseShellExecute = false
+                Arguments = command,
+                CreateNoWindow = true
             };
 
             Process process = new Process();
-            process.StartInfo = start;
-            process.Start();
-            process.BeginErrorReadLine();
+            process.Start(start);
             process.BeginOutputReadLine();
+
             process.EnableRaisingEvents = true;
 
             List<string> receiver = new List<string>();
 
             void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                string line = e.Data;
-
-                if (line == null)
+                if (e.Data == null)
                 {
-                    process.Close();
+                    Token.Cancel();
                     return;
                 }
+                string line = e.Data ?? string.Empty;
 
                 if (receiver != null)
                 {
@@ -76,18 +75,26 @@ namespace APKInstaller.Helpers
             try
             {
                 process.OutputDataReceived += OnOutputDataReceived;
-                process.WaitForExit();
-                process.Close();
+                await Task.Run(() =>
+                {
+                    while (!process.IsExited)
+                    {
+                        Token.Token.ThrowIfCancellationRequested();
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                });
             }
             catch (Exception)
             {
-                string message = string.Empty;
-                foreach (string line in receiver)
-                {
-                    message = $"{message}\n{line}";
-                }
+                process.Kill();
+            }
+            finally
+            {
+                process.Close();
                 process.OutputDataReceived -= OnOutputDataReceived;
             }
+
+            return receiver;
         }
     }
 }

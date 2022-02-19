@@ -1,5 +1,5 @@
-﻿using AAPTForUWP.Helpers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using ProcessForUWP.UWP.Helpers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -96,7 +96,7 @@ namespace ApkInstaller
                                 try
                                 {
                                     ValueSet message = new ValueSet() { { "UWP", json } };
-                                    _ = Connection.SendMessageAsync(message);
+                                    _ = Connection?.SendMessageAsync(message);
                                 }
                                 catch (Exception ex)
                                 {

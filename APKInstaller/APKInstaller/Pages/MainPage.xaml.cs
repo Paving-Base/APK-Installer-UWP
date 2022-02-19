@@ -23,7 +23,7 @@ namespace ApkInstaller
         public MainPage()
         {
             InitializeComponent();
-            //UIHelper.MainPage = this;
+            UIHelper.MainPage = this;
             UIHelper.DispatcherQueue = DispatcherQueue.GetForCurrentThread();
             CoreApplicationViewTitleBar TitleBar = CoreApplication.GetCurrentView().TitleBar;
             TitleBar.ExtendViewIntoTitleBar = true;

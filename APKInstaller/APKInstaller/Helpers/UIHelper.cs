@@ -1,6 +1,11 @@
-﻿using System;
+﻿using AdvancedSharpAdbClient;
+using ApkInstaller;
+using Microsoft.Toolkit.Uwp;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -10,6 +15,7 @@ using Windows.System;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace APKInstaller.Helpers
 {
@@ -65,6 +71,19 @@ namespace APKInstaller.Helpers
                 TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
                 TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = HasTitleBar ? BackgroundColor : Colors.Transparent;
             }
+        }
+    }
+
+    internal static partial class UIHelper
+    {
+        public static MainPage MainPage;
+
+        public static void Navigate(Type pageType, NavigationTransitionInfo TransitionInfo, object e = null)
+        {
+            DispatcherQueue?.EnqueueAsync(() =>
+            {
+                _ = (MainPage?.CoreAppFrame.Navigate(pageType, e, TransitionInfo));
+            });
         }
     }
 
@@ -131,9 +150,11 @@ namespace APKInstaller.Helpers
             {
                 uri = new Uri(uriString.Contains("://") ? uriString : uriString.Contains("//") ? uriString.Replace("//", "://") : $"http://{uriString}");
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
-
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
             }
             return uri;
         }

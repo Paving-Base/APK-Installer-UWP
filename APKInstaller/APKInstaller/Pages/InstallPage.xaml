@@ -2,13 +2,14 @@
     x:Class="APKInstaller.Pages.InstallPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:APKInstaller.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helper="using:APKInstaller.Helpers"
     xmlns:local="using:APKInstaller.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sys="using:System"
-    xmlns:viewmodels="using:APKInstaller.ViewModels" xmlns:controls="using:APKInstaller.Controls"
+    xmlns:viewmodels="using:APKInstaller.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:InstallViewModel}"
     mc:Ignorable="d">
     <Grid>
@@ -156,6 +157,7 @@
                     <TextBlock
                         x:Name="ProgressText"
                         Text="{Binding ProgressText}"
+                        TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                     <muxc:ProgressBar
                         x:Name="AppxInstallBar"
@@ -184,12 +186,14 @@
                             Grid.Row="0"
                             Margin="0,0,0,6"
                             Text="{Binding InfoMessage}"
+                            TextWrapping="WrapWholeWords"
                             ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                         <TextBlock
                             x:Name="WarningMessageModificationPackage"
                             Grid.Row="1"
                             Margin="0,0,0,6"
                             FontWeight="Bold"
+                            TextWrapping="WrapWholeWords"
                             ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                             Visibility="Collapsed" />
                     </Grid>
@@ -198,6 +202,7 @@
                         x:Uid="/InstallPage/InstallOutputTextBlock"
                         Grid.Row="0"
                         Margin="0,0,0,6"
+                        TextWrapping="WrapWholeWords"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                         Visibility="{Binding InstallOutputVisibility}" />
                     <ScrollViewer
@@ -396,7 +401,8 @@
                 x:Name="WaitProgressText"
                 Margin="0,6,0,0"
                 Text="{Binding WaitProgressText}"
-                TextAlignment="Center" />
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
 </Page>
