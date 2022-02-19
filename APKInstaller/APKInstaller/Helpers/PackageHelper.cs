@@ -14,11 +14,21 @@ namespace APKInstaller.Helpers
         public static async Task<(bool isfound, IEnumerable<Package> info)> FindPackagesByName(string PackageFamilyName)
         {
             PackageManager manager = new PackageManager();
-            IEnumerable<Package> WSAList = await Task.Run(() => { return manager.FindPackagesForUser("", PackageFamilyName); });
+            IEnumerable<Package> WSAList = await Task.Run(() =>
+            {
+                try
+                {
+                    return manager.FindPackagesForUser("", PackageFamilyName);
+                }
+                catch
+                {
+                    return null;
+                }
+            });
             return (WSAList != null && WSAList.Any(), WSAList);
         }
 
-        public static void LaunchPackage(string packagefamilyname, string appname = "App") => CommandHelper.ExecuteShellCommand($@"explorer.exe shell:appsFolder\{packagefamilyname}!{appname}");
+        public static async void LaunchPackage(string packagefamilyname, string appname = "App") => await CommandHelper.ExecuteShellCommand($@"explorer.exe shell:appsFolder\{packagefamilyname}!{appname}");
 
         public static async void LaunchWSAPackage(string packagename = "")
         {

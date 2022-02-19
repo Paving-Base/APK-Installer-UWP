@@ -874,7 +874,6 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = _loader.GetString("FoundWSA");
                     ContentDialog dialog = new MarkdownDialog
                     {
-                        XamlRoot = _page.XamlRoot,
                         Title = _loader.GetString("HowToConnect"),
                         DefaultButton = ContentDialogButton.Close,
                         CloseButtonText = _loader.GetString("IKnow"),
@@ -916,7 +915,6 @@ namespace APKInstaller.ViewModels
                 {
                     ContentDialog dialog = new ContentDialog
                     {
-                        XamlRoot = _page.XamlRoot,
                         Title = _loader.GetString("NoDevice"),
                         DefaultButton = ContentDialogButton.Close,
                         CloseButtonText = _loader.GetString("IKnow"),
@@ -934,7 +932,6 @@ namespace APKInstaller.ViewModels
             {
                 ContentDialog dialog = new ContentDialog
                 {
-                    XamlRoot = _page.XamlRoot,
                     Title = _loader.GetString("NoDevice"),
                     DefaultButton = ContentDialogButton.Close,
                     CloseButtonText = _loader.GetString("IKnow"),

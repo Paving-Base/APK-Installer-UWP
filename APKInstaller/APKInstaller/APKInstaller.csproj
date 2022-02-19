@@ -1137,6 +1137,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
+    <PackageReference Include="ProcessForUWP.UWP">
+      <Version>0.0.2</Version>
+    </PackageReference>
     <PackageReference Include="SharpCompress">
       <Version>0.30.1</Version>
     </PackageReference>
@@ -2012,10 +2015,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.UWP\ProcessForUWP.UWP.csproj">
-      <Project>{cb6b70e7-1f4b-49c9-b1cd-a73c082d359e}</Project>
-      <Name>ProcessForUWP.UWP</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AAPTForUWP\AAPTForUWP.csproj">
       <Project>{691dc506-e415-49fa-8895-fd96dc06c69f}</Project>
       <Name>AAPTForUWP</Name>
