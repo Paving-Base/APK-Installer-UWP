@@ -1,13 +1,10 @@
-﻿using AAPTForUWP;
-using AAPTForUWP.Models;
-using APKInstaller.Helpers;
+﻿using APKInstaller.Helpers;
 using APKInstaller.Pages;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.System;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -27,8 +24,13 @@ namespace ApkInstaller
             UIHelper.DispatcherQueue = DispatcherQueue.GetForCurrentThread();
             CoreApplicationViewTitleBar TitleBar = CoreApplication.GetCurrentView().TitleBar;
             TitleBar.ExtendViewIntoTitleBar = true;
-            _ = CoreAppFrame.Navigate(typeof(InstallPage));
             UIHelper.CheckTheme();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            _ = CoreAppFrame.Navigate(typeof(InstallPage), e.Parameter);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

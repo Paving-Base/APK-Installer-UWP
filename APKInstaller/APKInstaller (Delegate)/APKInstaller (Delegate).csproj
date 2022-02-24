@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ProcessForUWP.Desktop" Version="0.0.3" />
+	  <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
 	</ItemGroup>
 
 </Project>

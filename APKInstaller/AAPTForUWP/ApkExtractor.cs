@@ -1,6 +1,7 @@
 ﻿using AAPTForUWP.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace AAPTForUWP
 {
     internal class ApkExtractor
     {
-        private static readonly string tempPath = Path.Combine(Path.GetTempPath(), $@"AAPToolTempImage.png");
+        private static int id = 0;
+        public static readonly string tempPath = Path.Combine(Path.GetTempPath(), "Caches", $"{Process.GetCurrentProcess().Id}");
 
         public static DumpModel ExtractManifest(string path)
         {
@@ -250,17 +252,15 @@ namespace AAPTForUWP
                 return Icon.DefaultName;
             }
 
-            if (!Directory.Exists(tempPath.Substring(0, tempPath.LastIndexOf(@"\"))))
+            if (!Directory.Exists(tempPath))
             {
-                Directory.CreateDirectory(tempPath.Substring(0, tempPath.LastIndexOf(@"\")));
-            }
-            else if (Directory.Exists(tempPath))
-            {
-                Directory.Delete(tempPath, true);
+                Directory.CreateDirectory(tempPath);
             }
 
-            TryExtractIconImage(path, icon.IconName, tempPath);
-            return tempPath;
+            string IconPath = Path.Combine(tempPath, $@"AAPToolTempImage-{id++}.png");
+
+            TryExtractIconImage(path, icon.IconName, IconPath);
+            return IconPath;
         }
 
         private static void TryExtractIconImage(string path, string iconName, string desFile)

@@ -9,8 +9,8 @@
   IgnorableNamespaces="uap uap5 rescap">
 
   <Identity
-    Name="wherewhere.AndroidAppInstaller.UWP"
-    Publisher="CN=where"
+    Name="18184wherewhere.AndroidAppInstaller.UWP"
+    Publisher="CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5"
     Version="0.0.1.0" />
 
   <Properties>
@@ -33,8 +33,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="APK 安装程序"
-        Description="APK 安装程序"
+        DisplayName="ms-resource:AppName"
+        Description="ms-resource:AppDescription"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
@@ -52,17 +52,49 @@
           <uap:Rotation Preference="portraitFlipped"/>
           <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
-		<Extensions>
-			<uap:Extension Category="windows.appService">
-				<uap:AppService Name="ProcessForUWP.Delegate"/>
-			</uap:Extension>
-			<desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller (Delegate).exe" />
-		</Extensions>
+	  <Extensions>
+		<uap:Extension Category="windows.appService">
+		  <uap:AppService Name="ProcessForUWP.Delegate"/>
+		</uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="apk">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.apk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:APKFile</uap:DisplayName>
+            <uap:Logo>Images\256x256.png</uap:Logo>
+            <uap:InfoTip>ms-resource:APKDescription</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="apkinstaller">
+            <uap:DisplayName>ms-resource:AppName</uap:DisplayName>
+            <uap:Logo>Images\256x256.png</uap:Logo>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="splitapk">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.apks</uap:FileType>
+              <uap:FileType>.apkm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:SplitAPKFile</uap:DisplayName>
+            <uap:Logo>Images\256x256.png</uap:Logo>
+            <uap:InfoTip>ms-resource:APKDescription</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+		<desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller (Delegate).exe" />
+	  </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
+	<rescap:Capability Name="packageQuery" />
+	<rescap:Capability Name="confirmAppClose" />
+	<rescap:Capability Name="packageManagement" />
   </Capabilities>
 </Package>

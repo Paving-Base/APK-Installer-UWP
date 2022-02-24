@@ -2,11 +2,9 @@
 using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -39,7 +37,7 @@ namespace APKInstaller.Helpers
         {
             if (!LocalObject.KeyExists(ADBPath))
             {
-                LocalObject.Save(ADBPath, Path.Combine(ApplicationData.Current.LocalFolder.Path, @"platform-tools\adb.exe"));
+                LocalObject.Save(ADBPath, Path.Combine(Package.Current.InstalledLocation.Path, @"ADB\adb.exe"));
             }
             if (!LocalObject.KeyExists(IsOpenApp))
             {
@@ -63,7 +61,7 @@ namespace APKInstaller.Helpers
             }
             if (!LocalObject.KeyExists(IsCloseADB))
             {
-                LocalObject.Save(IsCloseADB, false);
+                LocalObject.Save(IsCloseADB, true);
             }
             if (!LocalObject.KeyExists(IsCloseAPP))
             {
@@ -126,6 +124,6 @@ namespace APKInstaller.Helpers
 
         string IObjectSerializer.Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
 
-        public T Deserialize<T>(string value) => JsonConvert.DeserializeObject<T>((string)value, settings);
+        public T Deserialize<T>(string value) => JsonConvert.DeserializeObject<T>(value, settings);
     }
 }

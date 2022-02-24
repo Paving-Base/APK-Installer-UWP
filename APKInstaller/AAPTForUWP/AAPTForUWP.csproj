@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ProcessForUWP.UWP" Version="0.0.2" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.UWP\ProcessForUWP.UWP.csproj" />
   </ItemGroup>
 
   <ItemGroup>

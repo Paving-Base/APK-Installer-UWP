@@ -37,10 +37,10 @@ namespace AAPTForUWP.Models
             "Oreo",
             "Oreo",
             "Pie",
-            "Android10",
-            "Android11",  // API level 30
-            "Android12",
-            "Android13"
+            "Q",
+            "R",  // API level 30
+            "S",
+            "T"
         };
 
         private static readonly string[] AndroidVersionCodes = {
@@ -64,7 +64,7 @@ namespace AAPTForUWP.Models
             "4.2",
             "4.3",
             "4.4",
-            "Unknown",  // API level 20
+            "4.4W",  // API level 20
             "5.0",
             "5.1",
             "6.0",
@@ -92,7 +92,7 @@ namespace AAPTForUWP.Models
 
         public static SDKInfo GetInfo(int sdkVer)
         {
-            int index = (sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1) ? 0 : sdkVer;
+            int index = sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1 ? 0 : sdkVer;
 
             return new SDKInfo(sdkVer.ToString(),
                 AndroidVersionCodes[index], AndroidCodeNames[index]);

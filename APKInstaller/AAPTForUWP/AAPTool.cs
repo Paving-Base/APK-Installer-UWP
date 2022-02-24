@@ -21,6 +21,7 @@ namespace AAPTForUWP
             XmlTree = 2,
         }
 
+        public static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Caches", $"{GetCurrentProcess().Id}");
         private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
 
         protected AAPTool()
@@ -173,14 +174,11 @@ namespace AAPTForUWP
 
         private static string createTempApk(string sourceFile)
         {
-            string tempFile = string.Empty;
-            try
+            string tempFile = Path.Combine(TempPath, $"AAPToolTempAPK.tmp");
+
+            if (!Directory.Exists(TempPath))
             {
-                tempFile = Path.GetTempFileName();
-            }
-            catch (IOException)
-            {
-                tempFile = Path.Combine(Path.GetTempPath(), $"AAPToolTempAPK.tmp");
+                _ = Directory.CreateDirectory(TempPath);
             }
 
             try

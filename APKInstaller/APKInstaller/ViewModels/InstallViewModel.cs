@@ -6,6 +6,7 @@ using APKInstaller.Controls.Dialogs;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
+using Downloader;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Connectivity;
 using SharpCompress.Archives;
@@ -17,7 +18,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
@@ -26,6 +26,7 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
 namespace APKInstaller.ViewModels
 {
@@ -33,9 +34,8 @@ namespace APKInstaller.ViewModels
     {
         private DeviceData _device;
         private readonly InstallPage _page;
-        private readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, $@"Caches\{Process.GetCurrentProcess().Id}");
-        private string APKTemp => Path.Combine(TempPath, @"NetAPKTemp.apk");
-        private string ADBTemp => Path.Combine(TempPath, @"platform-tools.zip");
+        private string APKTemp => Path.Combine(CachesHelper.TempPath, "NetAPKTemp.apk");
+        private string ADBTemp => Path.Combine(CachesHelper.TempPath, "platform-tools.zip");
 
 #if !DEBUG
         private Uri _url;
@@ -70,27 +70,22 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private string _ADBPath = SettingsHelper.Get<string>(SettingsHelper.ADBPath);
         public string ADBPath
         {
-            get => _ADBPath;
+            get => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
             set
             {
                 SettingsHelper.Set(SettingsHelper.ADBPath, value);
-                _ADBPath = SettingsHelper.Get<string>(SettingsHelper.ADBPath);
                 RaisePropertyChangedEvent();
             }
         }
 
-        private bool _isOpenApp = SettingsHelper.Get<bool>(SettingsHelper.IsOpenApp);
-        public bool IsOpenApp
+        public static bool IsOpenApp
         {
-            get => _isOpenApp;
+            get => SettingsHelper.Get<bool>(SettingsHelper.IsOpenApp);
             set
             {
                 SettingsHelper.Set(SettingsHelper.IsOpenApp, value);
-                _isOpenApp = SettingsHelper.Get<bool>(SettingsHelper.IsOpenApp);
-                RaisePropertyChangedEvent();
             }
         }
 
@@ -651,69 +646,101 @@ namespace APKInstaller.ViewModels
             {
                 Directory.Delete(ADBTemp, true);
             }
-        //using (Downloader downloader = new Downloader(new DownloaderOptions()))
-        //{
-        //    Uri = new Uri("https://dl.google.com/android/repository/platform-tools-latest-windows.zip"),
-        //    Stream = File.OpenWrite(ADBTemp)
-        //});
-        downloadadb:
-            //_ = downloader.Start();
-            WaitProgressText = _loader.GetString("WaitDownload");
-
-            //while (downloader.TotalSize <= 0 && downloader.IsStarted)
-            //{
-            //    await Task.Delay(1);
-            //}
-            WaitProgressIndeterminate = false;
-            //while (downloader.IsStarted)
-            //{
-            //    WaitProgressText = $"{((double)downloader.BytesPerSecond).GetSizeString()}/s";
-            //    WaitProgressValue = (double)downloader.CurrentSize * 100 / downloader.TotalSize;
-            //    await Task.Delay(1);
-            //}
-            //if (downloader.State != DownloadState.Finished)
-            //{
-            //    ProgressHelper.SetState(ProgressState.Error, true);
-            //    ContentDialog dialog = new ContentDialog
-            //    {
-            //        XamlRoot = _page.XamlRoot,
-            //        Title = _loader.GetString("DownloadFailed"),
-            //        PrimaryButtonText = _loader.GetString("Retry"),
-            //        CloseButtonText = _loader.GetString("Cancel"),
-            //        Content = new TextBlock { Text = _loader.GetString("DownloadFailedInfo") },
-            //        DefaultButton = ContentDialogButton.Primary
-            //    };
-            //    ContentDialogResult result = await dialog.ShowAsync();
-            //    ProgressHelper.SetState(ProgressState.Indeterminate, true);
-            //    if (result == ContentDialogResult.Primary)
-            //    {
-            //        goto downloadadb;
-            //    }
-            //    else
-            //    {
-            //        Application.Current.Exit();
-            //        return;
-            //    }
-            //}
-            WaitProgressValue = 0;
-            WaitProgressIndeterminate = true;
+            using (DownloadService downloader = new DownloadService(DownloadHelper.Configuration))
+            {
+                bool IsCompleted = false;
+                Exception exception = null;
+                long ReceivedBytesSize = 0;
+                long TotalBytesToReceive = 0;
+                double ProgressPercentage = 0;
+                double BytesPerSecondSpeed = 0;
+                void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+                {
+                    exception = e.Error;
+                    IsCompleted = true;
+                }
+                void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+                {
+                    ReceivedBytesSize = e.ReceivedBytesSize;
+                    ProgressPercentage = e.ProgressPercentage;
+                    TotalBytesToReceive = e.TotalBytesToReceive;
+                    BytesPerSecondSpeed = e.BytesPerSecondSpeed;
+                }
+                downloader.DownloadFileCompleted += OnDownloadFileCompleted;
+                downloader.DownloadProgressChanged += OnDownloadProgressChanged;
+            downloadadb:
+                WaitProgressText = _loader.GetString("WaitDownload");
+                _ = downloader.DownloadFileTaskAsync("https://dl.google.com/android/repository/platform-tools-latest-windows.zip", ADBTemp);
+                while (TotalBytesToReceive <= 0)
+                {
+                    await Task.Delay(1);
+                }
+                WaitProgressIndeterminate = false;
+                while (!IsCompleted)
+                {
+                    WaitProgressText = $"{((double)BytesPerSecondSpeed).GetSizeString()}/s";
+                    WaitProgressValue = ProgressPercentage;
+                    await Task.Delay(1);
+                }
+                WaitProgressIndeterminate = true;
+                WaitProgressValue = 0;
+                if (exception != null)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Content = exception.Message,
+                        Title = _loader.GetString("DownloadFailed"),
+                        PrimaryButtonText = _loader.GetString("Retry"),
+                        CloseButtonText = _loader.GetString("Cancel"),
+                        DefaultButton = ContentDialogButton.Primary
+                    };
+                    ContentDialogResult result = await dialog.ShowAsync();
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        goto downloadadb;
+                    }
+                    else
+                    {
+                        Application.Current.Exit();
+                        return;
+                    }
+                }
+                downloader.DownloadProgressChanged -= OnDownloadProgressChanged;
+                downloader.DownloadFileCompleted -= OnDownloadFileCompleted;
+            }
             WaitProgressText = _loader.GetString("UnzipADB");
             await Task.Delay(1);
-            //IArchive archive = ArchiveFactory.Open(ADBTemp);
-            WaitProgressIndeterminate = false;
-            //foreach (IArchiveEntry entry in archive.Entries)
-            //{
-            //    WaitProgressValue = archive.Entries.GetProgressValue(entry);
-            //    WaitProgressText = string.Format(_loader.GetString("UnzippingFormat"), archive.Entries.ToList().IndexOf(entry) + 1, archive.Entries.Count());
-            //    if (!entry.IsDirectory)
-            //    {
-            //        entry.WriteToDirectory(ApplicationData.Current.LocalFolder.Path, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
-            //    }
-            //    await Task.Delay(1);
-            //}
-            WaitProgressValue = 0;
-            WaitProgressIndeterminate = true;
-            WaitProgressText = _loader.GetString("UnzipComplete");
+            using (IArchive archive = ArchiveFactory.Open(ADBTemp))
+            {
+                WaitProgressIndeterminate = false;
+                int Progressed = 0;
+                bool IsCompleted = false;
+                double ProgressPercentage = 0;
+                int TotalCount = archive.Entries.Count();
+                _ = Task.Run(() =>
+                {
+                    foreach (IArchiveEntry entry in archive.Entries)
+                    {
+                        Progressed = archive.Entries.ToList().IndexOf(entry) + 1;
+                        ProgressPercentage = archive.Entries.GetProgressValue(entry);
+                        if (!entry.IsDirectory)
+                        {
+                            entry.WriteToDirectory(ApplicationData.Current.LocalFolder.Path, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+                        }
+                    }
+                    IsCompleted = true;
+                });
+                while (!IsCompleted)
+                {
+                    WaitProgressValue = ProgressPercentage;
+                    WaitProgressText = string.Format(_loader.GetString("UnzippingFormat"), Progressed, TotalCount);
+                    await Task.Delay(1);
+                }
+                WaitProgressValue = 0;
+                WaitProgressIndeterminate = true;
+                WaitProgressText = _loader.GetString("UnzipComplete");
+                await Task.Delay(1);
+            }
             ADBPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, @"platform-tools\adb.exe");
         }
 
@@ -726,46 +753,23 @@ namespace APKInstaller.ViewModels
                 if (!ADBServer.GetStatus().IsRunning)
                 {
                     WaitProgressText = _loader.GetString("CheckingADB");
-                    Process[] processes = Process.GetProcessesByName("adb");
-                    if (processes != null)
+                    await CheckADB();
+                    WaitProgressText = _loader.GetString("StartingADB");
+                    try
                     {
-                        WaitProgressText = _loader.GetString("StartingADB");
-                        try
-                        {
-                            await Task.Run(() => ADBServer.StartServer(processes.First().MainModule?.FileName, restartServerIfNewer: false));
-                        }
-                        catch
-                        {
-                            foreach (Process process in processes)
-                            {
-                                process.Kill();
-                            }
-                            await CheckADB();
-                            try
-                            {
-                                await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
-                            }
-                            catch
-                            {
-                                await CheckADB(true);
-                                WaitProgressText = _loader.GetString("StartingADB");
-                                await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
-                            }
-                        }
+                        await ADBHelper.StartADB();
                     }
-                    else
+                    catch
                     {
-                        await CheckADB();
-                        WaitProgressText = _loader.GetString("StartingADB");
                         try
                         {
-                            await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
+                            await ADBHelper.StartADB();
                         }
                         catch
                         {
                             await CheckADB(true);
                             WaitProgressText = _loader.GetString("StartingADB");
-                            await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
+                            await ADBHelper.StartADB();
                         }
                     }
                 }
@@ -794,7 +798,7 @@ namespace APKInstaller.ViewModels
                 {
                     try
                     {
-                        ApkInfo = await Task.Run(() => { return AAPTool.Decompile(_path); });
+                        ApkInfo = await Task.Run(() => AAPTool.Decompile(_path));
                     }
                     catch (Exception ex)
                     {
@@ -1020,7 +1024,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await Task.Run(() => { return AAPTool.Decompile(_path); });
+                ApkInfo = await Task.Run(() => AAPTool.Decompile(_path));
             }
             catch (Exception ex)
             {
@@ -1042,12 +1046,12 @@ namespace APKInstaller.ViewModels
                 else
                 {
                     ResetUI();
-                ActionButtonEnable = false;
-                ActionButtonText = _loader.GetString("Install");
-                InfoMessage = _loader.GetString("WaitingDevice");
-                DeviceSelectButtonText = _loader.GetString("Devices");
-                AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
-                ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
+                    ActionButtonEnable = false;
+                    ActionButtonText = _loader.GetString("Install");
+                    InfoMessage = _loader.GetString("WaitingDevice");
+                    DeviceSelectButtonText = _loader.GetString("Devices");
+                    AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
+                    ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
                 }
             }
             IsInstalling = false;
@@ -1059,59 +1063,75 @@ namespace APKInstaller.ViewModels
             {
                 if (!Directory.Exists(APKTemp.Substring(0, APKTemp.LastIndexOf(@"\"))))
                 {
-                    Directory.CreateDirectory(APKTemp.Substring(0, APKTemp.LastIndexOf(@"\")));
+                    _ = Directory.CreateDirectory(APKTemp.Substring(0, APKTemp.LastIndexOf(@"\")));
                 }
                 else if (Directory.Exists(APKTemp))
                 {
                     Directory.Delete(APKTemp, true);
                 }
-            //using Downloader downloader = new Downloader(new DownloaderOptions()
-            //{
-            //    Uri = _url,
-            //    Stream = File.OpenWrite(APKTemp)
-            //});
-            downloadapk:
-                //_ = downloader.Start();
-                ProgressText = _loader.GetString("WaitDownload");
-
-                //while (downloader.TotalSize <= 0 && downloader.IsStarted)
-                //{
-                //    await Task.Delay(1);
-                //}
-                AppxInstallBarIndeterminate = false;
-                //while (downloader.IsStarted)
-                //{
-                //    ProgressText = $"{(double)downloader.CurrentSize * 100 / downloader.TotalSize:N2}% {((double)downloader.BytesPerSecond).GetSizeString()}/s";
-                //    AppxInstallBarValue = (double)downloader.CurrentSize * 100 / downloader.TotalSize;
-                //    await Task.Delay(1);
-                //}
-                AppxInstallBarIndeterminate = true;
-                AppxInstallBarValue = 0;
-                ProgressText = _loader.GetString("Loading");
-                //if (downloader.State != DownloadState.Finished)
-                //{
-                //    ProgressHelper.SetState(ProgressState.Error, true);
-                //    ContentDialog dialog = new ContentDialog
-                //    {
-                //        XamlRoot = _page.XamlRoot,
-                //        Title = _loader.GetString("DownloadFailed"),
-                //        PrimaryButtonText = _loader.GetString("Retry"),
-                //        CloseButtonText = _loader.GetString("Cancel"),
-                //        Content = new TextBlock { Text = _loader.GetString("DownloadFailedInfo") },
-                //        DefaultButton = ContentDialogButton.Primary
-                //    };
-                //    ContentDialogResult result = await dialog.ShowAsync();
-                //    ProgressHelper.SetState(ProgressState.Indeterminate, true);
-                //    if (result == ContentDialogResult.Primary)
-                //    {
-                //        goto downloadapk;
-                //    }
-                //    else
-                //    {
-                //        Application.Current.Exit();
-                //        return;
-                //    }
-                //}
+                using (DownloadService downloader = new DownloadService(DownloadHelper.Configuration))
+                {
+                    bool IsCompleted = false;
+                    Exception exception = null;
+                    long ReceivedBytesSize = 0;
+                    long TotalBytesToReceive = 0;
+                    double ProgressPercentage = 0;
+                    double BytesPerSecondSpeed = 0;
+                    void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+                    {
+                        exception = e.Error;
+                        IsCompleted = true;
+                    }
+                    void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+                    {
+                        ReceivedBytesSize = e.ReceivedBytesSize;
+                        ProgressPercentage = e.ProgressPercentage;
+                        TotalBytesToReceive = e.TotalBytesToReceive;
+                        BytesPerSecondSpeed = e.BytesPerSecondSpeed;
+                    }
+                    downloader.DownloadFileCompleted += OnDownloadFileCompleted;
+                    downloader.DownloadProgressChanged += OnDownloadProgressChanged;
+                downloadapk:
+                    ProgressText = _loader.GetString("WaitDownload");
+                    _ = downloader.DownloadFileTaskAsync(_url.ToString(), APKTemp);
+                    while (TotalBytesToReceive <= 0)
+                    {
+                        await Task.Delay(1);
+                    }
+                    AppxInstallBarIndeterminate = false;
+                    while (!IsCompleted)
+                    {
+                        ProgressText = $"{ProgressPercentage:N2}% {((double)BytesPerSecondSpeed).GetSizeString()}/s";
+                        AppxInstallBarValue = ProgressPercentage;
+                        await Task.Delay(1);
+                    }
+                    ProgressText = _loader.GetString("Loading");
+                    AppxInstallBarIndeterminate = true;
+                    AppxInstallBarValue = 0;
+                    if (exception != null)
+                    {
+                        ContentDialog dialog = new ContentDialog
+                        {
+                            Content = exception.Message,
+                            Title = _loader.GetString("DownloadFailed"),
+                            PrimaryButtonText = _loader.GetString("Retry"),
+                            CloseButtonText = _loader.GetString("Cancel"),
+                            DefaultButton = ContentDialogButton.Primary
+                        };
+                        ContentDialogResult result = await dialog.ShowAsync();
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            goto downloadapk;
+                        }
+                        else
+                        {
+                            Application.Current.Exit();
+                            return;
+                        }
+                    }
+                    downloader.DownloadProgressChanged -= OnDownloadProgressChanged;
+                    downloader.DownloadFileCompleted -= OnDownloadFileCompleted;
+                }
             }
         }
 

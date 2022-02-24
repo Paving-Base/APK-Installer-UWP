@@ -1,13 +1,9 @@
-﻿using AdvancedSharpAdbClient;
-using ApkInstaller;
+﻿using ApkInstaller;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
