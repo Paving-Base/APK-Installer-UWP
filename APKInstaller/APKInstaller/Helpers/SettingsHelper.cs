@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -120,7 +119,7 @@ namespace APKInstaller.Helpers
     public class SystemTextJsonObjectSerializer : IObjectSerializer
     {
         // Specify your serialization settings
-        private readonly JsonSerializerSettings settings = new JsonSerializerSettings();
+        private readonly JsonSerializerSettings settings = new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore };
 
         string IObjectSerializer.Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
 

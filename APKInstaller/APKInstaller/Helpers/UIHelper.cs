@@ -19,8 +19,8 @@ namespace APKInstaller.Helpers
     {
         public static bool HasTitleBar => !CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
         public static bool HasStatusBar => ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
-        public static double TitleBarHeight => HasTitleBar ? 28 : 32;
-        public static double PageTitleHeight => HasTitleBar ? 48 : 48 + TitleBarHeight;
+        public static double TitleBarHeight => 32;
+        public static double PageTitleHeight => HasStatusBar || HasTitleBar ? 48 : 48 + TitleBarHeight;
         public static Thickness StackPanelMargin => new Thickness(0, PageTitleHeight, 0, 0);
         public static Thickness ScrollViewerMargin => new Thickness(0, PageTitleHeight, 0, 0);
         public static Thickness ScrollViewerPadding => new Thickness(0, -PageTitleHeight, 0, 0);

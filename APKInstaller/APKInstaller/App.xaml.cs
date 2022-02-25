@@ -1,4 +1,5 @@
 ﻿using APKInstaller.Helpers;
+using APKInstaller.Helpers.Exceptions;
 using Newtonsoft.Json;
 using ProcessForUWP.UWP.Helpers;
 using System;
@@ -32,6 +33,10 @@ namespace ApkInstaller
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            EnteredBackground += App_EnteredBackground;
+            LeavingBackground += App_LeavingBackground;
+            UnhandledException += Application_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
         /// <summary>
@@ -41,6 +46,8 @@ namespace ApkInstaller
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            RegisterExceptionHandlingSynchronizationContext();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -97,6 +104,8 @@ namespace ApkInstaller
 
         protected override async void OnActivated(IActivatedEventArgs e)
         {
+            RegisterExceptionHandlingSynchronizationContext();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -184,6 +193,33 @@ namespace ApkInstaller
                     }
                 }
             }
+        }
+
+        private void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error($"\n{e.Exception.Message}\n{e.Exception.HResult}\n{e.Exception.StackTrace}\nHelperLink: {e.Exception.HelpLink}", e.Exception);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error(e.ExceptionObject.ToString());
+        }
+
+        /// <summary>
+        /// Should be called from OnActivated and OnLaunched
+        /// </summary>
+        private void RegisterExceptionHandlingSynchronizationContext()
+        {
+            ExceptionHandlingSynchronizationContext
+                .Register()
+                .UnhandledException += SynchronizationContext_UnhandledException;
+        }
+
+        private void SynchronizationContext_UnhandledException(object sender, APKInstaller.Helpers.Exceptions.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error($"\n{e.Exception.Message}\n{e.Exception.HResult}(0x{Convert.ToString(e.Exception.HResult, 16)})\n{e.Exception.StackTrace}\nHelperLink: {e.Exception.HelpLink}", e.Exception);
         }
 
         /// <summary>

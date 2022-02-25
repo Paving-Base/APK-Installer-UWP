@@ -1,8 +1,6 @@
-﻿using APKInstaller.Helpers;
-using APKInstaller.Pages.SettingsPages;
+﻿using APKInstaller.Pages.SettingsPages;
 using APKInstaller.ViewModels;
 using System.Linq;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,6 +15,7 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class InstallPage : Page
     {
+        private bool IsCaches;
         internal InstallViewModel Provider;
 
         public InstallPage() => InitializeComponent();
@@ -24,26 +23,35 @@ namespace APKInstaller.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            string _path = string.Empty;
-            if (e.Parameter is IActivatedEventArgs args)
+            if (InstallViewModel.Caches != null)
             {
-                switch (args?.Kind)
-                {
-                    case ActivationKind.File:
-                        _path = (args as IFileActivatedEventArgs).Files.First().Path;
-                        Provider = new InstallViewModel(_path, this);
-                        break;
-                    case ActivationKind.Protocol:
-                        Provider = new InstallViewModel((args as IProtocolActivatedEventArgs).Uri, this);
-                        break;
-                    default:
-                        Provider = new InstallViewModel(_path, this);
-                        break;
-                }
+                IsCaches = true;
+                Provider = InstallViewModel.Caches;
             }
             else
             {
-                Provider = new InstallViewModel(_path, this);
+                IsCaches = false;
+                string _path = string.Empty;
+                if (e.Parameter is IActivatedEventArgs args)
+                {
+                    switch (args?.Kind)
+                    {
+                        case ActivationKind.File:
+                            _path = (args as IFileActivatedEventArgs).Files.First().Path;
+                            Provider = new InstallViewModel(_path, this);
+                            break;
+                        case ActivationKind.Protocol:
+                            Provider = new InstallViewModel((args as IProtocolActivatedEventArgs).Uri, this);
+                            break;
+                        default:
+                            Provider = new InstallViewModel(_path, this);
+                            break;
+                    }
+                }
+                else
+                {
+                    Provider = new InstallViewModel(_path, this);
+                }
             }
             DataContext = Provider;
         }
@@ -81,7 +89,7 @@ namespace APKInstaller.Pages
 
         private async void InitialLoadingUI_Loaded(object sender, RoutedEventArgs e)
         {
-            await Provider.Refresh();
+            await Provider.Refresh(!IsCaches);
         }
     }
 }

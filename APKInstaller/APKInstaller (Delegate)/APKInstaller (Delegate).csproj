@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>preview</LangVersion>
 		<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
 	</PropertyGroup>
 

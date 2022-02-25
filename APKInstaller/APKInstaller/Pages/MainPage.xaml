@@ -15,43 +15,45 @@
                 <EntranceThemeTransition />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
         <Grid
-            x:Name="CustomTitleBar"
-            Grid.Row="0"
-            Height="28"
-            HorizontalAlignment="Left"
-            Visibility="{x:Bind helper:UIHelper.HasTitleBar}" />
-        <Button
-            x:Name="AboutButton"
-            Grid.RowSpan="2"
-            Width="{x:Bind helper:UIHelper.TitleBarHeight}"
-            Height="{x:Bind helper:UIHelper.TitleBarHeight}"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="2"
-            Click="Button_Click"
-            IsTabStop="True"
-            Style="{StaticResource ButtonRevealStyle}"
-            Visibility="{x:Bind CoreAppFrame.CanGoBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}">
-            <StackPanel>
-                <TextBlock
-                    Margin="-10"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="18"
-                    Foreground="{StaticResource ApplicationPageBackgroundThemeBrush}"
-                    Text="" />
-            </StackPanel>
-        </Button>
-        <Frame
-            x:Name="CoreAppFrame"
-            Grid.Row="1"
-            x:FieldModifier="Public" />
+            Canvas.ZIndex="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid
+                x:Name="CustomTitleBar"
+                Grid.Column="1"
+                Height="{x:Bind helper:UIHelper.TitleBarHeight}"
+                HorizontalAlignment="Stretch"
+                Background="Transparent" />
+            <Button
+                x:Name="AboutButton"
+                Grid.Column="0"
+                Width="{x:Bind helper:UIHelper.TitleBarHeight}"
+                Height="{x:Bind helper:UIHelper.TitleBarHeight}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="2"
+                Click="Button_Click"
+                IsTabStop="True"
+                Style="{StaticResource ButtonRevealStyle}"
+                Visibility="{x:Bind CoreAppFrame.CanGoBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}">
+                <StackPanel>
+                    <TextBlock
+                        Margin="-10"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="18"
+                        Foreground="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                        Text="" />
+                </StackPanel>
+            </Button>
+        </Grid>
+        <Frame x:Name="CoreAppFrame" x:FieldModifier="Public" />
     </Grid>
 </Page>

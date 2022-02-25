@@ -1,5 +1,6 @@
 ﻿using APKInstaller.Helpers;
 using APKInstaller.Pages;
+using APKInstaller.Pages.SettingsPages;
 using Windows.ApplicationModel.Core;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -23,6 +24,7 @@ namespace ApkInstaller
             UIHelper.MainPage = this;
             UIHelper.DispatcherQueue = DispatcherQueue.GetForCurrentThread();
             CoreApplicationViewTitleBar TitleBar = CoreApplication.GetCurrentView().TitleBar;
+            Window.Current.SetTitleBar(CustomTitleBar);
             TitleBar.ExtendViewIntoTitleBar = true;
             UIHelper.CheckTheme();
         }
@@ -38,7 +40,7 @@ namespace ApkInstaller
             switch ((sender as FrameworkElement).Name)
             {
                 case "AboutButton":
-                    //_ = CoreAppFrame.Navigate(typeof(SettingsPage));
+                    _ = CoreAppFrame.Navigate(typeof(SettingsPage));
                     break;
                 default:
                     break;

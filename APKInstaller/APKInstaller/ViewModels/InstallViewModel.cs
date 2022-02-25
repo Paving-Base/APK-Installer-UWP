@@ -497,6 +497,7 @@ namespace APKInstaller.ViewModels
         {
             _url = Url;
             _page = Page;
+            Caches = this;
             _path = APKTemp;
             // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
             Dispose(disposing: false);
@@ -506,18 +507,27 @@ namespace APKInstaller.ViewModels
         public InstallViewModel(string Path, InstallPage Page)
         {
             _page = Page;
+            Caches = this;
             _path = string.IsNullOrEmpty(Path) ? _path : Path;
             // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
             Dispose(disposing: false);
         }
 
-        public async Task Refresh()
+        public async Task Refresh(bool force = true)
         {
             IsInitialized = false;
             try
             {
-                await InitilizeADB();
-                await InitilizeUI();
+                if (force)
+                {
+                    await InitilizeADB();
+                    await InitilizeUI();
+                }
+                else
+                {
+                    await ReinitilizeUI();
+                    IsInitialized = true;
+                }
             }
             catch (Exception ex)
             {
@@ -549,7 +559,6 @@ namespace APKInstaller.ViewModels
                     });
                 ContentDialog dialog = new ContentDialog
                 {
-                    XamlRoot = _page.XamlRoot,
                     Title = _loader.GetString("ADBMissing"),
                     PrimaryButtonText = _loader.GetString("Download"),
                     SecondaryButtonText = _loader.GetString("Select"),
@@ -574,7 +583,6 @@ namespace APKInstaller.ViewModels
                         {
                             ContentDialog dialogs = new ContentDialog
                             {
-                                XamlRoot = _page.XamlRoot,
                                 Title = _loader.GetString("DownloadFailed"),
                                 PrimaryButtonText = _loader.GetString("Retry"),
                                 CloseButtonText = _loader.GetString("Cancel"),
@@ -597,7 +605,6 @@ namespace APKInstaller.ViewModels
                     {
                         ContentDialog dialogs = new ContentDialog
                         {
-                            XamlRoot = _page.XamlRoot,
                             Title = _loader.GetString("NoInternet"),
                             PrimaryButtonText = _loader.GetString("Retry"),
                             CloseButtonText = _loader.GetString("Cancel"),
@@ -755,22 +762,16 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = _loader.GetString("CheckingADB");
                     await CheckADB();
                     WaitProgressText = _loader.GetString("StartingADB");
+                startadb:
                     try
                     {
                         await ADBHelper.StartADB();
                     }
                     catch
                     {
-                        try
-                        {
-                            await ADBHelper.StartADB();
-                        }
-                        catch
-                        {
-                            await CheckADB(true);
-                            WaitProgressText = _loader.GetString("StartingADB");
-                            await ADBHelper.StartADB();
-                        }
+                        await CheckADB();
+                        WaitProgressText = _loader.GetString("StartingADB");
+                        goto startadb;
                     }
                 }
                 WaitProgressText = _loader.GetString("Loading");
@@ -949,6 +950,23 @@ namespace APKInstaller.ViewModels
                 }
             }
             return false;
+        }
+
+        public async Task ReinitilizeUI()
+        {
+            WaitProgressText = _loader.GetString("Loading");
+            if ((!string.IsNullOrEmpty(_path) || _url != null) && NetAPKExist)
+            {
+            checkdevice:
+                if (CheckDevice() && _device != null)
+                {
+                    CheckAPK();
+                }
+                else if (ShowDialogs && await ShowDeviceDialog())
+                {
+                    goto checkdevice;
+                }
+            }
         }
 
         public void CheckAPK()
@@ -1231,7 +1249,7 @@ namespace APKInstaller.ViewModels
                 ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = Visibility.Collapsed;
                 await Task.Run(() =>
                 {
-                    new AdvancedAdbClient().Install(_device, File.Open(_path, FileMode.Open, FileAccess.Read));
+                    new AdvancedAdbClient().Install(_device, File.Open(ApkInfo.FullPath, FileMode.Open, FileAccess.Read));
                 });
                 if (IsOpenApp)
                 {
@@ -1239,6 +1257,11 @@ namespace APKInstaller.ViewModels
                     {
                         await Task.Delay(1000);// 据说如果安装完直接启动会崩溃。。。
                         OpenAPP();
+                        if (IsCloseAPP)
+                        {
+                            await Task.Delay(5000);
+                            UIHelper.DispatcherQueue.TryEnqueue(() => Application.Current.Exit());
+                        }
                     });
                 }
                 IsInstalling = false;

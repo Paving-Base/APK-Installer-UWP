@@ -1,0 +1,67 @@
+﻿<Page
+    x:Class="APKInstaller.Pages.ToolsPages.ProcessesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:APKInstaller.Controls"
+    xmlns:cwuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helper="using:APKInstaller.Helpers"
+    xmlns:local="using:APKInstaller.Pages.ToolsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
+    d:DataContext="{d:DesignInstance Type=toolspages:ProcessesViewModel}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <toolspages:ProcesseConverter x:Key="TextConverter" />
+    </Page.Resources>
+    <Grid>
+        <cwuc:DataGrid
+            Margin="{x:Bind helper:UIHelper.StackPanelMargin}"
+            AutoGenerateColumns="False"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            CanUserSortColumns="True"
+            IsReadOnly="True"
+            ItemsSource="{Binding Processes, Mode=OneWay}">
+            <cwuc:DataGrid.Columns>
+                <cwuc:DataGridTextColumn
+                    x:Uid="/ProcessesPage/Name"
+                    Binding="{Binding Name, Converter={StaticResource TextConverter}, ConverterParameter='Name'}"
+                    Tag="Name" />
+                <cwuc:DataGridTextColumn
+                    x:Uid="/ProcessesPage/ProcessId"
+                    Binding="{Binding ProcessId}"
+                    Tag="ProcessId" />
+                <cwuc:DataGridTextColumn
+                    x:Uid="/ProcessesPage/State"
+                    Binding="{Binding State, Converter={StaticResource TextConverter}, ConverterParameter='State'}"
+                    Tag="State" />
+                <cwuc:DataGridTextColumn
+                    x:Uid="/ProcessesPage/ResidentSetSize"
+                    Binding="{Binding ResidentSetSize, Converter={StaticResource TextConverter}, ConverterParameter='Size'}"
+                    Tag="Resident Set Size" />
+                <cwuc:DataGridTextColumn
+                    x:Uid="/ProcessesPage/Detail"
+                    Binding="{Binding Name}"
+                    Tag="Detail" />
+            </cwuc:DataGrid.Columns>
+        </cwuc:DataGrid>
+        <controls:TitleBar
+            x:Name="TitleBar"
+            x:Uid="/ProcessesPage/TitleBar"
+            BackRequested="TitleBar_BackRequested"
+            BackgroundVisibility="Visible"
+            IsBackEnable="{x:Bind Frame.CanGoBack}"
+            RefreshButtonVisibility="Visible"
+            RefreshEvent="TitleBar_RefreshEvent">
+            <controls:TitleBar.RightAreaContent>
+                <ComboBox
+                    x:Name="DeviceComboBox"
+                    x:Uid="/ProcessesPage/DeviceComboBox"
+                    VerticalAlignment="Center"
+                    Loaded="ComboBox_Loaded"
+                    SelectionChanged="ComboBox_SelectionChanged" />
+            </controls:TitleBar.RightAreaContent>
+        </controls:TitleBar>
+    </Grid>
+</Page>

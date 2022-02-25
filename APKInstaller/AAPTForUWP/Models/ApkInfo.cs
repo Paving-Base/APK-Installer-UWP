@@ -178,4 +178,11 @@ namespace AAPTForUWP.Models
             return init;
         }
     }
+
+    internal class ApkInfos
+    {
+        public string PackageName { get; set; }
+        public string VersionCode { get; set; }
+        public List<ApkInfo> Apks { get; set; }
+    }
 }

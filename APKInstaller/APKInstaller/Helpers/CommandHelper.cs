@@ -37,7 +37,7 @@ namespace APKInstaller.Helpers
         }
 
         /// <inheritdoc/>
-        public static async Task<List<string>> ExecuteShellCommandAsync(string filename,string command, CancellationToken cancellationToken)
+        public static async Task<List<string>> ExecuteShellCommandAsync(string filename, string command, CancellationToken cancellationToken)
         {
             CancellationTokenSource Token = new CancellationTokenSource();
 
