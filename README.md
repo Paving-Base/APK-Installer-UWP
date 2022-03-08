@@ -63,13 +63,15 @@ An Android Application Installer for Windows
 
 ## 屏幕截图
 - 安装
-![安装](Images/Screenshots/Snipaste_2022-02-10_19-56-57.png)
+![安装](Images/Screenshots/Snipaste_2022-03-08_19-06-34.png)
 
 ## 使用到的模块
 - [WinUI](https://github.com/microsoft/microsoft-ui-xaml "WinUI")
-- [Portable Downloader](https://github.com/madnik7/PortableDownloader "PortableDownloader")
+- [Downloader](https://github.com/bezzad/Downloader "Downloader")
+- [Sharp Compress](https://github.com/adamhathcock/sharpcompress "Sharp Compress")
+- [Newtonsoft Json](https://www.newtonsoft.com/json "Newtonsoft Json")
 - [Advanced Sharp Adb Client](https://github.com/yungd1plomat/AdvancedSharpAdbClient "Advanced Sharp Adb Client")
-- [ModernWPF Community Toolkit](https://github.com/ModernWpf-Community/ModernWpfCommunityToolkit "Windows Community Toolkit")
+- [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit "Windows Community Toolkit")
 
 ## 鸣谢
 - 所有为 APK Installer 做出贡献的同志们
