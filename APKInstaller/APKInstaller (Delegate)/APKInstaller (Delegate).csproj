@@ -1,14 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<LangVersion>preview</LangVersion>
-		<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
-	</PropertyGroup>
+  <PropertyGroup>
+	<Authors>wherewhere</Authors>
+	<OutputType>WinExe</OutputType>
+	<LangVersion>preview</LangVersion>
+	<VersionPrefix>0.0.1</VersionPrefix>
+	<ApplicationIcon>favicon.ico</ApplicationIcon>
+	<TargetFramework>netcoreapp3.1</TargetFramework>
+	<Description>An Android Application Installer for Windows</Description>
+	<Copyright>Copyright © 2017 - 2022 PavingBase. All rights reserved.</Copyright>
+	<RepositoryUrl>https://github.com/Paving-Base/APK-Installer-Classic</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/Paving-Base/APK-Installer-Classic</PackageProjectUrl>
+	<ProductName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</ProductName>
+	<AssemblyName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</AssemblyName>
+	<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
+  </PropertyGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
+  </ItemGroup>
 
 </Project>

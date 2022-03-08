@@ -51,7 +51,7 @@ namespace APKInstaller.Helpers
                 StandardOutputEncoding = Encoding.UTF8
             };
 
-            using (Process process = Process.Start(start))
+            using (Process process = await Task.Run(() => { return Process.Start(start); }))
             {
                 process.BeginOutputReadLine();
 

@@ -1,5 +1,8 @@
-﻿using APKInstaller.Pages.ToolsPages;
+﻿using APKInstaller.Helpers;
+using APKInstaller.Pages.ToolsPages;
+using System.Globalization;
 using Windows.ApplicationModel.Core;
+using Windows.Globalization;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,6 +56,29 @@ namespace APKInstaller.Pages.SettingsPages
             if (Frame.CanGoBack)
             {
                 Frame.GoBack();
+            }
+        }
+
+        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            string lang = SettingsHelper.Get<string>(SettingsHelper.CurrentLanguage);
+            lang = lang == LanguageHelper.AutoLanguageCode ? LanguageHelper.GetCurrentLanguage() : lang;
+            CultureInfo culture = new CultureInfo(lang);
+            (sender as ComboBox).SelectedItem = culture;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CultureInfo culture = (sender as ComboBox).SelectedItem as CultureInfo;
+            if (culture.Name != LanguageHelper.GetCurrentLanguage())
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+                SettingsHelper.Set(SettingsHelper.CurrentLanguage, culture.Name);
+            }
+            else
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+                SettingsHelper.Set(SettingsHelper.CurrentLanguage, LanguageHelper.AutoLanguageCode);
             }
         }
     }

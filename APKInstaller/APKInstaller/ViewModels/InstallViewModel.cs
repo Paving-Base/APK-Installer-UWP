@@ -4,6 +4,7 @@ using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using APKInstaller.Controls.Dialogs;
 using APKInstaller.Helpers;
+using APKInstaller.Models;
 using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
 using Downloader;
@@ -42,7 +43,7 @@ namespace APKInstaller.ViewModels
         private string _path = string.Empty;
 #else
         private Uri _url = new Uri("apkinstaller:?source=https://dl.coolapk.com/down?pn=com.coolapk.market&id=NDU5OQ&h=46bb9d98&from=from-web");
-        private string _path = @"C:\Users\qq251\Downloads\Programs\Minecraft_1.17.40.06_sign.apk";
+        private string _path = @"C:\Users\qq251\Downloads\Programs\Minecraft_1.18.2.03_sign.apk";
 #endif
         private bool NetAPKExist => _path != APKTemp || File.Exists(_path);
 
@@ -883,7 +884,7 @@ namespace APKInstaller.ViewModels
                         DefaultButton = ContentDialogButton.Close,
                         CloseButtonText = _loader.GetString("IKnow"),
                         PrimaryButtonText = _loader.GetString("StartWSA"),
-                        ContentUrl = "https://raw.githubusercontent.com/Paving-Base/APK-Installer/screenshots/Documents/Tutorials/How%20To%20Connect%20WSA/How%20To%20Connect%20WSA.md",
+                        ContentInfo = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Tutorials/How%20To%20Connect%20WSA", "How%20To%20Connect%20WSA.md")
                     };
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
@@ -921,13 +922,18 @@ namespace APKInstaller.ViewModels
                     ContentDialog dialog = new ContentDialog
                     {
                         Title = _loader.GetString("NoDevice"),
-                        DefaultButton = ContentDialogButton.Close,
+                        DefaultButton = ContentDialogButton.Primary,
                         CloseButtonText = _loader.GetString("IKnow"),
-                        PrimaryButtonText = _loader.GetString("GoToSetting"),
+                        PrimaryButtonText = _loader.GetString("InstallWSA"),
+                        SecondaryButtonText = _loader.GetString("GoToSetting"),
                         Content = _loader.GetString("NoDeviceInfo"),
                     };
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
+                    {
+                        _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9P3395VX91NR&mode=mini"));
+                    }
+                    else if (result == ContentDialogResult.Secondary)
                     {
                         UIHelper.Navigate(typeof(SettingsPage), null);
                     }

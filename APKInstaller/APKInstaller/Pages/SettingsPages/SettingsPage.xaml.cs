@@ -1,5 +1,7 @@
 ﻿using AdvancedSharpAdbClient;
+using APKInstaller.Controls;
 using APKInstaller.Helpers;
+using APKInstaller.Models;
 using APKInstaller.ViewModels.SettingsPages;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
@@ -49,6 +51,12 @@ namespace APKInstaller.Pages.SettingsPages
         {
             switch ((sender as FrameworkElement).Tag as string)
             {
+                case "Rate":
+                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9P2JFQ43FPPG"));
+                    break;
+                case "Group":
+                    _ = Launcher.LaunchUriAsync(new Uri("https://t.me/PavingBase"));
+                    break;
                 case "Reset":
                     ApplicationData.Current.LocalSettings.Values.Clear();
                     SettingsHelper.SetDefaultSettings();
@@ -97,5 +105,7 @@ namespace APKInstaller.Pages.SettingsPages
         private void GotoUpdate_Click(object sender, RoutedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri((sender as FrameworkElement).Tag.ToString()));
 
         private void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri(e.Link));
+
+        private void WebXAML_Loaded(object sender, RoutedEventArgs e) => (sender as WebXAML).ContentInfo = new GitInfo("Paving-Base", "APK-Installer-UWP", "screenshots", "Documents/Announcements", "Announcements.xml");
     }
 }

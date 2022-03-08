@@ -23,8 +23,10 @@ namespace APKInstaller.Helpers
         public const string IsCloseADB = "IsCloseADB";
         public const string IsCloseAPP = "IsCloseAPP";
         public const string ShowDialogs = "ShowDialogs";
+        public const string ShowMessages = "ShowMessages";
         public const string AutoGetNetAPK = "AutoGetNetAPK";
         public const string DefaultDevice = "DefaultDevice";
+        public const string CurrentLanguage = "CurrentLanguage";
         public const string IsBackgroundColorFollowSystem = "IsBackgroundColorFollowSystem";
 
         public static Type Get<Type>(string key) => LocalObject.Read<Type>(key);
@@ -70,13 +72,21 @@ namespace APKInstaller.Helpers
             {
                 LocalObject.Save(ShowDialogs, true);
             }
+            if (!LocalObject.KeyExists(ShowMessages))
+            {
+                LocalObject.Save(ShowMessages, true);
+            }
             if (!LocalObject.KeyExists(AutoGetNetAPK))
             {
                 LocalObject.Save(AutoGetNetAPK, false);
             }
             if (!LocalObject.KeyExists(DefaultDevice))
             {
-                LocalObject.Save(DefaultDevice, /*new DeviceData()*/string.Empty);
+                LocalObject.Save(DefaultDevice, string.Empty);
+            }
+            if (!LocalObject.KeyExists(CurrentLanguage))
+            {
+                LocalObject.Save(CurrentLanguage, LanguageHelper.AutoLanguageCode);
             }
             if (!LocalObject.KeyExists(IsBackgroundColorFollowSystem))
             {

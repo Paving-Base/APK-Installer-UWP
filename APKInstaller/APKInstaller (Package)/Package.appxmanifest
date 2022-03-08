@@ -50,7 +50,8 @@
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
           <uap:Rotation Preference="portraitFlipped"/>
-          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+		</uap:InitialRotationPreference>
       </uap:VisualElements>
 	  <Extensions>
 		<uap:Extension Category="windows.appService">
@@ -85,7 +86,7 @@
             <uap:EditFlags OpenIsSafe="true"/>
           </uap:FileTypeAssociation>
         </uap:Extension>
-		<desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller (Delegate).exe" />
+		<desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller.Delegate.exe" />
 	  </Extensions>
     </Application>
   </Applications>
@@ -95,6 +96,5 @@
     <rescap:Capability Name="runFullTrust" />
 	<rescap:Capability Name="packageQuery" />
 	<rescap:Capability Name="confirmAppClose" />
-	<rescap:Capability Name="packageManagement" />
   </Capabilities>
 </Package>

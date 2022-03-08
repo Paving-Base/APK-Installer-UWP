@@ -1,4 +1,5 @@
-﻿using APKInstaller.Helpers;
+﻿using AdvancedSharpAdbClient;
+using APKInstaller.Helpers;
 using APKInstaller.Helpers.Exceptions;
 using Newtonsoft.Json;
 using ProcessForUWP.UWP.Helpers;
@@ -91,7 +92,7 @@ namespace ApkInstaller
 
                         if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                         {
-                            try { ADBHelper.StopADB(); } catch { }
+                            try { new AdvancedAdbClient().KillAdb(); } catch { }
                         }
                     }
                     else
@@ -147,7 +148,7 @@ namespace ApkInstaller
 
                     if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                     {
-                        try { ADBHelper.StopADB(); } catch { }
+                        try { new AdvancedAdbClient().KillAdb(); } catch { }
                     }
                 }
                 else
@@ -167,7 +168,6 @@ namespace ApkInstaller
                 {
                     try
                     {
-                        await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
                         AppServiceConnected += (sender, e) =>
                         {
                             Connection.RequestReceived += ProcessHelper.Connection_RequestReceived;
@@ -186,6 +186,7 @@ namespace ApkInstaller
                                 }
                             };
                         };
+                        await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
                     }
                     catch (Exception ex)
                     {

@@ -15,7 +15,7 @@ namespace APKInstaller.Helpers
         {
             AdbServer ADBServer = new AdbServer();
             await CommandHelper.ExecuteShellCommand("start-server", ADBPath);
-            CancellationTokenSource TokenSource = new CancellationTokenSource(new TimeSpan(10));
+            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             while (!ADBServer.GetStatus().IsRunning)
             {
                 TokenSource.Token.ThrowIfCancellationRequested();
