@@ -10,18 +10,22 @@ using APKInstaller.Pages.SettingsPages;
 using Downloader;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Connectivity;
+using ProcessForUWP.UWP;
 using SharpCompress.Archives;
 using SharpCompress.Common;
+using SharpCompress.Writers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -33,16 +37,17 @@ namespace APKInstaller.ViewModels
 {
     public class InstallViewModel : INotifyPropertyChanged, IDisposable
     {
+        private InstallPage _page;
         private DeviceData _device;
-        private readonly InstallPage _page;
-        private string APKTemp => Path.Combine(CachesHelper.TempPath, "NetAPKTemp.apk");
-        private string ADBTemp => Path.Combine(CachesHelper.TempPath, "platform-tools.zip");
+        private readonly ProtocolForResultsOperation _operation;
+        private static readonly string APKTemp = Path.Combine(CachesHelper.TempPath, "NetAPKTemp.apk");
+        private static readonly string ADBTemp = Path.Combine(CachesHelper.TempPath, "platform-tools.zip");
 
 #if !DEBUG
         private Uri _url;
         private string _path = string.Empty;
 #else
-        private Uri _url = new Uri("apkinstaller:?source=https://dl.coolapk.com/down?pn=com.coolapk.market&id=NDU5OQ&h=46bb9d98&from=from-web");
+        private Uri _url = new("apkinstaller:?source=https://dl.coolapk.com/down?pn=com.coolapk.market&id=NDU5OQ&h=46bb9d98&from=from-web");
         private string _path = @"C:\Users\qq251\Downloads\Programs\Minecraft_1.18.2.03_sign.apk";
 #endif
         private bool NetAPKExist => _path != APKTemp || File.Exists(_path);
@@ -51,6 +56,7 @@ namespace APKInstaller.ViewModels
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InstallPage");
 
         public static InstallViewModel Caches;
+
         public string InstallFormat => _loader.GetString("InstallFormat");
         public string VersionFormat => _loader.GetString("VersionFormat");
         public string PackageNameFormat => _loader.GetString("PackageNameFormat");
@@ -66,8 +72,11 @@ namespace APKInstaller.ViewModels
             get => _apkInfo;
             set
             {
-                _apkInfo = value;
-                RaisePropertyChangedEvent();
+                if (_apkInfo != value)
+                {
+                    _apkInfo = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -76,18 +85,18 @@ namespace APKInstaller.ViewModels
             get => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
             set
             {
-                SettingsHelper.Set(SettingsHelper.ADBPath, value);
-                RaisePropertyChangedEvent();
+                if (ADBPath != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.ADBPath, value);
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
         public static bool IsOpenApp
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsOpenApp);
-            set
-            {
-                SettingsHelper.Set(SettingsHelper.IsOpenApp, value);
-            }
+            set => SettingsHelper.Set(SettingsHelper.IsOpenApp, value);
         }
 
         private bool _isInstalling;
@@ -96,8 +105,11 @@ namespace APKInstaller.ViewModels
             get => _isInstalling;
             set
             {
-                _isInstalling = value;
-                RaisePropertyChangedEvent();
+                if (_isInstalling != value)
+                {
+                    _isInstalling = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -107,8 +119,11 @@ namespace APKInstaller.ViewModels
             get => _isInitialized;
             set
             {
-                _isInitialized = value;
-                RaisePropertyChangedEvent();
+                if (_isInitialized != value)
+                {
+                    _isInitialized = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -118,8 +133,11 @@ namespace APKInstaller.ViewModels
             get => _appName;
             set
             {
-                _appName = value;
-                RaisePropertyChangedEvent();
+                if (_appName != value)
+                {
+                    _appName = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -129,8 +147,11 @@ namespace APKInstaller.ViewModels
             get => _textOutput;
             set
             {
-                _textOutput = value;
-                RaisePropertyChangedEvent();
+                if (_textOutput != value)
+                {
+                    _textOutput = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -140,8 +161,11 @@ namespace APKInstaller.ViewModels
             get => _infoMessage;
             set
             {
-                _infoMessage = value;
-                RaisePropertyChangedEvent();
+                if (_infoMessage != value)
+                {
+                    _infoMessage = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -151,8 +175,11 @@ namespace APKInstaller.ViewModels
             get => _progressText;
             set
             {
-                _progressText = value;
-                RaisePropertyChangedEvent();
+                if (_progressText != value)
+                {
+                    _progressText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -162,8 +189,11 @@ namespace APKInstaller.ViewModels
             get => _actionButtonEnable;
             set
             {
-                _actionButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_actionButtonEnable != value)
+                {
+                    _actionButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -173,8 +203,11 @@ namespace APKInstaller.ViewModels
             get => _secondaryActionButtonEnable;
             set
             {
-                _secondaryActionButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_secondaryActionButtonEnable != value)
+                {
+                    _secondaryActionButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -184,8 +217,11 @@ namespace APKInstaller.ViewModels
             get => _fileSelectButtonEnable;
             set
             {
-                _fileSelectButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_fileSelectButtonEnable != value)
+                {
+                    _fileSelectButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -195,8 +231,11 @@ namespace APKInstaller.ViewModels
             get => _downloadButtonEnable;
             set
             {
-                _downloadButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_downloadButtonEnable != value)
+                {
+                    _downloadButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -206,8 +245,11 @@ namespace APKInstaller.ViewModels
             get => _deviceSelectButtonEnable;
             set
             {
-                _deviceSelectButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_deviceSelectButtonEnable != value)
+                {
+                    _deviceSelectButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -217,8 +259,11 @@ namespace APKInstaller.ViewModels
             get => _cancelOperationButtonEnable;
             set
             {
-                _cancelOperationButtonEnable = value;
-                RaisePropertyChangedEvent();
+                if (_cancelOperationButtonEnable != value)
+                {
+                    _cancelOperationButtonEnable = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -228,8 +273,11 @@ namespace APKInstaller.ViewModels
             get => _waitProgressText;
             set
             {
-                _waitProgressText = value;
-                RaisePropertyChangedEvent();
+                if (_waitProgressText != value)
+                {
+                    _waitProgressText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -239,8 +287,11 @@ namespace APKInstaller.ViewModels
             get => _waitProgressValue;
             set
             {
-                _waitProgressValue = value;
-                RaisePropertyChangedEvent();
+                if (_waitProgressValue != value)
+                {
+                    _waitProgressValue = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -250,8 +301,11 @@ namespace APKInstaller.ViewModels
             get => _appxInstallBarValue;
             set
             {
-                _appxInstallBarValue = value;
-                RaisePropertyChangedEvent();
+                if (_appxInstallBarValue != value)
+                {
+                    _appxInstallBarValue = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -261,8 +315,11 @@ namespace APKInstaller.ViewModels
             get => _waitProgressIndeterminate;
             set
             {
-                _waitProgressIndeterminate = value;
-                RaisePropertyChangedEvent();
+                if (_waitProgressIndeterminate != value)
+                {
+                    _waitProgressIndeterminate = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -272,8 +329,11 @@ namespace APKInstaller.ViewModels
             get => _appxInstallBarIndeterminate;
             set
             {
-                _appxInstallBarIndeterminate = value;
-                RaisePropertyChangedEvent();
+                if (_appxInstallBarIndeterminate != value)
+                {
+                    _appxInstallBarIndeterminate = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -283,8 +343,11 @@ namespace APKInstaller.ViewModels
             get => _actionButtonText;
             set
             {
-                _actionButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_actionButtonText != value)
+                {
+                    _actionButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -294,8 +357,11 @@ namespace APKInstaller.ViewModels
             get => _secondaryActionButtonText;
             set
             {
-                _secondaryActionButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_secondaryActionButtonText != value)
+                {
+                    _secondaryActionButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -305,8 +371,11 @@ namespace APKInstaller.ViewModels
             get => _fileSelectButtonText;
             set
             {
-                _fileSelectButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_fileSelectButtonText != value)
+                {
+                    _fileSelectButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -316,8 +385,11 @@ namespace APKInstaller.ViewModels
             get => _downloadButtonText;
             set
             {
-                _downloadButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_downloadButtonText != value)
+                {
+                    _downloadButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -327,8 +399,11 @@ namespace APKInstaller.ViewModels
             get => _deviceSelectButtonText;
             set
             {
-                _deviceSelectButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_deviceSelectButtonText != value)
+                {
+                    _deviceSelectButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -338,8 +413,11 @@ namespace APKInstaller.ViewModels
             get => _cancelOperationButtonText;
             set
             {
-                _cancelOperationButtonText = value;
-                RaisePropertyChangedEvent();
+                if (_cancelOperationButtonText != value)
+                {
+                    _cancelOperationButtonText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -349,8 +427,11 @@ namespace APKInstaller.ViewModels
             get => _textOutputVisibility;
             set
             {
-                _textOutputVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_textOutputVisibility != value)
+                {
+                    _textOutputVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -360,8 +441,11 @@ namespace APKInstaller.ViewModels
             get => _installOutputVisibility;
             set
             {
-                _installOutputVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_installOutputVisibility != value)
+                {
+                    _installOutputVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -371,8 +455,11 @@ namespace APKInstaller.ViewModels
             get => _actionVisibility;
             set
             {
-                _actionVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_actionVisibility != value)
+                {
+                    _actionVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -382,8 +469,11 @@ namespace APKInstaller.ViewModels
             get => _secondaryActionVisibility;
             set
             {
-                _secondaryActionVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_secondaryActionVisibility != value)
+                {
+                    _secondaryActionVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -393,8 +483,11 @@ namespace APKInstaller.ViewModels
             get => _fileSelectVisibility;
             set
             {
-                _fileSelectVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_fileSelectVisibility != value)
+                {
+                    _fileSelectVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -404,8 +497,11 @@ namespace APKInstaller.ViewModels
             get => _downloadVisibility;
             set
             {
-                _downloadVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_downloadVisibility != value)
+                {
+                    _downloadVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -415,8 +511,11 @@ namespace APKInstaller.ViewModels
             get => _deviceSelectVisibility;
             set
             {
-                _deviceSelectVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_deviceSelectVisibility != value)
+                {
+                    _deviceSelectVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -426,8 +525,11 @@ namespace APKInstaller.ViewModels
             get => _cancelOperationVisibility;
             set
             {
-                _cancelOperationVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_cancelOperationVisibility != value)
+                {
+                    _cancelOperationVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -437,8 +539,11 @@ namespace APKInstaller.ViewModels
             get => _messagesToUserVisibility;
             set
             {
-                _messagesToUserVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_messagesToUserVisibility != value)
+                {
+                    _messagesToUserVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -448,8 +553,11 @@ namespace APKInstaller.ViewModels
             get => _launchWhenReadyVisibility;
             set
             {
-                _launchWhenReadyVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_launchWhenReadyVisibility != value)
+                {
+                    _launchWhenReadyVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -459,8 +567,11 @@ namespace APKInstaller.ViewModels
             get => _appVersionVisibility;
             set
             {
-                _appVersionVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_appVersionVisibility != value)
+                {
+                    _appVersionVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -470,8 +581,11 @@ namespace APKInstaller.ViewModels
             get => _appPublisherVisibility;
             set
             {
-                _appPublisherVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_appPublisherVisibility != value)
+                {
+                    _appPublisherVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -481,8 +595,11 @@ namespace APKInstaller.ViewModels
             get => _appCapabilitiesVisibility;
             set
             {
-                _appCapabilitiesVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_appCapabilitiesVisibility != value)
+                {
+                    _appCapabilitiesVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -494,29 +611,35 @@ namespace APKInstaller.ViewModels
         }
 
         // TODO: 仅当“Dispose(bool disposing)”拥有用于释放未托管资源的代码时才替代终结器
-        public InstallViewModel(Uri Url, InstallPage Page)
+        public InstallViewModel(Uri Url, InstallPage Page, ProtocolForResultsOperation Operation = null)
         {
             _url = Url;
             _page = Page;
             Caches = this;
             _path = APKTemp;
+            _operation = Operation;
             // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
             Dispose(disposing: false);
         }
 
         // TODO: 仅当“Dispose(bool disposing)”拥有用于释放未托管资源的代码时才替代终结器
-        public InstallViewModel(string Path, InstallPage Page)
+        public InstallViewModel(string Path, InstallPage Page, ProtocolForResultsOperation Operation = null)
         {
             _page = Page;
             Caches = this;
+            _operation = Operation;
             _path = string.IsNullOrEmpty(Path) ? _path : Path;
             // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
             Dispose(disposing: false);
         }
 
+        public static void SetPage(InstallPage Page) => Caches._page = Page;
+
         public async Task Refresh(bool force = true)
         {
             IsInitialized = false;
+            WaitProgressText = _loader.GetString("Loading");
+            //await OnFirstRun();
             try
             {
                 if (force)
@@ -533,21 +656,46 @@ namespace APKInstaller.ViewModels
             catch (Exception ex)
             {
                 PackageError(ex.Message);
+                IsInstalling = false;
             }
         }
 
-        public async Task CheckADB(bool force = false)
+        private async Task OnFirstRun()
         {
-        checkadb:
-            if (!force && File.Exists(ADBPath))
+            if (SettingsHelper.Get<bool>(SettingsHelper.IsFirstRun))
             {
-                WaitProgressText = _loader.GetString("ADBExist");
+                ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InstallPage");
+                MarkdownDialog dialog = new()
+                {
+                    Title = _loader.GetString("Welcome"),
+                    DefaultButton = ContentDialogButton.Close,
+                    CloseButtonText = _loader.GetString("IKnow"),
+                    ContentTask = async () =>
+                    {
+                        string langcode = LanguageHelper.GetCurrentLanguage();
+                        Uri dataUri = new($"ms-appx:///String/{langcode}/About.md");
+                        StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(dataUri);
+                        return await FileIO.ReadTextAsync(file);
+                    }
+                };
+                _ = await UIHelper.DispatcherQueue?.EnqueueAsync(async () => await dialog.ShowAsync());
+                SettingsHelper.Set(SettingsHelper.IsFirstRun, false);
             }
-            else
+        }
+
+        private async Task CheckADB(bool force = false)
+        {
+            if (!await Task.Run(() => FileEx.Exists(ADBPath)))
             {
-                StackPanel StackPanel = new StackPanel();
+                ADBPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
+            }
+
+            checkadb:
+            if (force || !await Task.Run(() => FileEx.Exists(ADBPath)))
+            {
+                StackPanel StackPanel = new();
                 StackPanel.Children.Add(
-                    new TextBlock()
+                    new TextBlock
                     {
                         TextWrapping = TextWrapping.Wrap,
                         Text = _loader.GetString("AboutADB")
@@ -558,7 +706,7 @@ namespace APKInstaller.ViewModels
                         Content = _loader.GetString("ClickToRead"),
                         NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
                     });
-                ContentDialog dialog = new ContentDialog
+                ContentDialog dialog = new()
                 {
                     Title = _loader.GetString("ADBMissing"),
                     PrimaryButtonText = _loader.GetString("Download"),
@@ -573,7 +721,7 @@ namespace APKInstaller.ViewModels
                 ContentDialogResult result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                downloadadb:
+                    downloadadb:
                     if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     {
                         try
@@ -582,12 +730,12 @@ namespace APKInstaller.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            ContentDialog dialogs = new ContentDialog
+                            ContentDialog dialogs = new()
                             {
                                 Title = _loader.GetString("DownloadFailed"),
                                 PrimaryButtonText = _loader.GetString("Retry"),
                                 CloseButtonText = _loader.GetString("Cancel"),
-                                Content = ex.Message,
+                                Content = new TextBlock { Text = ex.Message },
                                 DefaultButton = ContentDialogButton.Primary
                             };
                             ContentDialogResult results = await dialogs.ShowAsync();
@@ -597,6 +745,7 @@ namespace APKInstaller.ViewModels
                             }
                             else
                             {
+                                SendResults(new Exception($"ADB {_loader.GetString("DownloadFailed")}"));
                                 Application.Current.Exit();
                                 return;
                             }
@@ -604,12 +753,12 @@ namespace APKInstaller.ViewModels
                     }
                     else
                     {
-                        ContentDialog dialogs = new ContentDialog
+                        ContentDialog dialogs = new()
                         {
                             Title = _loader.GetString("NoInternet"),
                             PrimaryButtonText = _loader.GetString("Retry"),
                             CloseButtonText = _loader.GetString("Cancel"),
-                            Content = _loader.GetString("NoInternetInfo"),
+                            Content = new TextBlock { Text = _loader.GetString("NoInternetInfo") },
                             DefaultButton = ContentDialogButton.Primary
                         };
                         ContentDialogResult results = await dialogs.ShowAsync();
@@ -619,6 +768,7 @@ namespace APKInstaller.ViewModels
                         }
                         else
                         {
+                            SendResults(new Exception($"{_loader.GetString("NoInternet")}, ADB {_loader.GetString("DownloadFailed")}"));
                             Application.Current.Exit();
                             return;
                         }
@@ -626,7 +776,7 @@ namespace APKInstaller.ViewModels
                 }
                 else if (result == ContentDialogResult.Secondary)
                 {
-                    FileOpenPicker FileOpen = new FileOpenPicker();
+                    FileOpenPicker FileOpen = new();
                     FileOpen.FileTypeFilter.Add(".exe");
                     FileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
 
@@ -638,23 +788,24 @@ namespace APKInstaller.ViewModels
                 }
                 else
                 {
+                    SendResults(new Exception(_loader.GetString("ADBMissing")));
                     Application.Current.Exit();
                     return;
                 }
             }
         }
 
-        public async Task DownloadADB()
+        private async Task DownloadADB()
         {
             if (!Directory.Exists(ADBTemp.Substring(0, ADBTemp.LastIndexOf(@"\"))))
             {
-                Directory.CreateDirectory(ADBTemp.Substring(0, ADBTemp.LastIndexOf(@"\")));
+                _ = Directory.CreateDirectory(ADBTemp.Substring(0, ADBTemp.LastIndexOf(@"\")));
             }
             else if (Directory.Exists(ADBTemp))
             {
                 Directory.Delete(ADBTemp, true);
             }
-            using (DownloadService downloader = new DownloadService(DownloadHelper.Configuration))
+            using (DownloadService downloader = new(DownloadHelper.Configuration))
             {
                 bool IsCompleted = false;
                 Exception exception = null;
@@ -676,12 +827,16 @@ namespace APKInstaller.ViewModels
                 }
                 downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                 downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-            downloadadb:
+                downloadadb:
                 WaitProgressText = _loader.GetString("WaitDownload");
                 _ = downloader.DownloadFileTaskAsync("https://dl.google.com/android/repository/platform-tools-latest-windows.zip", ADBTemp);
                 while (TotalBytesToReceive <= 0)
                 {
                     await Task.Delay(1);
+                    if (IsCompleted)
+                    {
+                        goto downloadfinish;
+                    }
                 }
                 WaitProgressIndeterminate = false;
                 while (!IsCompleted)
@@ -692,9 +847,10 @@ namespace APKInstaller.ViewModels
                 }
                 WaitProgressIndeterminate = true;
                 WaitProgressValue = 0;
+                downloadfinish:
                 if (exception != null)
                 {
-                    ContentDialog dialog = new ContentDialog
+                    ContentDialog dialog = new()
                     {
                         Content = exception.Message,
                         Title = _loader.GetString("DownloadFailed"),
@@ -709,6 +865,7 @@ namespace APKInstaller.ViewModels
                     }
                     else
                     {
+                        SendResults(new Exception($"ADB {_loader.GetString("DownloadFailed")}"));
                         Application.Current.Exit();
                         return;
                     }
@@ -747,51 +904,56 @@ namespace APKInstaller.ViewModels
                 WaitProgressValue = 0;
                 WaitProgressIndeterminate = true;
                 WaitProgressText = _loader.GetString("UnzipComplete");
-                await Task.Delay(1);
             }
             ADBPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, @"platform-tools\adb.exe");
         }
 
-        public async Task InitilizeADB()
+        private async Task InitilizeADB()
         {
             WaitProgressText = _loader.GetString("Loading");
             if (!string.IsNullOrEmpty(_path) || _url != null)
             {
-                AdbServer ADBServer = new AdbServer();
+                IAdbServer ADBServer = AdbServer.Instance;
                 if (!ADBServer.GetStatus().IsRunning)
                 {
                     WaitProgressText = _loader.GetString("CheckingADB");
                     await CheckADB();
+                    startadb:
                     WaitProgressText = _loader.GetString("StartingADB");
-                startadb:
                     try
                     {
                         await ADBHelper.StartADB();
                     }
                     catch
                     {
-                        await CheckADB();
-                        WaitProgressText = _loader.GetString("StartingADB");
+                        await CheckADB(true);
                         goto startadb;
                     }
                 }
                 WaitProgressText = _loader.GetString("Loading");
-                if (IsOnlyWSA)
+                if (!CheckDevice())
                 {
-                    if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                    if (IsOnlyWSA)
                     {
-                        await AddressHelper.ConnectHyperV();
-                    }
-                    else
-                    {
-                        new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                        if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                        {
+                            await AddressHelper.ConnectHyperV();
+                            if (!CheckDevice())
+                            {
+                                new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                            }
+                        }
+                        else
+                        {
+                            new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                        }
                     }
                 }
                 ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
             }
         }
 
-        public async Task InitilizeUI()
+        private async Task InitilizeUI()
         {
             if (!string.IsNullOrEmpty(_path) || _url != null)
             {
@@ -819,7 +981,7 @@ namespace APKInstaller.ViewModels
                 }
                 else
                 {
-                checkdevice:
+                    checkdevice:
                     WaitProgressText = _loader.GetString("Checking");
                     if (CheckDevice() && _device != null)
                     {
@@ -884,44 +1046,62 @@ namespace APKInstaller.ViewModels
                         DefaultButton = ContentDialogButton.Close,
                         CloseButtonText = _loader.GetString("IKnow"),
                         PrimaryButtonText = _loader.GetString("StartWSA"),
+                        FallbackContent = _loader.GetString("HowToConnectInfo"),
                         ContentInfo = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Tutorials/How%20To%20Connect%20WSA", "How%20To%20Connect%20WSA.md")
                     };
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        WaitProgressText = _loader.GetString("LaunchingWSA");
-                        _ = await Launcher.LaunchUriAsync(new Uri("wsa://"));
-                        bool IsWSARunning = false;
-                        while (!IsWSARunning)
+                        startwsa:
+                        CancellationTokenSource TokenSource = new(TimeSpan.FromMinutes(5));
+                        try
                         {
-                            await Task.Run(() =>
+                            WaitProgressText = _loader.GetString("LaunchingWSA");
+                            _ = await Launcher.LaunchUriAsync(new Uri("wsa://"));
+                            WaitProgressText = _loader.GetString("WaitingWSAStart");
+                            while (!CheckDevice())
                             {
-                                Process[] ps = Process.GetProcessesByName("vmmemWSA");
-                                IsWSARunning = ps != null && ps.Length > 0;
-                            });
+                                TokenSource.Token.ThrowIfCancellationRequested();
+                                if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                                {
+                                    await AddressHelper.ConnectHyperV();
+                                    if (!CheckDevice())
+                                    {
+                                        new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                                    }
+                                }
+                                else
+                                {
+                                    new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                                }
+                                await Task.Delay(100);
+                            }
+                            WaitProgressText = _loader.GetString("WSARunning");
+                            return true;
                         }
-                        WaitProgressText = _loader.GetString("WaitingWSAStart");
-                        while (!CheckDevice())
+                        catch
                         {
-                            if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                            ContentDialog dialogs = new()
                             {
-                                await AddressHelper.ConnectHyperV();
-                            }
-                            else if (IsOnlyWSA)
+                                Title = _loader.GetString("CannotConnectWSA"),
+                                DefaultButton = ContentDialogButton.Close,
+                                CloseButtonText = _loader.GetString("IKnow"),
+                                PrimaryButtonText = _loader.GetString("Retry"),
+                                Content = _loader.GetString("CannotConnectWSAInfo"),
+                            };
+                            ContentDialogResult results = await dialogs.ShowAsync();
+                            if (results == ContentDialogResult.Primary)
                             {
-                                new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
+                                goto startwsa;
                             }
-                            await Task.Delay(100);
                         }
-                        WaitProgressText = _loader.GetString("WSARunning");
-                        return true;
                     }
                 }
                 else
                 {
-                    ContentDialog dialog = new ContentDialog
+                    ContentDialog dialog = new()
                     {
-                        Title = _loader.GetString("NoDevice"),
+                        Title = _loader.GetString("NoDevice10"),
                         DefaultButton = ContentDialogButton.Primary,
                         CloseButtonText = _loader.GetString("IKnow"),
                         PrimaryButtonText = _loader.GetString("InstallWSA"),
@@ -931,7 +1111,7 @@ namespace APKInstaller.ViewModels
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9P3395VX91NR&mode=mini"));
+                        _ = await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9P3395VX91NR&mode=mini"));
                     }
                     else if (result == ContentDialogResult.Secondary)
                     {
@@ -941,13 +1121,14 @@ namespace APKInstaller.ViewModels
             }
             else
             {
-                ContentDialog dialog = new ContentDialog
+                ContentDialog dialog = new MarkdownDialog
                 {
                     Title = _loader.GetString("NoDevice"),
                     DefaultButton = ContentDialogButton.Close,
                     CloseButtonText = _loader.GetString("IKnow"),
                     PrimaryButtonText = _loader.GetString("GoToSetting"),
-                    Content = _loader.GetString("NoDeviceInfo10"),
+                    FallbackContent = _loader.GetString("NoDeviceInfo10"),
+                    ContentInfo = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Tutorials/How%20To%20Connect%20Device", "How%20To%20Connect%20Device.md")
                 };
                 ContentDialogResult result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
@@ -958,28 +1139,31 @@ namespace APKInstaller.ViewModels
             return false;
         }
 
-        public async Task ReinitilizeUI()
+        private async Task ReinitilizeUI()
         {
             WaitProgressText = _loader.GetString("Loading");
             if ((!string.IsNullOrEmpty(_path) || _url != null) && NetAPKExist)
             {
-            checkdevice:
+                checkdevice:
                 if (CheckDevice() && _device != null)
                 {
                     CheckAPK();
                 }
-                else if (ShowDialogs && await ShowDeviceDialog())
+                else if (ShowDialogs)
                 {
-                    goto checkdevice;
+                    if (await ShowDeviceDialog())
+                    {
+                        goto checkdevice;
+                    }
                 }
             }
         }
 
-        public void CheckAPK()
+        private void CheckAPK()
         {
             ResetUI();
-            AdvancedAdbClient client = new AdvancedAdbClient();
-            PackageManager manager = new PackageManager(client, _device);
+            AdvancedAdbClient client = new();
+            PackageManager manager = new(client, _device);
             VersionInfo info = null;
             if (ApkInfo != null && !string.IsNullOrEmpty(ApkInfo?.PackageName))
             {
@@ -1007,7 +1191,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        public void CheckOnlinePackage()
+        private void CheckOnlinePackage()
         {
             Regex[] UriRegex = new Regex[] { new Regex(@":\?source=(.*)"), new Regex(@"://(.*)") };
             string Uri = UriRegex[0].IsMatch(_url.ToString()) ? UriRegex[0].Match(_url.ToString()).Groups[1].Value : UriRegex[1].Match(_url.ToString()).Groups[1].Value;
@@ -1048,7 +1232,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await Task.Run(() => AAPTool.Decompile(_path));
+                ApkInfo = await Task.Run(() => { return AAPTool.Decompile(_path); });
             }
             catch (Exception ex)
             {
@@ -1081,7 +1265,7 @@ namespace APKInstaller.ViewModels
             IsInstalling = false;
         }
 
-        public async Task DownloadAPK()
+        private async Task DownloadAPK()
         {
             if (_url != null)
             {
@@ -1093,7 +1277,7 @@ namespace APKInstaller.ViewModels
                 {
                     Directory.Delete(APKTemp, true);
                 }
-                using (DownloadService downloader = new DownloadService(DownloadHelper.Configuration))
+                using (DownloadService downloader = new(DownloadHelper.Configuration))
                 {
                     bool IsCompleted = false;
                     Exception exception = null;
@@ -1115,12 +1299,16 @@ namespace APKInstaller.ViewModels
                     }
                     downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                     downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                downloadapk:
+                    downloadapk:
                     ProgressText = _loader.GetString("WaitDownload");
                     _ = downloader.DownloadFileTaskAsync(_url.ToString(), APKTemp);
                     while (TotalBytesToReceive <= 0)
                     {
                         await Task.Delay(1);
+                        if (IsCompleted)
+                        {
+                            goto downloadfinish;
+                        }
                     }
                     AppxInstallBarIndeterminate = false;
                     while (!IsCompleted)
@@ -1132,9 +1320,10 @@ namespace APKInstaller.ViewModels
                     ProgressText = _loader.GetString("Loading");
                     AppxInstallBarIndeterminate = true;
                     AppxInstallBarValue = 0;
+                    downloadfinish:
                     if (exception != null)
                     {
-                        ContentDialog dialog = new ContentDialog
+                        ContentDialog dialog = new()
                         {
                             Content = exception.Message,
                             Title = _loader.GetString("DownloadFailed"),
@@ -1149,6 +1338,7 @@ namespace APKInstaller.ViewModels
                         }
                         else
                         {
+                            SendResults(new Exception($"APK {_loader.GetString("DownloadFailed")}"));
                             Application.Current.Exit();
                             return;
                         }
@@ -1195,11 +1385,7 @@ namespace APKInstaller.ViewModels
 
         private void OnDeviceChanged(object sender, DeviceDataEventArgs e)
         {
-            if (IsOnlyWSA)
-            {
-                new AdvancedAdbClient().Connect(new DnsEndPoint("127.0.0.1", 58526));
-            }
-            if (!IsInstalling)
+            if (IsInitialized && !IsInstalling)
             {
                 UIHelper.DispatcherQueue?.EnqueueAsync(() =>
                 {
@@ -1211,11 +1397,11 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        public bool CheckDevice()
+        private bool CheckDevice()
         {
-            AdvancedAdbClient client = new AdvancedAdbClient();
+            AdvancedAdbClient client = new();
             List<DeviceData> devices = client.GetDevices();
-            ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
+            ConsoleOutputReceiver receiver = new();
             if (devices.Count <= 0) { return false; }
             foreach (DeviceData device in devices)
             {
@@ -1249,6 +1435,7 @@ namespace APKInstaller.ViewModels
             try
             {
                 IsInstalling = true;
+                AppxInstallBarIndeterminate = true;
                 ProgressText = _loader.GetString("Installing");
                 CancelOperationButtonText = _loader.GetString("Cancel");
                 CancelOperationVisibility = LaunchWhenReadyVisibility = Visibility.Visible;
@@ -1257,6 +1444,7 @@ namespace APKInstaller.ViewModels
                 {
                     new AdvancedAdbClient().Install(_device, File.Open(ApkInfo.FullPath, FileMode.Open, FileAccess.Read));
                 });
+                AppName = string.Format(_loader.GetString("InstalledFormat"), ApkInfo?.AppName);
                 if (IsOpenApp)
                 {
                     _ = Task.Run(async () =>
@@ -1266,28 +1454,53 @@ namespace APKInstaller.ViewModels
                         if (IsCloseAPP)
                         {
                             await Task.Delay(5000);
-                            UIHelper.DispatcherQueue.TryEnqueue(() => Application.Current.Exit());
+                            UIHelper.DispatcherQueue?.TryEnqueue(() => Application.Current.Exit());
                         }
                     });
                 }
+                SendResults();
                 IsInstalling = false;
+                AppxInstallBarValue = 0;
+                AppxInstallBarIndeterminate = true;
                 SecondaryActionVisibility = Visibility.Visible;
                 SecondaryActionButtonText = _loader.GetString("Launch");
                 CancelOperationVisibility = LaunchWhenReadyVisibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {
+                SendResults(ex);
                 IsInstalling = false;
                 TextOutput = ex.Message;
                 TextOutputVisibility = InstallOutputVisibility = Visibility.Visible;
                 ActionVisibility = SecondaryActionVisibility = CancelOperationVisibility = LaunchWhenReadyVisibility = Visibility.Collapsed;
             }
+
+            void OnInstallProgressChanged(object sender, double e)
+            {
+                UIHelper.DispatcherQueue?.TryEnqueue(() =>
+                {
+                    AppxInstallBarValue = e;
+                    ProgressText = string.Format(_loader.GetString("InstallingPercent"), $"{e:N0}%");
+                });
+            }
+        }
+
+        public async void OpenAPK(string path)
+        {
+            if (path != null)
+            {
+                _path = path;
+                await UIHelper.DispatcherQueue?.EnqueueAsync(async () => await Refresh());
+            }
         }
 
         public async void OpenAPK()
         {
-            FileOpenPicker FileOpen = new FileOpenPicker();
+            FileOpenPicker FileOpen = new();
             FileOpen.FileTypeFilter.Add(".apk");
+            FileOpen.FileTypeFilter.Add(".apks");
+            FileOpen.FileTypeFilter.Add(".apkm");
+            FileOpen.FileTypeFilter.Add(".xapk");
             FileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
 
             StorageFile file = await FileOpen.PickSingleFileAsync();
@@ -1296,6 +1509,190 @@ namespace APKInstaller.ViewModels
                 _path = file.Path;
                 await Refresh();
             }
+        }
+
+        public async void OpenAPK(DataPackageView data)
+        {
+            WaitProgressText = _loader.GetString("CheckingPath");
+            IsInitialized = false;
+
+            await Task.Run(async () =>
+            {
+                if (data.Contains(StandardDataFormats.StorageItems))
+                {
+                    IReadOnlyList<IStorageItem> items = await data.GetStorageItemsAsync();
+                    if (items.Count == 1)
+                    {
+                        IStorageItem storageItem = items.FirstOrDefault();
+                        await OpenPath(storageItem);
+                        return;
+                    }
+                    else if (items.Count >= 1)
+                    {
+                        await CreateAPKS(items);
+                        return;
+                    }
+                }
+                else if (data.Contains(StandardDataFormats.Text))
+                {
+                    string path = await data.GetTextAsync();
+                    if (Directory.Exists(path))
+                    {
+                        StorageFolder storageItem = await StorageFolder.GetFolderFromPathAsync(path);
+                        await OpenPath(storageItem);
+                        return;
+                    }
+                    else if (File.Exists(path))
+                    {
+                        StorageFile storageItem = await StorageFile.GetFileFromPathAsync(path);
+                        await OpenPath(storageItem);
+                        return;
+                    }
+                }
+                await (UIHelper.DispatcherQueue?.EnqueueAsync(() => { IsInitialized = true; }));
+            });
+
+            async Task OpenPath(IStorageItem storageItem)
+            {
+                if (storageItem != null)
+                {
+                    if (storageItem is StorageFolder folder)
+                    {
+                        IReadOnlyList<StorageFile> files = await folder.GetFilesAsync();
+                        await CreateAPKS(files);
+                        return;
+                    }
+                    else
+                    {
+                        if (storageItem.Name.ToLower().EndsWith(".apk"))
+                        {
+                            OpenAPK(storageItem.Path);
+                            return;
+                        }
+                        try
+                        {
+                            using (IArchive archive = ArchiveFactory.Open(storageItem.Path))
+                            {
+                                foreach (IArchiveEntry entry in archive.Entries.Where(x => !x.Key.Contains('/')))
+                                {
+                                    if (entry.Key.ToLower().EndsWith(".apk"))
+                                    {
+                                        OpenAPK(storageItem.Path);
+                                        return;
+                                    }
+                                }
+                            }
+                            await (UIHelper.DispatcherQueue?.EnqueueAsync(() => { IsInitialized = true; }));
+                        }
+                        catch { }
+                    }
+                }
+                await (UIHelper.DispatcherQueue?.EnqueueAsync(() => { IsInitialized = true; }));
+            }
+
+            async Task CreateAPKS(IReadOnlyList<IStorageItem> items)
+            {
+                List<string> apks = new();
+                foreach (IStorageItem item in items)
+                {
+                    if (item != null)
+                    {
+                        if (item.Name.ToLower().EndsWith(".apk"))
+                        {
+                            apks.Add(item.Path);
+                            continue;
+                        }
+                        try
+                        {
+                            using (IArchive archive = ArchiveFactory.Open(item.Path))
+                            {
+                                foreach (IArchiveEntry entry in archive.Entries.Where(x => !x.Key.Contains('/')))
+                                {
+                                    if (entry.Key.ToLower().EndsWith(".apk"))
+                                    {
+                                        OpenAPK(item.Path);
+                                        return;
+                                    }
+                                }
+                            }
+                            apks.Add(item.Path);
+                            continue;
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                if (apks.Count == 1)
+                {
+                    OpenAPK(apks.First());
+                    return;
+                }
+                else if (apks.Count >= 1)
+                {
+                    IEnumerable<string> apklist = apks.Where(x => x.EndsWith(".apk"));
+                    if (apklist.Any())
+                    {
+                        string temp = Path.Combine(CachesHelper.TempPath, $"TempSplitAPK.apks");
+
+                        if (!Directory.Exists(temp.Substring(0, temp.LastIndexOf(@"\"))))
+                        {
+                            _ = Directory.CreateDirectory(temp.Substring(0, temp.LastIndexOf(@"\")));
+                        }
+                        else if (Directory.Exists(temp))
+                        {
+                            Directory.Delete(temp, true);
+                        }
+
+                        if (File.Exists(temp))
+                        {
+                            File.Delete(temp);
+                        }
+
+                        using (FileStream zip = File.OpenWrite(temp))
+                        {
+                            using IWriter zipWriter = WriterFactory.Open(zip, ArchiveType.Zip, CompressionType.Deflate);
+                            foreach (string apk in apks.Where(x => x.EndsWith(".apk")))
+                            {
+                                zipWriter.Write(Path.GetFileName(apk), apk);
+                            }
+                        }
+
+                        OpenAPK(temp);
+                        return;
+                    }
+                    else
+                    {
+                        IEnumerable<string> apkslist = apks.Where(x => !x.EndsWith(".apk"));
+                        if (apkslist.Count() == 1)
+                        {
+                            OpenAPK(apkslist.First());
+                            return;
+                        }
+                    }
+                }
+
+                await (UIHelper.DispatcherQueue?.EnqueueAsync(() => { IsInitialized = true; }));
+            }
+        }
+
+        private void SendResults(Exception exception = null)
+        {
+            if (_operation == null) { return; }
+            ValueSet results = new()
+            {
+                ["Result"] = exception != null,
+                ["Exception"] = exception
+            };
+            _operation.ReportCompleted(results);
+        }
+
+        public void CloseAPP()
+        {
+            SendResults(new Exception($"{_loader.GetString("Install")} {_loader.GetString("Cancel")}"));
+            Application.Current.Exit();
         }
 
         protected virtual void Dispose(bool disposing)

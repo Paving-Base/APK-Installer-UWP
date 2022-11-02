@@ -1,19 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<Authors>wherewhere</Authors>
-	<OutputType>WinExe</OutputType>
-	<LangVersion>preview</LangVersion>
-	<VersionPrefix>0.0.1</VersionPrefix>
 	<ApplicationIcon>favicon.ico</ApplicationIcon>
-	<TargetFramework>netcoreapp3.1</TargetFramework>
-	<Description>An Android Application Installer for Windows</Description>
-	<Copyright>Copyright © 2017 - 2022 PavingBase. All rights reserved.</Copyright>
-	<RepositoryUrl>https://github.com/Paving-Base/APK-Installer-Classic</RepositoryUrl>
-	<PackageProjectUrl>https://github.com/Paving-Base/APK-Installer-Classic</PackageProjectUrl>
-	<ProductName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</ProductName>
 	<AssemblyName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</AssemblyName>
+	<Authors>wherewhere</Authors>
+	<Copyright>Copyright © 2017 - 2022 PavingBase. All rights reserved.</Copyright>
+	<Description>An Android Application Installer for Windows</Description>
+	<LangVersion>preview</LangVersion>
+	<OutputType>WinExe</OutputType>
+	<PackageProjectUrl>https://github.com/Paving-Base/APK-Installer-UWP</PackageProjectUrl>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+	<ProductName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</ProductName>
+	<RepositoryUrl>https://github.com/Paving-Base/APK-Installer-UWP</RepositoryUrl>
 	<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
+	<TargetFramework>net4.8</TargetFramework>
+	<VersionPrefix>0.0.2</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

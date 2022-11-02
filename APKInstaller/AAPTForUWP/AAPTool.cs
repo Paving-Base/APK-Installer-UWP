@@ -1,20 +1,22 @@
 ﻿using AAPTForUWP.Models;
 using ProcessForUWP.UWP;
-using ProcessForUWP.UWP.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Windows.ApplicationModel;
+using Windows.Storage;
 
 namespace AAPTForUWP
 {
     /// <summary>
     /// Android Assert Packing Tool for NET
     /// </summary>
-    public class AAPTool : Process
+    public class AAPTool : ProcessEx
     {
         private enum DumpTypes
         {
@@ -23,12 +25,16 @@ namespace AAPTForUWP
             XmlTree = 2,
         }
 
-        public static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Caches", $"{GetCurrentProcess().Id}");
-        private static readonly string AppPath = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location);
+        private static readonly string AppPath = Package.Current.InstalledLocation.Path;
+#if NET5_0_OR_GREATER
+        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}", "AppPackages");
+#else
+        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{GetCurrentProcess().Id}", "AppPackages");
+#endif
 
         protected AAPTool()
         {
-            StartInfo.FileName = AppPath + @"\tool\aapt.exe";
+            StartInfo.FileName = AppPath + @"\Tools\aapt.exe";
             StartInfo.CreateNoWindow = true;
             StartInfo.UseShellExecute = false; // For read output data
             StartInfo.RedirectStandardError = true;
@@ -43,7 +49,7 @@ namespace AAPTForUWP
             BeginOutputReadLine();
         }
 
-        private static DumpModel dump(string path, string args, DumpTypes type, Func<string, int, bool> callback)
+        private static DumpModel Dump(string path, string args, DumpTypes type, Func<string, int, bool> callback)
         {
             int index = 0;
             bool terminated = false;
@@ -67,7 +73,7 @@ namespace AAPTForUWP
                     return new DumpModel(path, false, output);
             }
 
-            void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
+            void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
             {
                 if (e.Data == null)
                 {
@@ -92,10 +98,7 @@ namespace AAPTForUWP
                     index++;
                 }
 
-                if (output != null)
-                {
-                    output.Add(msg);
-                }
+                output?.Add(msg);
             }
 
             try
@@ -122,25 +125,25 @@ namespace AAPTForUWP
             return new DumpModel(path, isSuccess, output);
         }
 
-        internal static DumpModel dumpManifest(string path)
+        internal static DumpModel DumpManifest(string path)
         {
-            return dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
+            return Dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
         }
 
-        internal static DumpModel dumpResources(string path, Func<string, int, bool> callback)
+        internal static DumpModel DumpResources(string path, Func<string, int, bool> callback)
         {
-            return dump(path, string.Empty, DumpTypes.Resources, callback);
+            return Dump(path, string.Empty, DumpTypes.Resources, callback);
         }
 
-        internal static DumpModel dumpXmlTree(string path, string asset, Func<string, int, bool> callback = null)
+        internal static DumpModel DumpXmlTree(string path, string asset, Func<string, int, bool> callback = null)
         {
-            callback = callback ?? ((_, __) => false);
-            return dump(path, asset, DumpTypes.XmlTree, callback);
+            callback ??= ((_, __) => false);
+            return Dump(path, asset, DumpTypes.XmlTree, callback);
         }
 
-        internal static DumpModel dumpManifestTree(string path, Func<string, int, bool> callback = null)
+        internal static DumpModel DumpManifestTree(string path, Func<string, int, bool> callback = null)
         {
-            return dumpXmlTree(path, "AndroidManifest.xml", callback);
+            return DumpXmlTree(path, "AndroidManifest.xml", callback);
         }
 
         /// <summary>
@@ -150,10 +153,16 @@ namespace AAPTForUWP
         /// <returns>Filled apk if dump process is not failed</returns>
         public static ApkInfo Decompile(string path)
         {
-            string temppath = createTempApk(path);
-            List<string> apks = new List<string>();
-            using (ZipArchive archive = ZipFile.OpenRead(temppath))
+            string temppath = CreateTempApk(path);
+            List<string> apks = new();
+
+            if (temppath.EndsWith(".apk"))
             {
+                apks.Add(temppath);
+            }
+            else
+            {
+                using ZipArchive archive = ZipFile.OpenRead(temppath);
                 if (!Directory.Exists(TempPath))
                 {
                     Directory.CreateDirectory(TempPath);
@@ -175,19 +184,19 @@ namespace AAPTForUWP
                 }
             }
 
-            List<ApkInfo> apkInfos = new List<ApkInfo>();
+            List<ApkInfo> apkInfos = new();
             foreach (string apkpath in apks)
             {
                 DumpModel manifest = null;
                 try
                 {
                     manifest = ApkExtractor.ExtractManifest(apkpath);
-                    if (!manifest.isSuccess)
+                    if (!manifest.IsSuccess)
                     {
-                        throw new Exception();
+                        continue;
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     if (manifest == null)
                     {
@@ -202,11 +211,11 @@ namespace AAPTForUWP
                 ApkInfo apk = ApkParser.Parse(manifest);
                 apk.FullPath = apkpath;
 
-                if (apk.Icon.isImage)
+                if (apk.Icon.IsImage)
                 {
                     // Included icon in manifest, extract it from apk
                     apk.Icon.RealPath = ApkExtractor.ExtractIconImage(apkpath, apk.Icon);
-                    if (apk.Icon.isHighDensity)
+                    if (apk.Icon.IsHighDensity)
                     {
                         apkInfos.Add(apk);
                         continue;
@@ -225,7 +234,7 @@ namespace AAPTForUWP
 
             if (packages.Count > 1) { throw new Exception("This is a Multiple Package."); }
 
-            List<ApkInfo> infos = new List<ApkInfo>();
+            List<ApkInfo> infos = new();
             foreach (ApkInfos package in packages)
             {
                 foreach (ApkInfo baseapk in package.Apks.Where(x => !x.IsSplit))
@@ -239,14 +248,12 @@ namespace AAPTForUWP
 
             if (!infos.Any()) { throw new Exception("There are all dependents in this Package."); }
 
-            ApkInfo info = infos.First();
-
-            return info;
+            return infos.First();
         }
 
-        private static string createTempApk(string sourceFile)
+        private static string CreateTempApk(string sourceFile)
         {
-            string tempFile = Path.Combine(TempPath, $"AAPToolTempAPK.apk");
+            string tempFile = Path.Combine(TempPath, Path.GetFileName(sourceFile));
 
             if (!Directory.Exists(TempPath))
             {
@@ -255,7 +262,7 @@ namespace AAPTForUWP
 
             try
             {
-                ProcessHelper.CopyFile(sourceFile, tempFile, true);
+                FileEx.CopyFile(sourceFile, tempFile, true);
                 return tempFile;
             }
             catch

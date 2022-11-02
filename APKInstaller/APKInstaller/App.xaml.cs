@@ -1,30 +1,27 @@
-﻿using AdvancedSharpAdbClient;
+﻿using APKInstaller.Helpers.Exceptions;
 using APKInstaller.Helpers;
-using APKInstaller.Helpers.Exceptions;
-using Newtonsoft.Json;
+using APKInstaller.Pages;
 using ProcessForUWP.UWP.Helpers;
 using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Foundation.Metadata;
-using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.Foundation.Metadata;
+using Windows.System.Profile;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core.Preview;
 
-namespace ApkInstaller
+namespace APKInstaller
 {
     /// <summary>
     /// 提供特定于应用程序的行为，以补充默认的应用程序类。
     /// </summary>
-    public sealed partial class App : Application
+    sealed partial class App : Application
     {
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
@@ -34,10 +31,12 @@ namespace ApkInstaller
         {
             InitializeComponent();
             Suspending += OnSuspending;
-            EnteredBackground += App_EnteredBackground;
-            LeavingBackground += App_LeavingBackground;
             UnhandledException += Application_UnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.FocusVisualKind", "Reveal"))
+            {
+                FocusVisualKind = AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox" ? FocusVisualKind.Reveal : FocusVisualKind.HighVisibility;
+            }
         }
 
         /// <summary>
@@ -45,9 +44,10 @@ namespace ApkInstaller
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             RegisterExceptionHandlingSynchronizationContext();
+            Communication.InitializeAppServiceConnection();
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -55,7 +55,6 @@ namespace ApkInstaller
             // 只需确保窗口处于活动状态
             if (rootFrame == null)
             {
-                await InitializeConnection();
                 ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
@@ -80,32 +79,19 @@ namespace ApkInstaller
                     // 当导航堆栈尚未还原时，导航到第一页，
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
+                ThemeHelper.Initialize();
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
-                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += (sender, e) =>
-                {
-                    if (AppInstance.GetInstances().Count <= 1)
-                    {
-                        CachesHelper.CleanAllCaches(true);
-
-                        if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
-                        {
-                            try { new AdvancedAdbClient().KillAdb(); } catch { }
-                        }
-                    }
-                    else
-                    {
-                        CachesHelper.CleanAllCaches(false);
-                    }
-                };
             }
         }
 
-        protected override async void OnActivated(IActivatedEventArgs e)
+        protected override void OnActivated(IActivatedEventArgs e)
         {
             RegisterExceptionHandlingSynchronizationContext();
+            Communication.InitializeAppServiceConnection();
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -113,7 +99,6 @@ namespace ApkInstaller
             // 只需确保窗口处于活动状态
             if (rootFrame == null)
             {
-                await InitializeConnection();
                 ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
@@ -136,92 +121,15 @@ namespace ApkInstaller
                 // 当导航堆栈尚未还原时，导航到第一页，
                 // 并通过将所需信息作为导航参数传入来配置
                 // 参数
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
                 rootFrame.Navigate(typeof(MainPage), e);
             }
+            ThemeHelper.Initialize();
             // 确保当前窗口处于活动状态
             Window.Current.Activate();
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += (sender, e) =>
-            {
-                if (AppInstance.GetInstances().Count <= 1)
-                {
-                    CachesHelper.CleanAllCaches(true);
-
-                    if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
-                    {
-                        try { new AdvancedAdbClient().KillAdb(); } catch { }
-                    }
-                }
-                else
-                {
-                    CachesHelper.CleanAllCaches(false);
-                }
-            };
         }
 
         protected override void OnFileActivated(FileActivatedEventArgs e) => OnActivated(e);
-
-        private async Task InitializeConnection()
-        {
-            if (Connection == null)
-            {
-                if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
-                {
-                    try
-                    {
-                        AppServiceConnected += (sender, e) =>
-                        {
-                            Connection.RequestReceived += ProcessHelper.Connection_RequestReceived;
-                            ProcessHelper.SendMessage = (value) =>
-                            {
-                                string json = JsonConvert.SerializeObject(value);
-                                try
-                                {
-                                    ValueSet message = new ValueSet() { { "UWP", json } };
-                                    _ = Connection?.SendMessageAsync(message);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine(ex);
-                                    Debug.WriteLine(json);
-                                }
-                            };
-                        };
-                        await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                    }
-                }
-            }
-        }
-
-        private void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error($"\n{e.Exception.Message}\n{e.Exception.HResult}\n{e.Exception.StackTrace}\nHelperLink: {e.Exception.HelpLink}", e.Exception);
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-        {
-            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error(e.ExceptionObject.ToString());
-        }
-
-        /// <summary>
-        /// Should be called from OnActivated and OnLaunched
-        /// </summary>
-        private void RegisterExceptionHandlingSynchronizationContext()
-        {
-            ExceptionHandlingSynchronizationContext
-                .Register()
-                .UnhandledException += SynchronizationContext_UnhandledException;
-        }
-
-        private void SynchronizationContext_UnhandledException(object sender, APKInstaller.Helpers.Exceptions.UnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            //SettingsHelper.LogManager.GetLogger("UnhandledException").Error($"\n{e.Exception.Message}\n{e.Exception.HResult}(0x{Convert.ToString(e.Exception.HResult, 16)})\n{e.Exception.StackTrace}\nHelperLink: {e.Exception.HelpLink}", e.Exception);
-        }
 
         /// <summary>
         /// 导航到特定页失败时调用
@@ -242,58 +150,60 @@ namespace ApkInstaller
         /// <param name="e">有关挂起请求的详细信息。</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
+            var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
-        }
-
-        public static BackgroundTaskDeferral AppServiceDeferral = null;
-        public static AppServiceConnection Connection = null;
-        public static event EventHandler AppServiceDisconnected;
-        public static event EventHandler<AppServiceTriggerDetails> AppServiceConnected;
-        public static bool IsForeground = false;
-
-        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            IsForeground = true;
-        }
-
-        private void App_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
-        {
-            IsForeground = false;
         }
 
         /// <summary>
         /// Handles connection requests to the app service
         /// </summary>
+        /// <param name="args">Data about the background activation.</param>
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
+            Communication.OnBackgroundActivated(args);
+        }
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails details)
+        private void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            SettingsHelper.LogManager.GetLogger("Unhandled Exception - Application").Error(ExceptionToMessage(e.Exception), e.Exception);
+            e.Handled = true;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception Exception)
             {
-                // only accept connections from callers in the same package
-                if (details.CallerPackageFamilyName == Package.Current.Id.FamilyName)
-                {
-                    // connection established from the fulltrust process
-                    AppServiceDeferral = args.TaskInstance.GetDeferral();
-                    args.TaskInstance.Canceled += OnTaskCanceled;
-
-                    Connection = details.AppServiceConnection;
-                    AppServiceConnected?.Invoke(this, args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
-                }
+                SettingsHelper.LogManager.GetLogger("Unhandled Exception - CurrentDomain").Error(ExceptionToMessage(Exception), Exception);
             }
         }
 
         /// <summary>
-        /// Task canceled here means the app service client is gone
+        /// Should be called from OnActivated and OnLaunched
         /// </summary>
-        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        private void RegisterExceptionHandlingSynchronizationContext()
         {
-            AppServiceDeferral?.Complete();
-            AppServiceDeferral = null;
-            Connection = null;
-            AppServiceDisconnected?.Invoke(this, null);
+            ExceptionHandlingSynchronizationContext
+                .Register()
+                .UnhandledException += SynchronizationContext_UnhandledException;
+        }
+
+        private void SynchronizationContext_UnhandledException(object sender, Helpers.Exceptions.UnhandledExceptionEventArgs e)
+        {
+            SettingsHelper.LogManager.GetLogger("Unhandled Exception - SynchronizationContext").Error(ExceptionToMessage(e.Exception), e.Exception);
+            e.Handled = true;
+        }
+
+        private string ExceptionToMessage(Exception ex)
+        {
+            StringBuilder builder = new();
+            builder.Append('\n');
+            if (!string.IsNullOrWhiteSpace(ex.Message)) { builder.AppendLine($"Message: {ex.Message}"); }
+            builder.AppendLine($"HResult: {ex.HResult} (0x{Convert.ToString(ex.HResult, 16)})");
+            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { builder.AppendLine(ex.StackTrace); }
+            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { builder.Append($"HelperLink: {ex.HelpLink}"); }
+            return builder.ToString();
         }
     }
 }

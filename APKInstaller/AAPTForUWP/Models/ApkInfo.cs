@@ -89,27 +89,19 @@ namespace AAPTForUWP.Models
 
         public void AddSplit(string path) => SplitApks.Add(AAPTool.Decompile(path));
 
-        internal ApkInfo megre(params ApkInfo[] apks)
+        internal ApkInfo Megre(params ApkInfo[] apks)
         {
-            if (apks.Any(a => a == null))
-            {
-                throw new ArgumentNullException();
-            }
-
-            return ApkInfo.Merge(this, apks);
+            return apks.Any(a => a == null) ? throw new ArgumentNullException() : ApkInfo.Merge(this, apks);
         }
 
         internal static ApkInfo Merge(IEnumerable<ApkInfo> apks)
         {
-            return ApkInfo.Merge(null, apks);
+            return Merge(null, apks);
         }
 
         internal static ApkInfo Merge(ApkInfo init, IEnumerable<ApkInfo> apks)
         {
-            if (init == null)
-            {
-                init = new ApkInfo();
-            }
+            init ??= new ApkInfo();
 
             ApkInfo appApk = apks.FirstOrDefault(a => a.AppName.Length > 0);
             if (appApk != null)

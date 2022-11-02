@@ -1,11 +1,10 @@
-﻿using System;
+﻿using ProcessForUWP.UWP;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DataReceivedEventArgs = ProcessForUWP.UWP.DataReceivedEventArgs;
-using Process = ProcessForUWP.UWP.Process;
 
 namespace APKInstaller.Helpers
 {
@@ -51,7 +50,7 @@ namespace APKInstaller.Helpers
                 StandardOutputEncoding = Encoding.UTF8
             };
 
-            using (Process process = await Task.Run(() => { return Process.Start(start); }))
+            using (ProcessEx process = await Task.Run(() => { return ProcessEx.Start(start); }))
             {
                 process.BeginOutputReadLine();
 
@@ -59,7 +58,7 @@ namespace APKInstaller.Helpers
 
                 List<string> receiver = new List<string>();
 
-                void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
+                void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
                 {
                     if (e.Data == null)
                     {
@@ -68,10 +67,7 @@ namespace APKInstaller.Helpers
                     }
                     string line = e.Data ?? string.Empty;
 
-                    if (receiver != null)
-                    {
-                        receiver.Add(line);
-                    }
+                    receiver?.Add(line);
                 }
 
                 try

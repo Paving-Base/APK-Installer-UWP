@@ -1,14 +1,12 @@
 ﻿using AdvancedSharpAdbClient;
-using AdvancedSharpAdbClient.DeviceCommands;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.ViewModels.ToolsPages;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI;
-using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -39,9 +37,9 @@ namespace APKInstaller.Pages.ToolsPages
             ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
-        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = UIHelper.DispatcherQueue.EnqueueAsync(() => Provider.GetDevices());
+        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = UIHelper.DispatcherQueue?.EnqueueAsync(Provider.GetDevices);
 
-        private void TitleBar_BackRequested(object sender, RoutedEventArgs e)
+        private void TitleBar_BackRequested(TitleBar sender, object e)
         {
             if (Frame.CanGoBack)
             {
@@ -49,22 +47,14 @@ namespace APKInstaller.Pages.ToolsPages
             }
         }
 
-        private async void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            TitleBar.ShowProgressRing();
-            int index = DeviceComboBox.SelectedIndex;
-            PackageManager manager = new PackageManager(new AdvancedAdbClient(), Provider.devices[DeviceComboBox.SelectedIndex]);
-            Provider.Applications = await Task.Run(() => { return Provider.CheckAPP(manager.Packages, index); });
-            TitleBar.HideProgressRing();
+            _ = Provider.GetApps();
         }
 
-        private async void TitleBar_RefreshEvent(object sender, RoutedEventArgs e) => await Provider.Refresh();
-
-        private void ListViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        private void TitleBar_RefreshEvent(TitleBar sender, object e)
         {
-            Button Button = (sender as FrameworkElement).FindDescendant<Button>();
-            MenuFlyout Flyout = (MenuFlyout)Button.Flyout;
-            Flyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            _ = Provider.GetDevices().ContinueWith((Task) => _ = Provider.GetApps());
         }
 
         private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -87,22 +77,16 @@ namespace APKInstaller.Pages.ToolsPages
         {
             ListView ListView = sender as ListView;
             ItemsStackPanel StackPanel = ListView.FindDescendant<ItemsStackPanel>();
-            ScrollViewer ScrollViewer = ListView.FindDescendant<ScrollViewer>();
             if (StackPanel != null)
             {
-                StackPanel.Margin = new Thickness(14, UIHelper.StackPanelMargin.Top + 16, 14, 16);
-            }
-            if (ScrollViewer != null)
-            {
-                ScrollViewer.Margin = UIHelper.ScrollViewerMargin;
-                ScrollViewer.Padding = UIHelper.ScrollViewerPadding;
+                StackPanel.Margin = new Thickness(14, 16, 14, 16);
             }
         }
 
-        private async void ComboBox_Loaded(object sender, RoutedEventArgs e)
+        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
             Provider.DeviceComboBox = sender as ComboBox;
-            await UIHelper.DispatcherQueue.EnqueueAsync(() => Provider.GetDevices());
+            _ = Provider.GetDevices();
         }
     }
 }

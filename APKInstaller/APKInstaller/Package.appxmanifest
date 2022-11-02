@@ -8,11 +8,11 @@
   IgnorableNamespaces="uap uap5 mp">
 
   <Identity
-    Name="wherewhere.AndroidAppInstaller.UWP"
+    Name="18184wherewhere.AndroidAppInstaller.UWP"
     Publisher="CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5"
-    Version="0.0.1.0" />
+    Version="0.0.2.0" />
 
-  <mp:PhoneIdentity PhoneProductId="55a788e9-920c-4f7d-a5ec-9ebedf684902" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="b74bb720-bf67-4453-bb15-9ac9ba2f0d6a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>APK 安装程序 - UWP</DisplayName>
@@ -50,8 +50,13 @@
           <uap:Rotation Preference="landscape"/>
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
+          <uap:Rotation Preference="portraitFlipped"/>
+		</uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient"/>
+  </Capabilities>
 </Package>

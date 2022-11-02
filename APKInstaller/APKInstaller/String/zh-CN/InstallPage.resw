@@ -126,11 +126,23 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>找不到 ADB</value>
   </data>
+  <data name="APKFileFlyoutItem.Text" xml:space="preserve">
+    <value>APK 文件</value>
+  </data>
   <data name="AppCapabilities.HeadText" xml:space="preserve">
     <value>功能: </value>
   </data>
+  <data name="AppNameFlyoutItem.Text" xml:space="preserve">
+    <value>应用名称</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>取消</value>
+  </data>
+  <data name="CannotConnectWSA" xml:space="preserve">
+    <value>无法连接到 WSA</value>
+  </data>
+  <data name="CannotConnectWSAInfo" xml:space="preserve">
+    <value>WSA 可能没有正常启动，或者 ADB 出了问题。这种情况可能非常难解决。请重新启动安装程序。如果仍然无法使用，尝试重启电脑。</value>
   </data>
   <data name="CannotOpenPackage" xml:space="preserve">
     <value>无法打开应用程序包</value>
@@ -141,11 +153,17 @@
   <data name="CheckingADB" xml:space="preserve">
     <value>检查 ADB ……</value>
   </data>
+  <data name="CheckingPath" xml:space="preserve">
+    <value>检查路径……</value>
+  </data>
   <data name="ClickToRead" xml:space="preserve">
     <value>点击阅读</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>关闭</value>
+  </data>
+  <data name="CopyFlyoutItem.Text" xml:space="preserve">
+    <value>复制</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>设备</value>
@@ -174,8 +192,22 @@
   <data name="HowToConnect" xml:space="preserve">
     <value>如何连接 Android 子系统</value>
   </data>
+  <data name="HowToConnectInfo" xml:space="preserve">
+    <value>1. 请确保 APK Installer 已经更新到了最新版本
+2. 请确保您已经安装并运行了 Android 子系统
+3. 打开开发人员模式，并确保成功显示了 IP 地址
+4. 重新打开 APK Installer，继续您的安装
+
+[了解更多]({0})</value>
+  </data>
+  <data name="IconFlyoutItem.Text" xml:space="preserve">
+    <value>图标</value>
+  </data>
   <data name="IKnow" xml:space="preserve">
     <value>知道了</value>
+  </data>
+  <data name="InfosFlyoutItem.Text" xml:space="preserve">
+    <value>信息</value>
   </data>
   <data name="Install" xml:space="preserve">
     <value>安装</value>
@@ -189,7 +221,11 @@
     <comment>{0} - AppName.</comment>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>安装中……</value>
+    <value>正在安装……</value>
+  </data>
+  <data name="InstallingPercent" xml:space="preserve">
+    <value>正在安装 {0}……</value>
+    <comment>{0} - Progress.</comment>
   </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>原因: </value>
@@ -215,14 +251,32 @@
   <data name="Loading" xml:space="preserve">
     <value>加载中……</value>
   </data>
+  <data name="MoreInfoFlyoutItem.Text" xml:space="preserve">
+    <value>详细信息</value>
+  </data>
   <data name="NoDevice" xml:space="preserve">
     <value>找不到 Android 设备</value>
   </data>
+  <data name="NoDevice10" xml:space="preserve">
+    <value>如何连接设备</value>
+  </data>
   <data name="NoDeviceInfo" xml:space="preserve">
-    <value>您可以安装 WSA。或者前往设置连接设备。</value>
+    <value>如果您想要将应用程序安装到适用于 Windows 的 Android™ 子系统，您需要先安装它。 如果您想要安装到其他设备，请进入设置页面，关闭“仅适用于 WSA”，并连接您的设备。</value>
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
-    <value>您可以到设置中连接设备。</value>
+    <value>#### 使用 USB
+1. 请确保 APK Installer 已经更新到了[最新版本](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+2. 打开开发者模式，打开 USB 调试
+3. 前往 APK Installer 的设置页面，选择您的设备
+4. 返回，继续安装
+#### 使用 Wifi
+1. 请确保 APK Installer 已经更新到了[最新版本](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+2. 打开开发者模式，打开远程调试
+3. 记住您设备的 IP 地址
+4. 前往 APK Installer 的设置页面，连接并选择您的设备
+5. 返回，继续安装
+
+[了解更多]({0})</value>
   </data>
   <data name="NoInternet" xml:space="preserve">
     <value>无法连接到网络</value>
@@ -238,6 +292,9 @@
   </data>
   <data name="OnlinePackage" xml:space="preserve">
     <value>在线安装包</value>
+  </data>
+  <data name="PackageNameFlyoutItem.Text" xml:space="preserve">
+    <value>程序包名称</value>
   </data>
   <data name="PackageNameFormat" xml:space="preserve">
     <value>包名称: {0}</value>
@@ -260,11 +317,17 @@
   <data name="Select" xml:space="preserve">
     <value>选取</value>
   </data>
+  <data name="ShareFlyoutItem.Text" xml:space="preserve">
+    <value>分享</value>
+  </data>
   <data name="StartingADB" xml:space="preserve">
     <value>启动 ADB 服务……</value>
   </data>
   <data name="StartWSA" xml:space="preserve">
     <value>启动 WSA</value>
+  </data>
+  <data name="StoreLinkFlyoutItem.Text" xml:space="preserve">
+    <value>商店链接</value>
   </data>
   <data name="UnzipADB" xml:space="preserve">
     <value>解压 ADB ……</value>
@@ -283,6 +346,9 @@
     <value>更新 {0}?</value>
     <comment>{0} - AppName.</comment>
   </data>
+  <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
+    <value>版本代码</value>
+  </data>
   <data name="VersionFormat" xml:space="preserve">
     <value>版本: {0}</value>
     <comment>{0} - AppVersion.</comment>
@@ -300,6 +366,9 @@
   <data name="WaitingWSAStart" xml:space="preserve">
     <value>正在等待 WSA 启动……
 这通常需要很长时间。请坐和放宽。</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>欢迎！</value>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>WSA 正在运行</value>

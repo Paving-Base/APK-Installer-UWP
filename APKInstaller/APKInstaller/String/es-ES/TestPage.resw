@@ -118,42 +118,67 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AndroidTestSettingsHeader.Header" xml:space="preserve">
-    <value>Android Test</value>
+    <value>Prueba de Android</value>
   </data>
   <data name="ApplicationsSettings.Header" xml:space="preserve">
-    <value>Applications</value>
+    <value>Aplicaciones</value>
   </data>
   <data name="CompactOverlaySettings.Description" xml:space="preserve">
-    <value>Enter or Exit Compact Overlay</value>
+    <value>Introducir o salir de superposición compacta</value>
   </data>
   <data name="CompactOverlaySettings.Header" xml:space="preserve">
-    <value>Compact Overlay</value>
+    <value>Compactar superposición</value>
+  </data>
+  <data name="DevelopmentInfoBar.Message" xml:space="preserve">
+    <value>Una aplicación en versión de desarrollo puede no ser estable.
+Descarga la versión de publicación en la tienda de Microsoft.</value>
+  </data>
+  <data name="DevelopmentInfoBar.Title" xml:space="preserve">
+    <value>Estás usando una aplicación en versión de desarrollo.</value>
   </data>
   <data name="EnterPIP.Content" xml:space="preserve">
-    <value>Enter Compact Overlay</value>
+    <value>Introducir superposición compacta</value>
   </data>
   <data name="LanguageSettings.Description" xml:space="preserve">
-    <value>Select language and restart to change language</value>
+    <value>Selecciona idioma y reinicia para cambiar el idioma</value>
   </data>
   <data name="LanguageSettings.Header" xml:space="preserve">
-    <value>Language</value>
+    <value>Idioma</value>
   </data>
   <data name="OutPIP.Content" xml:space="preserve">
-    <value>Exit</value>
+    <value>Salir</value>
   </data>
   <data name="ProcessesSettings.Header" xml:space="preserve">
-    <value>Processes</value>
+    <value>Procesos</value>
+  </data>
+  <data name="ProgressSettings.Description" xml:space="preserve">
+    <value>Probar anillo de progreso en la barra de título</value>
+  </data>
+  <data name="ProgressSettings.Header" xml:space="preserve">
+    <value>Progreso</value>
+  </data>
+  <data name="SetProgressValue.Description" xml:space="preserve">
+    <value>Establecer el valor del anillo de progreso</value>
+  </data>
+  <data name="SetProgressValue.Header" xml:space="preserve">
+    <value>Valor del progreso</value>
+  </data>
+  <data name="ShowRefreshButton.Description" xml:space="preserve">
+    <value>Mostrar el botón de refrescar en la barra de título</value>
+  </data>
+  <data name="ShowRefreshButton.Header" xml:space="preserve">
+    <value>Botón de refrescar</value>
   </data>
   <data name="TitleBar.Title" xml:space="preserve">
-    <value>Testing</value>
+    <value>Probando</value>
   </data>
   <data name="TitleBarSettings.Description" xml:space="preserve">
-    <value>Extends Content Into TitleBar</value>
+    <value>Extiende el contenido en la barra de títulos</value>
   </data>
   <data name="TitleBarSettings.Header" xml:space="preserve">
-    <value>Title Bar</value>
+    <value>Barra de título</value>
   </data>
   <data name="UITestSettingsHeader.Header" xml:space="preserve">
-    <value>UI Test</value>
+    <value>Test UI</value>
   </data>
 </root>

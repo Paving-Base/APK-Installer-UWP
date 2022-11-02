@@ -50,7 +50,7 @@ namespace APKInstaller.Helpers.Exceptions
             }
 
 
-            if (!(syncContext is ExceptionHandlingSynchronizationContext customSynchronizationContext))
+            if (syncContext is not ExceptionHandlingSynchronizationContext customSynchronizationContext)
             {
                 customSynchronizationContext = new ExceptionHandlingSynchronizationContext(syncContext);
                 SetSynchronizationContext(customSynchronizationContext);
@@ -141,7 +141,7 @@ namespace APKInstaller.Helpers.Exceptions
         {
             if (UnhandledException == null) { return false; }
 
-            UnhandledExceptionEventArgs exWrapper = new UnhandledExceptionEventArgs()
+            UnhandledExceptionEventArgs exWrapper = new()
             {
                 Exception = exception
             };

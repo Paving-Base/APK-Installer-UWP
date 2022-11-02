@@ -5,7 +5,7 @@ namespace AAPTForUWP.Models
 {
     public class SDKInfo
     {
-        internal static readonly SDKInfo Unknown = new SDKInfo("0", "0", "0");
+        internal static readonly SDKInfo Unknown = new("0", "0", "0");
 
         // https://source.android.com/setup/start/build-numbers
         private static readonly string[] AndroidCodeNames = {
@@ -113,40 +113,23 @@ namespace AAPTForUWP.Models
 
         public static SDKInfo GetInfo(string sdkVer)
         {
-            if (int.TryParse(sdkVer, out int ver))
-            {
-                if (ver > AndroidVersionCodes.Length - 1) { return new SDKInfo(sdkVer, sdkVer, "Hello from 2022!"); }
-                else { return GetInfo(ver); }
-            }
-            else
-            {
-                return new SDKInfo(sdkVer, sdkVer, AndroidCodeNames[0]);
-            }
+            return int.TryParse(sdkVer, out int ver)
+                ? ver > AndroidVersionCodes.Length - 1 ? new SDKInfo(sdkVer, sdkVer, "Hello from 2022!") : GetInfo(ver)
+                : new SDKInfo(sdkVer, sdkVer, AndroidCodeNames[0]);
         }
 
         public override int GetHashCode() => 1008763889 + EqualityComparer<string>.Default.GetHashCode(APILevel);
 
         public override bool Equals(object obj)
         {
-            if (obj is SDKInfo another)
-            {
-                return APILevel == another.APILevel;
-            }
-            return false;
+            return obj is SDKInfo another && APILevel == another.APILevel;
         }
 
         public int CompareTo(object obj)
         {
-            if (obj is SDKInfo another)
-            {
-                if (int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver))
-                {
-                    return ver.CompareTo(anotherver);
-                }
-
-                return 0;
-            }
-            throw new ArgumentException();
+            return obj is SDKInfo another
+                ? int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver) ? ver.CompareTo(anotherver) : 0
+                : throw new ArgumentException();
         }
 
         public static bool operator ==(SDKInfo left, SDKInfo right) => left.Equals(right);
@@ -163,12 +146,9 @@ namespace AAPTForUWP.Models
 
         public override string ToString()
         {
-            if (this == Unknown)
-            {
-                return AndroidCodeNames[0];
-            }
-
-            return $"API Level {APILevel} " +
+            return this == Unknown
+                ? AndroidCodeNames[0]
+                : $"API Level {APILevel} " +
                 $"{(Version == AndroidVersionCodes[0] ? $"({Version} - " : $"(Android {Version} - ")}" +
                 $"{CodeName})";
         }

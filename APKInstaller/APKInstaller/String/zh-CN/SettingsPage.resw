@@ -120,8 +120,8 @@
   <data name="AboutSettingsHeader.Header" xml:space="preserve">
     <value>关于</value>
   </data>
-  <data name="AfdianLink.Content" xml:space="preserve">
-    <value>爱发电</value>
+  <data name="ADBPathSettings.Header" xml:space="preserve">
+    <value>ADB 路径</value>
   </data>
   <data name="AutoGetNetAPKSettings.Description" xml:space="preserve">
     <value>当安装包来自 URL 链接时自动下载。</value>
@@ -129,8 +129,14 @@
   <data name="AutoGetNetAPKSettings.Header" xml:space="preserve">
     <value>是否自动下载在线安装包？</value>
   </data>
-  <data name="BilibiliLink.Content" xml:space="preserve">
-    <value>哔哩哔哩</value>
+  <data name="BackdropSettings.Description" xml:space="preserve">
+    <value>选择适用于 Windows 11 的背景色类型</value>
+  </data>
+  <data name="BackdropSettings.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="Change.Content" xml:space="preserve">
+    <value>更改</value>
   </data>
   <data name="CheckFailed" xml:space="preserve">
     <value>检查失败</value>
@@ -148,13 +154,16 @@
     <value>关闭 ADB 可能会使其他正在运行的安装程序崩溃。</value>
   </data>
   <data name="CloseADBSettings.Header" xml:space="preserve">
-    <value>关闭安装程序时是否关闭 ADB？</value>
+    <value>关闭安装程序时是否关闭ADB？</value>
   </data>
   <data name="CloseAPPSettings.Description" xml:space="preserve">
     <value>在 APK 安装完成并启动后关闭安装程序。</value>
   </data>
   <data name="CloseAPPSettings.Header" xml:space="preserve">
     <value>当应用程序准备就绪后是否关闭安装程序？</value>
+  </data>
+  <data name="ConfigsSettingsHeader.Header" xml:space="preserve">
+    <value>配置</value>
   </data>
   <data name="ConnectDevice.Description" xml:space="preserve">
     <value>通过网络连接设备。</value>
@@ -170,9 +179,6 @@
   </data>
   <data name="ContentSettingsHeader.Header" xml:space="preserve">
     <value>内容</value>
-  </data>
-  <data name="CoolapkLink.Content" xml:space="preserve">
-    <value>酷安</value>
   </data>
   <data name="DeviceSettingsHeader.Header" xml:space="preserve">
     <value>设备</value>
@@ -195,8 +201,8 @@
   <data name="FindUpdate" xml:space="preserve">
     <value>找到新的更新</value>
   </data>
-  <data name="GithubLink.Content" xml:space="preserve">
-    <value>Github</value>
+  <data name="GoToTestPage.Description" xml:space="preserve">
+    <value>前往用于测试的页面。</value>
   </data>
   <data name="GoToTestPage.Header" xml:space="preserve">
     <value>前往测试页面</value>
@@ -210,6 +216,18 @@
   <data name="LastChecked.Text" xml:space="preserve">
     <value>上次检查时间: </value>
   </data>
+  <data name="LearnMoreLink.Content" xml:space="preserve">
+    <value>了解更多</value>
+  </data>
+  <data name="LogFolderLink.Content" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="ModifiedInfoBar.Message" xml:space="preserve">
+    <value>修改版可能会包含一些不好的东西，包括但不限于广告、损坏的特性，甚至是病毒。请前往 Microsoft Store 安装原版。请参阅我们的 Github 仓库了解更多信息。</value>
+  </data>
+  <data name="ModifiedInfoBar.Title" xml:space="preserve">
+    <value>您正在使用修改版！</value>
+  </data>
   <data name="OnlyWSASettings.Description" xml:space="preserve">
     <value>关闭它以连接到其他设备。</value>
   </data>
@@ -219,14 +237,23 @@
   <data name="OthersSettingsHeader.Header" xml:space="preserve">
     <value>其他</value>
   </data>
-  <data name="PatreonLink.Content" xml:space="preserve">
-    <value>Patreon</value>
+  <data name="RadioThemeDark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="RadioThemeDefault.Content" xml:space="preserve">
+    <value>Windows 默认</value>
+  </data>
+  <data name="RadioThemeLight.Content" xml:space="preserve">
+    <value>浅色</value>
   </data>
   <data name="Rate.Content" xml:space="preserve">
     <value>前往商店好评</value>
   </data>
   <data name="ReleaseNotes.Content" xml:space="preserve">
     <value>发行说明</value>
+  </data>
+  <data name="ResetSettings.Description" xml:space="preserve">
+    <value>重置此应用程序的设置。</value>
   </data>
   <data name="ResetSettings.Header" xml:space="preserve">
     <value>重置应用</value>
@@ -255,19 +282,25 @@
   <data name="ShowMessagesSettings.Header" xml:space="preserve">
     <value>是否显示公告？</value>
   </data>
+  <data name="ThemeSettings.Header" xml:space="preserve">
+    <value>应用主题</value>
+  </data>
+  <data name="ThemesSettingsHeader.Header" xml:space="preserve">
+    <value>主题</value>
+  </data>
   <data name="TitleBar.Title" xml:space="preserve">
     <value>设置</value>
   </data>
   <data name="TranslateLink.Content" xml:space="preserve">
     <value>翻译</value>
   </data>
-  <data name="TwitterLink.Content" xml:space="preserve">
-    <value>推特</value>
-  </data>
   <data name="UpdateSettingsHeader.Header" xml:space="preserve">
     <value>版本</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
     <value>最新</value>
+  </data>
+  <data name="WindowsColorButton.Content" xml:space="preserve">
+    <value>Windows 颜色设置</value>
   </data>
 </root>

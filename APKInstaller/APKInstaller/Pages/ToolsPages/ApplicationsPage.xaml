@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:APKInstaller.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:APKInstaller.Pages.ToolsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
     d:DataContext="{d:DesignInstance Type=toolspages:ApplicationsViewModel}"
@@ -12,62 +13,80 @@
         <toolspages:ApplicationConverter x:Key="ApplicationConverter" />
     </Page.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:TitleBar
+            x:Name="TitleBar"
+            x:Uid="/ApplicationsPage/TitleBar"
+            BackRequested="TitleBar_BackRequested"
+            IsBackButtonVisible="True"
+            IsBackEnabled="{x:Bind Frame.CanGoBack}"
+            IsRefreshButtonVisible="True"
+            IsRefreshEnabled="True"
+            RefreshRequested="TitleBar_RefreshEvent">
+            <ComboBox
+                x:Name="DeviceComboBox"
+                x:Uid="/ApplicationsPage/DeviceComboBox"
+                VerticalAlignment="Center"
+                Loaded="ComboBox_Loaded"
+                SelectionChanged="ComboBox_SelectionChanged" />
+        </controls:TitleBar>
         <ListView
             x:Name="ListView"
+            Grid.Row="1"
             ItemsSource="{Binding Applications, Mode=OneWay}"
             Loaded="ListView_Loaded">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="toolspages:APKInfo">
-                    <ListViewItem Background="Transparent" RightTapped="ListViewItem_RightTapped">
-                        <controls:Setting Header="{x:Bind Name}" Style="{StaticResource ListViewItemContentSettingStyle}">
-                            <controls:Setting.Icon>
-                                <Grid>
-                                    <FontIcon
-                                        x:Name="IsActive"
-                                        x:Load="{x:Bind IsActive}"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Foreground="{StaticResource SystemFillColorSuccessBrush}"
-                                        Glyph="&#xF5B0;" />
-                                    <FontIcon
-                                        x:Name="NotActive"
-                                        x:Load="{x:Bind IsActive, Converter={StaticResource BoolNegationConverter}}"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Foreground="{StaticResource SystemFillColorCriticalBrush}"
-                                        Glyph="&#xE73B;" />
-                                </Grid>
-                            </controls:Setting.Icon>
+                    <ListViewItem Background="Transparent">
+                        <ListViewItem.Resources>
+                            <MenuFlyout x:Name="MenuFlyout">
+                                <MenuFlyoutItem
+                                    x:Name="Stop"
+                                    x:Uid="/ApplicationsPage/Stop"
+                                    x:Load="{x:Bind IsActive}"
+                                    Click="MenuFlyoutItem_Click"
+                                    Tag="{x:Bind Name}" />
+                                <MenuFlyoutItem
+                                    x:Name="Start"
+                                    x:Uid="/ApplicationsPage/Start"
+                                    x:Load="{x:Bind IsActive, Converter={StaticResource BoolNegationConverter}}"
+                                    Click="MenuFlyoutItem_Click"
+                                    Tag="{x:Bind Name}" />
+                                <MenuFlyoutItem
+                                    x:Uid="/ApplicationsPage/Uninstall"
+                                    Click="MenuFlyoutItem_Click"
+                                    Tag="{x:Bind Name}" />
+                            </MenuFlyout>
+                        </ListViewItem.Resources>
+                        <controls:Setting
+                            ContextFlyout="{StaticResource MenuFlyout}"
+                            Header="{x:Bind Name}"
+                            Icon="{x:Bind Icon}"
+                            Style="{StaticResource ListViewItemContentSettingStyle}">
                             <controls:Setting.Description>
-                                <TextBlock>
-                                    <Run Text="{x:Bind VersionInfo.VersionName}" />
-                                    <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
-                                    <Run Text="{x:Bind IsActive, Converter={StaticResource ApplicationConverter}, ConverterParameter='State'}" />
-                                </TextBlock>
+                                <Grid>
+                                    <TextBlock x:Name="InfoText" x:Load="{x:Bind PackageName, Converter={StaticResource StringToBoolConverter}}">
+                                        <Run Text="{x:Bind VersionInfo.VersionName}" />
+                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Text="{x:Bind PackageName}" />
+                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Text="{x:Bind IsActive, Converter={StaticResource ApplicationConverter}, ConverterParameter='State'}" />
+                                    </TextBlock>
+                                    <TextBlock x:Name="InfoTextWithoutName" x:Load="{x:Bind PackageName, Converter={StaticResource StringToBoolConverter}, ConverterParameter='true'}">
+                                        <Run Text="{x:Bind VersionInfo.VersionName}" />
+                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Text="{x:Bind IsActive, Converter={StaticResource ApplicationConverter}, ConverterParameter='State'}" />
+                                    </TextBlock>
+                                </Grid>
                             </controls:Setting.Description>
                             <controls:Setting.ActionContent>
-                                <Button Background="Transparent">
+                                <Button Background="Transparent" Flyout="{StaticResource MenuFlyout}">
                                     <Button.Content>
                                         <SymbolIcon Symbol="More" />
                                     </Button.Content>
-                                    <Button.Flyout>
-                                        <MenuFlyout x:Name="MenuFlyout">
-                                            <MenuFlyoutItem
-                                                x:Name="Stop"
-                                                x:Uid="/ApplicationsPage/Stop"
-                                                x:Load="{x:Bind IsActive}"
-                                                Click="MenuFlyoutItem_Click"
-                                                Tag="{x:Bind Name}" />
-                                            <MenuFlyoutItem
-                                                x:Name="Start"
-                                                x:Uid="/ApplicationsPage/Start"
-                                                x:Load="{x:Bind IsActive, Converter={StaticResource BoolNegationConverter}}"
-                                                Click="MenuFlyoutItem_Click"
-                                                Tag="{x:Bind Name}" />
-                                            <MenuFlyoutItem
-                                                x:Uid="/ApplicationsPage/Uninstall"
-                                                Click="MenuFlyoutItem_Click"
-                                                Tag="{x:Bind Name}" />
-                                        </MenuFlyout>
-                                    </Button.Flyout>
                                 </Button>
                             </controls:Setting.ActionContent>
                         </controls:Setting>
@@ -75,22 +94,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <controls:TitleBar
-            x:Name="TitleBar"
-            x:Uid="/ApplicationsPage/TitleBar"
-            BackRequested="TitleBar_BackRequested"
-            BackgroundVisibility="Visible"
-            IsBackEnable="{x:Bind Frame.CanGoBack}"
-            RefreshButtonVisibility="Visible"
-            RefreshEvent="TitleBar_RefreshEvent">
-            <controls:TitleBar.RightAreaContent>
-                <ComboBox
-                    x:Name="DeviceComboBox"
-                    x:Uid="/ApplicationsPage/DeviceComboBox"
-                    VerticalAlignment="Center"
-                    Loaded="ComboBox_Loaded"
-                    SelectionChanged="ComboBox_SelectionChanged" />
-            </controls:TitleBar.RightAreaContent>
-        </controls:TitleBar>
     </Grid>
 </Page>

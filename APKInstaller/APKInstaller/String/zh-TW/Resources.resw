@@ -121,7 +121,7 @@
     <value>Android 應用程式包</value>
   </data>
   <data name="APKFile" xml:space="preserve">
-    <value>APK 文件</value>
+    <value>APK 檔案</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
     <value>一個 Android 應用安裝器。作者：@wherewhere 和 @Tangent-90。</value>
@@ -133,10 +133,10 @@
     <value>程式出現了錯誤……</value>
   </data>
   <data name="ImageLoadError" xml:space="preserve">
-    <value>無法載入圖片</value>
+    <value>圖片載入失敗。</value>
   </data>
   <data name="NetworkError" xml:space="preserve">
-    <value>無法連接到網路</value>
+    <value>網路出現了一些問題……</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>否</value>

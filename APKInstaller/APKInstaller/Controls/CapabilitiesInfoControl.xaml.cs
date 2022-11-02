@@ -1,6 +1,8 @@
 ﻿using APKInstaller.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -46,17 +48,19 @@ namespace APKInstaller.Controls
         private void GetTextBlock()
         {
             if (CapabilitiesList == null) { return; }
+            RichTextBlockCapabilities.Blocks.Clear();
+            RichTextBlockFullCapabilities.Blocks.Clear();
             foreach (string capability in CapabilitiesList)
             {
                 if (!string.IsNullOrEmpty(capability))
                 {
-                    Paragraph paragraph = new Paragraph();
+                    Paragraph paragraph = new();
                     paragraph.Inlines.Add(new Run { Text = $"• {capability.GetPermissionName()}" });
                     RichTextBlockFullCapabilities.Blocks.Add(paragraph);
                 }
                 if (RichTextBlockCapabilities.Blocks.Count < 3 && !string.IsNullOrEmpty(capability))
                 {
-                    Paragraph paragraph = new Paragraph();
+                    Paragraph paragraph = new();
                     paragraph.Inlines.Add(new Run { Text = $"• {capability.GetPermissionName()}" });
                     RichTextBlockCapabilities.Blocks.Add(paragraph);
                 }

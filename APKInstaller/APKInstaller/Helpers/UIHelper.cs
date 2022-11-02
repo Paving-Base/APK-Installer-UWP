@@ -1,29 +1,23 @@
-﻿using ApkInstaller;
+﻿using APKInstaller.Pages;
 using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace APKInstaller.Helpers
 {
-    internal static partial class UIHelper
+    public static partial class UIHelper
     {
-        public static bool HasTitleBar => !CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
         public static bool HasStatusBar => ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
-        public static double TitleBarHeight => 32;
-        public static double PageTitleHeight => HasStatusBar || HasTitleBar ? 48 : 48 + TitleBarHeight;
-        public static Thickness StackPanelMargin => new Thickness(0, PageTitleHeight, 0, 0);
-        public static Thickness ScrollViewerMargin => new Thickness(0, PageTitleHeight, 0, 0);
-        public static Thickness ScrollViewerPadding => new Thickness(0, -PageTitleHeight, 0, 0);
+        public static bool TitleBarExtended => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+        public static double TitleBarHeight => TitleBarExtended ? 32 : 0;
+        public static double PageTitlePadding => TitleBarHeight;
 
         private static DispatcherQueue _dispatcherQueue;
         public static DispatcherQueue DispatcherQueue
@@ -31,46 +25,15 @@ namespace APKInstaller.Helpers
             get => _dispatcherQueue;
             set
             {
-                if (_dispatcherQueue == null)
+                if (_dispatcherQueue != value)
                 {
                     _dispatcherQueue = value;
                 }
             }
         }
-
-        public static bool IsDarkTheme() => IsDarkTheme(SettingsHelper.Theme);
-
-        public static bool IsDarkTheme(ElementTheme theme) => theme == ElementTheme.Default ? Application.Current.RequestedTheme == ApplicationTheme.Dark : theme == ElementTheme.Dark;
-
-        public static void CheckTheme()
-        {
-            bool IsDark = IsDarkTheme(SettingsHelper.Theme);
-            CheckTheme(IsDark, false);
-        }
-
-        public static void CheckTheme(bool IsDark, bool IsInvoke = false)
-        {
-            Color ForegroundColor = IsDark ? Colors.White : Colors.Black;
-            Color BackgroundColor = new AccessibilitySettings().HighContrast ? Color.FromArgb(255, 0, 0, 0) : IsDark ? Color.FromArgb(255, 32, 32, 32) : Color.FromArgb(255, 243, 243, 243);
-
-            if (HasStatusBar)
-            {
-                StatusBar StatusBar = StatusBar.GetForCurrentView();
-                StatusBar.ForegroundColor = ForegroundColor;
-                StatusBar.BackgroundColor = BackgroundColor;
-                StatusBar.BackgroundOpacity = 0; // 透明度
-            }
-            else
-            {
-                ApplicationViewTitleBar TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-                TitleBar.ForegroundColor = TitleBar.ButtonForegroundColor = ForegroundColor;
-                TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
-                TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = HasTitleBar ? BackgroundColor : Colors.Transparent;
-            }
-        }
     }
 
-    internal static partial class UIHelper
+    public static partial class UIHelper
     {
         public static MainPage MainPage;
 
@@ -83,7 +46,7 @@ namespace APKInstaller.Helpers
         }
     }
 
-    internal static partial class UIHelper
+    public static partial class UIHelper
     {
         public static string GetSizeString(this double size)
         {
@@ -146,13 +109,23 @@ namespace APKInstaller.Helpers
             {
                 uri = new Uri(uriString.Contains("://") ? uriString : uriString.Contains("//") ? uriString.Replace("//", "://") : $"http://{uriString}");
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
-#if DEBUG
-                Debug.WriteLine(e.Message);
-#endif
+
             }
             return uri;
+        }
+
+        public static Color ColorMixing(Color c1, Color c2)
+        {
+            double a1 = c1.A / 255;
+            double a2 = c2.A / 255;
+            int a = Math.Min(c1.A + c2.A, 255);
+            int r = Convert.ToInt32(Math.Min((c1.R * a1) + (c2.R * a2), 255));
+            int g = Convert.ToInt32(Math.Min((c1.G * a1) + (c2.G * a2), 255));
+            int b = Convert.ToInt32(Math.Min((c1.B * a1) + (c2.B * a2), 255));
+            Color color_mixing = Color.FromArgb(Convert.ToByte(a), Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
+            return color_mixing;
         }
     }
 }

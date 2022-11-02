@@ -1,7 +1,10 @@
-﻿using APKInstaller.Models;
+﻿using APKInstaller.Helpers;
+using APKInstaller.Models;
+using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -48,85 +51,37 @@ namespace APKInstaller.Controls
             set => SetValue(ContentXAMLProperty, value);
         }
 
-        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => (d as WebXAML).UpdateContent(e.NewValue);
+        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as WebXAML).UpdateContent(e.NewValue);
+        }
 
         public WebXAML() => InitializeComponent();
 
         private async void UpdateContent(object Content)
         {
-            if (Content == null) { return; }
-            if (Content is GitInfo ContentInfo && ContentInfo != default(GitInfo))
+            await Task.Run(async () =>
             {
-                string value = ContentInfo.FormatURL(GitInfo.GITHUB_API, false);
-                if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }
-                using (HttpClient client = new HttpClient())
+                if (Content == null) { return; }
+                if (Content is GitInfo ContentInfo && ContentInfo != default(GitInfo))
                 {
+                    string value = ContentInfo.FormatURL(GitInfo.GITHUB_API);
+                    if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }
+                    using HttpClient client = new();
                     UIElement UIElement = null;
                     try
                     {
-                        UIElement = (UIElement)XamlReader.Load(await client.GetStringAsync(value));
+                        string xaml = await client.GetStringAsync(value);
+                        if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                     }
                     catch
                     {
                         try
                         {
-                            UIElement = (UIElement)XamlReader.Load((await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.FASTGIT_API, false))).Replace("://raw.githubusercontent.com", "://raw.fastgit.org"));
-                        }
-                        catch
-                        {
-                            try
-                            {
-                                UIElement = (UIElement)XamlReader.Load(await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API, false)));
-                            }
-                            catch
-                            {
-                                UIElement = null;
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        if (UIElement != null)
-                        {
-                            this.Content = UIElement;
-                        }
-                    }
-                }
-            }
-            else if (Content is string ContentXAML && ContentXAML != default)
-            {
-                UIElement UIElement = null;
-                try
-                {
-                    UIElement = (UIElement)XamlReader.Load(ContentXAML);
-                }
-                catch
-                {
-                    UIElement = null;
-                }
-                finally
-                {
-                    if (UIElement != null)
-                    {
-                        this.Content = UIElement;
-                    }
-                }
-            }
-            else if (Content is Uri ContentUri && ContentUri != default)
-            {
-                if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }
-                using (HttpClient client = new HttpClient())
-                {
-                    UIElement UIElement = null;
-                    try
-                    {
-                        UIElement = (UIElement)XamlReader.Load(await client.GetStringAsync(ContentUri));
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            UIElement = (UIElement)XamlReader.Load((await client.GetStringAsync(ContentUri.ToString().Replace("://raw.githubusercontent.com", "://raw.fastgit.org"))).Replace("://raw.githubusercontent.com", "://raw.fastgit.org"));
+                            string xaml = await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API));
+                            if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                            UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                         }
                         catch
                         {
@@ -137,11 +92,53 @@ namespace APKInstaller.Controls
                     {
                         if (UIElement != null)
                         {
-                            this.Content = UIElement;
+                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
                         }
                     }
                 }
-            }
+                else if (Content is string ContentXAML && ContentXAML != default)
+                {
+                    UIElement UIElement = null;
+                    try
+                    {
+                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(ContentXAML); });
+                    }
+                    catch
+                    {
+                        UIElement = null;
+                    }
+                    finally
+                    {
+                        if (UIElement != null)
+                        {
+                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
+                        }
+                    }
+                }
+                else if (Content is Uri ContentUri && ContentUri != default)
+                {
+                    if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }
+                    using HttpClient client = new();
+                    UIElement UIElement = null;
+                    try
+                    {
+                        string xaml = await client.GetStringAsync(ContentUri);
+                        if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
+                    }
+                    catch
+                    {
+                        UIElement = null;
+                    }
+                    finally
+                    {
+                        if (UIElement != null)
+                        {
+                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
+                        }
+                    }
+                }
+            });
         }
     }
 }

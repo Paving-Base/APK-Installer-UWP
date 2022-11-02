@@ -4,7 +4,8 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace APKInstaller.Controls
 {
@@ -34,7 +35,7 @@ namespace APKInstaller.Controls
 
         private void CheckBoxSubTextControl_Loaded(object sender, RoutedEventArgs e)
         {
-            StackPanel panel = new StackPanel() { Orientation = Orientation.Vertical };
+            StackPanel panel = new() { Orientation = Orientation.Vertical };
             panel.Children.Add(new TextBlock() { Margin = new Thickness(0, 10, 0, 0), Text = Header });
             panel.Children.Add(new IsEnabledTextBlock() { FontSize = (double)Application.Current.Resources["SecondaryTextFontSize"], Foreground = (SolidColorBrush)Application.Current.Resources["TextFillColorSecondaryBrush"], Text = Description });
             _checkBoxSubTextControl.Content = panel;
