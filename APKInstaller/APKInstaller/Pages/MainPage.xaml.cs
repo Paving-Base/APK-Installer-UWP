@@ -1,6 +1,7 @@
 ﻿using AdvancedSharpAdbClient;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.SettingsPages;
+using System.IO;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Core.Preview;

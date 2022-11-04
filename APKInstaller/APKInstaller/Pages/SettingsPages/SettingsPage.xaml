@@ -54,6 +54,7 @@
                 <controls:WebXAML
                     x:Name="MessageBar"
                     x:Load="{x:Bind Provider.ShowMessages, Mode=OneWay}"
+                    Loaded="WebXAML_Loaded"
                     Visibility="{Binding ShowMessages, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <controls:SettingsGroup x:Uid="/SettingsPage/DeviceSettingsHeader">
                     <ListView

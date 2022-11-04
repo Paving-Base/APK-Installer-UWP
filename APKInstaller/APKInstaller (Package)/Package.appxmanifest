@@ -16,7 +16,7 @@
   <Properties>
     <DisplayName>APK 安装程序 - UWP</DisplayName>
     <PublisherDisplayName>wherewhere</PublisherDisplayName>
-    <Logo>Images\StoreLogo.png</Logo>
+    <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>

@@ -65,7 +65,7 @@ namespace APKInstaller.Controls
                 if (Content == null) { return; }
                 if (Content is GitInfo ContentInfo && ContentInfo != default(GitInfo))
                 {
-                    string value = ContentInfo.FormatURL(GitInfo.GITHUB_API);
+                    string value = ContentInfo.FormatURL(GitInfo.GITHUB_API, false);
                     if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }
                     using HttpClient client = new();
                     UIElement UIElement = null;
@@ -79,7 +79,7 @@ namespace APKInstaller.Controls
                     {
                         try
                         {
-                            string xaml = await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API));
+                            string xaml = await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API, false));
                             if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
                             UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                         }
