@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<ApplicationIcon>favicon.ico</ApplicationIcon>
-	<AssemblyName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</AssemblyName>
-	<Authors>wherewhere</Authors>
-	<Copyright>Copyright © 2017 - 2022 PavingBase. All rights reserved.</Copyright>
-	<Description>An Android Application Installer for Windows</Description>
-	<LangVersion>preview</LangVersion>
-	<OutputType>WinExe</OutputType>
-	<PackageProjectUrl>https://github.com/Paving-Base/APK-Installer-UWP</PackageProjectUrl>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <AssemblyName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</AssemblyName>
+    <Authors>wherewhere</Authors>
+    <Copyright>Copyright © 2017 - 2022 PavingBase. All rights reserved.</Copyright>
+    <Description>An Android Application Installer for Windows</Description>
+    <LangVersion>preview</LangVersion>
+    <OutputType>WinExe</OutputType>
+    <PackageProjectUrl>https://github.com/Paving-Base/APK-Installer-UWP</PackageProjectUrl>
     <Platforms>AnyCPU;x86;x64;ARM;ARM64</Platforms>
-	<ProductName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</ProductName>
-	<RepositoryUrl>https://github.com/Paving-Base/APK-Installer-UWP</RepositoryUrl>
-	<RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
-	<TargetFramework>net4.8</TargetFramework>
-	<VersionPrefix>0.0.2</VersionPrefix>
+    <ProductName>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</ProductName>
+    <RepositoryUrl>https://github.com/Paving-Base/APK-Installer-UWP</RepositoryUrl>
+    <RootNamespace>$(MSBuildProjectName.Replace(" (", ".").Replace("  ", "_").Replace(")", ""))</RootNamespace>
+    <RuntimeIdentifiers>win7-x86;win7-x64;win81-arm;win10-arm64</RuntimeIdentifiers>
+    <TargetFramework>net4.8</TargetFramework>
+    <VersionPrefix>0.0.2</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
+    <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.Desktop\ProcessForUWP.Desktop.csproj" />
   </ItemGroup>
 
 </Project>
