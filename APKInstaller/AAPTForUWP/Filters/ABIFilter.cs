@@ -10,24 +10,24 @@ namespace AAPTForUWP.Filters
     /// <remarks>https://developer.android.com/ndk/guides/abis</remarks>
     internal class ABIFilter : BaseFilter
     {
-        private string[] segments = new string[] { };
+        private string[] Segments = new string[] { };
 
-        public override bool canHandle(string msg)
+        public override bool CanHandle(string msg)
             => msg.StartsWith("native-code:");
 
-        public override void addMessage(string msg)
+        public override void AddMessage(string msg)
         {
-            segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
+            Segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public override ApkInfo getAPK()
+        public override ApkInfo GetAPK()
         {
             return new ApkInfo()
             {
-                SupportedABIs = segments.Skip(1).ToList()   // Skip "native-code"
+                SupportedABIs = Segments.Skip(1).ToList()   // Skip "native-code"
             };
         }
 
-        public override void clear() => throw new NotImplementedException();
+        public override void Clear() => throw new NotImplementedException();
     }
 }

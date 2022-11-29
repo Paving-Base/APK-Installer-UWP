@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace APKInstaller.Helpers
 {
-    internal static class ADBHelper
+    public static class ADBHelper
     {
         private static string ADBPath => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
         public static DeviceMonitor Monitor = new DeviceMonitor(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdvancedAdbClient.AdbServerPort)));

@@ -7,7 +7,7 @@ namespace APKInstaller.Helpers
     public static class CachesHelper
     {
         public static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "Caches", $"{Process.GetCurrentProcess().Id}");
-        public static readonly string OldTempPath = Path.Combine(Path.GetTempPath(), "Caches", $"{Process.GetCurrentProcess().Id}");
+        public static readonly string OldTempPath = Path.Combine(Path.GetTempPath(), @"APKInstaller\Caches", $"{Process.GetCurrentProcess().Id}");
 
         public static void CleanCaches(bool isall)
         {

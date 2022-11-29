@@ -31,8 +31,8 @@ namespace APKInstaller.Helpers
 
         public static async void LaunchWSAPackage(string packagename = "")
         {
-            (bool isfound, IEnumerable<Package> info) result = await FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe");
-            if (result.isfound)
+            (bool isfound, _) = await FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe");
+            if (isfound)
             {
                 _ = await Launcher.LaunchUriAsync(new Uri($"wsa://{packagename}"));
             }

@@ -118,156 +118,189 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutSettingsHeader.Header" xml:space="preserve">
-    <value>About</value>
+    <value>Info</value>
   </data>
-  <data name="AfdianLink.Content" xml:space="preserve">
-    <value>Afdian</value>
+  <data name="ADBPathSettings.Header" xml:space="preserve">
+    <value>Percorso ADB</value>
   </data>
   <data name="AutoGetNetAPKSettings.Description" xml:space="preserve">
-    <value>Auto download when package is from URL.</value>
+    <value>Download automatico quando il pacchetto proviene da un URL.</value>
   </data>
   <data name="AutoGetNetAPKSettings.Header" xml:space="preserve">
-    <value>Is Auto Download Online Packages?</value>
+    <value>Auto Download dei Pacchetti Online?</value>
   </data>
-  <data name="BilibiliLink.Content" xml:space="preserve">
-    <value>BiliBili</value>
+  <data name="BackdropSettings.Description" xml:space="preserve">
+    <value>Scegli il Contesto per Windows 11</value>
+  </data>
+  <data name="BackdropSettings.Header" xml:space="preserve">
+    <value>Contesto</value>
+  </data>
+  <data name="Change.Content" xml:space="preserve">
+    <value>Modifica</value>
   </data>
   <data name="CheckFailed" xml:space="preserve">
-    <value>Check Failed</value>
+    <value>Verifica Fallita</value>
   </data>
   <data name="CheckingUpdates.Text" xml:space="preserve">
-    <value>Checking For Updates...</value>
+    <value>Ricerca Aggiornamenti in Corso...</value>
   </data>
   <data name="CheckUpdates.Content" xml:space="preserve">
-    <value>Check For Updates</value>
+    <value>Controlla Aggiornamenti</value>
   </data>
   <data name="CleanCacheButton.Content" xml:space="preserve">
-    <value>Clear cache</value>
+    <value>Svuota Cache</value>
   </data>
   <data name="CloseADBSettings.Description" xml:space="preserve">
-    <value>Close ADB may break other Installers when they still open.</value>
+    <value>Chiudere ADB può interrompere altri installatori avviati.</value>
   </data>
   <data name="CloseADBSettings.Header" xml:space="preserve">
-    <value>Is Close ADB when Closing Installer?</value>
+    <value>Chiudere ADB quando si Chiude l'Installatore?</value>
   </data>
   <data name="CloseAPPSettings.Description" xml:space="preserve">
-    <value>Close Installer after APK has installed and start.</value>
+    <value>Chiudere il programma di installazione dopo che l'APK è stato installato e avviarlo.</value>
   </data>
   <data name="CloseAPPSettings.Header" xml:space="preserve">
-    <value>Is Close Installer when APP is Ready ?</value>
+    <value>Chiudere l'Installatore appena l'App è pronta?</value>
+  </data>
+  <data name="ConfigsSettingsHeader.Header" xml:space="preserve">
+    <value>Configurazioni</value>
   </data>
   <data name="ConnectDevice.Description" xml:space="preserve">
-    <value>Connect device on network.</value>
+    <value>Connetti dispositivo alla rete.</value>
   </data>
   <data name="ConnectDevice.Header" xml:space="preserve">
-    <value>Connect Device</value>
+    <value>Connetti Dispositivo</value>
   </data>
   <data name="ContactMeSettings.Header" xml:space="preserve">
-    <value>Contact Me</value>
+    <value>Contattami</value>
   </data>
   <data name="ContactMeTextBlock.Text" xml:space="preserve">
-    <value>Follow me on social apps for the latest developments. If you find any bug, please report it to me in PM. I will try my best to solve the problem. If you have Telegram account, welcome to chat at Paving Base Group 😊!</value>
+    <value>Seguimi nelle Social Apps per scoprire nuovi sviluppi. Se trovi qualche bug, per favore segnalamelo in PM. Farò del mio meglio per risolvere il problema. Se hai un account Telegram, ti invito nel Gruppo @PavingBase @CyberMarique😊!</value>
   </data>
   <data name="ContentSettingsHeader.Header" xml:space="preserve">
-    <value>Content</value>
-  </data>
-  <data name="CoolapkLink.Content" xml:space="preserve">
-    <value>Coolapk</value>
+    <value>Contenuto</value>
   </data>
   <data name="DeviceSettingsHeader.Header" xml:space="preserve">
-    <value>Device</value>
+    <value>Dispositivo</value>
   </data>
   <data name="DisplaySettingsHeader.Header" xml:space="preserve">
     <value>Display</value>
   </data>
   <data name="DonateSettings.Header" xml:space="preserve">
-    <value>Supports</value>
+    <value>Supportaci</value>
   </data>
   <data name="DonateTextBlock.Text" xml:space="preserve">
-    <value>APK Installer is an open source application, and it won't be inserted any ads for profit. If you like this app, don't forget to rate it in the store. Of course, it would be better if you could donate a little. Thanks for your supports 💕.</value>
+    <value>APK Installer è un'applicazione open-source e nessun annuncio è stato o sarà aggiunto per ricavarne del profitto. Se ti piace questa app, non dimenticare di votarla nello store. Naturalmente, sarebbe meglio una piccola donazione. Grazie per il tuo supporto.💕</value>
   </data>
   <data name="EULA.Content" xml:space="preserve">
-    <value>EULA</value>
+    <value>ELUA</value>
   </data>
   <data name="FeedbackLink.Content" xml:space="preserve">
     <value>Feedback</value>
   </data>
   <data name="FindUpdate" xml:space="preserve">
-    <value>Find Update</value>
+    <value>Cerca Aggiornamenti</value>
   </data>
-  <data name="GithubLink.Content" xml:space="preserve">
-    <value>Github</value>
+  <data name="GoToTestPage.Description" xml:space="preserve">
+    <value>Vai alla pagina di test.</value>
   </data>
   <data name="GoToTestPage.Header" xml:space="preserve">
-    <value>Go to TestPage</value>
+    <value>Vai alla TestPage</value>
   </data>
   <data name="GoToUpdate.Content" xml:space="preserve">
-    <value>Go to Update</value>
+    <value>Vai ad Aggiorna</value>
   </data>
   <data name="Group.Content" xml:space="preserve">
-    <value>Join Our Chat</value>
+    <value>Entra Nella Nostra Chat</value>
   </data>
   <data name="LastChecked.Text" xml:space="preserve">
-    <value>Last Checked: </value>
+    <value>Ultimo Controllo:</value>
+  </data>
+  <data name="LearnMoreLink.Content" xml:space="preserve">
+    <value>Maggiori Informazioni</value>
+  </data>
+  <data name="LogFolderLink.Content" xml:space="preserve">
+    <value>Registri</value>
+  </data>
+  <data name="ModifiedInfoBar.Message" xml:space="preserve">
+    <value>Una versione modificata può contenere qualcosa di fastidioso. Come AD, funzioni corrotte e anche dei virus. Per favore vai sul Microsoft Store per scaricare la versione ufficiale. Vedi il nostro deposito Github per saperne di più.</value>
+  </data>
+  <data name="ModifiedInfoBar.Title" xml:space="preserve">
+    <value>Stai utilizzando una versione modificata!</value>
   </data>
   <data name="OnlyWSASettings.Description" xml:space="preserve">
-    <value>Disable it to connect to other device.</value>
+    <value>Disabilitalo per connetterti ad altri dispositivi.</value>
   </data>
   <data name="OnlyWSASettings.Header" xml:space="preserve">
-    <value>Is Only for WSA?</value>
+    <value>Solo per WSA?</value>
   </data>
   <data name="OthersSettingsHeader.Header" xml:space="preserve">
-    <value>Others</value>
+    <value>Altri</value>
   </data>
-  <data name="PatreonLink.Content" xml:space="preserve">
-    <value>Patreon</value>
+  <data name="RadioThemeDark.Content" xml:space="preserve">
+    <value>Scuro</value>
+  </data>
+  <data name="RadioThemeDefault.Content" xml:space="preserve">
+    <value>Predefinito di Windows</value>
+  </data>
+  <data name="RadioThemeLight.Content" xml:space="preserve">
+    <value>Chiaro</value>
   </data>
   <data name="Rate.Content" xml:space="preserve">
-    <value>Rate On Store</value>
+    <value>Vota Nello Store</value>
   </data>
   <data name="ReleaseNotes.Content" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Note di Rilascio</value>
+  </data>
+  <data name="ResetSettings.Description" xml:space="preserve">
+    <value>Ripristina le impostazioni di questa applicazione.</value>
   </data>
   <data name="ResetSettings.Header" xml:space="preserve">
-    <value>Reset application</value>
+    <value>Ripristina applicazione</value>
   </data>
   <data name="ResetSettingsButton.Content" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="ResetSettingsConfirm.Content" xml:space="preserve">
-    <value>Yes</value>
+    <value>Si</value>
   </data>
   <data name="ResetSettingsTitle.Text" xml:space="preserve">
-    <value>Are you sure you want to reset the app?</value>
+    <value>Sei sicuro di voler ripristinare l'app?</value>
   </data>
   <data name="SelectDeviceBox.Header" xml:space="preserve">
-    <value>Select Device</value>
+    <value>Seleziona dispositivo</value>
   </data>
   <data name="ShowDialogsSettings.Description" xml:space="preserve">
-    <value>Show helpers when no device is connected.</value>
+    <value>Mostra gli aiuti disponibili quando nessun dispositivo è collegato.</value>
   </data>
   <data name="ShowDialogsSettings.Header" xml:space="preserve">
-    <value>Is Show Helpers?</value>
+    <value>Aiuti Visualizzati?</value>
   </data>
   <data name="ShowMessagesSettings.Description" xml:space="preserve">
-    <value>Show Announcements on the top of Settings.</value>
+    <value>Mostra annunci in cima alle Impostazioni.</value>
   </data>
   <data name="ShowMessagesSettings.Header" xml:space="preserve">
-    <value>Is Show Announcements?</value>
+    <value>Mostra Annunci?</value>
+  </data>
+  <data name="ThemeSettings.Header" xml:space="preserve">
+    <value>Tema Applicazione</value>
+  </data>
+  <data name="ThemesSettingsHeader.Header" xml:space="preserve">
+    <value>Temi</value>
   </data>
   <data name="TitleBar.Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Impostazioni</value>
   </data>
   <data name="TranslateLink.Content" xml:space="preserve">
-    <value>Translate</value>
-  </data>
-  <data name="TwitterLink.Content" xml:space="preserve">
-    <value>Twitter</value>
+    <value>Traduzioni</value>
   </data>
   <data name="UpdateSettingsHeader.Header" xml:space="preserve">
-    <value>Version</value>
+    <value>Versione</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
-    <value>Up To Date</value>
+    <value>Aggiornato</value>
+  </data>
+  <data name="WindowsColorButton.Content" xml:space="preserve">
+    <value>Impostazioni Colore Finestre</value>
   </data>
 </root>

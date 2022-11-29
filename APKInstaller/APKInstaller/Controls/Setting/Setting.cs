@@ -1,12 +1,15 @@
-﻿using System.ComponentModel;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
+using System.ComponentModel;
 
-// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace APKInstaller.Controls
 {
+    [ContentProperty(Name = "ActionContent")]
     [TemplateVisualState(Name = "Normal", GroupName = "CommonStates")]
     [TemplateVisualState(Name = "Disabled", GroupName = "CommonStates")]
     [TemplatePart(Name = PartIconPresenter, Type = typeof(ContentPresenter))]
@@ -156,24 +159,10 @@ namespace APKInstaller.Controls
 
             if (_setting._iconPresenter != null)
             {
-                if (_setting.Icon == null)
-                {
-                    _setting._iconPresenter.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    _setting._iconPresenter.Visibility = Visibility.Visible;
-                }
+                _setting._iconPresenter.Visibility = _setting.Icon == null ? Visibility.Collapsed : Visibility.Visible;
             }
 
-            if (_setting.Description == null)
-            {
-                _setting._descriptionPresenter.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                _setting._descriptionPresenter.Visibility = Visibility.Visible;
-            }
+            _setting._descriptionPresenter.Visibility = _setting.Description == null ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }

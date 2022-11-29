@@ -5,6 +5,8 @@ namespace APKInstaller.Models
 {
     public class GitInfo
     {
+        public static string NUAA_API = "https://raw.nuaa.cf/{0}/{1}/{2}/{3}/{4}";
+        public static string YZUU_API = "https://raw.yzuu.cf/{0}/{1}/{2}/{3}/{4}";
         public static string FASTGIT_API = "https://raw.fastgit.org/{0}/{1}/{2}/{3}/{4}";
         public static string JSDELIVR_API = "https://cdn.jsdelivr.net/gh/{0}/{1}@{2}/{3}/{4}";
         public static string GITHUB_API = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}/{4}";
@@ -36,13 +38,11 @@ namespace APKInstaller.Models
 
         private string AddLanguage(string filename, string langcode)
         {
-            Regex file = new Regex(@"^.*(\.\w+)$");
-            Regex lang = new Regex(@"^.*\.[a-z]{2}(-[A-Z]{2})?\.\w+$");
-            if (file.IsMatch(filename) && !lang.IsMatch(filename))
-            {
-                return Regex.Replace(filename, @"(?<name>.*)(?<extension>\.\w+$)", $"${{name}}.{langcode}${{extension}}");
-            }
-            return filename;
+            Regex file = new(@"^.*(\.\w+)$");
+            Regex lang = new(@"^.*\.[a-z]{2}(-[A-Z]{2})?\.\w+$");
+            return file.IsMatch(filename) && !lang.IsMatch(filename)
+                ? Regex.Replace(filename, @"(?<name>.*)(?<extension>\.\w+$)", $"${{name}}.{langcode}${{extension}}")
+                : filename;
         }
     }
 }

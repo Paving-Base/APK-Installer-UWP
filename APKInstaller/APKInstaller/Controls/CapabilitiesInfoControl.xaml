@@ -5,14 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:APKInstaller.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
     mc:Ignorable="d">
     <Grid
         x:Name="Root"
         Margin="-10"
         Padding="10"
-        BorderBrush="{StaticResource SystemAccentColor}">
+        BorderBrush="{ThemeResource SystemAccentColor}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition />

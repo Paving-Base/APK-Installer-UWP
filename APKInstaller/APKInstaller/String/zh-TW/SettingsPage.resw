@@ -120,8 +120,8 @@
   <data name="AboutSettingsHeader.Header" xml:space="preserve">
     <value>關於</value>
   </data>
-  <data name="AfdianLink.Content" xml:space="preserve">
-    <value>愛發電</value>
+  <data name="ADBPathSettings.Header" xml:space="preserve">
+    <value>ADB 路徑</value>
   </data>
   <data name="AutoGetNetAPKSettings.Description" xml:space="preserve">
     <value>當安裝包來自 URL 連結時自動下載。</value>
@@ -129,8 +129,14 @@
   <data name="AutoGetNetAPKSettings.Header" xml:space="preserve">
     <value>是否自動下載在線安裝包？</value>
   </data>
-  <data name="BilibiliLink.Content" xml:space="preserve">
-    <value>嗶哩嗶哩</value>
+  <data name="BackdropSettings.Description" xml:space="preserve">
+    <value>選擇適用於 Windows 11 的背景色類型</value>
+  </data>
+  <data name="BackdropSettings.Header" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="Change.Content" xml:space="preserve">
+    <value>更改</value>
   </data>
   <data name="CheckFailed" xml:space="preserve">
     <value>檢查失敗</value>
@@ -156,6 +162,9 @@
   <data name="CloseAPPSettings.Header" xml:space="preserve">
     <value>當應用程式準備就緒後是否關閉安裝程式？</value>
   </data>
+  <data name="ConfigsSettingsHeader.Header" xml:space="preserve">
+    <value>配置</value>
+  </data>
   <data name="ConnectDevice.Description" xml:space="preserve">
     <value>通過網路連接設備。</value>
   </data>
@@ -170,9 +179,6 @@
   </data>
   <data name="ContentSettingsHeader.Header" xml:space="preserve">
     <value>內容</value>
-  </data>
-  <data name="CoolapkLink.Content" xml:space="preserve">
-    <value>酷安</value>
   </data>
   <data name="DeviceSettingsHeader.Header" xml:space="preserve">
     <value>設備</value>
@@ -195,8 +201,8 @@
   <data name="FindUpdate" xml:space="preserve">
     <value>找到新的更新</value>
   </data>
-  <data name="GithubLink.Content" xml:space="preserve">
-    <value>Github</value>
+  <data name="GoToTestPage.Description" xml:space="preserve">
+    <value>前往用於測試的頁面。</value>
   </data>
   <data name="GoToTestPage.Header" xml:space="preserve">
     <value>前往測試頁面</value>
@@ -210,6 +216,18 @@
   <data name="LastChecked.Text" xml:space="preserve">
     <value>上次檢查時間: </value>
   </data>
+  <data name="LearnMoreLink.Content" xml:space="preserve">
+    <value>瞭解更多</value>
+  </data>
+  <data name="LogFolderLink.Content" xml:space="preserve">
+    <value>日誌</value>
+  </data>
+  <data name="ModifiedInfoBar.Message" xml:space="preserve">
+    <value>修改版可能會包含一些不好的東西，包括但不限於廣告、損壞的特性，甚至是病毒。 請前往 Microsoft Store 安裝原版。 請參閱我們的 Github 倉庫瞭解更多資訊。</value>
+  </data>
+  <data name="ModifiedInfoBar.Title" xml:space="preserve">
+    <value>您正在使用修改版！</value>
+  </data>
   <data name="OnlyWSASettings.Description" xml:space="preserve">
     <value>關閉它以連接到其他設備。</value>
   </data>
@@ -219,14 +237,23 @@
   <data name="OthersSettingsHeader.Header" xml:space="preserve">
     <value>其他</value>
   </data>
-  <data name="PatreonLink.Content" xml:space="preserve">
-    <value>Patreon</value>
+  <data name="RadioThemeDark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="RadioThemeDefault.Content" xml:space="preserve">
+    <value>Windows 預設</value>
+  </data>
+  <data name="RadioThemeLight.Content" xml:space="preserve">
+    <value>淺色</value>
   </data>
   <data name="Rate.Content" xml:space="preserve">
     <value>前往商店好評</value>
   </data>
   <data name="ReleaseNotes.Content" xml:space="preserve">
     <value>發布說明</value>
+  </data>
+  <data name="ResetSettings.Description" xml:space="preserve">
+    <value>重置此應用程式的設置。</value>
   </data>
   <data name="ResetSettings.Header" xml:space="preserve">
     <value>重置應用</value>
@@ -255,19 +282,25 @@
   <data name="ShowMessagesSettings.Header" xml:space="preserve">
     <value>是否顯示公告？</value>
   </data>
+  <data name="ThemeSettings.Header" xml:space="preserve">
+    <value>應用主題</value>
+  </data>
+  <data name="ThemesSettingsHeader.Header" xml:space="preserve">
+    <value>主題</value>
+  </data>
   <data name="TitleBar.Title" xml:space="preserve">
     <value>設定</value>
   </data>
   <data name="TranslateLink.Content" xml:space="preserve">
     <value>翻譯</value>
   </data>
-  <data name="TwitterLink.Content" xml:space="preserve">
-    <value>推特</value>
-  </data>
   <data name="UpdateSettingsHeader.Header" xml:space="preserve">
     <value>版本</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
     <value>最新</value>
+  </data>
+  <data name="WindowsColorButton.Content" xml:space="preserve">
+    <value>Windows 顏色設定</value>
   </data>
 </root>

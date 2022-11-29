@@ -118,190 +118,259 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutADB" xml:space="preserve">
-    <value>ADB, the Android Debug Bridge, is needed for APK Installer to work. Click "Download" to download it. By downloading, you accept the Google Terms and Conditions for ADB. If you have already downloaded ADB, click "Select" to select it.</value>
+    <value>ADB, el Puente de Depuración de Android, es necesario para que el Instalador de APK funcione. Clica "Descargar" para descargarlo. Al descargar, aceptas los Términos y Condiciones de Google para ADB. Si ya has descargado ADB, clica "Seleccionar" para seleccionarlo.</value>
   </data>
   <data name="ADBExist" xml:space="preserve">
-    <value>ADB Exist</value>
+    <value>ADB Existe</value>
   </data>
   <data name="ADBMissing" xml:space="preserve">
-    <value>ADB is missing</value>
+    <value>Falta ADB</value>
+  </data>
+  <data name="APKFileFlyoutItem.Text" xml:space="preserve">
+    <value>Archivo APK</value>
   </data>
   <data name="AppCapabilities.HeadText" xml:space="preserve">
-    <value>Capabilities: </value>
+    <value>Capacidades: </value>
+  </data>
+  <data name="AppNameFlyoutItem.Text" xml:space="preserve">
+    <value>Nombre de la aplicación</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
+  </data>
+  <data name="CannotConnectWSA" xml:space="preserve">
+    <value>No se puede conectar a WSA</value>
+  </data>
+  <data name="CannotConnectWSAInfo" xml:space="preserve">
+    <value>Puede que el WSA no empezase correctamente o hay un problema con el ADB. Este problema puede ser muy difícil de resolver. Por favor, reinicia el instalador. Si sigue sin funcionar, prueba a reiniciar el equipo.</value>
   </data>
   <data name="CannotOpenPackage" xml:space="preserve">
-    <value>Cannot open app package</value>
+    <value>No se puede abrir el paquete de aplicación</value>
   </data>
   <data name="Checking" xml:space="preserve">
-    <value>Checking...</value>
+    <value>Comprobando...</value>
   </data>
   <data name="CheckingADB" xml:space="preserve">
-    <value>Checking ADB...</value>
+    <value>Comprobando ADB...</value>
+  </data>
+  <data name="CheckingPath" xml:space="preserve">
+    <value>Comprobando la ruta...</value>
   </data>
   <data name="ClickToRead" xml:space="preserve">
-    <value>Click here to read them</value>
+    <value>Haz clic aquí para leerlos</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Cerrar</value>
+  </data>
+  <data name="CopyFlyoutItem.Text" xml:space="preserve">
+    <value>Copiar</value>
   </data>
   <data name="Devices" xml:space="preserve">
-    <value>Devices</value>
+    <value>Dispositivos</value>
   </data>
   <data name="Download" xml:space="preserve">
-    <value>Download</value>
+    <value>Descargar</value>
   </data>
   <data name="DownloadFailed" xml:space="preserve">
-    <value>Download Failed</value>
+    <value>Descarga fallida</value>
   </data>
   <data name="DownloadFailedInfo" xml:space="preserve">
-    <value>Please check your network connection or the URL and try again.</value>
+    <value>Por favor, comprueba tu conexión a la red o el URL e intenta otra vez.</value>
   </data>
   <data name="FindingWSA" xml:space="preserve">
-    <value>Finding WSA...</value>
+    <value>Buscando WSA...</value>
   </data>
   <data name="Finished" xml:space="preserve">
-    <value>Finished</value>
+    <value>Terminado</value>
   </data>
   <data name="FoundWSA" xml:space="preserve">
-    <value>WSA Found</value>
+    <value>WSA Encontrado</value>
   </data>
   <data name="GoToSetting" xml:space="preserve">
-    <value>Go to Setting</value>
+    <value>Ir a ajustes</value>
   </data>
   <data name="HowToConnect" xml:space="preserve">
-    <value>How to connect WSA?</value>
+    <value>Cómo conectar WSA</value>
+  </data>
+  <data name="HowToConnectInfo" xml:space="preserve">
+    <value>1. Por favor, asegúrate de que APK Installer ha sido actualizado a la última versión
+2. Asegúrate de que tienes el Subsistema Android instalado y ejecutando
+3. Activa el modo de desarrollador y asegúrate de que la dirección IP se muestra con éxito
+4. Reabre APK Installer y continúa tu instalación
+
+[Saber más]({0})</value>
+  </data>
+  <data name="IconFlyoutItem.Text" xml:space="preserve">
+    <value>Icono</value>
   </data>
   <data name="IKnow" xml:space="preserve">
-    <value>I Know</value>
+    <value>Lo sé</value>
+  </data>
+  <data name="InfosFlyoutItem.Text" xml:space="preserve">
+    <value>Información</value>
   </data>
   <data name="Install" xml:space="preserve">
-    <value>Install</value>
+    <value>Instalar</value>
   </data>
   <data name="InstalledFormat" xml:space="preserve">
-    <value>{0} is ready!</value>
+    <value>¡{0} está listo!</value>
     <comment>{0} - AppName.</comment>
   </data>
   <data name="InstallFormat" xml:space="preserve">
-    <value>Install {0}?</value>
+    <value>¿Instalar {0}?</value>
     <comment>{0} - AppName.</comment>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Instalando...</value>
+  </data>
+  <data name="InstallingPercent" xml:space="preserve">
+    <value>Installing {0}...</value>
+    <comment>{0} - Progress.</comment>
   </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
-    <value>Reason: </value>
+    <value>Causa: </value>
   </data>
   <data name="InstallWSA" xml:space="preserve">
-    <value>Install WSA</value>
+    <value>Instalar WSA</value>
   </data>
   <data name="InvalidPackage" xml:space="preserve">
-    <value>The package is either corrupted or invalid.</value>
+    <value>El paquete está corrupto o es inválido.</value>
   </data>
   <data name="InvalidURL" xml:space="preserve">
-    <value>The URL is either Incomplete or invalid.</value>
+    <value>La URL es incompleta o inválida.</value>
   </data>
   <data name="Launch" xml:space="preserve">
-    <value>Launch</value>
+    <value>Ejecutar</value>
   </data>
   <data name="LaunchingWSA" xml:space="preserve">
-    <value>Launching WSA...</value>
+    <value>Ejecutando WSA...</value>
   </data>
   <data name="LaunchWhenReadyCheckbox.Content" xml:space="preserve">
-    <value>Launch when ready</value>
+    <value>Ejecuta cuando esté listo</value>
   </data>
   <data name="Loading" xml:space="preserve">
-    <value>Loading...</value>
+    <value>Cargando...</value>
+  </data>
+  <data name="MoreInfoFlyoutItem.Text" xml:space="preserve">
+    <value>Más información</value>
   </data>
   <data name="NoDevice" xml:space="preserve">
-    <value>Cannot find Android Device</value>
+    <value>No se puede encontrar el Dispositivo Android</value>
+  </data>
+  <data name="NoDevice10" xml:space="preserve">
+    <value>Cómo conectar el dispositivo</value>
   </data>
   <data name="NoDeviceInfo" xml:space="preserve">
-    <value>You can install WSA. Or go to Settings to connect Device.</value>
+    <value>Si quieres instalar la aplicación al Subsistema Windows para Android™, necesitas instalarlo primero. Si quieres instalar en otros dispositivos, por favor, ve a la página de ajustes, desactiva "Solo para WSA" y conecta tu dispositivo.</value>
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
-    <value>You can go to Settings to connect Device.</value>
+    <value>#### Usando USB
+1. Por favor, asegúrate de que APK Installer ha sido actualizado a [la última versión](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+2. Activa el modo de desarrollador, abre la depuración USB
+3. Ve a la página de ajustes de APK Installer, selecciona tu dispositivo
+4. Vuelve, resume la instalación
+#### Usando Wifi
+1. Por favor, asegúrate de que APK Installer ha sido actualizado a [la última versión](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+2. Activa el modo de desarrollador, abre la depuración remota
+3. Recuerda la dirección IP de tu dispositivo
+4. Ve a la página de ajustes de APK Installer, conecta y selecciona tu dispositivo
+5. Vuelve, resume la instalación 
+
+[Saber más]({0})</value>
   </data>
   <data name="NoInternet" xml:space="preserve">
-    <value>Cannot connect Internet</value>
+    <value>No se puede conectar a Internet</value>
   </data>
   <data name="NoInternetInfo" xml:space="preserve">
-    <value>Please connect to the internet before opening the app.</value>
+    <value>Por favor, conéctate a Internet antes de iniciar la aplicación.</value>
   </data>
   <data name="NoPackageWranning" xml:space="preserve">
-    <value>For proper functioning of the app, try to launch an Android app package.</value>
+    <value>Para un mejor funcionamiento de la aplicación, intenta iniciar un paquete de aplicación Android.</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="OnlinePackage" xml:space="preserve">
-    <value>Online Package</value>
+    <value>Paquete en línea</value>
+  </data>
+  <data name="PackageNameFlyoutItem.Text" xml:space="preserve">
+    <value>Nombre del paquete</value>
   </data>
   <data name="PackageNameFormat" xml:space="preserve">
-    <value>Package Name: {0}</value>
+    <value>Nombre del paquete: {0}</value>
     <comment>{0} - Package Name.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
-    <value>Reinstall</value>
+    <value>Reinstalar</value>
   </data>
   <data name="ReinstallFormat" xml:space="preserve">
-    <value>{0} is already installed</value>
+    <value>{0} ya está instalado</value>
     <comment>{0} - AppName.</comment>
   </data>
   <data name="ReinstallOutput" xml:space="preserve">
-    <value>A newer version of {0} is already installed.</value>
+    <value>Una versión más nueva de {0} ya está instalada.</value>
     <comment>{0} - AppName.</comment>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Reintentar</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Select</value>
+    <value>Seleccionar</value>
+  </data>
+  <data name="ShareFlyoutItem.Text" xml:space="preserve">
+    <value>Compartir</value>
   </data>
   <data name="StartingADB" xml:space="preserve">
-    <value>Starting ADB Server...</value>
+    <value>Iniciando servidor ADB...</value>
   </data>
   <data name="StartWSA" xml:space="preserve">
-    <value>Start WSA</value>
+    <value>Iniciar WSA</value>
+  </data>
+  <data name="StoreLinkFlyoutItem.Text" xml:space="preserve">
+    <value>Enlaces de tienda</value>
   </data>
   <data name="UnzipADB" xml:space="preserve">
-    <value>Unzip ADB...</value>
+    <value>Descomprimiendo ADB...</value>
   </data>
   <data name="UnzipComplete" xml:space="preserve">
-    <value>Unzip completed</value>
+    <value>Descompresión completada</value>
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
-    <value>Unzipping {0}/{1} ...</value>
+    <value>Descomprimiendo {0}/{1}...</value>
     <comment>{0} - Have done num. {1} - All num.</comment>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Update</value>
+    <value>Actualización</value>
   </data>
   <data name="UpdateFormat" xml:space="preserve">
-    <value>Update {0}?</value>
+    <value>¿Actualizar {0}?</value>
     <comment>{0} - AppName.</comment>
   </data>
+  <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
+    <value>Código de versión</value>
+  </data>
   <data name="VersionFormat" xml:space="preserve">
-    <value>Version: {0}</value>
+    <value>Versión: {0}</value>
     <comment>{0} - AppVersion.</comment>
   </data>
   <data name="WaitDownload" xml:space="preserve">
-    <value>Waiting for download...</value>
+    <value>Esperando la descarga...</value>
   </data>
   <data name="WaitingDevice" xml:space="preserve">
-    <value>Waiting for Device...</value>
+    <value>Esperando un dispositivo...</value>
   </data>
   <data name="WaitingForInstallFormat" xml:space="preserve">
-    <value>Waiting for install {0}</value>
+    <value>Esperando para instalar {0}</value>
     <comment>{0} - AppName.</comment>
   </data>
   <data name="WaitingWSAStart" xml:space="preserve">
-    <value>Waiting WSA Start...
-This may take long time. Sit back and relax.</value>
+    <value>Esperando a que WSA empiece...
+Puede que esto tome un largo tiempo. Siéntate y relájate.</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>¡Bienvenido!</value>
   </data>
   <data name="WSARunning" xml:space="preserve">
-    <value>WSA is Running</value>
+    <value>WSA se está ejecutando</value>
   </data>
 </root>

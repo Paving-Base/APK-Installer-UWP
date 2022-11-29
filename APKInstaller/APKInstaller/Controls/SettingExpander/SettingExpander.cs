@@ -2,7 +2,8 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 
-// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace APKInstaller.Controls
 {
@@ -12,7 +13,7 @@ namespace APKInstaller.Controls
         {
             DefaultStyleKey = typeof(Expander);
             Style = (Style)Application.Current.Resources["SettingExpanderStyle"];
-            RegisterPropertyChangedCallback(Expander.HeaderProperty, OnHeaderChanged);
+            RegisterPropertyChangedCallback(HeaderProperty, OnHeaderChanged);
         }
 
         private static void OnHeaderChanged(DependencyObject d, DependencyProperty dp)

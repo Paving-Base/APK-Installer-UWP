@@ -1,7 +1,10 @@
-﻿using APKInstaller.Pages.SettingsPages;
+﻿using APKInstaller.Helpers;
+using APKInstaller.Pages.SettingsPages;
 using APKInstaller.ViewModels;
+using System;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -76,13 +79,13 @@ namespace APKInstaller.Pages
                     Provider.OpenAPK();
                     break;
                 case "DeviceSelectButton":
-                    _ = Frame.Navigate(typeof(SettingsPage));
+                    Frame.Navigate(typeof(SettingsPage));
                     break;
                 case "SecondaryActionButton":
                     Provider.OpenAPP();
                     break;
                 case "CancelOperationButton":
-                    Application.Current.Exit();
+                    Provider.CloseAPP();
                     break;
             }
         }
@@ -90,6 +93,47 @@ namespace APKInstaller.Pages
         private async void InitialLoadingUI_Loaded(object sender, RoutedEventArgs e)
         {
             await Provider.Refresh(!IsCaches);
+        }
+
+        private void CopyFileItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem element = sender as MenuFlyoutItem;
+            DataTransferHelper.CopyFile(element.Tag.ToString(), element.Text);
+        }
+
+        private void CopyStringItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem element = sender as MenuFlyoutItem;
+            DataTransferHelper.CopyText(element.Tag.ToString(), element.Text);
+        }
+
+        private void CopyBitmapItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem element = sender as MenuFlyoutItem;
+            DataTransferHelper.CopyBitmap(element.Tag.ToString(), element.Text);
+        }
+
+        private void ShareFileItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem element = sender as MenuFlyoutItem;
+            DataTransferHelper.ShareFile(element.Tag.ToString(), element.Text, element.Tag.ToString());
+        }
+
+        private void ShareUrlItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem element = sender as MenuFlyoutItem;
+            DataTransferHelper.ShareURL(new Uri(element.Tag.ToString()), element.Text, element.Tag.ToString());
+        }
+
+        private void Page_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private void Page_Drop(object sender, DragEventArgs e)
+        {
+            Provider.OpenAPK(e.DataView);
+            e.Handled = true;
         }
     }
 }

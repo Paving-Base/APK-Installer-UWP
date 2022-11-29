@@ -3,10 +3,13 @@ using AdvancedSharpAdbClient.DeviceCommands;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -20,14 +23,17 @@ namespace APKInstaller.ViewModels.ToolsPages
         public List<DeviceData> devices;
         private readonly ProcessesPage _page;
 
-        private List<string> deviceList = new List<string>();
+        private List<string> deviceList = new();
         public List<string> DeviceList
         {
             get => deviceList;
             set
             {
-                deviceList = value;
-                RaisePropertyChangedEvent();
+                if (deviceList != value)
+                {
+                    deviceList = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -37,8 +43,11 @@ namespace APKInstaller.ViewModels.ToolsPages
             get => processes;
             set
             {
-                processes = value;
-                RaisePropertyChangedEvent();
+                if (processes != value)
+                {
+                    processes = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -54,47 +63,59 @@ namespace APKInstaller.ViewModels.ToolsPages
             _page = page;
         }
 
-        public void GetDevices()
+        public async Task GetDevices()
         {
-            TitleBar.ShowProgressRing();
-            devices = new AdvancedAdbClient().GetDevices();
-            DeviceList.Clear();
-            if (devices.Count > 0)
+            await Task.Run(async () =>
             {
-                foreach (DeviceData device in devices)
+                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                devices = new AdvancedAdbClient().GetDevices();
+                await UIHelper.DispatcherQueue?.EnqueueAsync(DeviceList.Clear);
+                if (devices.Count > 0)
                 {
-                    if (!string.IsNullOrEmpty(device.Name))
+                    foreach (DeviceData device in devices)
                     {
-                        DeviceList.Add(device.Name);
+                        if (!string.IsNullOrEmpty(device.Name))
+                        {
+                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Name));
+                        }
+                        else if (!string.IsNullOrEmpty(device.Model))
+                        {
+                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Model));
+                        }
+                        else if (!string.IsNullOrEmpty(device.Product))
+                        {
+                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Product));
+                        }
+                        else if (!string.IsNullOrEmpty(device.Serial))
+                        {
+                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Serial));
+                        }
+                        else
+                        {
+                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add("Device"));
+                        }
                     }
-                    else if (!string.IsNullOrEmpty(device.Model))
-                    {
-                        DeviceList.Add(device.Model);
-                    }
-                    else if (!string.IsNullOrEmpty(device.Product))
-                    {
-                        DeviceList.Add(device.Product);
-                    }
-                    else if (!string.IsNullOrEmpty(device.Serial))
-                    {
-                        DeviceList.Add(device.Serial);
-                    }
-                    else
-                    {
-                        DeviceList.Add("Device");
-                    }
+                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => { DeviceComboBox.ItemsSource = DeviceList; if (DeviceComboBox.SelectedIndex == -1) { DeviceComboBox.SelectedIndex = 0; } });
                 }
-                DeviceComboBox.ItemsSource = DeviceList;
-                if (DeviceComboBox.SelectedIndex == -1)
+                else if (Processes != null)
                 {
-                    DeviceComboBox.SelectedIndex = 0;
+                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => Processes = null);
                 }
-            }
-            else if (Processes != null)
+                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+            });
+        }
+
+        public async Task GetProcess()
+        {
+            await Task.Run(async () =>
             {
-                Processes = null;
-            }
-            TitleBar.HideProgressRing();
+                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                AdvancedAdbClient client = new();
+                DeviceData device = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return devices[DeviceComboBox.SelectedIndex]; });
+                IEnumerable<AndroidProcess> list = DeviceExtensions.ListProcesses(client, device);
+                await UIHelper.DispatcherQueue?.EnqueueAsync(() => Processes = list);
+                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+            });
         }
     }
 
@@ -102,27 +123,26 @@ namespace APKInstaller.ViewModels.ToolsPages
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            switch ((string)parameter)
+            return (string)parameter switch
             {
-                case "Size": return ((double)(int)value).GetSizeString();
-                case "Name": return ((string)value).Split('/').Last().Split(':').First().Split('@').First();
-                case "State":
-                    switch ((AndroidProcessState)value)
-                    {
-                        case AndroidProcessState.Unknown: return "Unknown";
-                        case AndroidProcessState.D: return "Sleep(D)";
-                        case AndroidProcessState.R: return "Running";
-                        case AndroidProcessState.S: return "Sleep(S)";
-                        case AndroidProcessState.T: return "Stopped";
-                        case AndroidProcessState.W: return "Paging";
-                        case AndroidProcessState.X: return "Dead";
-                        case AndroidProcessState.Z: return "Defunct";
-                        case AndroidProcessState.K: return "Wakekill";
-                        case AndroidProcessState.P: return "Parked";
-                        default: return value.ToString();
-                    }
-                default: return value.ToString();
-            }
+                "Size" => ((double)(int)value).GetSizeString(),
+                "Name" => ((string)value).Split('/').Last().Split(':').First().Split('@').First(),
+                "State" => (AndroidProcessState)value switch
+                {
+                    AndroidProcessState.Unknown => "Unknown",
+                    AndroidProcessState.D => "Sleep(D)",
+                    AndroidProcessState.R => "Running",
+                    AndroidProcessState.S => "Sleep(S)",
+                    AndroidProcessState.T => "Stopped",
+                    AndroidProcessState.W => "Paging",
+                    AndroidProcessState.X => "Dead",
+                    AndroidProcessState.Z => "Defunct",
+                    AndroidProcessState.K => "Wakekill",
+                    AndroidProcessState.P => "Parked",
+                    _ => value.ToString(),
+                },
+                _ => value.ToString(),
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language) => (Visibility)value == Visibility.Visible;

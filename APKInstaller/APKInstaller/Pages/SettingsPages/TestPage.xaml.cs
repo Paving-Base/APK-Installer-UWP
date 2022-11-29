@@ -1,8 +1,13 @@
-﻿using APKInstaller.Helpers;
+﻿using APKInstaller.Controls;
+using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
+using System;
+using System.ComponentModel;
 using System.Globalization;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -24,8 +29,55 @@ namespace APKInstaller.Pages.SettingsPages
                 if (IsExtendsTitleBar != value)
                 {
                     CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
+                    ThemeHelper.UpdateSystemCaptionButtonColors();
                 }
             }
+        }
+
+        private double progressValue = 0;
+        internal double ProgressValue
+        {
+            get => progressValue;
+            set
+            {
+                if (progressValue != value)
+                {
+                    TitleBar.SetProgressValue(value);
+                    progressValue = value;
+                }
+            }
+        }
+
+        private bool isShowProgressRing = false;
+        internal bool IsShowProgressRing
+        {
+            get => isShowProgressRing;
+            set
+            {
+                if (isShowProgressRing != value)
+                {
+                    if (value)
+                    {
+                        TitleBar.ShowProgressRing();
+                    }
+                    else
+                    {
+                        TitleBar.HideProgressRing();
+                    }
+                    isShowProgressRing = value;
+                }
+            }
+        }
+
+        internal bool IsDevelopment => Package.Current.IsDevelopmentMode
+            || Package.Current.SignatureKind != PackageSignatureKind.Store
+            || Package.Current.Status.Modified;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        {
+            if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
         public TestPage() => InitializeComponent();
@@ -34,6 +86,9 @@ namespace APKInstaller.Pages.SettingsPages
         {
             switch ((sender as FrameworkElement).Tag as string)
             {
+                case "Store":
+                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9NSHFKJ1D4BF&mode=mini"));
+                    break;
                 case "OutPIP":
                     _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
                     break;
@@ -51,7 +106,7 @@ namespace APKInstaller.Pages.SettingsPages
             }
         }
 
-        private void TitleBar_BackRequested(object sender, RoutedEventArgs e)
+        private void TitleBar_BackRequested(TitleBar sender, object e)
         {
             if (Frame.CanGoBack)
             {
@@ -61,24 +116,36 @@ namespace APKInstaller.Pages.SettingsPages
 
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            string lang = SettingsHelper.Get<string>(SettingsHelper.CurrentLanguage);
-            lang = lang == LanguageHelper.AutoLanguageCode ? LanguageHelper.GetCurrentLanguage() : lang;
-            CultureInfo culture = new CultureInfo(lang);
-            (sender as ComboBox).SelectedItem = culture;
+            ComboBox ComboBox = sender as ComboBox;
+            switch (ComboBox.Tag as string)
+            {
+                case "Language":
+                    string lang = SettingsHelper.Get<string>(SettingsHelper.CurrentLanguage);
+                    lang = lang == LanguageHelper.AutoLanguageCode ? LanguageHelper.GetCurrentLanguage() : lang;
+                    CultureInfo culture = new(lang);
+                    ComboBox.SelectedItem = culture;
+                    break;
+            }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CultureInfo culture = (sender as ComboBox).SelectedItem as CultureInfo;
-            if (culture.Name != LanguageHelper.GetCurrentLanguage())
+            ComboBox ComboBox = sender as ComboBox;
+            switch (ComboBox.Tag as string)
             {
-                ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
-                SettingsHelper.Set(SettingsHelper.CurrentLanguage, culture.Name);
-            }
-            else
-            {
-                ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
-                SettingsHelper.Set(SettingsHelper.CurrentLanguage, LanguageHelper.AutoLanguageCode);
+                case "Language":
+                    CultureInfo culture = ComboBox.SelectedItem as CultureInfo;
+                    if (culture.Name != LanguageHelper.GetCurrentLanguage())
+                    {
+                        ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+                        SettingsHelper.Set(SettingsHelper.CurrentLanguage, culture.Name);
+                    }
+                    else
+                    {
+                        ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+                        SettingsHelper.Set(SettingsHelper.CurrentLanguage, LanguageHelper.AutoLanguageCode);
+                    }
+                    break;
             }
         }
     }

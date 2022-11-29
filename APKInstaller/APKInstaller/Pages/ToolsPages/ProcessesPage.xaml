@@ -5,18 +5,38 @@
     xmlns:controls="using:APKInstaller.Controls"
     xmlns:cwuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helper="using:APKInstaller.Helpers"
     xmlns:local="using:APKInstaller.Pages.ToolsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
     d:DataContext="{d:DesignInstance Type=toolspages:ProcessesViewModel}"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
     <Page.Resources>
         <toolspages:ProcesseConverter x:Key="TextConverter" />
     </Page.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:TitleBar
+            x:Name="TitleBar"
+            x:Uid="/ProcessesPage/TitleBar"
+            BackRequested="TitleBar_BackRequested"
+            IsBackButtonVisible="True"
+            IsBackEnabled="{x:Bind Frame.CanGoBack}"
+            IsRefreshButtonVisible="True"
+            IsRefreshEnabled="True"
+            RefreshRequested="TitleBar_RefreshEvent">
+            <ComboBox
+                x:Name="DeviceComboBox"
+                x:Uid="/ProcessesPage/DeviceComboBox"
+                VerticalAlignment="Center"
+                Loaded="ComboBox_Loaded"
+                SelectionChanged="ComboBox_SelectionChanged" />
+        </controls:TitleBar>
         <cwuc:DataGrid
-            Margin="{x:Bind helper:UIHelper.StackPanelMargin}"
+            Grid.Row="1"
             AutoGenerateColumns="False"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
@@ -46,22 +66,5 @@
                     Tag="Detail" />
             </cwuc:DataGrid.Columns>
         </cwuc:DataGrid>
-        <controls:TitleBar
-            x:Name="TitleBar"
-            x:Uid="/ProcessesPage/TitleBar"
-            BackRequested="TitleBar_BackRequested"
-            BackgroundVisibility="Visible"
-            IsBackEnable="{x:Bind Frame.CanGoBack}"
-            RefreshButtonVisibility="Visible"
-            RefreshEvent="TitleBar_RefreshEvent">
-            <controls:TitleBar.RightAreaContent>
-                <ComboBox
-                    x:Name="DeviceComboBox"
-                    x:Uid="/ProcessesPage/DeviceComboBox"
-                    VerticalAlignment="Center"
-                    Loaded="ComboBox_Loaded"
-                    SelectionChanged="ComboBox_SelectionChanged" />
-            </controls:TitleBar.RightAreaContent>
-        </controls:TitleBar>
     </Grid>
 </Page>

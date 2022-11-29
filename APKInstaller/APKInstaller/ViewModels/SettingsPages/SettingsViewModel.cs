@@ -7,8 +7,12 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Resources;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -19,15 +23,20 @@ namespace APKInstaller.ViewModels.SettingsPages
         private readonly SettingsPage _page;
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
 
+        public static SettingsViewModel Caches;
+
         private IEnumerable<DeviceData> _deviceList;
         public IEnumerable<DeviceData> DeviceList
         {
             get => _deviceList;
             set
             {
-                _deviceList = value;
-                RaisePropertyChangedEvent();
-                if (!IsOnlyWSA) { ChooseDevice(); }
+                if (_deviceList != value)
+                {
+                    _deviceList = value;
+                    RaisePropertyChangedEvent();
+                    if (!IsOnlyWSA) { ChooseDevice(); }
+                }
             }
         }
 
@@ -36,36 +45,49 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => SettingsHelper.Get<bool>(SettingsHelper.IsOnlyWSA);
             set
             {
-                SettingsHelper.Set(SettingsHelper.IsOnlyWSA, value);
-                _page.SelectDeviceBox.SelectionMode = value ? ListViewSelectionMode.None : ListViewSelectionMode.Single;
-                if (!value) { ChooseDevice(); }
+                if (IsOnlyWSA != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.IsOnlyWSA, value);
+                    _page.SelectDeviceBox.SelectionMode = value ? ListViewSelectionMode.None : ListViewSelectionMode.Single;
+                    if (!value) { ChooseDevice(); }
+                }
             }
         }
 
         public static bool IsCloseADB
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB);
-            set
-            {
-                SettingsHelper.Set(SettingsHelper.IsCloseADB, value);
-            }
+            set => SettingsHelper.Set(SettingsHelper.IsCloseADB, value);
         }
 
         public static bool IsCloseAPP
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsCloseAPP);
-            set
-            {
-                SettingsHelper.Set(SettingsHelper.IsCloseAPP, value);
-            }
+            set => SettingsHelper.Set(SettingsHelper.IsCloseAPP, value);
         }
 
         public static bool ShowDialogs
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.ShowDialogs);
+            set => SettingsHelper.Set(SettingsHelper.ShowDialogs, value);
+        }
+
+        public static bool AutoGetNetAPK
+        {
+            get => SettingsHelper.Get<bool>(SettingsHelper.AutoGetNetAPK);
+            set => SettingsHelper.Set(SettingsHelper.AutoGetNetAPK, value);
+        }
+
+        public string ADBPath
+        {
+            get => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
             set
             {
-                SettingsHelper.Set(SettingsHelper.ShowDialogs, value);
+                if (ADBPath != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.ADBPath, value);
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -87,19 +109,30 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => SettingsHelper.Get<DateTime>(SettingsHelper.UpdateDate);
             set
             {
-                SettingsHelper.Set(SettingsHelper.UpdateDate, value);
-                RaisePropertyChangedEvent();
+                if (UpdateDate != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.UpdateDate, value);
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
-        public static bool AutoGetNetAPK
+        public static int SelectedTheme
         {
-            get => SettingsHelper.Get<bool>(SettingsHelper.AutoGetNetAPK);
+            get => 2 - (int)ThemeHelper.RootTheme;
             set
             {
-                SettingsHelper.Set(SettingsHelper.AutoGetNetAPK, value);
+                if (SelectedTheme != value)
+                {
+                    ThemeHelper.RootTheme = (ElementTheme)(2 - value);
+                }
             }
         }
+
+        public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
+            || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
+            || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
+            || (Package.Current.Id.Publisher != "CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5" && Package.Current.Id.Publisher != "CN=where");
 
         private bool _checkingUpdate;
         public bool CheckingUpdate
@@ -107,8 +140,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _checkingUpdate;
             set
             {
-                _checkingUpdate = value;
-                RaisePropertyChangedEvent();
+                if (_checkingUpdate != value)
+                {
+                    _checkingUpdate = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -118,8 +154,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _gotoUpdateTag;
             set
             {
-                _gotoUpdateTag = value;
-                RaisePropertyChangedEvent();
+                if (_gotoUpdateTag != value)
+                {
+                    _gotoUpdateTag = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -129,8 +168,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _gotoUpdateVisibility;
             set
             {
-                _gotoUpdateVisibility = value;
-                RaisePropertyChangedEvent();
+                if (_gotoUpdateVisibility != value)
+                {
+                    _gotoUpdateVisibility = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -140,8 +182,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _updateStateIsOpen;
             set
             {
-                _updateStateIsOpen = value;
-                RaisePropertyChangedEvent();
+                if (_updateStateIsOpen != value)
+                {
+                    _updateStateIsOpen = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -151,8 +196,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _updateStateMessage;
             set
             {
-                _updateStateMessage = value;
-                RaisePropertyChangedEvent();
+                if (_updateStateMessage != value)
+                {
+                    _updateStateMessage = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -162,8 +210,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _updateStateSeverity;
             set
             {
-                _updateStateSeverity = value;
-                RaisePropertyChangedEvent();
+                if (_updateStateSeverity != value)
+                {
+                    _updateStateSeverity = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -173,8 +224,25 @@ namespace APKInstaller.ViewModels.SettingsPages
             get => _updateStateTitle;
             set
             {
-                _updateStateTitle = value;
-                RaisePropertyChangedEvent();
+                if (_updateStateTitle != value)
+                {
+                    _updateStateTitle = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private string _aboutTextBlockText;
+        public string AboutTextBlockText
+        {
+            get => _aboutTextBlockText;
+            set
+            {
+                if (_aboutTextBlockText != value)
+                {
+                    _aboutTextBlockText = value;
+                    RaisePropertyChangedEvent();
+                }
             }
         }
 
@@ -185,26 +253,36 @@ namespace APKInstaller.ViewModels.SettingsPages
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
-        public static string VersionTextBlockText
+        public string VersionTextBlockText
         {
             get
             {
                 string ver = $"{Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
-                ResourceLoader loader = ResourceLoader.GetForViewIndependentUse();
-                string name = loader?.GetString("AppName") ?? "APK Installer";
+                string name = Package.Current.DisplayName; ;
+                GetAboutTextBlockText();
                 return $"{name} v{ver}";
             }
         }
 
-        public SettingsViewModel(SettingsPage Page) => _page = Page;
-
-        public void OnDeviceChanged(object sender, DeviceDataEventArgs e)
+        public async void GetAboutTextBlockText()
         {
-            UIHelper.DispatcherQueue?.EnqueueAsync(() =>
+            await Task.Run(async () =>
             {
-                DeviceList = new AdvancedAdbClient().GetDevices();
+                string langcode = LanguageHelper.GetCurrentLanguage();
+                Uri dataUri = new($"ms-appx:///String/{langcode}/About.md");
+                StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(dataUri);
+                string markdown = await FileIO.ReadTextAsync(file);
+                _ = UIHelper.DispatcherQueue.EnqueueAsync(() => AboutTextBlockText = markdown);
             });
         }
+
+        public SettingsViewModel(SettingsPage Page)
+        {
+            _page = Page;
+            Caches = this;
+        }
+
+        public void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = (UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList = new AdvancedAdbClient().GetDevices()));
 
         public async void CheckUpdate()
         {
@@ -256,6 +334,19 @@ namespace APKInstaller.ViewModels.SettingsPages
                     _page.SelectDeviceBox.SelectedItem = data;
                     break;
                 }
+            }
+        }
+
+        public async void ChangeADBPath()
+        {
+            FileOpenPicker FileOpen = new();
+            FileOpen.FileTypeFilter.Add(".exe");
+            FileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+
+            StorageFile file = await FileOpen.PickSingleFileAsync();
+            if (file != null)
+            {
+                ADBPath = file.Path;
             }
         }
     }

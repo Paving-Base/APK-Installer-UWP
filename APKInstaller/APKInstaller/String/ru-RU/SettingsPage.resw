@@ -120,23 +120,29 @@
   <data name="AboutSettingsHeader.Header" xml:space="preserve">
     <value>О программе</value>
   </data>
-  <data name="AfdianLink.Content" xml:space="preserve">
-    <value>Afdian</value>
+  <data name="ADBPathSettings.Header" xml:space="preserve">
+    <value>Путь ADB</value>
   </data>
   <data name="AutoGetNetAPKSettings.Description" xml:space="preserve">
-    <value>Auto download when package is from URL.</value>
+    <value>Автоматически загружать пакеты из URL.</value>
   </data>
   <data name="AutoGetNetAPKSettings.Header" xml:space="preserve">
-    <value>Is Auto Download Online Packages?</value>
+    <value>Does Auto Download Online Packages?</value>
   </data>
-  <data name="BilibiliLink.Content" xml:space="preserve">
-    <value>BiliBili</value>
+  <data name="BackdropSettings.Description" xml:space="preserve">
+    <value>Выберите тип фона для Windows 11</value>
+  </data>
+  <data name="BackdropSettings.Header" xml:space="preserve">
+    <value>Цвет фона уведомления</value>
+  </data>
+  <data name="Change.Content" xml:space="preserve">
+    <value>Изменить</value>
   </data>
   <data name="CheckFailed" xml:space="preserve">
     <value>Проверка не завершена</value>
   </data>
   <data name="CheckingUpdates.Text" xml:space="preserve">
-    <value>Checking For Updates...</value>
+    <value>Проверка наличия обновлений...</value>
   </data>
   <data name="CheckUpdates.Content" xml:space="preserve">
     <value>Проверить обновления</value>
@@ -145,16 +151,19 @@
     <value>Очистить кэш</value>
   </data>
   <data name="CloseADBSettings.Description" xml:space="preserve">
-    <value>Close ADB may break other Installers when they still open.</value>
+    <value>Закрытие ADB может прервать работу других установщиков, если они открыты.</value>
   </data>
   <data name="CloseADBSettings.Header" xml:space="preserve">
-    <value>Закрывается ли ADB при закрытии программы установки?</value>
+    <value>Does Close ADB when Closing Installer?</value>
   </data>
   <data name="CloseAPPSettings.Description" xml:space="preserve">
-    <value>Close Installer after APK has installed and start.</value>
+    <value>Закрывает программу установки после того, как APK установлен и запущен.</value>
   </data>
   <data name="CloseAPPSettings.Header" xml:space="preserve">
-    <value>Is Close Installer when APP is Ready ?</value>
+    <value>Does Close Installer when APP is Ready?</value>
+  </data>
+  <data name="ConfigsSettingsHeader.Header" xml:space="preserve">
+    <value>Настройки</value>
   </data>
   <data name="ConnectDevice.Description" xml:space="preserve">
     <value>Подключите устройство к сети.</value>
@@ -163,31 +172,28 @@
     <value>Подключить устройство</value>
   </data>
   <data name="ContactMeSettings.Header" xml:space="preserve">
-    <value>Contact Me</value>
+    <value>Обратная связь</value>
   </data>
   <data name="ContactMeTextBlock.Text" xml:space="preserve">
-    <value>Follow me on social apps for the latest developments. If you find any bug, please report it to me in PM. I will try my best to solve the problem. If you have Telegram account, welcome to chat at Paving Base Group 😊!</value>
+    <value>Следите за мной в социальных приложениях, чтобы быть в курсе последних событий. Если вы найдете какой-либо баг, пожалуйста, сообщите мне об этом в личку. Я сделаю все возможное, чтобы решить проблему. Если у вас есть аккаунт в Telegram, добро пожаловать в чат Paving Base Group 😊!</value>
   </data>
   <data name="ContentSettingsHeader.Header" xml:space="preserve">
     <value>Содержание</value>
-  </data>
-  <data name="CoolapkLink.Content" xml:space="preserve">
-    <value>Coolapk</value>
   </data>
   <data name="DeviceSettingsHeader.Header" xml:space="preserve">
     <value>Устройство</value>
   </data>
   <data name="DisplaySettingsHeader.Header" xml:space="preserve">
-    <value>Display</value>
+    <value>Отображение</value>
   </data>
   <data name="DonateSettings.Header" xml:space="preserve">
-    <value>Supports</value>
+    <value>Поддержать</value>
   </data>
   <data name="DonateTextBlock.Text" xml:space="preserve">
-    <value>APK Installer is an open source application, and it won't be inserted any ads for profit. If you like this app, don't forget to rate it in the store. Of course, it would be better if you could donate a little. Thanks for your supports 💕.</value>
+    <value>APK Installer is an open-source application, and no ads will be added for profit. If you like this app, don't forget to rate it in the store. Of course, it would be better if you could donate a little. Thanks for your support.💕</value>
   </data>
   <data name="EULA.Content" xml:space="preserve">
-    <value>EULA</value>
+    <value>Лицензионное соглашение</value>
   </data>
   <data name="FeedbackLink.Content" xml:space="preserve">
     <value>Оставьте отзыв</value>
@@ -195,8 +201,8 @@
   <data name="FindUpdate" xml:space="preserve">
     <value>Найти обновление</value>
   </data>
-  <data name="GithubLink.Content" xml:space="preserve">
-    <value>Github</value>
+  <data name="GoToTestPage.Description" xml:space="preserve">
+    <value>Перейти на страницу тестирования.</value>
   </data>
   <data name="GoToTestPage.Header" xml:space="preserve">
     <value>Перейти к тестовой странице</value>
@@ -205,13 +211,25 @@
     <value>Перейти к обновлению</value>
   </data>
   <data name="Group.Content" xml:space="preserve">
-    <value>Join Our Chat</value>
+    <value>Присоединяйтесь к нашему чату</value>
   </data>
   <data name="LastChecked.Text" xml:space="preserve">
-    <value>Last Checked: </value>
+    <value>Последняя проверка: </value>
+  </data>
+  <data name="LearnMoreLink.Content" xml:space="preserve">
+    <value>Learn More</value>
+  </data>
+  <data name="LogFolderLink.Content" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="ModifiedInfoBar.Message" xml:space="preserve">
+    <value>A modified version may contains something unpleasant. Such as ADs, broken functions even virus. Please go to Microsoft Store to download the original one. See our Github Repository to learn more about it.</value>
+  </data>
+  <data name="ModifiedInfoBar.Title" xml:space="preserve">
+    <value>You are using a modified version!</value>
   </data>
   <data name="OnlyWSASettings.Description" xml:space="preserve">
-    <value>Disable it to connect to other device.</value>
+    <value>Disable it to connect to other devices.</value>
   </data>
   <data name="OnlyWSASettings.Header" xml:space="preserve">
     <value>Только для WSA?</value>
@@ -219,14 +237,23 @@
   <data name="OthersSettingsHeader.Header" xml:space="preserve">
     <value>Другое</value>
   </data>
-  <data name="PatreonLink.Content" xml:space="preserve">
-    <value>Patreon</value>
+  <data name="RadioThemeDark.Content" xml:space="preserve">
+    <value>Темная</value>
+  </data>
+  <data name="RadioThemeDefault.Content" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="RadioThemeLight.Content" xml:space="preserve">
+    <value>Светлая</value>
   </data>
   <data name="Rate.Content" xml:space="preserve">
-    <value>Rate On Store</value>
+    <value>Оценить в магазине приложений</value>
   </data>
   <data name="ReleaseNotes.Content" xml:space="preserve">
     <value>Журнал изменений</value>
+  </data>
+  <data name="ResetSettings.Description" xml:space="preserve">
+    <value>Сброс настроек этого приложения.</value>
   </data>
   <data name="ResetSettings.Header" xml:space="preserve">
     <value>Сброс приложений</value>
@@ -244,30 +271,36 @@
     <value>Выбрать устройство</value>
   </data>
   <data name="ShowDialogsSettings.Description" xml:space="preserve">
-    <value>Show helpers when no device is connected.</value>
+    <value>Показывать подсказки, когда не подключено устройство.</value>
   </data>
   <data name="ShowDialogsSettings.Header" xml:space="preserve">
-    <value>Is Show Helpers?</value>
+    <value>Показывать подсказки?</value>
   </data>
   <data name="ShowMessagesSettings.Description" xml:space="preserve">
-    <value>Show Announcements on the top of Settings.</value>
+    <value>Показывает уведомления в верхней части параметров.</value>
   </data>
   <data name="ShowMessagesSettings.Header" xml:space="preserve">
-    <value>Is Show Announcements?</value>
+    <value>Показывать уведомления?</value>
+  </data>
+  <data name="ThemeSettings.Header" xml:space="preserve">
+    <value>Тема приложения</value>
+  </data>
+  <data name="ThemesSettingsHeader.Header" xml:space="preserve">
+    <value>Themes</value>
   </data>
   <data name="TitleBar.Title" xml:space="preserve">
     <value>Параметры</value>
   </data>
   <data name="TranslateLink.Content" xml:space="preserve">
-    <value>Translate</value>
-  </data>
-  <data name="TwitterLink.Content" xml:space="preserve">
-    <value>Twitter</value>
+    <value>Перевод</value>
   </data>
   <data name="UpdateSettingsHeader.Header" xml:space="preserve">
     <value>Версия</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
-    <value>Up To Date</value>
+    <value>Последняя версия</value>
+  </data>
+  <data name="WindowsColorButton.Content" xml:space="preserve">
+    <value>Настройки цветов Windows</value>
   </data>
 </root>
