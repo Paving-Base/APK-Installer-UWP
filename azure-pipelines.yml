@@ -7,6 +7,7 @@ trigger:
   branches:
     include:
       - main
+      - perview
   paths:
     include:
       - APKInstaller/**
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
       - main
+      - perview
   paths:
     include:
       - APKInstaller/**
@@ -40,17 +42,17 @@ steps:
   displayName: 'Clone Process-For-UWP'
   inputs:
     script: |
-      echo 'Cloning into sources folder at: $(Build.SourcesDirectory)\..\AdvancedSharpAdbClient'
+      echo 'Cloning into sources folder at: $(Build.SourcesDirectory)\..\Process-For-UWP'
       git clone https://github.com/wherewhere/Process-For-UWP.git --progress --branch master --single-branch --depth=1 $(Build.SourcesDirectory)\..\Process-For-UWP
       exit
 
-- task: MSBuild@1
+- task: VSBuild@1
   displayName: 'Restore Solution'
   inputs:
     platform: 'x64'
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
-    msbuildArguments: '/t:restore'
+    msbuildArgs: '/t:restore'
     msbuildArchitecture: 'x64'
     maximumCpuCount: true
 
