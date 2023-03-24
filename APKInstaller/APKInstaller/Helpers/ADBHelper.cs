@@ -1,4 +1,5 @@
 ﻿using AdvancedSharpAdbClient;
+using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,30 +11,29 @@ namespace APKInstaller.Helpers
 {
     public static class ADBHelper
     {
-        private static string ADBPath => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
-        public static DeviceMonitor Monitor = new DeviceMonitor(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdvancedAdbClient.AdbServerPort)));
-
-        public static async Task StartADB()
+        private static DeviceMonitor _monitor;
+        public static DeviceMonitor Monitor
         {
-            AdbServer ADBServer = new AdbServer();
-            await CommandHelper.ExecuteShellCommand("start-server", ADBPath);
-            CancellationTokenSource TokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            while (!ADBServer.GetStatus().IsRunning)
+            get
             {
-                TokenSource.Token.ThrowIfCancellationRequested();
+                if (_monitor == null && AdbServer.Instance.GetStatus().IsRunning)
+                {
+                    _monitor = new(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)));
+                    _monitor.Start();
+                }
+                return _monitor;
             }
-            Monitor.Start();
         }
-
-        public static async void StopADB() => await CommandHelper.ExecuteShellCommand("kill-server", ADBPath);
 
         public static bool CheckFileExists(string path)
         {
-            return !string.IsNullOrWhiteSpace(path);
+            return !string.IsNullOrWhiteSpace(path) && FileEx.Exists(path);
         }
 
         public static int RunProcess(string filename, string command, List<string> errorOutput, List<string> standardOutput)
         {
+            int code = 1;
+
             ProcessStartInfo psi = new(filename, command)
             {
                 CreateNoWindow = true,
@@ -43,34 +43,75 @@ namespace APKInstaller.Helpers
                 RedirectStandardOutput = true
             };
 
-            using Process process = Process.Start(psi);
-            string standardErrorString = process.StandardError.ReadToEnd();
-            string standardOutputString = process.StandardOutput.ReadToEnd();
-
-            errorOutput?.AddRange(standardErrorString.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
-
-            standardOutput?.AddRange(standardOutputString.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
-
-            // get the return code from the process
-            if (!process.WaitForExit(5000))
+            using (ProcessEx process = ProcessEx.Start(psi))
             {
-                process.Kill();
+                CancellationTokenSource Token = new();
+
+                process.BeginOutputReadLine();
+
+                process.EnableRaisingEvents = true;
+
+                void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
+                {
+                    if (e.Data == null)
+                    {
+                        code = 0;
+                        Token.Cancel();
+                        return;
+                    }
+                    string line = e.Data ?? string.Empty;
+
+                    standardOutput?.Add(line);
+                }
+
+                void ErrorDataReceived(object sender, DataReceivedEventArgsEx e)
+                {
+                    string line = e.Data ?? string.Empty;
+
+                    errorOutput?.Add(line);
+                }
+
+                try
+                {
+                    process.OutputDataReceived += OnOutputDataReceived;
+                    process.ErrorDataReceived += ErrorDataReceived;
+                    while (!process.IsExited)
+                    {
+                        Token.Token.ThrowIfCancellationRequested();
+                    }
+                }
+                catch (Exception)
+                {
+                    process.Kill();
+                }
+                finally
+                {
+                    process.Close();
+                    process.OutputDataReceived -= OnOutputDataReceived;
+                }
             }
 
-            return process.ExitCode;
+            return code;
         }
 
-        public static TResult AwaitByTaskCompleteSource<TResult>(Func<Task<TResult>> func)
+        public static TResult AwaitByTaskCompleteSource<TResult>(Func<Task<TResult>> function)
         {
             TaskCompletionSource<TResult> taskCompletionSource = new();
-            Task<TResult> task1 = taskCompletionSource.Task;
+            Task<TResult> task = taskCompletionSource.Task;
             _ = Task.Run(async () =>
             {
-                TResult result = await func.Invoke();
-                taskCompletionSource.SetResult(result);
+                try
+                {
+                    TResult result = await function.Invoke().ConfigureAwait(false);
+                    taskCompletionSource.SetResult(result);
+                }
+                catch (Exception e)
+                {
+                    taskCompletionSource.SetException(e);
+                }
             });
-            TResult task1Result = task1.Result;
-            return task1Result;
+            TResult taskResult = task.Result;
+            return taskResult;
         }
     }
 }

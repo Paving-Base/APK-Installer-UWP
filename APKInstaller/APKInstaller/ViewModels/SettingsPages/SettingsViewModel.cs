@@ -4,15 +4,17 @@ using APKInstaller.Models;
 using APKInstaller.Pages.SettingsPages;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.UI.Xaml.Controls;
+using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -24,6 +26,15 @@ namespace APKInstaller.ViewModels.SettingsPages
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
 
         public static SettingsViewModel Caches;
+
+        public static string DeviceFamily => AnalyticsInfo.VersionInfo.DeviceFamily.Replace('.', ' ');
+
+        public static string ToolkitVersion => Assembly.Load(new AssemblyName("Microsoft.Toolkit.Uwp")).GetName().Version.ToString();
+
+        public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
+            || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
+            || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
+            || (Package.Current.Id.Publisher != "CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5" && Package.Current.Id.Publisher != "CN=where");
 
         private IEnumerable<DeviceData> _deviceList;
         public IEnumerable<DeviceData> DeviceList
@@ -54,6 +65,27 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
+        public static bool ScanPairedDevice
+        {
+            get => SettingsHelper.Get<bool>(SettingsHelper.ScanPairedDevice);
+            set
+            {
+                if (ScanPairedDevice != value)
+                {
+                    //if (value)
+                    //{
+                    //    MonitorHelper.InitializeConnectListener();
+                    //    _ = MonitorHelper.ConnectPairedDevice();
+                    //}
+                    //else
+                    //{
+                    //    MonitorHelper.DisposeConnectListener();
+                    //}
+                    SettingsHelper.Set(SettingsHelper.ScanPairedDevice, value);
+                }
+            }
+        }
+
         public static bool IsCloseADB
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB);
@@ -70,6 +102,12 @@ namespace APKInstaller.ViewModels.SettingsPages
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.ShowDialogs);
             set => SettingsHelper.Set(SettingsHelper.ShowDialogs, value);
+        }
+
+        public static bool ShowProgress
+        {
+            get => SettingsHelper.Get<bool>(SettingsHelper.ShowProgress);
+            set => SettingsHelper.Set(SettingsHelper.ShowProgress, value);
         }
 
         public static bool AutoGetNetAPK
@@ -128,11 +166,6 @@ namespace APKInstaller.ViewModels.SettingsPages
                 }
             }
         }
-
-        public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
-            || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
-            || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
-            || (Package.Current.Id.Publisher != "CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5" && Package.Current.Id.Publisher != "CN=where");
 
         private bool _checkingUpdate;
         public bool CheckingUpdate
@@ -232,6 +265,90 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
+        private bool _pairingDevice;
+        public bool PairingDevice
+        {
+            get => _pairingDevice;
+            set
+            {
+                if (_pairingDevice != value)
+                {
+                    _pairingDevice = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private bool _connectingDevice;
+        public bool ConnectingDevice
+        {
+            get => _connectingDevice;
+            set
+            {
+                if (_connectingDevice != value)
+                {
+                    _connectingDevice = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private bool _connectInfoIsOpen;
+        public bool ConnectInfoIsOpen
+        {
+            get => _connectInfoIsOpen;
+            set
+            {
+                if (_connectInfoIsOpen != value)
+                {
+                    _connectInfoIsOpen = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private InfoBarSeverity _connectInfoSeverity;
+        public InfoBarSeverity ConnectInfoSeverity
+        {
+            get => _connectInfoSeverity;
+            set
+            {
+                if (_connectInfoSeverity != value)
+                {
+                    _connectInfoSeverity = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private string _connectInfoTitle;
+        public string ConnectInfoTitle
+        {
+            get => _connectInfoTitle;
+            set
+            {
+                if (_connectInfoTitle != value)
+                {
+                    _connectInfoTitle = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
+        private string _ADBVersion;
+        public string ADBVersion
+        {
+            get => _ADBVersion;
+            set
+            {
+                if (_ADBVersion != value)
+                {
+                    _ADBVersion = value;
+                    RaisePropertyChangedEvent();
+                }
+            }
+        }
+
         private string _aboutTextBlockText;
         public string AboutTextBlockText
         {
@@ -258,21 +375,56 @@ namespace APKInstaller.ViewModels.SettingsPages
             get
             {
                 string ver = $"{Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
-                string name = Package.Current.DisplayName; ;
+                string name = Package.Current.DisplayName;
                 GetAboutTextBlockText();
                 return $"{name} v{ver}";
             }
         }
 
-        public async void GetAboutTextBlockText()
+        public static List<HyperlinkContent> ConnectHelpers
+        {
+            get
+            {
+                string langcode = LanguageHelper.GetPrimaryLanguage();
+                ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InstallPage");
+                List<HyperlinkContent> values = new()
+                {
+                    new(_loader.GetString("NoDevice10"),new Uri($"https://github.com/Paving-Base/APK-Installer/blob/screenshots/Documents/Tutorials/How%20To%20Connect%20Device/How%20To%20Connect%20Device.{langcode}.md")),
+                    new(_loader.GetString("HowToConnect"),new Uri($"https://github.com/Paving-Base/APK-Installer/blob/screenshots/Documents/Tutorials/How%20To%20Connect%20WSA/How%20To%20Connect%20WSA.{langcode}.md"))
+                };
+                return values;
+            }
+        }
+
+        public async void GetADBVersion()
         {
             await Task.Run(async () =>
             {
-                string langcode = LanguageHelper.GetCurrentLanguage();
-                Uri dataUri = new($"ms-appx:///String/{langcode}/About.md");
+                string version = "Unknown";
+                if (await Task.Run(() => FileEx.Exists(ADBPath)))
+                {
+                    AdbServerStatus info = AdbServer.Instance.GetStatus();
+                    if (info.IsRunning)
+                    {
+                        version = info.Version.ToString(3);
+                    }
+                }
+                _ = UIHelper.DispatcherQueue.EnqueueAsync(() => ADBVersion = version);
+            });
+        }
+
+        private async void GetAboutTextBlockText()
+        {
+            await Task.Run(async () =>
+            {
+                string langcode = LanguageHelper.GetPrimaryLanguage();
+                Uri dataUri = new($"ms-appx:///Assets/About/About.{langcode}.md");
                 StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(dataUri);
-                string markdown = await FileIO.ReadTextAsync(file);
-                _ = UIHelper.DispatcherQueue.EnqueueAsync(() => AboutTextBlockText = markdown);
+                if (file != null)
+                {
+                    string markdown = await FileIO.ReadTextAsync(file);
+                    _ = UIHelper.DispatcherQueue.EnqueueAsync(() => AboutTextBlockText = markdown);
+                }
             });
         }
 
@@ -335,6 +487,112 @@ namespace APKInstaller.ViewModels.SettingsPages
                     break;
                 }
             }
+        }
+
+        public async void ConnectDevice(string ip)
+        {
+            ConnectingDevice = true;
+            IAdbServer ADBServer = AdbServer.Instance;
+            if (!ADBServer.GetStatus().IsRunning)
+            {
+                try
+                {
+                    _ = await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
+                    ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
+                }
+                catch (Exception ex)
+                {
+                    SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                    ConnectInfoSeverity = InfoBarSeverity.Warning;
+                    ConnectInfoTitle = ResourceLoader.GetForViewIndependentUse("InstallPage").GetString("ADBMissing");
+                    ConnectInfoIsOpen = true;
+                    ConnectingDevice = false;
+                    return;
+                }
+            }
+            try
+            {
+                string results = (await new AdbClient().ConnectAsync(ip)).TrimStart();
+                if (results.ToLowerInvariant().StartsWith("connected to"))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Success;
+                    ConnectInfoTitle = results;
+                    ConnectInfoIsOpen = true;
+                }
+                else if (results.ToLowerInvariant().StartsWith("cannot connect to"))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Error;
+                    ConnectInfoTitle = results;
+                    ConnectInfoIsOpen = true;
+                }
+                else if (!string.IsNullOrWhiteSpace(results))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Warning;
+                    ConnectInfoTitle = results;
+                    ConnectInfoIsOpen = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                ConnectInfoSeverity = InfoBarSeverity.Error;
+                ConnectInfoTitle = ex.Message;
+                ConnectInfoIsOpen = true;
+            }
+            ConnectingDevice = false;
+        }
+
+        public async void PairDevice(string ip, string code)
+        {
+            PairingDevice = true;
+            IAdbServer ADBServer = AdbServer.Instance;
+            if (!ADBServer.GetStatus().IsRunning)
+            {
+                try
+                {
+                    _ = await Task.Run(() => ADBServer.StartServer(ADBPath, restartServerIfNewer: false));
+                    ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
+                }
+                catch (Exception ex)
+                {
+                    SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                    ConnectInfoSeverity = InfoBarSeverity.Warning;
+                    ConnectInfoTitle = ResourceLoader.GetForViewIndependentUse("InstallPage").GetString("ADBMissing");
+                    ConnectInfoIsOpen = true;
+                    PairingDevice = false;
+                    return;
+                }
+            }
+            try
+            {
+                string results = (await new AdbClient().PairAsync(ip, code)).TrimStart();
+                if (results.ToLowerInvariant().StartsWith("successfully"))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Success;
+                    ConnectInfoTitle = results;
+                    ConnectInfoIsOpen = true;
+                }
+                else if (results.ToLowerInvariant().StartsWith("failed:"))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Error;
+                    ConnectInfoTitle = results.Substring(8);
+                    ConnectInfoIsOpen = true;
+                }
+                else if (!string.IsNullOrWhiteSpace(results))
+                {
+                    ConnectInfoSeverity = InfoBarSeverity.Warning;
+                    ConnectInfoTitle = results;
+                    ConnectInfoIsOpen = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                ConnectInfoSeverity = InfoBarSeverity.Error;
+                ConnectInfoTitle = ex.Message;
+                ConnectInfoIsOpen = true;
+            }
+            PairingDevice = false;
         }
 
         public async void ChangeADBPath()

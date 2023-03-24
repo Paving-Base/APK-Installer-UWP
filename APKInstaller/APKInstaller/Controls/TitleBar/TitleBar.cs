@@ -17,20 +17,21 @@ namespace APKInstaller.Controls
     [TemplatePart(Name = "Icon", Type = typeof(Viewbox))]
     public partial class TitleBar : Control
     {
-        private Grid m_layoutRoot;
-        private TextBlock m_titleTextBlock;
-        private FrameworkElement m_customArea;
-        private Viewbox m_icon;
+        //private Grid m_layoutRoot;
+        //private TextBlock m_titleTextBlock;
+        //private FrameworkElement m_customArea;
+        //private Viewbox m_icon;
 
-        private readonly bool m_isTitleSquished = false;
-        private readonly bool m_isIconSquished = false;
+        //private readonly bool m_isTitleSquished = false;
+        //private readonly bool m_isIconSquished = false;
 
-        private readonly double m_titleWidth;
-        private readonly double m_iconWidth;
+        //private readonly double m_titleWidth;
+        //private readonly double m_iconWidth;
 
         public TitleBar()
         {
-            this.DefaultStyleKey = typeof(TitleBar);
+            DefaultStyleKey = typeof(TitleBar);
+            SetValue(TemplateSettingsProperty, new TitleBarTemplateSettings());
 
             Window window = Window.Current;
             if (window != null)
@@ -41,25 +42,25 @@ namespace APKInstaller.Controls
 
         protected override void OnApplyTemplate()
         {
-            m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
+            //m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
 
-            m_icon = (Viewbox)GetTemplateChild("Icon");
-            m_titleTextBlock = (TextBlock)GetTemplateChild("TitleText");
-            m_customArea = (FrameworkElement)GetTemplateChild("CustomContentPresenter");
+            //m_icon = (Viewbox)GetTemplateChild("Icon");
+            //m_titleTextBlock = (TextBlock)GetTemplateChild("TitleText");
+            //m_customArea = (FrameworkElement)GetTemplateChild("CustomContentPresenter");
 
             Window window = Window.Current;
-            if (window != null)
-            {
-                Grid dragRegion = (Grid)GetTemplateChild("DragRegion");
-                if (dragRegion != null)
-                {
-                    window.SetTitleBar(dragRegion);
-                }
-                else
-                {
-                    window.SetTitleBar(null);
-                }
-            }
+            //if (window != null)
+            //{
+            //    Grid dragRegion = (Grid)GetTemplateChild("DragRegion");
+            //    if (dragRegion != null)
+            //    {
+            //        window.SetTitleBar(dragRegion);
+            //    }
+            //    else
+            //    {
+            //        window.SetTitleBar(null);
+            //    }
+            //}
 
             Button backButton = (Button)GetTemplateChild("BackButton");
             if (backButton != null)

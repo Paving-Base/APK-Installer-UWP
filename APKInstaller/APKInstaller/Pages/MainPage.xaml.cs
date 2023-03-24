@@ -3,6 +3,7 @@ using APKInstaller.Helpers;
 using APKInstaller.Pages.SettingsPages;
 using System.IO;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Core.Preview;
 using Windows.UI.Xaml;
@@ -18,6 +19,8 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
+
         public MainPage()
         {
             InitializeComponent();
@@ -53,7 +56,7 @@ namespace APKInstaller.Pages
 
                 if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                 {
-                    try { new AdvancedAdbClient().KillAdb(); } catch { }
+                    try { new AdbClient().KillAdb(); } catch { }
                 }
             }
             else

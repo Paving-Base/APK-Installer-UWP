@@ -137,7 +137,6 @@
     <Compile Include="Controls\TitleBar\TitleBar.cs" />
     <Compile Include="Controls\TitleBar\TitleBar.Properties.cs" />
     <Compile Include="Controls\TitleBar\TitleBarTemplateSettings.cs" />
-    <Compile Include="Controls\TitleBar\TitleBarTemplateSettings.Properties.cs" />
     <Compile Include="Controls\WebXAML.xaml.cs">
       <DependentUpon>WebXAML.xaml</DependentUpon>
     </Compile>
@@ -147,7 +146,7 @@
     <Compile Include="Helpers\CommandHelper.cs" />
     <Compile Include="Helpers\DataTransferHelper.cs" />
     <Compile Include="Helpers\DownloadHelper.cs" />
-    <Compile Include="Helpers\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Helpers\ExceptionHandling.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Helpers\PackageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -155,6 +154,7 @@
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Helpers\UpdateHelper.cs" />
     <Compile Include="Models\GitInfo.cs" />
+    <Compile Include="Models\HyperlinkContent.cs" />
     <Compile Include="Models\SystemVersionInfo.cs" />
     <Compile Include="Models\UpdateInfo.cs" />
     <Compile Include="Pages\InstallPage.xaml.cs">
@@ -187,6 +187,41 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\About\About.af-ZA.md" />
+    <Content Include="Assets\About\About.ar-SA.md" />
+    <Content Include="Assets\About\About.ca-ES.md" />
+    <Content Include="Assets\About\About.cs-CZ.md" />
+    <Content Include="Assets\About\About.da-DK.md" />
+    <Content Include="Assets\About\About.de-DE.md" />
+    <Content Include="Assets\About\About.el-GR.md" />
+    <Content Include="Assets\About\About.en-US.md" />
+    <Content Include="Assets\About\About.es-ES.md" />
+    <Content Include="Assets\About\About.fa-IR.md" />
+    <Content Include="Assets\About\About.fi-FI.md" />
+    <Content Include="Assets\About\About.fr-FR.md" />
+    <Content Include="Assets\About\About.he-IL.md" />
+    <Content Include="Assets\About\About.hu-HU.md" />
+    <Content Include="Assets\About\About.id-ID.md" />
+    <Content Include="Assets\About\About.it-IT.md" />
+    <Content Include="Assets\About\About.ja-JP.md" />
+    <Content Include="Assets\About\About.kaa-UZ.md" />
+    <Content Include="Assets\About\About.ko-KR.md" />
+    <Content Include="Assets\About\About.nl-NL.md" />
+    <Content Include="Assets\About\About.no-NO.md" />
+    <Content Include="Assets\About\About.pl-PL.md" />
+    <Content Include="Assets\About\About.pt-BR.md" />
+    <Content Include="Assets\About\About.pt-PT.md" />
+    <Content Include="Assets\About\About.ro-RO.md" />
+    <Content Include="Assets\About\About.ru-RU.md" />
+    <Content Include="Assets\About\About.sr-SP.md" />
+    <Content Include="Assets\About\About.sv-SE.md" />
+    <Content Include="Assets\About\About.tr-TR.md" />
+    <Content Include="Assets\About\About.ug-CN.md" />
+    <Content Include="Assets\About\About.uk-UA.md" />
+    <Content Include="Assets\About\About.vi-VN.md" />
+    <Content Include="Assets\About\About.zh-CN.md" />
+    <Content Include="Assets\About\About.zh-Latn.md" />
+    <Content Include="Assets\About\About.zh-TW.md" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\256x256.png" />
     <Content Include="Assets\LargeTile.scale-100.png" />
@@ -241,409 +276,416 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
-    <None Include="String\af-ZA\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ar-SA\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ca-ES\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\cs-CZ\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\da-DK\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\de-DE\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\el-GR\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\en-US\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\es-ES\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\fi-FI\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\fr-FR\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\he-IL\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\hu-HU\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\id-ID\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\it-IT\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ja-JP\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ko-KR\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\nl-NL\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\no-NO\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\pl-PL\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\pt-BR\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\pt-PT\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ro-RO\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\ru-RU\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\sr-SP\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\sv-SE\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\tr-TR\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\uk-UA\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\vi-VN\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\zh-CN\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="String\zh-TW\About.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <PRIResource Include="String\zh-TW\TitleBar.resw" />
-    <PRIResource Include="String\zh-TW\TestPage.resw" />
-    <PRIResource Include="String\zh-TW\SettingsPage.resw" />
-    <PRIResource Include="String\zh-TW\Resources.resw" />
-    <PRIResource Include="String\zh-TW\ProcessesPage.resw" />
-    <PRIResource Include="String\zh-TW\Permissions.resw" />
-    <PRIResource Include="String\zh-TW\MarkdownDialog.resw" />
-    <PRIResource Include="String\zh-TW\InstallPage.resw" />
-    <PRIResource Include="String\zh-TW\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\zh-TW\ApplicationsPage.resw" />
-    <PRIResource Include="String\zh-CN\TitleBar.resw" />
-    <PRIResource Include="String\zh-CN\TestPage.resw" />
-    <PRIResource Include="String\zh-CN\SettingsPage.resw" />
-    <PRIResource Include="String\zh-CN\Resources.resw" />
-    <PRIResource Include="String\zh-CN\ProcessesPage.resw" />
-    <PRIResource Include="String\zh-CN\Permissions.resw" />
-    <PRIResource Include="String\zh-CN\MarkdownDialog.resw" />
-    <PRIResource Include="String\zh-CN\InstallPage.resw" />
-    <PRIResource Include="String\zh-CN\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\zh-CN\ApplicationsPage.resw" />
-    <PRIResource Include="String\vi-VN\TitleBar.resw" />
-    <PRIResource Include="String\vi-VN\TestPage.resw" />
-    <PRIResource Include="String\vi-VN\SettingsPage.resw" />
-    <PRIResource Include="String\vi-VN\Resources.resw" />
-    <PRIResource Include="String\vi-VN\ProcessesPage.resw" />
-    <PRIResource Include="String\vi-VN\Permissions.resw" />
-    <PRIResource Include="String\vi-VN\MarkdownDialog.resw" />
-    <PRIResource Include="String\vi-VN\InstallPage.resw" />
-    <PRIResource Include="String\vi-VN\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\vi-VN\ApplicationsPage.resw" />
-    <PRIResource Include="String\uk-UA\TitleBar.resw" />
-    <PRIResource Include="String\uk-UA\TestPage.resw" />
-    <PRIResource Include="String\uk-UA\SettingsPage.resw" />
-    <PRIResource Include="String\uk-UA\Resources.resw" />
-    <PRIResource Include="String\uk-UA\ProcessesPage.resw" />
-    <PRIResource Include="String\uk-UA\Permissions.resw" />
-    <PRIResource Include="String\uk-UA\MarkdownDialog.resw" />
-    <PRIResource Include="String\uk-UA\InstallPage.resw" />
-    <PRIResource Include="String\uk-UA\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\uk-UA\ApplicationsPage.resw" />
-    <PRIResource Include="String\tr-TR\TitleBar.resw" />
-    <PRIResource Include="String\tr-TR\TestPage.resw" />
-    <PRIResource Include="String\tr-TR\SettingsPage.resw" />
-    <PRIResource Include="String\tr-TR\Resources.resw" />
-    <PRIResource Include="String\tr-TR\ProcessesPage.resw" />
-    <PRIResource Include="String\tr-TR\Permissions.resw" />
-    <PRIResource Include="String\tr-TR\MarkdownDialog.resw" />
-    <PRIResource Include="String\tr-TR\InstallPage.resw" />
-    <PRIResource Include="String\tr-TR\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\tr-TR\ApplicationsPage.resw" />
-    <PRIResource Include="String\sv-SE\TitleBar.resw" />
-    <PRIResource Include="String\sv-SE\TestPage.resw" />
-    <PRIResource Include="String\sv-SE\SettingsPage.resw" />
-    <PRIResource Include="String\sv-SE\Resources.resw" />
-    <PRIResource Include="String\sv-SE\ProcessesPage.resw" />
-    <PRIResource Include="String\sv-SE\Permissions.resw" />
-    <PRIResource Include="String\sv-SE\MarkdownDialog.resw" />
-    <PRIResource Include="String\sv-SE\InstallPage.resw" />
-    <PRIResource Include="String\sv-SE\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\sv-SE\ApplicationsPage.resw" />
-    <PRIResource Include="String\sr-SP\TitleBar.resw" />
-    <PRIResource Include="String\sr-SP\TestPage.resw" />
-    <PRIResource Include="String\sr-SP\SettingsPage.resw" />
-    <PRIResource Include="String\sr-SP\Resources.resw" />
-    <PRIResource Include="String\sr-SP\ProcessesPage.resw" />
-    <PRIResource Include="String\sr-SP\Permissions.resw" />
-    <PRIResource Include="String\sr-SP\MarkdownDialog.resw" />
-    <PRIResource Include="String\sr-SP\InstallPage.resw" />
-    <PRIResource Include="String\sr-SP\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\sr-SP\ApplicationsPage.resw" />
-    <PRIResource Include="String\ru-RU\TitleBar.resw" />
-    <PRIResource Include="String\ru-RU\TestPage.resw" />
-    <PRIResource Include="String\ru-RU\SettingsPage.resw" />
-    <PRIResource Include="String\ru-RU\Resources.resw" />
-    <PRIResource Include="String\ru-RU\ProcessesPage.resw" />
-    <PRIResource Include="String\ru-RU\Permissions.resw" />
-    <PRIResource Include="String\ru-RU\MarkdownDialog.resw" />
-    <PRIResource Include="String\ru-RU\InstallPage.resw" />
-    <PRIResource Include="String\ru-RU\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ru-RU\ApplicationsPage.resw" />
-    <PRIResource Include="String\ro-RO\TitleBar.resw" />
-    <PRIResource Include="String\ro-RO\TestPage.resw" />
-    <PRIResource Include="String\ro-RO\SettingsPage.resw" />
-    <PRIResource Include="String\ro-RO\Resources.resw" />
-    <PRIResource Include="String\ro-RO\ProcessesPage.resw" />
-    <PRIResource Include="String\ro-RO\Permissions.resw" />
-    <PRIResource Include="String\ro-RO\MarkdownDialog.resw" />
-    <PRIResource Include="String\ro-RO\InstallPage.resw" />
-    <PRIResource Include="String\ro-RO\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ro-RO\ApplicationsPage.resw" />
-    <PRIResource Include="String\pt-PT\TitleBar.resw" />
-    <PRIResource Include="String\pt-PT\TestPage.resw" />
-    <PRIResource Include="String\pt-PT\SettingsPage.resw" />
-    <PRIResource Include="String\pt-PT\Resources.resw" />
-    <PRIResource Include="String\pt-PT\ProcessesPage.resw" />
-    <PRIResource Include="String\pt-PT\Permissions.resw" />
-    <PRIResource Include="String\pt-PT\MarkdownDialog.resw" />
-    <PRIResource Include="String\pt-PT\InstallPage.resw" />
-    <PRIResource Include="String\pt-PT\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\pt-PT\ApplicationsPage.resw" />
-    <PRIResource Include="String\pt-BR\TitleBar.resw" />
-    <PRIResource Include="String\pt-BR\TestPage.resw" />
-    <PRIResource Include="String\pt-BR\SettingsPage.resw" />
-    <PRIResource Include="String\pt-BR\Resources.resw" />
-    <PRIResource Include="String\pt-BR\ProcessesPage.resw" />
-    <PRIResource Include="String\pt-BR\Permissions.resw" />
-    <PRIResource Include="String\pt-BR\MarkdownDialog.resw" />
-    <PRIResource Include="String\pt-BR\InstallPage.resw" />
-    <PRIResource Include="String\pt-BR\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\pt-BR\ApplicationsPage.resw" />
-    <PRIResource Include="String\pl-PL\TitleBar.resw" />
-    <PRIResource Include="String\pl-PL\TestPage.resw" />
-    <PRIResource Include="String\pl-PL\SettingsPage.resw" />
-    <PRIResource Include="String\pl-PL\Resources.resw" />
-    <PRIResource Include="String\pl-PL\ProcessesPage.resw" />
-    <PRIResource Include="String\pl-PL\Permissions.resw" />
-    <PRIResource Include="String\pl-PL\MarkdownDialog.resw" />
-    <PRIResource Include="String\pl-PL\InstallPage.resw" />
-    <PRIResource Include="String\pl-PL\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\pl-PL\ApplicationsPage.resw" />
-    <PRIResource Include="String\no-NO\TitleBar.resw" />
-    <PRIResource Include="String\no-NO\TestPage.resw" />
-    <PRIResource Include="String\no-NO\SettingsPage.resw" />
-    <PRIResource Include="String\no-NO\Resources.resw" />
-    <PRIResource Include="String\no-NO\ProcessesPage.resw" />
-    <PRIResource Include="String\no-NO\Permissions.resw" />
-    <PRIResource Include="String\no-NO\MarkdownDialog.resw" />
-    <PRIResource Include="String\no-NO\InstallPage.resw" />
-    <PRIResource Include="String\no-NO\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\no-NO\ApplicationsPage.resw" />
-    <PRIResource Include="String\nl-NL\TitleBar.resw" />
-    <PRIResource Include="String\nl-NL\TestPage.resw" />
-    <PRIResource Include="String\nl-NL\SettingsPage.resw" />
-    <PRIResource Include="String\nl-NL\Resources.resw" />
-    <PRIResource Include="String\nl-NL\ProcessesPage.resw" />
-    <PRIResource Include="String\nl-NL\Permissions.resw" />
-    <PRIResource Include="String\nl-NL\MarkdownDialog.resw" />
-    <PRIResource Include="String\nl-NL\InstallPage.resw" />
-    <PRIResource Include="String\nl-NL\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\nl-NL\ApplicationsPage.resw" />
-    <PRIResource Include="String\ko-KR\TitleBar.resw" />
-    <PRIResource Include="String\ko-KR\TestPage.resw" />
-    <PRIResource Include="String\ko-KR\SettingsPage.resw" />
-    <PRIResource Include="String\ko-KR\Resources.resw" />
-    <PRIResource Include="String\ko-KR\ProcessesPage.resw" />
-    <PRIResource Include="String\ko-KR\Permissions.resw" />
-    <PRIResource Include="String\ko-KR\MarkdownDialog.resw" />
-    <PRIResource Include="String\ko-KR\InstallPage.resw" />
-    <PRIResource Include="String\ko-KR\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ko-KR\ApplicationsPage.resw" />
-    <PRIResource Include="String\ja-JP\TitleBar.resw" />
-    <PRIResource Include="String\ja-JP\TestPage.resw" />
-    <PRIResource Include="String\ja-JP\SettingsPage.resw" />
-    <PRIResource Include="String\ja-JP\Resources.resw" />
-    <PRIResource Include="String\ja-JP\ProcessesPage.resw" />
-    <PRIResource Include="String\ja-JP\Permissions.resw" />
-    <PRIResource Include="String\ja-JP\MarkdownDialog.resw" />
-    <PRIResource Include="String\ja-JP\InstallPage.resw" />
-    <PRIResource Include="String\ja-JP\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ja-JP\ApplicationsPage.resw" />
-    <PRIResource Include="String\it-IT\TitleBar.resw" />
-    <PRIResource Include="String\it-IT\TestPage.resw" />
-    <PRIResource Include="String\it-IT\SettingsPage.resw" />
-    <PRIResource Include="String\it-IT\Resources.resw" />
-    <PRIResource Include="String\it-IT\ProcessesPage.resw" />
-    <PRIResource Include="String\it-IT\Permissions.resw" />
-    <PRIResource Include="String\it-IT\MarkdownDialog.resw" />
-    <PRIResource Include="String\it-IT\InstallPage.resw" />
-    <PRIResource Include="String\it-IT\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\it-IT\ApplicationsPage.resw" />
-    <PRIResource Include="String\id-ID\TitleBar.resw" />
-    <PRIResource Include="String\id-ID\TestPage.resw" />
-    <PRIResource Include="String\id-ID\SettingsPage.resw" />
-    <PRIResource Include="String\id-ID\Resources.resw" />
-    <PRIResource Include="String\id-ID\ProcessesPage.resw" />
-    <PRIResource Include="String\id-ID\Permissions.resw" />
-    <PRIResource Include="String\id-ID\MarkdownDialog.resw" />
-    <PRIResource Include="String\id-ID\InstallPage.resw" />
-    <PRIResource Include="String\id-ID\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\id-ID\ApplicationsPage.resw" />
-    <PRIResource Include="String\hu-HU\TitleBar.resw" />
-    <PRIResource Include="String\hu-HU\TestPage.resw" />
-    <PRIResource Include="String\hu-HU\SettingsPage.resw" />
-    <PRIResource Include="String\hu-HU\Resources.resw" />
-    <PRIResource Include="String\hu-HU\ProcessesPage.resw" />
-    <PRIResource Include="String\hu-HU\Permissions.resw" />
-    <PRIResource Include="String\hu-HU\MarkdownDialog.resw" />
-    <PRIResource Include="String\hu-HU\InstallPage.resw" />
-    <PRIResource Include="String\hu-HU\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\hu-HU\ApplicationsPage.resw" />
-    <PRIResource Include="String\he-IL\TitleBar.resw" />
-    <PRIResource Include="String\he-IL\TestPage.resw" />
-    <PRIResource Include="String\he-IL\SettingsPage.resw" />
-    <PRIResource Include="String\he-IL\Resources.resw" />
-    <PRIResource Include="String\he-IL\ProcessesPage.resw" />
-    <PRIResource Include="String\he-IL\Permissions.resw" />
-    <PRIResource Include="String\he-IL\MarkdownDialog.resw" />
-    <PRIResource Include="String\he-IL\InstallPage.resw" />
-    <PRIResource Include="String\he-IL\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\he-IL\ApplicationsPage.resw" />
-    <PRIResource Include="String\fr-FR\TitleBar.resw" />
-    <PRIResource Include="String\fr-FR\TestPage.resw" />
-    <PRIResource Include="String\fr-FR\SettingsPage.resw" />
-    <PRIResource Include="String\fr-FR\Resources.resw" />
-    <PRIResource Include="String\fr-FR\ProcessesPage.resw" />
-    <PRIResource Include="String\fr-FR\Permissions.resw" />
-    <PRIResource Include="String\fr-FR\MarkdownDialog.resw" />
-    <PRIResource Include="String\fr-FR\InstallPage.resw" />
-    <PRIResource Include="String\fr-FR\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\fr-FR\ApplicationsPage.resw" />
-    <PRIResource Include="String\fi-FI\TitleBar.resw" />
-    <PRIResource Include="String\fi-FI\TestPage.resw" />
-    <PRIResource Include="String\fi-FI\SettingsPage.resw" />
-    <PRIResource Include="String\fi-FI\Resources.resw" />
-    <PRIResource Include="String\fi-FI\ProcessesPage.resw" />
-    <PRIResource Include="String\fi-FI\Permissions.resw" />
-    <PRIResource Include="String\fi-FI\MarkdownDialog.resw" />
-    <PRIResource Include="String\fi-FI\InstallPage.resw" />
-    <PRIResource Include="String\fi-FI\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\fi-FI\ApplicationsPage.resw" />
-    <PRIResource Include="String\es-ES\TitleBar.resw" />
-    <PRIResource Include="String\es-ES\TestPage.resw" />
-    <PRIResource Include="String\es-ES\SettingsPage.resw" />
-    <PRIResource Include="String\es-ES\Resources.resw" />
-    <PRIResource Include="String\es-ES\ProcessesPage.resw" />
-    <PRIResource Include="String\es-ES\Permissions.resw" />
-    <PRIResource Include="String\es-ES\MarkdownDialog.resw" />
-    <PRIResource Include="String\es-ES\InstallPage.resw" />
-    <PRIResource Include="String\es-ES\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\es-ES\ApplicationsPage.resw" />
-    <PRIResource Include="String\en-US\TitleBar.resw" />
-    <PRIResource Include="String\en-US\TestPage.resw" />
-    <PRIResource Include="String\en-US\SettingsPage.resw" />
-    <PRIResource Include="String\en-US\Resources.resw" />
-    <PRIResource Include="String\en-US\ProcessesPage.resw" />
-    <PRIResource Include="String\en-US\Permissions.resw" />
-    <PRIResource Include="String\en-US\MarkdownDialog.resw" />
-    <PRIResource Include="String\en-US\InstallPage.resw" />
-    <PRIResource Include="String\en-US\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\en-US\ApplicationsPage.resw" />
-    <PRIResource Include="String\el-GR\TitleBar.resw" />
-    <PRIResource Include="String\el-GR\TestPage.resw" />
-    <PRIResource Include="String\el-GR\SettingsPage.resw" />
-    <PRIResource Include="String\el-GR\Resources.resw" />
-    <PRIResource Include="String\el-GR\ProcessesPage.resw" />
-    <PRIResource Include="String\el-GR\Permissions.resw" />
-    <PRIResource Include="String\el-GR\MarkdownDialog.resw" />
-    <PRIResource Include="String\el-GR\InstallPage.resw" />
-    <PRIResource Include="String\el-GR\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\el-GR\ApplicationsPage.resw" />
-    <PRIResource Include="String\de-DE\TitleBar.resw" />
-    <PRIResource Include="String\de-DE\TestPage.resw" />
-    <PRIResource Include="String\de-DE\SettingsPage.resw" />
-    <PRIResource Include="String\de-DE\Resources.resw" />
-    <PRIResource Include="String\de-DE\ProcessesPage.resw" />
-    <PRIResource Include="String\de-DE\Permissions.resw" />
-    <PRIResource Include="String\de-DE\MarkdownDialog.resw" />
-    <PRIResource Include="String\de-DE\InstallPage.resw" />
-    <PRIResource Include="String\de-DE\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\de-DE\ApplicationsPage.resw" />
-    <PRIResource Include="String\da-DK\TitleBar.resw" />
-    <PRIResource Include="String\da-DK\TestPage.resw" />
-    <PRIResource Include="String\da-DK\SettingsPage.resw" />
-    <PRIResource Include="String\da-DK\Resources.resw" />
-    <PRIResource Include="String\da-DK\ProcessesPage.resw" />
-    <PRIResource Include="String\da-DK\Permissions.resw" />
-    <PRIResource Include="String\da-DK\MarkdownDialog.resw" />
-    <PRIResource Include="String\da-DK\InstallPage.resw" />
-    <PRIResource Include="String\da-DK\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\da-DK\ApplicationsPage.resw" />
-    <PRIResource Include="String\cs-CZ\TitleBar.resw" />
-    <PRIResource Include="String\cs-CZ\TestPage.resw" />
-    <PRIResource Include="String\cs-CZ\SettingsPage.resw" />
-    <PRIResource Include="String\cs-CZ\Resources.resw" />
-    <PRIResource Include="String\cs-CZ\ProcessesPage.resw" />
-    <PRIResource Include="String\cs-CZ\Permissions.resw" />
-    <PRIResource Include="String\cs-CZ\MarkdownDialog.resw" />
-    <PRIResource Include="String\cs-CZ\InstallPage.resw" />
-    <PRIResource Include="String\cs-CZ\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\cs-CZ\ApplicationsPage.resw" />
-    <PRIResource Include="String\ca-ES\TitleBar.resw" />
-    <PRIResource Include="String\ca-ES\TestPage.resw" />
-    <PRIResource Include="String\ca-ES\SettingsPage.resw" />
-    <PRIResource Include="String\ca-ES\Resources.resw" />
-    <PRIResource Include="String\ca-ES\ProcessesPage.resw" />
-    <PRIResource Include="String\ca-ES\Permissions.resw" />
-    <PRIResource Include="String\ca-ES\MarkdownDialog.resw" />
-    <PRIResource Include="String\ca-ES\InstallPage.resw" />
-    <PRIResource Include="String\ca-ES\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ca-ES\ApplicationsPage.resw" />
-    <PRIResource Include="String\ar-SA\TitleBar.resw" />
-    <PRIResource Include="String\ar-SA\TestPage.resw" />
-    <PRIResource Include="String\ar-SA\SettingsPage.resw" />
-    <PRIResource Include="String\ar-SA\Resources.resw" />
-    <PRIResource Include="String\ar-SA\ProcessesPage.resw" />
-    <PRIResource Include="String\ar-SA\Permissions.resw" />
-    <PRIResource Include="String\ar-SA\MarkdownDialog.resw" />
-    <PRIResource Include="String\ar-SA\InstallPage.resw" />
-    <PRIResource Include="String\ar-SA\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\ar-SA\ApplicationsPage.resw" />
-    <PRIResource Include="String\af-ZA\TitleBar.resw" />
-    <PRIResource Include="String\af-ZA\TestPage.resw" />
-    <PRIResource Include="String\af-ZA\SettingsPage.resw" />
-    <PRIResource Include="String\af-ZA\Resources.resw" />
-    <PRIResource Include="String\af-ZA\ProcessesPage.resw" />
-    <PRIResource Include="String\af-ZA\Permissions.resw" />
-    <PRIResource Include="String\af-ZA\MarkdownDialog.resw" />
-    <PRIResource Include="String\af-ZA\InstallPage.resw" />
-    <PRIResource Include="String\af-ZA\CapabilitiesInfoControl.resw" />
-    <PRIResource Include="String\af-ZA\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\zh-TW\TitleBar.resw" />
+    <PRIResource Include="Strings\zh-TW\TestPage.resw" />
+    <PRIResource Include="Strings\zh-TW\SettingsPage.resw" />
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
+    <PRIResource Include="Strings\zh-TW\ProcessesPage.resw" />
+    <PRIResource Include="Strings\zh-TW\Permissions.resw" />
+    <PRIResource Include="Strings\zh-TW\PairDevicePage.resw" />
+    <PRIResource Include="Strings\zh-TW\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\zh-TW\InstallPage.resw" />
+    <PRIResource Include="Strings\zh-TW\InfosPage.resw" />
+    <PRIResource Include="Strings\zh-TW\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\zh-TW\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\TitleBar.resw" />
+    <PRIResource Include="Strings\zh-Latn\TestPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\SettingsPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\Resources.resw" />
+    <PRIResource Include="Strings\zh-Latn\ProcessesPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\Permissions.resw" />
+    <PRIResource Include="Strings\zh-Latn\PairDevicePage.resw" />
+    <PRIResource Include="Strings\zh-Latn\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\zh-Latn\InstallPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\InfosPage.resw" />
+    <PRIResource Include="Strings\zh-Latn\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\zh-Latn\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\zh-CN\TitleBar.resw" />
+    <PRIResource Include="Strings\zh-CN\TestPage.resw" />
+    <PRIResource Include="Strings\zh-CN\SettingsPage.resw" />
+    <PRIResource Include="Strings\zh-CN\Resources.resw" />
+    <PRIResource Include="Strings\zh-CN\ProcessesPage.resw" />
+    <PRIResource Include="Strings\zh-CN\Permissions.resw" />
+    <PRIResource Include="Strings\zh-CN\PairDevicePage.resw" />
+    <PRIResource Include="Strings\zh-CN\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\zh-CN\InstallPage.resw" />
+    <PRIResource Include="Strings\zh-CN\InfosPage.resw" />
+    <PRIResource Include="Strings\zh-CN\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\zh-CN\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\vi-VN\TitleBar.resw" />
+    <PRIResource Include="Strings\vi-VN\TestPage.resw" />
+    <PRIResource Include="Strings\vi-VN\SettingsPage.resw" />
+    <PRIResource Include="Strings\vi-VN\Resources.resw" />
+    <PRIResource Include="Strings\vi-VN\ProcessesPage.resw" />
+    <PRIResource Include="Strings\vi-VN\Permissions.resw" />
+    <PRIResource Include="Strings\vi-VN\PairDevicePage.resw" />
+    <PRIResource Include="Strings\vi-VN\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\vi-VN\InstallPage.resw" />
+    <PRIResource Include="Strings\vi-VN\InfosPage.resw" />
+    <PRIResource Include="Strings\vi-VN\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\vi-VN\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\uk-UA\TitleBar.resw" />
+    <PRIResource Include="Strings\uk-UA\TestPage.resw" />
+    <PRIResource Include="Strings\uk-UA\SettingsPage.resw" />
+    <PRIResource Include="Strings\uk-UA\Resources.resw" />
+    <PRIResource Include="Strings\uk-UA\ProcessesPage.resw" />
+    <PRIResource Include="Strings\uk-UA\Permissions.resw" />
+    <PRIResource Include="Strings\uk-UA\PairDevicePage.resw" />
+    <PRIResource Include="Strings\uk-UA\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\uk-UA\InstallPage.resw" />
+    <PRIResource Include="Strings\uk-UA\InfosPage.resw" />
+    <PRIResource Include="Strings\uk-UA\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\uk-UA\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ug-CN\TitleBar.resw" />
+    <PRIResource Include="Strings\ug-CN\TestPage.resw" />
+    <PRIResource Include="Strings\ug-CN\SettingsPage.resw" />
+    <PRIResource Include="Strings\ug-CN\Resources.resw" />
+    <PRIResource Include="Strings\ug-CN\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ug-CN\Permissions.resw" />
+    <PRIResource Include="Strings\ug-CN\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ug-CN\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ug-CN\InstallPage.resw" />
+    <PRIResource Include="Strings\ug-CN\InfosPage.resw" />
+    <PRIResource Include="Strings\ug-CN\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ug-CN\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\tr-TR\TitleBar.resw" />
+    <PRIResource Include="Strings\tr-TR\TestPage.resw" />
+    <PRIResource Include="Strings\tr-TR\SettingsPage.resw" />
+    <PRIResource Include="Strings\tr-TR\Resources.resw" />
+    <PRIResource Include="Strings\tr-TR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\tr-TR\Permissions.resw" />
+    <PRIResource Include="Strings\tr-TR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\tr-TR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\tr-TR\InstallPage.resw" />
+    <PRIResource Include="Strings\tr-TR\InfosPage.resw" />
+    <PRIResource Include="Strings\tr-TR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\tr-TR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\sv-SE\TitleBar.resw" />
+    <PRIResource Include="Strings\sv-SE\TestPage.resw" />
+    <PRIResource Include="Strings\sv-SE\SettingsPage.resw" />
+    <PRIResource Include="Strings\sv-SE\Resources.resw" />
+    <PRIResource Include="Strings\sv-SE\ProcessesPage.resw" />
+    <PRIResource Include="Strings\sv-SE\Permissions.resw" />
+    <PRIResource Include="Strings\sv-SE\PairDevicePage.resw" />
+    <PRIResource Include="Strings\sv-SE\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\sv-SE\InstallPage.resw" />
+    <PRIResource Include="Strings\sv-SE\InfosPage.resw" />
+    <PRIResource Include="Strings\sv-SE\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\sv-SE\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ru-RU\TitleBar.resw" />
+    <PRIResource Include="Strings\ru-RU\TestPage.resw" />
+    <PRIResource Include="Strings\ru-RU\SettingsPage.resw" />
+    <PRIResource Include="Strings\ru-RU\Resources.resw" />
+    <PRIResource Include="Strings\ru-RU\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ru-RU\Permissions.resw" />
+    <PRIResource Include="Strings\ru-RU\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ru-RU\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ru-RU\InstallPage.resw" />
+    <PRIResource Include="Strings\ru-RU\InfosPage.resw" />
+    <PRIResource Include="Strings\ru-RU\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ru-RU\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ro-RO\TitleBar.resw" />
+    <PRIResource Include="Strings\ro-RO\TestPage.resw" />
+    <PRIResource Include="Strings\ro-RO\SettingsPage.resw" />
+    <PRIResource Include="Strings\ro-RO\Resources.resw" />
+    <PRIResource Include="Strings\ro-RO\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ro-RO\Permissions.resw" />
+    <PRIResource Include="Strings\ro-RO\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ro-RO\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ro-RO\InstallPage.resw" />
+    <PRIResource Include="Strings\ro-RO\InfosPage.resw" />
+    <PRIResource Include="Strings\ro-RO\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ro-RO\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\pt-PT\TitleBar.resw" />
+    <PRIResource Include="Strings\pt-PT\TestPage.resw" />
+    <PRIResource Include="Strings\pt-PT\SettingsPage.resw" />
+    <PRIResource Include="Strings\pt-PT\Resources.resw" />
+    <PRIResource Include="Strings\pt-PT\ProcessesPage.resw" />
+    <PRIResource Include="Strings\pt-PT\Permissions.resw" />
+    <PRIResource Include="Strings\pt-PT\PairDevicePage.resw" />
+    <PRIResource Include="Strings\pt-PT\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\pt-PT\InstallPage.resw" />
+    <PRIResource Include="Strings\pt-PT\InfosPage.resw" />
+    <PRIResource Include="Strings\pt-PT\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\pt-PT\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\pt-BR\TitleBar.resw" />
+    <PRIResource Include="Strings\pt-BR\TestPage.resw" />
+    <PRIResource Include="Strings\pt-BR\SettingsPage.resw" />
+    <PRIResource Include="Strings\pt-BR\Resources.resw" />
+    <PRIResource Include="Strings\pt-BR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\pt-BR\Permissions.resw" />
+    <PRIResource Include="Strings\pt-BR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\pt-BR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\pt-BR\InstallPage.resw" />
+    <PRIResource Include="Strings\pt-BR\InfosPage.resw" />
+    <PRIResource Include="Strings\pt-BR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\pt-BR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\pl-PL\TitleBar.resw" />
+    <PRIResource Include="Strings\pl-PL\TestPage.resw" />
+    <PRIResource Include="Strings\pl-PL\SettingsPage.resw" />
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
+    <PRIResource Include="Strings\pl-PL\ProcessesPage.resw" />
+    <PRIResource Include="Strings\pl-PL\Permissions.resw" />
+    <PRIResource Include="Strings\pl-PL\PairDevicePage.resw" />
+    <PRIResource Include="Strings\pl-PL\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\pl-PL\InstallPage.resw" />
+    <PRIResource Include="Strings\pl-PL\InfosPage.resw" />
+    <PRIResource Include="Strings\pl-PL\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\pl-PL\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\no-NO\TitleBar.resw" />
+    <PRIResource Include="Strings\no-NO\TestPage.resw" />
+    <PRIResource Include="Strings\no-NO\SettingsPage.resw" />
+    <PRIResource Include="Strings\no-NO\Resources.resw" />
+    <PRIResource Include="Strings\no-NO\ProcessesPage.resw" />
+    <PRIResource Include="Strings\no-NO\Permissions.resw" />
+    <PRIResource Include="Strings\no-NO\PairDevicePage.resw" />
+    <PRIResource Include="Strings\no-NO\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\no-NO\InstallPage.resw" />
+    <PRIResource Include="Strings\no-NO\InfosPage.resw" />
+    <PRIResource Include="Strings\no-NO\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\no-NO\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\nl-NL\TitleBar.resw" />
+    <PRIResource Include="Strings\nl-NL\TestPage.resw" />
+    <PRIResource Include="Strings\nl-NL\SettingsPage.resw" />
+    <PRIResource Include="Strings\nl-NL\Resources.resw" />
+    <PRIResource Include="Strings\nl-NL\ProcessesPage.resw" />
+    <PRIResource Include="Strings\nl-NL\Permissions.resw" />
+    <PRIResource Include="Strings\nl-NL\PairDevicePage.resw" />
+    <PRIResource Include="Strings\nl-NL\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\nl-NL\InstallPage.resw" />
+    <PRIResource Include="Strings\nl-NL\InfosPage.resw" />
+    <PRIResource Include="Strings\nl-NL\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\nl-NL\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ko-KR\TitleBar.resw" />
+    <PRIResource Include="Strings\ko-KR\TestPage.resw" />
+    <PRIResource Include="Strings\ko-KR\SettingsPage.resw" />
+    <PRIResource Include="Strings\ko-KR\Resources.resw" />
+    <PRIResource Include="Strings\ko-KR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ko-KR\Permissions.resw" />
+    <PRIResource Include="Strings\ko-KR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ko-KR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ko-KR\InstallPage.resw" />
+    <PRIResource Include="Strings\ko-KR\InfosPage.resw" />
+    <PRIResource Include="Strings\ko-KR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ko-KR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\TitleBar.resw" />
+    <PRIResource Include="Strings\kaa-UZ\TestPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\SettingsPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\Resources.resw" />
+    <PRIResource Include="Strings\kaa-UZ\ProcessesPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\Permissions.resw" />
+    <PRIResource Include="Strings\kaa-UZ\PairDevicePage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\kaa-UZ\InstallPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\InfosPage.resw" />
+    <PRIResource Include="Strings\kaa-UZ\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\kaa-UZ\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ja-JP\TitleBar.resw" />
+    <PRIResource Include="Strings\ja-JP\TestPage.resw" />
+    <PRIResource Include="Strings\ja-JP\SettingsPage.resw" />
+    <PRIResource Include="Strings\ja-JP\Resources.resw" />
+    <PRIResource Include="Strings\ja-JP\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ja-JP\Permissions.resw" />
+    <PRIResource Include="Strings\ja-JP\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ja-JP\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ja-JP\InstallPage.resw" />
+    <PRIResource Include="Strings\ja-JP\InfosPage.resw" />
+    <PRIResource Include="Strings\ja-JP\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ja-JP\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\it-IT\TitleBar.resw" />
+    <PRIResource Include="Strings\it-IT\TestPage.resw" />
+    <PRIResource Include="Strings\it-IT\SettingsPage.resw" />
+    <PRIResource Include="Strings\it-IT\Resources.resw" />
+    <PRIResource Include="Strings\it-IT\ProcessesPage.resw" />
+    <PRIResource Include="Strings\it-IT\Permissions.resw" />
+    <PRIResource Include="Strings\it-IT\PairDevicePage.resw" />
+    <PRIResource Include="Strings\it-IT\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\it-IT\InstallPage.resw" />
+    <PRIResource Include="Strings\it-IT\InfosPage.resw" />
+    <PRIResource Include="Strings\it-IT\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\it-IT\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\id-ID\TitleBar.resw" />
+    <PRIResource Include="Strings\id-ID\TestPage.resw" />
+    <PRIResource Include="Strings\id-ID\SettingsPage.resw" />
+    <PRIResource Include="Strings\id-ID\Resources.resw" />
+    <PRIResource Include="Strings\id-ID\ProcessesPage.resw" />
+    <PRIResource Include="Strings\id-ID\Permissions.resw" />
+    <PRIResource Include="Strings\id-ID\PairDevicePage.resw" />
+    <PRIResource Include="Strings\id-ID\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\id-ID\InstallPage.resw" />
+    <PRIResource Include="Strings\id-ID\InfosPage.resw" />
+    <PRIResource Include="Strings\id-ID\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\id-ID\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\hu-HU\TitleBar.resw" />
+    <PRIResource Include="Strings\hu-HU\TestPage.resw" />
+    <PRIResource Include="Strings\hu-HU\SettingsPage.resw" />
+    <PRIResource Include="Strings\hu-HU\Resources.resw" />
+    <PRIResource Include="Strings\hu-HU\ProcessesPage.resw" />
+    <PRIResource Include="Strings\hu-HU\Permissions.resw" />
+    <PRIResource Include="Strings\hu-HU\PairDevicePage.resw" />
+    <PRIResource Include="Strings\hu-HU\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\hu-HU\InstallPage.resw" />
+    <PRIResource Include="Strings\hu-HU\InfosPage.resw" />
+    <PRIResource Include="Strings\hu-HU\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\hu-HU\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\he-IL\TitleBar.resw" />
+    <PRIResource Include="Strings\he-IL\TestPage.resw" />
+    <PRIResource Include="Strings\he-IL\SettingsPage.resw" />
+    <PRIResource Include="Strings\he-IL\Resources.resw" />
+    <PRIResource Include="Strings\he-IL\ProcessesPage.resw" />
+    <PRIResource Include="Strings\he-IL\Permissions.resw" />
+    <PRIResource Include="Strings\he-IL\PairDevicePage.resw" />
+    <PRIResource Include="Strings\he-IL\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\he-IL\InstallPage.resw" />
+    <PRIResource Include="Strings\he-IL\InfosPage.resw" />
+    <PRIResource Include="Strings\he-IL\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\he-IL\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\fr-FR\TitleBar.resw" />
+    <PRIResource Include="Strings\fr-FR\TestPage.resw" />
+    <PRIResource Include="Strings\fr-FR\SettingsPage.resw" />
+    <PRIResource Include="Strings\fr-FR\Resources.resw" />
+    <PRIResource Include="Strings\fr-FR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\fr-FR\Permissions.resw" />
+    <PRIResource Include="Strings\fr-FR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\fr-FR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\fr-FR\InstallPage.resw" />
+    <PRIResource Include="Strings\fr-FR\InfosPage.resw" />
+    <PRIResource Include="Strings\fr-FR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\fr-FR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\fi-FI\TitleBar.resw" />
+    <PRIResource Include="Strings\fi-FI\TestPage.resw" />
+    <PRIResource Include="Strings\fi-FI\SettingsPage.resw" />
+    <PRIResource Include="Strings\fi-FI\Resources.resw" />
+    <PRIResource Include="Strings\fi-FI\ProcessesPage.resw" />
+    <PRIResource Include="Strings\fi-FI\Permissions.resw" />
+    <PRIResource Include="Strings\fi-FI\PairDevicePage.resw" />
+    <PRIResource Include="Strings\fi-FI\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\fi-FI\InstallPage.resw" />
+    <PRIResource Include="Strings\fi-FI\InfosPage.resw" />
+    <PRIResource Include="Strings\fi-FI\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\fi-FI\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\fa-IR\TitleBar.resw" />
+    <PRIResource Include="Strings\fa-IR\TestPage.resw" />
+    <PRIResource Include="Strings\fa-IR\SettingsPage.resw" />
+    <PRIResource Include="Strings\fa-IR\Resources.resw" />
+    <PRIResource Include="Strings\fa-IR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\fa-IR\Permissions.resw" />
+    <PRIResource Include="Strings\fa-IR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\fa-IR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\fa-IR\InstallPage.resw" />
+    <PRIResource Include="Strings\fa-IR\InfosPage.resw" />
+    <PRIResource Include="Strings\fa-IR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\fa-IR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\es-ES\TitleBar.resw" />
+    <PRIResource Include="Strings\es-ES\TestPage.resw" />
+    <PRIResource Include="Strings\es-ES\SettingsPage.resw" />
+    <PRIResource Include="Strings\es-ES\Resources.resw" />
+    <PRIResource Include="Strings\es-ES\ProcessesPage.resw" />
+    <PRIResource Include="Strings\es-ES\Permissions.resw" />
+    <PRIResource Include="Strings\es-ES\PairDevicePage.resw" />
+    <PRIResource Include="Strings\es-ES\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\es-ES\InstallPage.resw" />
+    <PRIResource Include="Strings\es-ES\InfosPage.resw" />
+    <PRIResource Include="Strings\es-ES\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\es-ES\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\en-US\TitleBar.resw" />
+    <PRIResource Include="Strings\en-US\TestPage.resw" />
+    <PRIResource Include="Strings\en-US\SettingsPage.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\en-US\ProcessesPage.resw" />
+    <PRIResource Include="Strings\en-US\Permissions.resw" />
+    <PRIResource Include="Strings\en-US\PairDevicePage.resw" />
+    <PRIResource Include="Strings\en-US\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\en-US\InstallPage.resw" />
+    <PRIResource Include="Strings\en-US\InfosPage.resw" />
+    <PRIResource Include="Strings\en-US\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\en-US\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\el-GR\TitleBar.resw" />
+    <PRIResource Include="Strings\el-GR\TestPage.resw" />
+    <PRIResource Include="Strings\el-GR\SettingsPage.resw" />
+    <PRIResource Include="Strings\el-GR\Resources.resw" />
+    <PRIResource Include="Strings\el-GR\ProcessesPage.resw" />
+    <PRIResource Include="Strings\el-GR\Permissions.resw" />
+    <PRIResource Include="Strings\el-GR\PairDevicePage.resw" />
+    <PRIResource Include="Strings\el-GR\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\el-GR\InstallPage.resw" />
+    <PRIResource Include="Strings\el-GR\InfosPage.resw" />
+    <PRIResource Include="Strings\el-GR\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\el-GR\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\de-DE\TitleBar.resw" />
+    <PRIResource Include="Strings\de-DE\TestPage.resw" />
+    <PRIResource Include="Strings\de-DE\SettingsPage.resw" />
+    <PRIResource Include="Strings\de-DE\Resources.resw" />
+    <PRIResource Include="Strings\de-DE\ProcessesPage.resw" />
+    <PRIResource Include="Strings\de-DE\Permissions.resw" />
+    <PRIResource Include="Strings\de-DE\PairDevicePage.resw" />
+    <PRIResource Include="Strings\de-DE\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\de-DE\InstallPage.resw" />
+    <PRIResource Include="Strings\de-DE\InfosPage.resw" />
+    <PRIResource Include="Strings\de-DE\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\de-DE\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\da-DK\TitleBar.resw" />
+    <PRIResource Include="Strings\da-DK\TestPage.resw" />
+    <PRIResource Include="Strings\da-DK\SettingsPage.resw" />
+    <PRIResource Include="Strings\da-DK\Resources.resw" />
+    <PRIResource Include="Strings\da-DK\ProcessesPage.resw" />
+    <PRIResource Include="Strings\da-DK\Permissions.resw" />
+    <PRIResource Include="Strings\da-DK\PairDevicePage.resw" />
+    <PRIResource Include="Strings\da-DK\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\da-DK\InstallPage.resw" />
+    <PRIResource Include="Strings\da-DK\InfosPage.resw" />
+    <PRIResource Include="Strings\da-DK\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\da-DK\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\TitleBar.resw" />
+    <PRIResource Include="Strings\cs-CZ\TestPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\SettingsPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\Resources.resw" />
+    <PRIResource Include="Strings\cs-CZ\ProcessesPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\Permissions.resw" />
+    <PRIResource Include="Strings\cs-CZ\PairDevicePage.resw" />
+    <PRIResource Include="Strings\cs-CZ\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\cs-CZ\InstallPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\InfosPage.resw" />
+    <PRIResource Include="Strings\cs-CZ\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\cs-CZ\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ca-ES\TitleBar.resw" />
+    <PRIResource Include="Strings\ca-ES\TestPage.resw" />
+    <PRIResource Include="Strings\ca-ES\SettingsPage.resw" />
+    <PRIResource Include="Strings\ca-ES\Resources.resw" />
+    <PRIResource Include="Strings\ca-ES\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ca-ES\Permissions.resw" />
+    <PRIResource Include="Strings\ca-ES\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ca-ES\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ca-ES\InstallPage.resw" />
+    <PRIResource Include="Strings\ca-ES\InfosPage.resw" />
+    <PRIResource Include="Strings\ca-ES\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ca-ES\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\ar-SA\TitleBar.resw" />
+    <PRIResource Include="Strings\ar-SA\TestPage.resw" />
+    <PRIResource Include="Strings\ar-SA\SettingsPage.resw" />
+    <PRIResource Include="Strings\ar-SA\Resources.resw" />
+    <PRIResource Include="Strings\ar-SA\ProcessesPage.resw" />
+    <PRIResource Include="Strings\ar-SA\Permissions.resw" />
+    <PRIResource Include="Strings\ar-SA\PairDevicePage.resw" />
+    <PRIResource Include="Strings\ar-SA\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\ar-SA\InstallPage.resw" />
+    <PRIResource Include="Strings\ar-SA\InfosPage.resw" />
+    <PRIResource Include="Strings\ar-SA\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\ar-SA\ApplicationsPage.resw" />
+    <PRIResource Include="Strings\af-ZA\TitleBar.resw" />
+    <PRIResource Include="Strings\af-ZA\TestPage.resw" />
+    <PRIResource Include="Strings\af-ZA\SettingsPage.resw" />
+    <PRIResource Include="Strings\af-ZA\Resources.resw" />
+    <PRIResource Include="Strings\af-ZA\ProcessesPage.resw" />
+    <PRIResource Include="Strings\af-ZA\Permissions.resw" />
+    <PRIResource Include="Strings\af-ZA\PairDevicePage.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\af-ZA\MarkdownDialog.resw" />
+    <PRIResource Include="Strings\af-ZA\InstallPage.resw" />
+    <PRIResource Include="Strings\af-ZA\InfosPage.resw" />
+    <PRIResource Include="Strings\af-ZA\CapabilitiesInfoControl.resw" />
+    <PRIResource Include="Strings\af-ZA\ApplicationsPage.resw" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -686,7 +728,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\TitleBar\TitleBar_themeresources.xaml">
+    <Page Include="Controls\TitleBar\TitleBar.ThemeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -738,14 +780,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\SettingsUI.xaml">
+    <Page Include="Themes\CustomStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Downloader">
-      <Version>3.0.1</Version>
+      <Version>3.0.4</Version>
     </PackageReference>
     <PackageReference Include="MetroLog">
       <Version>1.0.1</Version>
@@ -796,7 +838,6 @@
       <Name>AdvancedSharpAdbClient</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

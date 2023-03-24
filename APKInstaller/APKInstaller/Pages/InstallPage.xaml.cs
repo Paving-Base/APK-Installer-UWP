@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -43,8 +44,49 @@ namespace APKInstaller.Pages
                             _path = (args as IFileActivatedEventArgs).Files.First().Path;
                             Provider = new InstallViewModel(_path, this);
                             break;
+                        case ActivationKind.ShareTarget:
+                            IShareTargetActivatedEventArgs ShareTargetEventArgs = args as IShareTargetActivatedEventArgs;
+                            ShareTargetEventArgs.ShareOperation.DismissUI();
+                            Provider = new InstallViewModel(string.Empty, this);
+                            Provider.OpenAPK(ShareTargetEventArgs.ShareOperation.Data);
+                            break;
                         case ActivationKind.Protocol:
-                            Provider = new InstallViewModel((args as IProtocolActivatedEventArgs).Uri, this);
+                            ProtocolActivatedEventArgs ProtocolArgs = args as ProtocolActivatedEventArgs;
+                            ValueSet ProtocolData = ProtocolArgs.Data;
+                            if (ProtocolData == null || !ProtocolData.Any())
+                            {
+                                Provider = new InstallViewModel(ProtocolArgs.Uri, this);
+                            }
+                            else
+                            {
+                                if (ProtocolData.ContainsKey("Url"))
+                                {
+                                    Provider = new InstallViewModel(ProtocolData["Url"] as Uri, this);
+                                }
+                                else if (ProtocolData.ContainsKey("FilePath"))
+                                {
+                                    Provider = new InstallViewModel(ProtocolData["FilePath"] as string, this);
+                                }
+                            }
+                            break;
+                        case ActivationKind.ProtocolForResults:
+                            ProtocolForResultsActivatedEventArgs ProtocolForResultsArgs = args as ProtocolForResultsActivatedEventArgs;
+                            ValueSet ProtocolForResultsData = ProtocolForResultsArgs.Data;
+                            if (ProtocolForResultsData == null || !ProtocolForResultsData.Any())
+                            {
+                                Provider = new InstallViewModel(ProtocolForResultsArgs.Uri, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
+                            }
+                            else
+                            {
+                                if (ProtocolForResultsData.ContainsKey("Url"))
+                                {
+                                    Provider = new InstallViewModel(ProtocolForResultsData["Url"] as Uri, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
+                                }
+                                else if (ProtocolForResultsData.ContainsKey("FilePath"))
+                                {
+                                    Provider = new InstallViewModel(ProtocolForResultsData["FilePath"] as string, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
+                                }
+                            }
                             break;
                         default:
                             Provider = new InstallViewModel(_path, this);
@@ -57,12 +99,6 @@ namespace APKInstaller.Pages
                 }
             }
             DataContext = Provider;
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-            Provider.Dispose();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -78,14 +114,21 @@ namespace APKInstaller.Pages
                 case "FileSelectButton":
                     Provider.OpenAPK();
                     break;
+                case "MoreInfoFlyoutItem":
+                    //_ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
+                    break;
                 case "DeviceSelectButton":
-                    Frame.Navigate(typeof(SettingsPage));
+                    _ = Frame.Navigate(typeof(SettingsPage));
+                    break;
+                case "CancelConfirmButton":
+                    CancelFlyout.Hide();
+                    Provider.CloseAPP();
+                    break;
+                case "CancelContinueButton":
+                    CancelFlyout.Hide();
                     break;
                 case "SecondaryActionButton":
                     Provider.OpenAPP();
-                    break;
-                case "CancelOperationButton":
-                    Provider.CloseAPP();
                     break;
             }
         }

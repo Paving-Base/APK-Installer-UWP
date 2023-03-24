@@ -9,9 +9,9 @@ namespace APKInstaller.Helpers
     {
         public static async Task<List<string>> GetAddressID(string mac)
         {
-            List<string> addresses = new List<string>();
-            Regex Regex = new Regex($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
-            List<string> lines = await CommandHelper.ExecuteShellCommand($"arp -a|findstr {mac}");
+            List<string> addresses = new();
+            Regex Regex = new($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
+            List<string> lines = await CommandHelper.ExecuteShellCommandAsync($"arp -a|findstr {mac}");
             foreach (string line in lines)
             {
                 if (Regex.IsMatch(line))
@@ -24,12 +24,24 @@ namespace APKInstaller.Helpers
 
         public static async Task ConnectHyperV()
         {
-            AdvancedAdbClient AdbClient = new AdvancedAdbClient();
+            AdbClient AdbClient = new();
             List<string> addresses = await GetAddressID("00-15-5d");
             foreach (string address in addresses)
             {
-                AdbClient.Connect(address);
+                _ = AdbClient.ConnectAsync(address);
             }
+        }
+
+        public static async Task<List<string>> ConnectHyperVAsync()
+        {
+            AdbClient AdbClient = new();
+            List<string> addresses = await GetAddressID("00-15-5d");
+            List<string> results = new();
+            foreach (string address in addresses)
+            {
+                results.Add(await AdbClient.ConnectAsync(address));
+            }
+            return results;
         }
     }
 }

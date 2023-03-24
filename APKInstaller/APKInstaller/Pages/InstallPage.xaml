@@ -30,7 +30,11 @@
                         <FontIcon Glyph="&#xECAA;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
-                <MenuFlyoutSubItem x:Uid="/InstallPage/InfosFlyoutItem">
+                <MenuFlyoutSubItem
+                    x:Name="InfosFlyoutItem"
+                    x:Uid="/InstallPage/InfosFlyoutItem"
+                    x:Load="{x:Bind Provider.ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                    Visibility="{Binding ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, ConverterParameter='true'}">
                     <MenuFlyoutSubItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </MenuFlyoutSubItem.Icon>
@@ -60,15 +64,22 @@
                     </MenuFlyoutItem>
                 </MenuFlyoutSubItem>
                 <MenuFlyoutItem
+                    x:Name="APKFileFlyoutItem"
                     x:Uid="/InstallPage/APKFileFlyoutItem"
+                    x:Load="{x:Bind Provider.ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                     Click="CopyFileItem_Click"
-                    Tag="{Binding ApkInfo.FullPath}">
+                    Tag="{Binding ApkInfo.FullPath}"
+                    Visibility="{Binding ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, ConverterParameter='true'}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE7B8;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
-            <MenuFlyoutSubItem x:Uid="/InstallPage/ShareFlyoutItem">
+            <MenuFlyoutSubItem
+                x:Name="ShareFlyoutItem"
+                x:Uid="/InstallPage/ShareFlyoutItem"
+                x:Load="{x:Bind Provider.ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                Visibility="{Binding ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, ConverterParameter='true'}">
                 <MenuFlyoutSubItem.Icon>
                     <FontIcon Glyph="&#xE72D;" />
                 </MenuFlyoutSubItem.Icon>
@@ -102,11 +113,16 @@
                         Text="Amazon" />
                 </MenuFlyoutSubItem>
             </MenuFlyoutSubItem>
-            <!--<MenuFlyoutItem x:Uid="/InstallPage/MoreInfoFlyoutItem">
+            <MenuFlyoutItem
+                x:Name="MoreInfoFlyoutItem"
+                x:Uid="/InstallPage/MoreInfoFlyoutItem"
+                x:Load="{x:Bind Provider.ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                Click="Button_Click"
+                Visibility="{Binding ApkInfo.IsEmpty, FallbackValue=true, Converter={StaticResource BoolNegationConverter}, ConverterParameter='true'}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
                 </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>-->
+            </MenuFlyoutItem>
         </MenuFlyout>
     </Page.Resources>
 
@@ -116,15 +132,6 @@
                 <EntranceThemeTransition />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid
-            x:Name="CustomTitleBar"
-            Grid.Row="0"
-            Height="{x:Bind helper:UIHelper.TitleBarHeight}"
-            HorizontalAlignment="Stretch" />
         <Grid
             x:Name="CoreAppUI"
             Grid.Row="1"
@@ -132,7 +139,7 @@
             Visibility="{Binding IsInitialized, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid
                 x:Name="MainContentContainer"
@@ -140,23 +147,23 @@
                 Margin="24,0,24,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid
                     x:Name="TopInformation"
                     Grid.Column="0"
                     VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock
                         x:Name="AppName"
                         Grid.Row="0"
-                        FontSize="24"
+                        FontSize="{ThemeResource PivotHeaderItemFontSize}"
                         FontWeight="SemiLight"
                         OpticalMarginAlignment="TrimSideBearings"
                         Text="{Binding AppName}"
@@ -226,7 +233,7 @@
                     x:Name="AppBigPictureMainContentText"
                     Grid.Row="0"
                     HorizontalAlignment="Center"
-                    FontSize="24"
+                    FontSize="{ThemeResource PivotHeaderItemFontSize}"
                     FontWeight="SemiBold"
                     MaxLines="2"
                     OpticalMarginAlignment="TrimSideBearings"
@@ -262,7 +269,7 @@
                         Text="{Binding ProgressText}"
                         TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
-                    <ProgressBar
+                    <muxc:ProgressBar
                         x:Name="AppxInstallBar"
                         Height="12"
                         IsIndeterminate="{Binding AppxInstallBarIndeterminate}"
@@ -273,7 +280,7 @@
                     Grid.Row="1"
                     Margin="0,10,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid
@@ -281,7 +288,7 @@
                         Margin="0,10,0,0"
                         Visibility="{Binding MessagesToUserVisibility}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock
@@ -448,6 +455,32 @@
                                 Style="{StaticResource AccentButtonStyle}"
                                 TabIndex="1"
                                 Visibility="{Binding CancelOperationVisibility}">
+                                <Button.Flyout>
+                                    <Flyout x:Name="CancelFlyout" x:FieldModifier="Public">
+                                        <StackPanel>
+                                            <TextBlock
+                                                x:Name="ConfirmationText"
+                                                x:Uid="/InstallPage/ConfirmationText"
+                                                Margin="0,0,0,12"
+                                                Style="{ThemeResource BaseTextBlockStyle}" />
+                                            <RelativePanel>
+                                                <Button
+                                                    x:Name="CancelConfirmButton"
+                                                    x:Uid="/InstallPage/CancelConfirmButton"
+                                                    MinWidth="80"
+                                                    Margin="120,5,0,0"
+                                                    Click="Button_Click" />
+                                                <Button
+                                                    x:Name="CancelContinueButton"
+                                                    x:Uid="/InstallPage/CancelContinueButton"
+                                                    MinWidth="80"
+                                                    Margin="12,5,0,0"
+                                                    Click="Button_Click"
+                                                    RelativePanel.RightOf="CancelConfirmButton" />
+                                            </RelativePanel>
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
                                 <StackPanel>
                                     <Image
                                         x:Name="CancelOperationButtonImage"

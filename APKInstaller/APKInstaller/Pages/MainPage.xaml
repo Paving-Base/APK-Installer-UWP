@@ -4,20 +4,25 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helper="using:APKInstaller.Helpers"
-    xmlns:local="using:APKInstaller.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d">
-    <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///Controls/TitleBar/TitleBar_themeresources.xaml" />
-    </Page.Resources>
     <Grid x:Name="Root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <ReorderThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.BackgroundTransition>
             <BrushTransition />
         </Grid.BackgroundTransition>
@@ -26,8 +31,35 @@
             Grid.Column="1"
             Height="{x:Bind helper:UIHelper.TitleBarHeight}"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Background="{ThemeResource SystemControlTransparentBrush}" />
+            VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <muxc:ImageIcon
+                x:Name="Icon"
+                Grid.Column="0"
+                MaxWidth="16"
+                MaxHeight="16"
+                Margin="16,0"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind helper:UIHelper.TitleBarExtended}"
+                Source="/Assets/256x256.png"
+                Visibility="{x:Bind CoreAppFrame.CanGoBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <TextBlock
+                x:Name="AppTitle"
+                Grid.Column="1"
+                Margin="0,0,16,2"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind helper:UIHelper.TitleBarExtended}"
+                Foreground="{ThemeResource TitleBarForegroundBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Bind GetAppTitleFromSystem}"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap"
+                Visibility="{x:Bind CoreAppFrame.CanGoBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </Grid>
         <Border
             x:Name="AboutButtonBorder"
             HorizontalAlignment="Left"
@@ -39,15 +71,15 @@
                 x:Uid="/TitleBar/AboutButton"
                 Width="{x:Bind helper:UIHelper.TitleBarHeight}"
                 Height="{x:Bind helper:UIHelper.TitleBarHeight}"
-                Margin="0"
+                Padding="0"
                 Click="Button_Click"
                 FocusVisualMargin="0"
                 IsTabStop="True"
-                Style="{StaticResource TitleBarSettingsButtonStyle}"
-                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" />
+                Style="{StaticResource TitleBarSettingsButtonStyle}" />
         </Border>
         <Frame
             x:Name="CoreAppFrame"
+            Grid.Row="1"
             Grid.ColumnSpan="3"
             x:FieldModifier="Public" />
     </Grid>

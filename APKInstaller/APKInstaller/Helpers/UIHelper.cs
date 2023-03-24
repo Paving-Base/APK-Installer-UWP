@@ -3,6 +3,7 @@ using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
@@ -39,10 +40,7 @@ namespace APKInstaller.Helpers
 
         public static void Navigate(Type pageType, NavigationTransitionInfo TransitionInfo, object e = null)
         {
-            DispatcherQueue?.EnqueueAsync(() =>
-            {
-                _ = (MainPage?.CoreAppFrame.Navigate(pageType, e, TransitionInfo));
-            });
+            _ = (DispatcherQueue?.EnqueueAsync(() => { _ = (MainPage?.CoreAppFrame.Navigate(pageType, e, TransitionInfo)); }));
         }
     }
 
@@ -86,8 +84,9 @@ namespace APKInstaller.Helpers
                 string name = _loader.GetString(permission) ?? string.Empty;
                 return string.IsNullOrEmpty(name) ? permission : name;
             }
-            catch
+            catch (Exception e)
             {
+                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Warn(e.ExceptionToMessage(), e);
                 return permission;
             }
         }
@@ -109,11 +108,22 @@ namespace APKInstaller.Helpers
             {
                 uri = new Uri(uriString.Contains("://") ? uriString : uriString.Contains("//") ? uriString.Replace("//", "://") : $"http://{uriString}");
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
-
+                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Error(e.ExceptionToMessage(), e);
             }
             return uri;
+        }
+
+        public static string ExceptionToMessage(this Exception ex)
+        {
+            StringBuilder builder = new();
+            builder.Append('\n');
+            if (!string.IsNullOrWhiteSpace(ex.Message)) { builder.AppendLine($"Message: {ex.Message}"); }
+            builder.AppendLine($"HResult: {ex.HResult} (0x{Convert.ToString(ex.HResult, 16)})");
+            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { builder.AppendLine(ex.StackTrace); }
+            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { builder.Append($"HelperLink: {ex.HelpLink}"); }
+            return builder.ToString();
         }
 
         public static Color ColorMixing(Color c1, Color c2)

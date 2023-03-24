@@ -17,20 +17,21 @@ namespace APKInstaller.Helpers
 {
     public static partial class SettingsHelper
     {
-        public const string ADBPath = "ADBPath";
-        public const string IsOpenApp = "IsOpenApp";
-        public const string IsOnlyWSA = "IsOnlyWSA";
-        public const string UpdateDate = "UpdateDate";
-        public const string IsFirstRun = "IsFirstRun";
-        public const string IsCloseADB = "IsCloseADB";
-        public const string IsCloseAPP = "IsCloseAPP";
-        public const string ShowDialogs = "ShowDialogs";
-        public const string ShowMessages = "ShowMessages";
-        public const string AutoGetNetAPK = "AutoGetNetAPK";
-        public const string DefaultDevice = "DefaultDevice";
-        public const string CurrentLanguage = "CurrentLanguage";
-        public const string SelectedAppTheme = "SelectedAppTheme";
-        public const string SelectedBackdrop = "SelectedBackdrop";
+        public const string ADBPath = nameof(ADBPath);
+        public const string IsOpenApp = nameof(IsOpenApp);
+        public const string IsOnlyWSA = nameof(IsOnlyWSA);
+        public const string UpdateDate = nameof(UpdateDate);
+        public const string IsFirstRun = nameof(IsFirstRun);
+        public const string IsCloseADB = nameof(IsCloseADB);
+        public const string IsCloseAPP = nameof(IsCloseAPP);
+        public const string ShowDialogs = nameof(ShowDialogs);
+        public const string ShowMessages = nameof(ShowMessages);
+        public const string ShowProgress = nameof(ShowProgress);
+        public const string AutoGetNetAPK = nameof(AutoGetNetAPK);
+        public const string DefaultDevice = nameof(DefaultDevice);
+        public const string CurrentLanguage = nameof(CurrentLanguage);
+        public const string ScanPairedDevice = nameof(ScanPairedDevice);
+        public const string SelectedAppTheme = nameof(SelectedAppTheme);
 
         public static Type Get<Type>(string key) => LocalObject.Read<Type>(key);
         public static void Set(string key, object value) => LocalObject.Save(key, value);
@@ -75,6 +76,10 @@ namespace APKInstaller.Helpers
             {
                 LocalObject.Save(ShowMessages, true);
             }
+            if (!LocalObject.KeyExists(ShowProgress))
+            {
+                LocalObject.Save(ShowProgress, true);
+            }
             if (!LocalObject.KeyExists(AutoGetNetAPK))
             {
                 LocalObject.Save(AutoGetNetAPK, false);
@@ -87,18 +92,15 @@ namespace APKInstaller.Helpers
             {
                 LocalObject.Save(CurrentLanguage, LanguageHelper.AutoLanguageCode);
             }
+            if (!LocalObject.KeyExists(ScanPairedDevice))
+            {
+                LocalObject.Save(ScanPairedDevice, false);
+            }
             if (!LocalObject.KeyExists(SelectedAppTheme))
             {
                 LocalObject.Save(SelectedAppTheme, ElementTheme.Default);
             }
         }
-    }
-
-    public enum UISettingChangedType
-    {
-        LightMode,
-        DarkMode,
-        NoPicChanged,
     }
 
     public static partial class SettingsHelper
@@ -108,10 +110,7 @@ namespace APKInstaller.Helpers
         public static OSVersion OperatingSystemVersion => SystemInformation.Instance.OperatingSystemVersion;
         private static readonly ApplicationDataStorageHelper LocalObject = ApplicationDataStorageHelper.GetCurrent(new SystemTextJsonObjectSerializer());
 
-        static SettingsHelper()
-        {
-            SetDefaultSettings();
-        }
+        static SettingsHelper() => SetDefaultSettings();
 
         public static void CheckAssembly()
         {

@@ -1,4 +1,4 @@
-﻿using APKInstaller.Helpers.Exceptions;
+﻿using AdvancedSharpAdbClient;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
 using ProcessForUWP.UWP.Helpers;
@@ -6,15 +6,14 @@ using System;
 using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
+using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Windows.Foundation.Metadata;
-using Windows.System.Profile;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core.Preview;
 
 namespace APKInstaller
 {
@@ -48,6 +47,8 @@ namespace APKInstaller
         {
             RegisterExceptionHandlingSynchronizationContext();
             Communication.InitializeAppServiceConnection();
+            CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
+            CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -92,6 +93,8 @@ namespace APKInstaller
         {
             RegisterExceptionHandlingSynchronizationContext();
             Communication.InitializeAppServiceConnection();
+            CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
+            CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -189,7 +192,7 @@ namespace APKInstaller
                 .UnhandledException += SynchronizationContext_UnhandledException;
         }
 
-        private void SynchronizationContext_UnhandledException(object sender, Helpers.Exceptions.UnhandledExceptionEventArgs e)
+        private void SynchronizationContext_UnhandledException(object sender, Helpers.UnhandledExceptionEventArgs e)
         {
             SettingsHelper.LogManager.GetLogger("Unhandled Exception - SynchronizationContext").Error(ExceptionToMessage(e.Exception), e.Exception);
             e.Handled = true;
