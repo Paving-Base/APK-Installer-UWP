@@ -106,7 +106,7 @@ namespace AAPTForUWP
                 aapt.OutputDataReceived += OnOutputDataReceived;
                 while (!aapt.IsExited)
                 {
-                    cancellationToken.Token.ThrowIfCancellationRequested();
+                    if (cancellationToken.Token.IsCancellationRequested) { break; }
                 }
             }
             catch (Exception)

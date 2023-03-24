@@ -1,16 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
+    <ExtrasUwpMetaPackageVersion>6.2.14</ExtrasUwpMetaPackageVersion>
 	<LangVersion>preview</LangVersion>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>uap10.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Process-For-UWP\ProcessForUWP.UWP\ProcessForUWP.UWP.csproj" />
+    <PackageReference Include="ProcessForUWP.UWP" Version="0.0.4" />
   </ItemGroup>
 
   <ItemGroup>

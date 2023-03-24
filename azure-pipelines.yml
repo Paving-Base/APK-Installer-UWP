@@ -37,13 +37,13 @@ steps:
   displayName: 'Download CA certificate'
   inputs:
     secureFile: 'where.pfx'
-
+    
 - task: CmdLine@2
-  displayName: 'Clone Process-For-UWP'
+  displayName: 'Clone SharpAdbClient'
   inputs:
     script: |
-      echo 'Cloning into sources folder at: $(Build.SourcesDirectory)\..\Process-For-UWP'
-      git clone https://github.com/wherewhere/Process-For-UWP.git --progress --branch master --single-branch --depth=1 $(Build.SourcesDirectory)\..\Process-For-UWP
+      echo 'Cloning into sources folder at: $(Build.SourcesDirectory)\..\AdvancedSharpAdbClient'
+      git clone https://github.com/yungd1plomat/AdvancedSharpAdbClient.git --progress --branch main --single-branch --depth=1 $(Build.SourcesDirectory)\..\AdvancedSharpAdbClient
       exit
 
 - task: VSBuild@1

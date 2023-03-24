@@ -48,7 +48,7 @@ namespace APKInstaller.ViewModels
         private string _path = string.Empty;
 #else
         private Uri _url = new("apkinstaller:?source=https://dl.coolapk.com/down?pn=com.coolapk.market&id=NDU5OQ&h=46bb9d98&from=from-web");
-        private string _path = @"C:\Users\qq251\Downloads\Programs\Minecraft_1.18.2.03_sign.apk";
+        private string _path = @"C:\Users\qq251\Downloads\Programs\weixin8030android2260_arm64.apk";
 #endif
         private bool NetAPKExist => _path != APKTemp || File.Exists(_path);
 
@@ -1061,7 +1061,7 @@ namespace APKInstaller.ViewModels
                             WaitProgressText = _loader.GetString("WaitingWSAStart");
                             while (!CheckDevice())
                             {
-                                TokenSource.Token.ThrowIfCancellationRequested();
+                                if (TokenSource.Token.IsCancellationRequested) { break; }
                                 if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                                 {
                                     await AddressHelper.ConnectHyperV();

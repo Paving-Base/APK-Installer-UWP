@@ -77,8 +77,8 @@ namespace APKInstaller.Helpers
                     {
                         while (!process.IsExited)
                         {
-                            Token.Token.ThrowIfCancellationRequested();
-                            cancellationToken.ThrowIfCancellationRequested();
+                            if (Token.Token.IsCancellationRequested) { break; }
+                            if (cancellationToken.IsCancellationRequested) { break; }
                         }
                     });
                 }
