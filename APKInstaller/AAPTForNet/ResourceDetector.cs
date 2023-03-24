@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace AAPTForUWP
+namespace AAPTForNet
 {
     internal class ResourceDetector
     {

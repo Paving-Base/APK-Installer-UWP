@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AAPTForUWP.Models
+namespace AAPTForNet.Models
 {
     internal class DumpModel
     {

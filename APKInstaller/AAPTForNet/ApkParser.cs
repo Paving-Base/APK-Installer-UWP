@@ -1,9 +1,9 @@
-﻿using AAPTForUWP.Filters;
-using AAPTForUWP.Models;
+﻿using AAPTForNet.Filters;
+using AAPTForNet.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AAPTForUWP
+namespace AAPTForNet
 {
     /// <summary>
     /// Parse output messages from AAPTool
@@ -18,12 +18,17 @@ namespace AAPTForUWP
             }
 
             List<BaseFilter> filters = new() {
-                new ABIFilter(),
+                new PermissionFilter(),
+                new LabelFilter(),
+                new FeatureFilter(),
                 new SDKFilter(),
                 new PackageFilter(),
-                new PermissionFilter(),
+                new ApplicationFilter(),
                 new SupportScrFilter(),
-                new ApplicationFilter()
+                new LocaleFilter(),
+                new DensityFilter(),
+                new ABIFilter(),
+                new LaunchableFilter()
             };
 
             foreach (string msg in model.Messages)

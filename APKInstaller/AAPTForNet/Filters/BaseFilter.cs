@@ -1,6 +1,6 @@
-﻿using AAPTForUWP.Models;
+﻿using AAPTForNet.Models;
 
-namespace AAPTForUWP.Filters
+namespace AAPTForNet.Filters
 {
     internal abstract class BaseFilter
     {
@@ -10,6 +10,7 @@ namespace AAPTForUWP.Filters
         public abstract bool CanHandle(string msg);
         public abstract void AddMessage(string msg);
         public abstract ApkInfo GetAPK();
+
         /// <summary>
         /// Test in loop
         /// </summary>

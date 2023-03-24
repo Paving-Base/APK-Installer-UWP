@@ -1,4 +1,4 @@
-﻿using AAPTForUWP.Models;
+﻿using AAPTForNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,15 +6,15 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Windows.Storage;
-using Detector = AAPTForUWP.ResourceDetector;
+using Detector = AAPTForNet.ResourceDetector;
 
-namespace AAPTForUWP
+namespace AAPTForNet
 {
     internal class ApkExtractor
     {
         private static int id = 0;
 
-#if NET5_0_OR_GREATER
+#if NET
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}");
 #else
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}");
@@ -38,7 +38,7 @@ namespace AAPTForUWP
                 return Icon.Default;
             }
 
-            if (iconTable.Values.All(i => i.isRefernce))
+            if (iconTable.Values.All(i => i.IsRefernce))
             {
                 string refID = iconTable.Values.FirstOrDefault().IconName;
                 iconTable = ExtractIconTable(path, refID);
@@ -194,7 +194,7 @@ namespace AAPTForUWP
             // reverse list and get first elem with LINQ
             IEnumerable<string> configNames = Enum.GetNames(typeof(Configs)).Reverse();
             Dictionary<string, Icon> iconTable = new();
-            void addIcon2Table(string cfg, string iconName)
+            void AddIcon2Table(string cfg, string iconName)
             {
                 if (!iconTable.ContainsKey(cfg))
                 {
@@ -228,13 +228,13 @@ namespace AAPTForUWP
                             // Resource value is icon url
                             string iconName = resValue.Split(seperator)
                                 .FirstOrDefault(n => n.Contains('/'));
-                            addIcon2Table(config, iconName);
+                            AddIcon2Table(config, iconName);
                             break;
                         }
                         if (Detector.IsReference(resValue))
                         {
                             string iconID = resValue.Trim().Split(' ')[1];
-                            addIcon2Table(config, iconID);
+                            AddIcon2Table(config, iconID);
                             break;
                         }
 

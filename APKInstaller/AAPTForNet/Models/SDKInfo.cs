@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AAPTForUWP.Models
+namespace AAPTForNet.Models
 {
-    public class SDKInfo
+    public class SDKInfo : IComparable
     {
         internal static readonly SDKInfo Unknown = new("0", "0", "0");
 
         // https://source.android.com/setup/start/build-numbers
         private static readonly string[] AndroidCodeNames = {
             "Unknown",
-            "Unnamed",  // API level 1
-            "Unnamed",
+            "Unnamed",          // API level 1
+            "Petit Four",
             "Cupcake",
             "Donut",
-            "Eclair",
-            "Eclair",
-            "Eclair",
+            "Éclair",
+            "Éclair",
+            "Éclair",
             "Froyo",
             "Gingerbread",
-            "Gingerbread",
+            "Gingerbread",      // API level 10
             "Honeycomb",
             "Honeycomb",
             "Honeycomb",
@@ -29,7 +29,7 @@ namespace AAPTForUWP.Models
             "Jelly Bean",
             "Jelly Bean",
             "KitKat",
-            "Unknown",  // API level 20
+            "KitKat",           // API level 20
             "Lollipop",
             "Lollipop",
             "Marshmallow",
@@ -39,39 +39,41 @@ namespace AAPTForUWP.Models
             "Oreo",
             "Pie",
             "Q",
-            "R",        // API level 30
-            "S",
-            "T",
-            "U",
-            "V",
+            "Red Velvet Cake",  // API level 30
+            "Snow Cone",
+            "Snow Cone",
+            "Tiramisu",
+            "Upside Down Cake",
+            "Vanilla Ice Cream",
             "W",
             "X",
             "Y",
-            "Z"         // API level 38
+            "Z",
+            "Hello from 2022!"  // API level 40
         };
 
         private static readonly string[] AndroidVersionCodes = {
             "Unknown",
-            "1.0",  // API level 1
+            "1.0",      // API level 1
             "1.1",
             "1.5",
             "1.6",
             "2.0",
-            "2.0",
+            "2.0.1",
             "2.1",
             "2.2",
             "2.3",
-            "2.3",
+            "2.3.3",    // API level 10
             "3.0",
             "3.1",
             "3.2",
             "4.0",
-            "4.0",
+            "4.0.3",
             "4.1",
             "4.2",
             "4.3",
             "4.4",
-            "4.4W", // API level 20
+            "4.4W",     // API level 20
             "5.0",
             "5.1",
             "6.0",
@@ -79,17 +81,19 @@ namespace AAPTForUWP.Models
             "7.1",
             "8.0",
             "8.1",
-            "9",
+            "9.0",
             "10",
-            "11",   // API level 30
+            "11",       // API level 30
             "12",
+            "12.1",
             "13",
             "14",
             "15",
             "16",
             "17",
             "18",
-            "19"    // API level 38
+            "19",
+            "20"        // API level 40
         };
 
         public string APILevel { get; }
@@ -105,32 +109,21 @@ namespace AAPTForUWP.Models
 
         public static SDKInfo GetInfo(int sdkVer)
         {
-            int index = (sdkVer < 1 || sdkVer > AndroidCodeNames.Length - 1) ? 0 : sdkVer;
-
-            return new SDKInfo(sdkVer.ToString(),
-                AndroidVersionCodes[index], AndroidCodeNames[index]);
+            int index = Math.Min(Math.Max(sdkVer, 0), AndroidCodeNames.Length - 1);
+            string version = sdkVer <= AndroidVersionCodes.Length - 1 ? AndroidVersionCodes[index] : (sdkVer - 20).ToString();
+            return new SDKInfo(sdkVer.ToString(), version, AndroidCodeNames[index]);
         }
 
-        public static SDKInfo GetInfo(string sdkVer)
-        {
-            return int.TryParse(sdkVer, out int ver)
-                ? ver > AndroidVersionCodes.Length - 1 ? new SDKInfo(sdkVer, sdkVer, "Hello from 2022!") : GetInfo(ver)
-                : new SDKInfo(sdkVer, sdkVer, AndroidCodeNames[0]);
-        }
+        public static SDKInfo GetInfo(string sdkVer) => int.TryParse(sdkVer, out int ver) ? GetInfo(ver) : new SDKInfo(sdkVer, sdkVer, AndroidCodeNames[0]);
 
         public override int GetHashCode() => 1008763889 + EqualityComparer<string>.Default.GetHashCode(APILevel);
 
-        public override bool Equals(object obj)
-        {
-            return obj is SDKInfo another && APILevel == another.APILevel;
-        }
+        public override bool Equals(object obj) => obj is SDKInfo another && APILevel == another.APILevel;
 
-        public int CompareTo(object obj)
-        {
-            return obj is SDKInfo another
-                ? int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver) ? ver.CompareTo(anotherver) : 0
-                : throw new ArgumentException();
-        }
+        public int CompareTo(object obj) => obj is SDKInfo another
+            ? int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver)
+            ? ver.CompareTo(anotherver) : 0
+            : throw new ArgumentException(null, nameof(obj));
 
         public static bool operator ==(SDKInfo left, SDKInfo right) => left.Equals(right);
 
@@ -144,13 +137,11 @@ namespace AAPTForUWP.Models
 
         public static bool operator >=(SDKInfo left, SDKInfo right) => left.CompareTo(right) >= 0;
 
-        public override string ToString()
-        {
-            return this == Unknown
-                ? AndroidCodeNames[0]
-                : $"API Level {APILevel} " +
-                $"{(Version == AndroidVersionCodes[0] ? $"({Version} - " : $"(Android {Version} - ")}" +
+        public override string ToString() => this == Unknown
+            ? AndroidCodeNames[0]
+            : $"API Level {APILevel} " +
+                $"{(Version == AndroidVersionCodes[0]
+                ? $"({Version} - " : $"(Android {Version} - ")}" +
                 $"{CodeName})";
-        }
     }
 }

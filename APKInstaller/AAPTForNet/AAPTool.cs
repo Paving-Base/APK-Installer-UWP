@@ -1,4 +1,4 @@
-﻿using AAPTForUWP.Models;
+﻿using AAPTForNet.Models;
 using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
@@ -6,17 +6,17 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using Windows.ApplicationModel;
 using Windows.Storage;
 
-namespace AAPTForUWP
+namespace AAPTForNet
 {
     /// <summary>
     /// Android Assert Packing Tool for NET
     /// </summary>
-    public class AAPTool : ProcessEx
+    public class AAPTool : Process
     {
         private enum DumpTypes
         {
@@ -39,24 +39,26 @@ namespace AAPTForUWP
             StartInfo.UseShellExecute = false; // For read output data
             StartInfo.RedirectStandardError = true;
             StartInfo.RedirectStandardOutput = true;
-            StartInfo.StandardOutputEncoding = Encoding.GetEncoding("utf-8");
+            StartInfo.StandardOutputEncoding = Encoding.UTF8;
         }
 
-        protected new void Start(string args)
+        protected new bool Start(string args)
         {
             StartInfo.Arguments = args;
-            Start();
-            BeginOutputReadLine();
+            return Start();
         }
 
-        private static DumpModel Dump(string path, string args, DumpTypes type, Func<string, int, bool> callback)
+        private static DumpModel Dump(
+            string path,
+            string args,
+            DumpTypes type,
+            Func<string, int, bool> callback)
         {
+
             int index = 0;
             bool terminated = false;
-            string msg = string.Empty;
-            AAPTool aapt = new AAPTool();
-            List<string> output = new List<string>();    // Messages from output stream
-            CancellationTokenSource cancellationToken = new CancellationTokenSource();
+            AAPTool aapt = new();
+            List<string> output = new();    // Messages from output stream
 
             switch (type)
             {
@@ -73,15 +75,9 @@ namespace AAPTForUWP
                     return new DumpModel(path, false, output);
             }
 
-            void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
+            while (!aapt.StandardOutput.EndOfStream && !terminated)
             {
-                if (e.Data == null)
-                {
-                    terminated = true;
-                    cancellationToken.Cancel();
-                    return;
-                }
-                msg = e.Data ?? string.Empty;
+                string msg = aapt.StandardOutput.ReadLine();
 
                 if (callback(msg, index))
                 {
@@ -89,7 +85,6 @@ namespace AAPTForUWP
                     try
                     {
                         aapt.Kill();
-                        cancellationToken.Cancel();
                     }
                     catch { }
                 }
@@ -98,26 +93,20 @@ namespace AAPTForUWP
                     index++;
                 }
 
-                output?.Add(msg);
+                output.Add(msg);
+            }
+
+            while (!aapt.StandardError.EndOfStream)
+            {
+                output.Add(aapt.StandardError.ReadLine());
             }
 
             try
             {
-                aapt.OutputDataReceived += OnOutputDataReceived;
-                while (!aapt.IsExited)
-                {
-                    if (cancellationToken.Token.IsCancellationRequested) { break; }
-                }
-            }
-            catch (Exception)
-            {
-                aapt.Kill();
-            }
-            finally
-            {
+                aapt.WaitForExit();
                 aapt.Close();
-                aapt.OutputDataReceived -= OnOutputDataReceived;
             }
+            catch { }
 
             // Dump xml tree get only 1 message when failed, the others are 2.
             bool isSuccess = type != DumpTypes.XmlTree ?
@@ -153,16 +142,16 @@ namespace AAPTForUWP
         /// <returns>Filled apk if dump process is not failed</returns>
         public static ApkInfo Decompile(string path)
         {
-            string temppath = CreateTempApk(path);
+            path = CreateTempApk(path);
             List<string> apks = new();
 
-            if (temppath.EndsWith(".apk"))
+            if (path.EndsWith(".apk"))
             {
-                apks.Add(temppath);
+                apks.Add(path);
             }
             else
             {
-                using ZipArchive archive = ZipFile.OpenRead(temppath);
+                using ZipArchive archive = ZipFile.OpenRead(path);
                 if (!Directory.Exists(TempPath))
                 {
                     Directory.CreateDirectory(TempPath);
@@ -180,42 +169,28 @@ namespace AAPTForUWP
 
                 if (!apks.Any())
                 {
-                    apks.Add(temppath);
+                    apks.Add(path);
                 }
             }
 
             List<ApkInfo> apkInfos = new();
             foreach (string apkpath in apks)
             {
-                DumpModel manifest = null;
-                try
+                DumpModel manifest = ApkExtractor.ExtractManifest(apkpath);
+                if (!manifest.IsSuccess)
                 {
-                    manifest = ApkExtractor.ExtractManifest(apkpath);
-                    if (!manifest.IsSuccess)
-                    {
-                        continue;
-                    }
-                }
-                catch
-                {
-                    if (manifest == null)
-                    {
-                        if (apks.Count() <= 1)
-                        {
-                            apkInfos.Add(new ApkInfo { AppName = Path.GetFileName(apkpath), FullPath = apkpath });
-                        }
-                        continue;
-                    }
+                    continue;
                 }
 
                 ApkInfo apk = ApkParser.Parse(manifest);
                 apk.FullPath = apkpath;
+                apk.PackagePath = path;
 
                 if (apk.Icon.IsImage)
                 {
                     // Included icon in manifest, extract it from apk
                     apk.Icon.RealPath = ApkExtractor.ExtractIconImage(apkpath, apk.Icon);
-                    if (apk.Icon.IsHighDensity)
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && apk.Icon.IsHighDensity)
                     {
                         apkInfos.Add(apk);
                         continue;
@@ -228,7 +203,7 @@ namespace AAPTForUWP
 
             if (!apkInfos.Any()) { return new ApkInfo(); }
 
-            if (apkInfos.Count <= 1) { return apkInfos.First(); }
+            if (apkInfos.Count <= 1) { return apkInfos.FirstOrDefault(); }
 
             List<ApkInfos> packages = apkInfos.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = x.ToList() }).ToList();
 
@@ -248,7 +223,9 @@ namespace AAPTForUWP
 
             if (!infos.Any()) { throw new Exception("There are all dependents in this Package."); }
 
-            return infos.First();
+            ApkInfo info = infos.FirstOrDefault();
+
+            return info;
         }
 
         private static string CreateTempApk(string sourceFile)

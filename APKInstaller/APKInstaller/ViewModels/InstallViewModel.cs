@@ -1,5 +1,5 @@
-﻿using AAPTForUWP;
-using AAPTForUWP.Models;
+﻿using AAPTForNet;
+using AAPTForNet.Models;
 using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using APKInstaller.Controls.Dialogs;

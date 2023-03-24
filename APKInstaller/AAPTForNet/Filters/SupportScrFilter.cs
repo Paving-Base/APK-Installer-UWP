@@ -1,6 +1,6 @@
-﻿using AAPTForUWP.Models;
+﻿using AAPTForNet.Models;
 
-namespace AAPTForUWP.Filters
+namespace AAPTForNet.Filters
 {
     internal class SupportScrFilter : BaseFilter
     {
@@ -11,15 +11,9 @@ namespace AAPTForUWP.Filters
 
         private string Message = string.Empty;
 
-        public override bool CanHandle(string msg)
-        {
-            return msg.StartsWith("supports-screens:");
-        }
+        public override bool CanHandle(string msg) => msg.StartsWith("supports-screens:");
 
-        public override void AddMessage(string msg)
-        {
-            Message = msg;
-        }
+        public override void AddMessage(string msg) => Message = msg;
 
         public override ApkInfo GetAPK()
         {

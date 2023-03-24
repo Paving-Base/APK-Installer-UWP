@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Versioning;
 
-namespace AAPTForUWP.Models
+namespace AAPTForNet.Models
 {
     public class Icon
     {
-
         private const int hdpiWidth = 72;
         public const string DefaultName = "ic_launcher.png";
 
@@ -24,11 +24,10 @@ namespace AAPTForUWP.Models
         /// </summary>
         public bool IsImage => !DefaultName.Equals(IconName, StringComparison.Ordinal) && !IsMarkup;
 
-        internal bool IsMarkup => IconName
-            .EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
+        internal bool IsMarkup => IconName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
 
         // Not real icon, it refer to another
-        internal bool isRefernce => IconName.StartsWith("0x");
+        internal bool IsRefernce => IconName.StartsWith("0x");
 
         internal bool IsHighDensity
         {
@@ -60,8 +59,6 @@ namespace AAPTForUWP.Models
         /// </summary>
         internal string IconName { get; set; }
 
-        internal Icon() => throw new NotImplementedException();
-
         internal Icon(string iconName)
         {
             IconName = iconName ?? string.Empty;
@@ -70,10 +67,7 @@ namespace AAPTForUWP.Models
 
         public override string ToString() => IconName;
 
-        public override bool Equals(object obj)
-        {
-            return obj is Icon ic && IconName == ic.IconName;
-        }
+        public override bool Equals(object obj) => obj is Icon ic && IconName == ic.IconName;
 
         public override int GetHashCode() => -489061483 + EqualityComparer<string>.Default.GetHashCode(IconName);
     }

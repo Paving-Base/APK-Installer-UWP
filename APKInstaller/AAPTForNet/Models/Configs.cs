@@ -1,4 +1,4 @@
-﻿namespace AAPTForUWP.Models
+﻿namespace AAPTForNet.Models
 {
     internal enum Configs
     {

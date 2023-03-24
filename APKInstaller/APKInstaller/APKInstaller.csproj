@@ -787,14 +787,14 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AAPTForUWP\AAPTForUWP.csproj">
-      <Project>{719fd4b4-4ac6-4165-b4d5-5489f2500c32}</Project>
-      <Name>AAPTForUWP</Name>
+    <ProjectReference Include="..\AAPTForNet\AAPTForNet.csproj">
+      <Project>{691DC506-E415-49FA-8895-FD96DC06C69F}</Project>
+      <Name>AAPTForNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\AdvancedSharpAdbClient\AdvancedSharpAdbClient\AdvancedSharpAdbClient.csproj">
       <Project>{9A19103F-16F7-4668-BE54-9A1E7A4F7556}</Project>
       <Name>AdvancedSharpAdbClient</Name>
-	</ProjectReference>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
