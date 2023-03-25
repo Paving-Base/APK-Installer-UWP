@@ -11,6 +11,9 @@ namespace APKInstaller.Helpers
     {
         private static Window CurrentApplicationWindow;
 
+        // Keep reference so it does not get optimized/garbage collected
+        public static UISettings UISettings;
+
         /// <summary>
         /// Gets the current actual theme of the app based on the requested theme of the
         /// root element, or if that value is Default, the requested theme of the Application.
@@ -19,7 +22,7 @@ namespace APKInstaller.Helpers
         {
             get
             {
-                if (Window.Current.Content is FrameworkElement rootElement)
+                if (CurrentApplicationWindow?.Content is FrameworkElement rootElement)
                 {
                     if (rootElement.RequestedTheme != ElementTheme.Default)
                     {
@@ -36,10 +39,10 @@ namespace APKInstaller.Helpers
         /// </summary>
         public static ElementTheme RootTheme
         {
-            get => Window.Current.Content is FrameworkElement rootElement ? rootElement.RequestedTheme : ElementTheme.Default;
+            get => CurrentApplicationWindow?.Content is FrameworkElement rootElement ? rootElement.RequestedTheme : ElementTheme.Default;
             set
             {
-                if (Window.Current.Content is FrameworkElement rootElement)
+                if (CurrentApplicationWindow?.Content is FrameworkElement rootElement)
                 {
                     rootElement.RequestedTheme = value;
                 }
@@ -54,6 +57,15 @@ namespace APKInstaller.Helpers
             // Save reference as this might be null when the user is in another app
             CurrentApplicationWindow = Window.Current;
             RootTheme = SettingsHelper.Get<ElementTheme>(SettingsHelper.SelectedAppTheme);
+
+            // Registering to color changes, thus we notice when user changes theme system wide
+            UISettings = new UISettings();
+            UISettings.ColorValuesChanged += UISettings_ColorValuesChanged;
+        }
+
+        private static void UISettings_ColorValuesChanged(UISettings sender, object args)
+        {
+            UpdateSystemCaptionButtonColors();
         }
 
         public static bool IsDarkTheme()

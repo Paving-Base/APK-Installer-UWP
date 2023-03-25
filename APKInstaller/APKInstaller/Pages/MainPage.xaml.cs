@@ -64,5 +64,7 @@ namespace APKInstaller.Pages
                 CachesHelper.CleanAllCaches(false);
             }
         }
+
+        internal void UpdateTitleBarHeight() => CustomTitleBar.Height = UIHelper.TitleBarHeight;
     }
 }

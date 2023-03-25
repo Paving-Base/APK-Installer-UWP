@@ -31,6 +31,8 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public static string ToolkitVersion => Assembly.Load(new AssemblyName("Microsoft.Toolkit.Uwp")).GetName().Version.ToString();
 
+        public static string SharpAdbClientVersion => Assembly.Load(new AssemblyName("AdvancedSharpAdbClient")).GetName().Version.ToString();
+
         public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
             || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
             || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
@@ -608,4 +610,6 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
     }
+
+    public record class HyperlinkContent(string Content, Uri NavigateUri);
 }

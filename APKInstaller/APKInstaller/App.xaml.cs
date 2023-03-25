@@ -3,13 +3,14 @@ using APKInstaller.Helpers;
 using APKInstaller.Pages;
 using ProcessForUWP.UWP.Helpers;
 using System;
-using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
+using Windows.Security.Authorization.AppCapabilityAccess;
 using Windows.System.Profile;
+using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -45,65 +46,48 @@ namespace APKInstaller
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            RegisterExceptionHandlingSynchronizationContext();
-            Communication.InitializeAppServiceConnection();
-            CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
-            CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
-
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            // 不要在窗口已包含内容时重复应用程序初始化，
-            // 只需确保窗口处于活动状态
-            if (rootFrame == null)
-            {
-                ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-
-                // 创建要充当导航上下文的框架，并导航到第一页
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: 从之前挂起的应用程序加载状态
-                }
-
-                // 将框架放在当前窗口中
-                Window.Current.Content = rootFrame;
-            }
-
-            if (e.PrelaunchActivated == false)
-            {
-                if (rootFrame.Content == null)
-                {
-                    // 当导航堆栈尚未还原时，导航到第一页，
-                    // 并通过将所需信息作为导航参数传入来配置
-                    // 参数
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                ThemeHelper.Initialize();
-                // 确保当前窗口处于活动状态
-                Window.Current.Activate();
-            }
+            EnsureWindow(e);
         }
 
         protected override void OnActivated(IActivatedEventArgs e)
         {
-            RegisterExceptionHandlingSynchronizationContext();
-            Communication.InitializeAppServiceConnection();
-            CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
-            CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
+            EnsureWindow(e);
+            base.OnActivated(e);
+        }
 
-            Frame rootFrame = Window.Current.Content as Frame;
+        protected override void OnFileActivated(FileActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnFileActivated(e);
+        }
+
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnShareTargetActivated(e);
+        }
+
+        private void EnsureWindow(IActivatedEventArgs e)
+        {
+            if (MainWindow == null)
+            {
+                RequestWifiAccess();
+                RegisterExceptionHandlingSynchronizationContext();
+                Communication.InitializeAppServiceConnection();
+                CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
+                CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
+
+                MainWindow = Window.Current;
+            }
 
             // 不要在窗口已包含内容时重复应用程序初始化，
             // 只需确保窗口处于活动状态
-            if (rootFrame == null)
+            if (MainWindow.Content is not Frame rootFrame)
             {
                 ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
                 // 创建要充当导航上下文的框架，并导航到第一页
                 rootFrame = new Frame();
@@ -117,6 +101,17 @@ namespace APKInstaller
 
                 // 将框架放在当前窗口中
                 Window.Current.Content = rootFrame;
+
+                ThemeHelper.Initialize();
+            }
+
+            if (e is LaunchActivatedEventArgs args)
+            {
+                if (!args.PrelaunchActivated)
+                {
+                    CoreApplication.EnablePrelaunch(true);
+                }
+                else { return; }
             }
 
             if (rootFrame.Content == null)
@@ -124,15 +119,12 @@ namespace APKInstaller
                 // 当导航堆栈尚未还原时，导航到第一页，
                 // 并通过将所需信息作为导航参数传入来配置
                 // 参数
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
                 rootFrame.Navigate(typeof(MainPage), e);
             }
-            ThemeHelper.Initialize();
-            // 确保当前窗口处于活动状态
-            Window.Current.Activate();
-        }
 
-        protected override void OnFileActivated(FileActivatedEventArgs e) => OnActivated(e);
+            // 确保当前窗口处于活动状态
+            MainWindow.Activate();
+        }
 
         /// <summary>
         /// 导航到特定页失败时调用
@@ -158,6 +150,22 @@ namespace APKInstaller
             deferral.Complete();
         }
 
+        private async void RequestWifiAccess()
+        {
+            if (ApiInformation.IsMethodPresent("Windows.Security.Authorization.AppCapabilityAccess.AppCapability", "Create"))
+            {
+                AppCapability wifiData = AppCapability.Create("wifiData");
+                switch (wifiData.CheckAccess())
+                {
+                    case AppCapabilityAccessStatus.DeniedByUser:
+                    case AppCapabilityAccessStatus.DeniedBySystem:
+                        // Do something
+                        await AppCapability.Create("wifiData").RequestAccessAsync();
+                        break;
+                }
+            }
+        }
+
         /// <summary>
         /// Handles connection requests to the app service
         /// </summary>
@@ -170,7 +178,7 @@ namespace APKInstaller
 
         private void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            SettingsHelper.LogManager.GetLogger("Unhandled Exception - Application").Error(ExceptionToMessage(e.Exception), e.Exception);
+            SettingsHelper.LogManager.GetLogger("Unhandled Exception - Application").Error(e.Exception.ExceptionToMessage(), e.Exception);
             e.Handled = true;
         }
 
@@ -178,7 +186,7 @@ namespace APKInstaller
         {
             if (e.ExceptionObject is Exception Exception)
             {
-                SettingsHelper.LogManager.GetLogger("Unhandled Exception - CurrentDomain").Error(ExceptionToMessage(Exception), Exception);
+                SettingsHelper.LogManager.GetLogger("Unhandled Exception - CurrentDomain").Error(Exception.ExceptionToMessage(), Exception);
             }
         }
 
@@ -194,19 +202,10 @@ namespace APKInstaller
 
         private void SynchronizationContext_UnhandledException(object sender, Helpers.UnhandledExceptionEventArgs e)
         {
-            SettingsHelper.LogManager.GetLogger("Unhandled Exception - SynchronizationContext").Error(ExceptionToMessage(e.Exception), e.Exception);
+            SettingsHelper.LogManager.GetLogger("Unhandled Exception - SynchronizationContext").Error(e.Exception.ExceptionToMessage(), e.Exception);
             e.Handled = true;
         }
 
-        private string ExceptionToMessage(Exception ex)
-        {
-            StringBuilder builder = new();
-            builder.Append('\n');
-            if (!string.IsNullOrWhiteSpace(ex.Message)) { builder.AppendLine($"Message: {ex.Message}"); }
-            builder.AppendLine($"HResult: {ex.HResult} (0x{Convert.ToString(ex.HResult, 16)})");
-            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { builder.AppendLine(ex.StackTrace); }
-            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { builder.Append($"HelperLink: {ex.HelpLink}"); }
-            return builder.ToString();
-        }
+        public static Window MainWindow { get; private set; }
     }
 }

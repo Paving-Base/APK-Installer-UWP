@@ -5,7 +5,6 @@
     xmlns:controls="using:APKInstaller.Controls"
     xmlns:cwuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:APKInstaller.Pages.ToolsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
     d:DataContext="{d:DesignInstance Type=toolspages:ProcessesViewModel}"

@@ -3,6 +3,7 @@ using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Models;
 using APKInstaller.ViewModels.SettingsPages;
+using Microsoft.Toolkit.Uwp.UI;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
@@ -40,22 +41,19 @@ namespace APKInstaller.Pages.SettingsPages
             if (SettingsViewModel.Caches != null)
             {
                 Provider = SettingsViewModel.Caches;
-                if (AdbServer.Instance.GetStatus().IsRunning)
-                {
-                    Provider.DeviceList = new AdvancedAdbClient().GetDevices();
-                }
             }
             else
             {
                 Provider = new SettingsViewModel(this);
                 if (Provider.UpdateDate == DateTime.MinValue) { Provider.CheckUpdate(); }
-                if (AdbServer.Instance.GetStatus().IsRunning)
-                {
-                    ADBHelper.Monitor.DeviceChanged += Provider.OnDeviceChanged;
-                    Provider.DeviceList = new AdvancedAdbClient().GetDevices();
-                }
+            }
+            if (AdbServer.Instance.GetStatus().IsRunning)
+            {
+                ADBHelper.Monitor.DeviceChanged += Provider.OnDeviceChanged;
+                Provider.DeviceList = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online);
             }
             DataContext = Provider;
+            Provider.GetADBVersion();
             //#if DEBUG
             GoToTestPage.Visibility = Visibility.Visible;
             //#endif
@@ -72,19 +70,19 @@ namespace APKInstaller.Pages.SettingsPages
         {
             switch ((sender as FrameworkElement).Tag as string)
             {
+                case "Pair":
+                    Provider.PairDevice(ConnectIP.Text, PairCode.Text);
+                    break;
                 case "Rate":
-                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NSHFKJ1D4BF"));
+                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9P2JFQ43FPPG"));
                     break;
                 case "Group":
                     _ = Launcher.LaunchUriAsync(new Uri("https://t.me/PavingBase"));
                     break;
                 case "Reset":
+                    Reset.Flyout?.Hide();
                     ApplicationData.Current.LocalSettings.Values.Clear();
                     SettingsHelper.SetDefaultSettings();
-                    if (Reset.Flyout is Flyout flyout_reset)
-                    {
-                        flyout_reset.Hide();
-                    }
                     _ = Frame.Navigate(typeof(SettingsPage));
                     Frame.GoBack();
                     break;
@@ -92,17 +90,22 @@ namespace APKInstaller.Pages.SettingsPages
                     Provider.ChangeADBPath();
                     break;
                 case "Connect":
-                    new AdvancedAdbClient().Connect(ConnectIP.Text);
-                    Provider.OnDeviceChanged(null, null);
+                    Provider.ConnectDevice(ConnectIP.Text);
                     break;
                 case "TestPage":
                     _ = Frame.Navigate(typeof(TestPage));
+                    break;
+                case "PairDevice":
+                    //_ = Frame.Navigate(typeof(PairDevicePage));
                     break;
                 case "CheckUpdate":
                     Provider.CheckUpdate();
                     break;
                 case "WindowsColor":
                     _ = Launcher.LaunchUriAsync(new Uri("ms-settings:colors"));
+                    break;
+                case "CopyConnectInfo":
+                    DataTransferHelper.CopyText(Provider.ConnectInfoTitle, "Connect Info");
                     break;
                 default:
                     break;
@@ -144,10 +147,22 @@ namespace APKInstaller.Pages.SettingsPages
             }
         }
 
+        private void InfoBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element?.FindDescendant("Title") is TextBlock title)
+            {
+                title.IsTextSelectionEnabled = true;
+            }
+            if (element?.FindDescendant("Message") is TextBlock message)
+            {
+                message.IsTextSelectionEnabled = true;
+            }
+        }
+
         private void GotoUpdate_Click(object sender, RoutedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri((sender as FrameworkElement).Tag.ToString()));
 
         private void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri(e.Link));
-
         private void WebXAML_Loaded(object sender, RoutedEventArgs e) => (sender as WebXAML).ContentInfo = new GitInfo("Paving-Base", "APK-Installer-UWP", "screenshots", "Documents/Announcements", "Announcements.xml");
     }
 }
