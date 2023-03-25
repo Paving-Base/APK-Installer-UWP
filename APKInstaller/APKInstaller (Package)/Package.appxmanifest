@@ -105,6 +105,8 @@
 
   <Capabilities>
     <Capability Name="internetClient"/>
+    <Capability Name="privateNetworkClientServer" />
+    <Capability Name="internetClientServer" />
     <rescap:Capability Name="runFullTrust" />
 	<rescap:Capability Name="packageQuery" />
 	<rescap:Capability Name="confirmAppClose" />

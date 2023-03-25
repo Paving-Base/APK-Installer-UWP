@@ -74,15 +74,15 @@ namespace APKInstaller.ViewModels.SettingsPages
             {
                 if (ScanPairedDevice != value)
                 {
-                    //if (value)
-                    //{
-                    //    MonitorHelper.InitializeConnectListener();
-                    //    _ = MonitorHelper.ConnectPairedDevice();
-                    //}
-                    //else
-                    //{
-                    //    MonitorHelper.DisposeConnectListener();
-                    //}
+                    if (value)
+                    {
+                        ZeroconfHelper.InitializeConnectListener();
+                        _ = ZeroconfHelper.ConnectPairedDevice();
+                    }
+                    else
+                    {
+                        ZeroconfHelper.DisposeConnectListener();
+                    }
                     SettingsHelper.Set(SettingsHelper.ScanPairedDevice, value);
                 }
             }

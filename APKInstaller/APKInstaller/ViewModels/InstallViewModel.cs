@@ -938,7 +938,7 @@ namespace APKInstaller.ViewModels
                     {
                         if (ScanPairedDevice)
                         {
-                            //MonitorHelper.InitializeConnectListener();
+                            ZeroconfHelper.InitializeConnectListener();
                         }
 
                         if (IsOnlyWSA)
@@ -1591,7 +1591,7 @@ namespace APKInstaller.ViewModels
                 {
                     _ = Task.Run(async () =>
                     {
-                        await Task.Delay(1000);// 据说如果安装完直接启动会崩溃。。。
+                        await Task.Delay(1000); // 据说如果安装完直接启动会崩溃。。。
                         OpenAPP();
                         if (IsCloseAPP)
                         {
