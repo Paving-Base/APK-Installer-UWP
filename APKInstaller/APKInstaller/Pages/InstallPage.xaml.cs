@@ -1,4 +1,5 @@
 ﻿using APKInstaller.Helpers;
+using APKInstaller.Pages.AboutPages;
 using APKInstaller.Pages.SettingsPages;
 using APKInstaller.ViewModels;
 using System;
@@ -115,7 +116,7 @@ namespace APKInstaller.Pages
                     Provider.OpenAPK();
                     break;
                 case "MoreInfoFlyoutItem":
-                    //_ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
+                    _ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
                     break;
                 case "DeviceSelectButton":
                     _ = Frame.Navigate(typeof(SettingsPage));
