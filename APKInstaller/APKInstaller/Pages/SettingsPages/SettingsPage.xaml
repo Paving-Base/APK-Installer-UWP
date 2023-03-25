@@ -63,19 +63,22 @@
                 <controls:SettingsGroup x:Uid="/SettingsPage/DeviceSettingsHeader">
                     <ListView
                         x:Name="SelectDeviceBox"
-                        Margin="-2,0"
                         x:FieldModifier="public"
+                        ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
                         ItemsSource="{Binding DeviceList, Mode=OneWay}"
                         SelectionChanged="SelectDeviceBox_SelectionChanged">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" Spacing="2" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="sharpadbclient:DeviceData">
-                                <ListViewItem Margin="0,1" Background="Transparent">
-                                    <controls:Setting
-                                        Description="{x:Bind State}"
-                                        Header="{x:Bind Name}"
-                                        Icon="&#xE8EA;"
-                                        Style="{StaticResource ListViewItemContentSettingStyle}" />
-                                </ListViewItem>
+                                <controls:Setting
+                                    Description="{x:Bind State}"
+                                    Header="{x:Bind Name}"
+                                    Icon="&#xE8EA;"
+                                    Style="{StaticResource ListViewItemContentSettingStyle}" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

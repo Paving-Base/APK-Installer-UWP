@@ -18,6 +18,8 @@
             <StaticResource x:Key="SettingCardBorderBrushPointerOver" ResourceKey="ControlElevationBorderBrush" />
             <StaticResource x:Key="SettingCardBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
             <StaticResource x:Key="SettingCardBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
+
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AccentFillColorDefaultBrush" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Light">
@@ -35,6 +37,8 @@
             <StaticResource x:Key="SettingCardBorderBrushPointerOver" ResourceKey="ControlElevationBorderBrush" />
             <StaticResource x:Key="SettingCardBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
             <StaticResource x:Key="SettingCardBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
+
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AccentFillColorDefaultBrush" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
@@ -52,6 +56,8 @@
             <StaticResource x:Key="SettingCardBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
             <StaticResource x:Key="SettingCardBorderBrushPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
             <StaticResource x:Key="SettingCardBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
         </ResourceDictionary>
 
     </ResourceDictionary.ThemeDictionaries>
@@ -78,9 +84,199 @@
     <Thickness x:Key="ToggleSwitchLeftHeaderMargin">0,0,4,0</Thickness>
 
     <Style x:Key="ListViewItemContentSettingStyle" TargetType="controls:Setting">
-        <Setter Property="Padding" Value="16,14" />
-        <Setter Property="Margin" Value="-14,0,-10,0" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlTransparentBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="ListViewItemSettingStyle" TargetType="SelectorItem">
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="Background" Value="{ThemeResource SettingCardBackground}" />
+        <Setter Property="Foreground" Value="{ThemeResource SettingCardForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SettingCardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource SettingCardBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="TabNavigation" Value="Local" />
+        <Setter Property="IsHoldingEnabled" Value="True" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="MinWidth" Value="{ThemeResource SettingCardMinWidth}" />
+        <Setter Property="MinHeight" Value="{ThemeResource SettingCardMinHeight}" />
+        <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="1" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
+        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="SelectorItem">
+                    <Grid
+                        x:Name="ContentBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Control.IsTemplateFocusTarget="True"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        RenderTransformOrigin="0.5,0.5">
+                        <Grid.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.083" />
+                        </Grid.BackgroundTransition>
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
+                        </Grid.RenderTransform>
+                        <Grid x:Name="PressedBackgroundGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.85*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="0.85*" />
+                            </Grid.RowDefinitions>
+                            <Rectangle
+                                x:Name="PressedBackground"
+                                Grid.Row="1"
+                                Width="3.5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Fill="{ThemeResource ListViewItemSelectionIndicatorBrush}"
+                                Opacity="0"
+                                RadiusX="1.5"
+                                RadiusY="1.5"
+                                RenderTransformOrigin="0.5,0.5">
+                                <Rectangle.RenderTransform>
+                                    <ScaleTransform x:Name="PillTransform" ScaleY="0.625" />
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                        </Grid>
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="Selected">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                                <SplineDoubleKeyFrame
+                                                    KeySpline="0,0,0,1"
+                                                    KeyTime="00:00:00.167"
+                                                    Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition To="PointerOverSelected">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                                <SplineDoubleKeyFrame
+                                                    KeySpline="0,0,0,1"
+                                                    KeyTime="00:00:00.167"
+                                                    Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition To="PressedSelected">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                                <SplineDoubleKeyFrame
+                                                    KeySpline="1,0,0,0"
+                                                    KeyTime="00:00:00.167"
+                                                    Value="0.625" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardForegroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardForegroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="PillTransform.ScaleY" Value="1" />
+                                        <Setter Target="PressedBackground.Opacity" Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOverSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="PillTransform.ScaleY" Value="1" />
+                                        <Setter Target="PressedBackground.Opacity" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBorderBrushPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardForegroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PressedSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="PillTransform.ScaleY" Value="1" />
+                                        <Setter Target="PressedBackground.Opacity" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="BorderBrush">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardBorderBrushPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardForegroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DisabledStates">
+                                <VisualState x:Name="Enabled" />
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SettingCardForegroundDisabled}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!--  This style overrides the default style so that all ToggleSwitches are right aligned, with the label on the left  -->

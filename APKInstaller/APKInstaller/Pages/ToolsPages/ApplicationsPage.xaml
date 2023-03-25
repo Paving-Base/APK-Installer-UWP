@@ -37,12 +37,19 @@
         <ListView
             x:Name="ListView"
             Grid.Row="1"
+            Padding="12,0,12,12"
+            ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
             ItemsSource="{x:Bind Provider.Applications, Mode=OneWay}"
             Loaded="ListView_Loaded">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" Spacing="2" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="toolspages:APKInfo">
-                    <ListViewItem Background="Transparent">
-                        <ListViewItem.Resources>
+                    <Border>
+                        <Border.Resources>
                             <MenuFlyout x:Name="MenuFlyout">
                                 <MenuFlyoutItem
                                     x:Name="Stop"
@@ -61,7 +68,7 @@
                                     Click="MenuFlyoutItem_Click"
                                     Tag="{x:Bind Name}" />
                             </MenuFlyout>
-                        </ListViewItem.Resources>
+                        </Border.Resources>
                         <controls:Setting
                             ContextFlyout="{StaticResource MenuFlyout}"
                             Header="{x:Bind Name}"
@@ -89,7 +96,7 @@
                                 Flyout="{StaticResource MenuFlyout}"
                                 Style="{StaticResource TitleBarSettingsButtonStyle}" />
                         </controls:Setting>
-                    </ListViewItem>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

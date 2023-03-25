@@ -67,10 +67,12 @@ An Android Application Installer for Windows
 ![安装](Images/Screenshots/Snipaste_2022-03-08_19-06-34.png)
 
 ## 使用到的模块
-- [Downloader](https://github.com/bezzad/Downloader "Downloader")
+- [MetroLog](https://github.com/roubachof/MetroLog "MetroLog")
+- [Zeroconf](https://github.com/novotnyllc/Zeroconf "Zeroconf")
 - [Windows UI](https://github.com/microsoft/microsoft-ui-xaml "Windows UI")
+- [Downloader](https://github.com/bezzad/Downloader "Downloader")
+- [AAPTForNet](https://github.com/canheo136/QuickLook.Plugin.ApkViewer "AAPTForNet")
 - [Sharp Compress](https://github.com/adamhathcock/sharpcompress "Sharp Compress")
-- [Newtonsoft Json](https://www.newtonsoft.com/json "Newtonsoft Json")
 - [Advanced Sharp Adb Client](https://github.com/yungd1plomat/AdvancedSharpAdbClient "Advanced Sharp Adb Client")
 - [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit "Windows Community Toolkit")
 

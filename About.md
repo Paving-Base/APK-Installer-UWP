@@ -15,9 +15,10 @@
 [![Contributors](https://contrib.rocks/image?repo=Paving-Base/APK-Installer-UWP)](https://github.com/Paving-Base/APK-Installer-UWP/graphs/contributors)
 
 ##### 引用及参考
-- [Downloader](https://github.com/bezzad/Downloader "Downloader")
+- [MetroLog](https://github.com/roubachof/MetroLog "MetroLog")
 - [Windows UI](https://github.com/microsoft/microsoft-ui-xaml "Windows UI")
+- [Downloader](https://github.com/bezzad/Downloader "Downloader")
+- [AAPTForNet](https://github.com/canheo136/QuickLook.Plugin.ApkViewer "AAPTForNet")
 - [Sharp Compress](https://github.com/adamhathcock/sharpcompress "Sharp Compress")
-- [Newtonsoft Json](https://www.newtonsoft.com/json "Newtonsoft Json")
 - [Advanced Sharp Adb Client](https://github.com/yungd1plomat/AdvancedSharpAdbClient "Advanced Sharp Adb Client")
 - [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit "Windows Community Toolkit")

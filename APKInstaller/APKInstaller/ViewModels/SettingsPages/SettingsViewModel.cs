@@ -8,6 +8,7 @@ using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -436,7 +437,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             Caches = this;
         }
 
-        public void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = (UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList = new AdvancedAdbClient().GetDevices()));
+        public void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = (UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online)));
 
         public async void CheckUpdate()
         {
