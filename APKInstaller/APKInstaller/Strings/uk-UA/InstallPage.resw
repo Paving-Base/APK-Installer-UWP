@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>ADB відсутній</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>In Analysis...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>Файл APK</value>
   </data>
@@ -176,9 +179,6 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Копіювати</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Decompiling...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Пристрої</value>
@@ -294,12 +294,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### За допомогою USB
-1. Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1. Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Увімкніть режим розробника, відкрийте налагодження USB
 3. Перейдіть на сторінку налаштувань Інсталятора APK, виберіть свій пристрій
 4. Поверніться, відновіть встановлення
 #### За допомогою Wi-Fi
-1.Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1.Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Увімкніть режим розробника, відкрийте безпровідне надагодження
 3. Запам'ятайте IP-адресу вашого пристрою
 4. Перейдіть на сторінку налаштувань Інсталятора APK, підключіться та виберіть свій пристрій

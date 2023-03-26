@@ -1,13 +1,13 @@
 #### Üdvözöljük az APK telepítőben!
 
 ##### Nyilatkozat
-1. Please comply with the [APK Installer End User License Agreement and Privacy Policy](https://github.com/Paving-Base/APK-Installer/blob/main/Privacy.md).
-2. This program is open source software, so please make sure the program is from [this Github repository](https://github.com/Paving-Base/APK-Installer) or [this application](https://apps.microsoft.com/store/detail/9P2JFQ43FPPG) to ensure your data security.
-3. If the source of the program is not abnormal, all your data will be used only for the running of the program or stored locally during the running, and the developer will not steal any of your data. Ennek ellenére kérjük, ügyeljen a környezet biztonságára.
-4. The translation of this application comes from the [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") community, and all texts does not represent the author's views.
+1. Kérjük, tartsa be az [APK telepítő végfelhasználói licencszerződést és adatvédelmi szabályzatot](https://github.com/Paving-Base/APK-Installer-UWP/blob/main/Privacy.md).
+2. Ez a program nyílt forráskódú szoftver, ezért az adatbiztonság érdekében győződjön meg róla, hogy a program ebből [a Github-tárból](https://github.com/Paving-Base/APK-Installer-UWP) vagy [ebből az alkalmazásból](https://www.microsoft.com/store/apps/9NSHFKJ1D4BF) származik.
+3. Ha a program forrása nem abnormális, akkor az összes adatodat csak a program futtatásához használják, vagy a futás során helyben tárolják, és a fejlesztő nem lopja el az adataidat. Ennek ellenére kérjük, ügyeljen a környezet biztonságára.
+4. Az alkalmazás fordítása a [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") közösségtől származik, és minden szöveg nem a szerző nézeteit képviseli.
 
 ##### Fordítás
-Köszönet a [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") fordítóknak a támogatásért. If there are any problems with the translation, please feel free to correct us. And please translate seriously. Everything you write will be read all over the world.
+Köszönet a [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") fordítóknak a támogatásért. Ha bármilyen probléma van a fordítással, kérjük, bátran javítson ki minket. És kérjük, fordítson komolyan. Mindent, amit ír, az egész világon el fogják olvasni.
 
 ##### Hozzájárulók
 - [wherewhere](https://github.com/wherewhere)
@@ -17,7 +17,7 @@ Köszönet a [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") ford�
 - [sam1357](https://github.com/sam1357)
 
 ##### Idézetek és hivatkozások
-- [MetroLog](https://github.com/roubachof/MetroLog "MetroLog")
+- [MetroLog](https://github.com/novotnyllc/MetroLog "MetroLog")
 - [Zeroconf](https://github.com/novotnyllc/Zeroconf "Zeroconf")
 - [Windows UI](https://github.com/microsoft/microsoft-ui-xaml "Windows UI")
 - [Downloader](https://github.com/bezzad/Downloader "Downloader")

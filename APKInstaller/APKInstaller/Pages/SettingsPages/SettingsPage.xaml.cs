@@ -74,7 +74,7 @@ namespace APKInstaller.Pages.SettingsPages
                     Provider.PairDevice(ConnectIP.Text, PairCode.Text);
                     break;
                 case "Rate":
-                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9P2JFQ43FPPG"));
+                    _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NSHFKJ1D4BF"));
                     break;
                 case "Group":
                     _ = Launcher.LaunchUriAsync(new Uri("https://t.me/PavingBase"));

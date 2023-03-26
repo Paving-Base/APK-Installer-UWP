@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace APKInstaller.Helpers
 {
@@ -92,26 +91,6 @@ namespace APKInstaller.Helpers
             }
 
             return code;
-        }
-
-        public static TResult AwaitByTaskCompleteSource<TResult>(Func<Task<TResult>> function)
-        {
-            TaskCompletionSource<TResult> taskCompletionSource = new();
-            Task<TResult> task = taskCompletionSource.Task;
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    TResult result = await function.Invoke().ConfigureAwait(false);
-                    taskCompletionSource.SetResult(result);
-                }
-                catch (Exception e)
-                {
-                    taskCompletionSource.SetException(e);
-                }
-            });
-            TResult taskResult = task.Result;
-            return taskResult;
         }
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
@@ -136,6 +137,26 @@ namespace APKInstaller.Helpers
             int b = Convert.ToInt32(Math.Min((c1.B * a1) + (c2.B * a2), 255));
             Color color_mixing = Color.FromArgb(Convert.ToByte(a), Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
             return color_mixing;
+        }
+
+        public static TResult AwaitByTaskCompleteSource<TResult>(Func<Task<TResult>> function)
+        {
+            TaskCompletionSource<TResult> taskCompletionSource = new();
+            Task<TResult> task = taskCompletionSource.Task;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    TResult result = await function.Invoke().ConfigureAwait(false);
+                    taskCompletionSource.SetResult(result);
+                }
+                catch (Exception e)
+                {
+                    taskCompletionSource.SetException(e);
+                }
+            });
+            TResult taskResult = task.Result;
+            return taskResult;
         }
     }
 }

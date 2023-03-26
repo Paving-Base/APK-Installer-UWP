@@ -1,13 +1,13 @@
 #### Bienvenue dans l'installateur d'APK!
 
-##### Declaration
-1. Please comply with the [APK Installer End User License Agreement and Privacy Policy](https://github.com/Paving-Base/APK-Installer/blob/main/Privacy.md).
-2. This program is open source software, so please make sure the program is from [this Github repository](https://github.com/Paving-Base/APK-Installer) or [this application](https://apps.microsoft.com/store/detail/9P2JFQ43FPPG) to ensure your data security.
-3. If the source of the program is not abnormal, all your data will be used only for the running of the program or stored locally during the running, and the developer will not steal any of your data. Still, please pay attention to the security of the environment.
-4. The translation of this application comes from the [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") community, and all texts does not represent the author's views.
+##### Déclaration
+1. Veuillez vous conformer au [Contrat de licence et à la politique de confidentialité de l'Utilisateur final APK](https://github.com/Paving-Base/APK-Installer-UWP/blob/main/Privacy.md).
+2. Ce programme est un logiciel open source, donc assurez-vous que le programme provient de [ce dépôt Github](https://github.com/Paving-Base/APK-Installer-UWP) ou [cette application](https://www.microsoft.com/store/apps/9NSHFKJ1D4BF) pour assurer la sécurité de vos données.
+3. Si la source du programme n'est pas anormale, toutes vos données ne seront utilisées que pour l'exécution du programme ou stockées localement pendant l'exécution, et le développeur ne volera aucune de vos données. Néanmoins, veuillez prêter attention à la sécurité de l'environnement.
+4. La traduction de cette application provient de la communauté [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") et tous les textes ne représentent pas les opinions de l'auteur.
 
 ##### Traduire
-Thanks to [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") translators for their support. If there are any problems with the translation, please feel free to correct us. And please translate seriously. Everything you write will be read all over the world.
+Thanks to [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") translators for their support. En cas de problème avec la traduction, n'hésitez pas à nous corriger. And please translate seriously. Tout ce que vous écrivez sera lu partout dans le monde.
 
 ##### Contributors
 - [wherewhere](https://github.com/wherewhere)
@@ -17,7 +17,7 @@ Thanks to [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") translat
 - [sam1357](https://github.com/sam1357)
 
 ##### Citations and References
-- [MetroLog](https://github.com/roubachof/MetroLog "MetroLog")
+- [MetroLog](https://github.com/novotnyllc/MetroLog "MetroLog")
 - [Zeroconf](https://github.com/novotnyllc/Zeroconf "Zeroconf")
 - [Windows UI](https://github.com/microsoft/microsoft-ui-xaml "Windows UI")
 - [Downloader](https://github.com/bezzad/Downloader "Downloader")

@@ -1,8 +1,8 @@
 #### 歡迎使用 APK 安裝程式！
 
 ##### 聲明
-1. 請遵守 [APK Installer 最終使用者許可協定與隱私條款](https://github.com/Paving-Base/APK-Installer/blob/main/Privacy.md)。
-2. 本程式是開源軟體，因此，在使用時請確保程式是來自[本 Github 倉庫](https://github.com/Paving-Base/APK-Installer)或應用商店中的[本應用](https://apps.microsoft.com/store/detail/9P2JFQ43FPPG)，以確保您的數據安全。
+1. 請遵守 [APK Installer 最終使用者許可協定與隱私條款](https://github.com/Paving-Base/APK-Installer-UWP/blob/main/Privacy.md)。
+2. 本程式是開源軟體，因此，在使用時請確保程式是來自[本 Github 倉庫](https://github.com/Paving-Base/APK-Installer-UWP)或應用商店中的[本應用](https://www.microsoft.com/store/apps/9NSHFKJ1D4BF)，以確保您的數據安全。
 3. 若程式來源無異常，程式運行過程中您的所有數據都僅用於與程式運行或儲存於本地，開發者不會竊取您的任何數據。 但即便如此，也請注意使用環境的安全性。
 4. 本應用文本翻譯來自 [Crowdin](https://crowdin.com/project/APKInstaller "Crowdin") 社區，所有文本均不代表作者觀點。
 
@@ -17,7 +17,7 @@
 - [sam1357](https://github.com/sam1357)
 
 ##### 引用及參考
-- [MetroLog](https://github.com/roubachof/MetroLog "MetroLog")
+- [MetroLog](https://github.com/novotnyllc/MetroLog "MetroLog")
 - [Zeroconf](https://github.com/novotnyllc/Zeroconf "Zeroconf")
 - [Windows UI](https://github.com/microsoft/microsoft-ui-xaml "Windows UI")
 - [Downloader](https://github.com/bezzad/Downloader "Downloader")

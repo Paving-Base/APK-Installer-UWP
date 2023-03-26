@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>ADB eksik</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analizde...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>APK Dosyası</value>
   </data>
@@ -176,9 +179,6 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kopyala</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Derleme çözülüyor...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Aygıtlar</value>
@@ -294,12 +294,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### USB'yi Kullanma
-1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Yükleyici")
+1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Yükleyici")
 2. Geliştirici Modunu açın, USB Hata Ayıklamayı açın
 3. APK Installer'ın Ayarlar Sayfasına gidin, cihazınızı seçin
 4. Geri dönün, kuruluma devam edin
 #### Wifi Kullanımı
-1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Yükleyici")
+1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Yükleyici")
 2. Geliştirici Modunu açın, Uzaktan Hata Ayıklamayı açın
 3. Cihazınızın IP adresini hatırlayın
 4. APK Installer'ın Ayarlar Sayfasına gidin, bağlanın ve cihazınızı seçin

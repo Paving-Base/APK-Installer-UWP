@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>ADB hilang</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Dalam Tahap Analisis...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>berkas APK</value>
   </data>
@@ -174,13 +177,10 @@
     <value>Apakah Anda yakin ingin membatalkan penginstalan?</value>
   </data>
   <data name="ConnectPairedDevices" xml:space="preserve">
-    <value>Connecting Paired Devices...</value>
+    <value>Menghubungkan Perangkat yang Disandingkan...</value>
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Salin</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Decompiling...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Perangkat</value>
@@ -296,12 +296,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Menggunakan USB
-1. Pastikan Penginstal APK telah diperbarui ke [versi terbaru](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1. Pastikan Penginstal APK telah diperbarui ke [versi terbaru](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Aktifkan Mode Pengembang, buka USB Debug
 3. Buka Halaman Pengaturan Penginstal APK, pilih perangkat Anda
 4. Kembali, lanjutkan instalasi
 #### Menggunakan Wifi
-1. Pastikan Penginstal APK telah diperbarui ke [versi terbaru](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1. Pastikan Penginstal APK telah diperbarui ke [versi terbaru](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Aktifkan Mode Pengembang, buka Debug Jarak Jauh
 3. Ingat alamat IP perangkat Anda
 4. Buka Halaman Pengaturan Penginstal APK, sambungkan dan pilih perangkat Anda

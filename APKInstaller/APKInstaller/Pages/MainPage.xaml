@@ -31,7 +31,8 @@
             Grid.Column="1"
             Height="{x:Bind helper:UIHelper.TitleBarHeight}"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Top">
+            VerticalAlignment="Top"
+            Background="{ThemeResource SystemControlTransparentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

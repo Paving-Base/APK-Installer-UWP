@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>Thiếu ADB</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>In Analysis...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>Tệp APK</value>
   </data>
@@ -178,9 +181,6 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Sao chép</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Đang dịch ngược...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Thiết bị</value>
@@ -296,12 +296,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Sử dụng USB
-1. Vui lòng đảm bảo rằng Trình cài đặt APK đã được cập nhật lên [phiên bản mới nhất](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "Trình cài đặt APK")
+1. Vui lòng đảm bảo rằng Trình cài đặt APK đã được cập nhật lên [phiên bản mới nhất](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "Trình cài đặt APK")
 2. Bật Chế độ nhà phát triển, mở USB Debug
 3. Vào trang Cài đặt của APK Installer, chọn thiết bị của bạn
 4. Quay lại, tiếp tục cài đặt
 #### Sử dụng Wifi
-1. Vui lòng đảm bảo rằng Trình cài đặt APK đã được cập nhật lên [phiên bản mới nhất](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "Trình cài đặt APK")
+1. Vui lòng đảm bảo rằng Trình cài đặt APK đã được cập nhật lên [phiên bản mới nhất](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "Trình cài đặt APK")
 2. Bật Chế độ nhà phát triển, mở gỡ lỗi từ xa
 3. Ghi nhớ địa chỉ IP của thiết bị của bạn
 4. Vào trang Cài đặt của APK Installer, kết nối và chọn thiết bị của bạn

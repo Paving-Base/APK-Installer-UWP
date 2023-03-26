@@ -408,7 +408,7 @@
                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                         <HyperlinkButton
                                             x:Uid="/SettingsPage/FeedbackLink"
-                                            NavigateUri="https://github.com/Paving-Base/APK-Installer/issues"
+                                            NavigateUri="https://github.com/Paving-Base/APK-Installer-UWP/issues"
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                         <HyperlinkButton
                                             x:Uid="/SettingsPage/LogFolderLink"
@@ -420,11 +420,11 @@
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                         <HyperlinkButton
                                             x:Uid="/SettingsPage/ReleaseNotes"
-                                            NavigateUri="https://github.com/Paving-Base/APK-Installer/releases/latest"
+                                            NavigateUri="https://github.com/Paving-Base/APK-Installer-UWP/releases/latest"
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                         <HyperlinkButton
                                             x:Uid="/SettingsPage/EULA"
-                                            NavigateUri="https://github.com/Paving-Base/APK-Installer/blob/main/Privacy.md"
+                                            NavigateUri="https://github.com/Paving-Base/APK-Installer-UWP/blob/main/Privacy.md"
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                     </StackPanel>
                                 </ScrollViewer>

@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>ADB lipsește</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>In Analysis...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>Fișier APK</value>
   </data>
@@ -176,9 +179,6 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Copiere</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Decompiling...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Dispozitive</value>
@@ -294,12 +294,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Folosind USB
-1. Asigurați-vă că APK Installer a fost actualizat la [cea mai recentă versiune](https://www.microsoft.com/store/productId/9P2JFQ43FPPG „APK Installer”)
+1. Asigurați-vă că APK Installer a fost actualizat la [cea mai recentă versiune](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF „APK Installer”)
 2. Activați Modul Dezvoltator, deschideți Depanare USB
 3. Accesați pagina Setări a APK Installer, selectați dispozitivul dvs.
 4. Reveniți, reluați instalarea
 #### Folosind Wifi
-1. Asigurați-vă că APK Installer a fost actualizat la [cea mai recentă versiune](https://www.microsoft.com/store/productId/9P2JFQ43FPPG „APK Installer”)
+1. Asigurați-vă că APK Installer a fost actualizat la [cea mai recentă versiune](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF „APK Installer”)
 2. Activați Modul dezvoltator, deschideți Remote Debug
 3. Amintiți-vă adresa IP a dispozitivului dvs
 4. Accesați pagina Setări a APK Installer, conectați-vă și selectați dispozitivul dvs.

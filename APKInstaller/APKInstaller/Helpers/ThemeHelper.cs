@@ -1,4 +1,7 @@
-﻿using Windows.UI;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+using Windows.ApplicationModel.Core;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -22,15 +25,24 @@ namespace APKInstaller.Helpers
         {
             get
             {
-                if (CurrentApplicationWindow?.Content is FrameworkElement rootElement)
+                if (CurrentApplicationWindow?.Dispatcher?.HasThreadAccess == true)
                 {
-                    if (rootElement.RequestedTheme != ElementTheme.Default)
-                    {
-                        return rootElement.RequestedTheme;
-                    }
+                    return CurrentApplicationWindow?.Content is FrameworkElement rootElement
+                        && rootElement.RequestedTheme != ElementTheme.Default
+                        ? rootElement.RequestedTheme
+                        : SettingsHelper.Get<ElementTheme>(SettingsHelper.SelectedAppTheme);
                 }
-
-                return SettingsHelper.Get<ElementTheme>(SettingsHelper.SelectedAppTheme);
+                else
+                {
+                    return UIHelper.AwaitByTaskCompleteSource(() =>
+                        CurrentApplicationWindow?.Dispatcher?.AwaitableRunAsync(() =>
+                        {
+                            return CurrentApplicationWindow?.Content is FrameworkElement rootElement
+                                && rootElement.RequestedTheme != ElementTheme.Default
+                                ? rootElement.RequestedTheme
+                                : SettingsHelper.Get<ElementTheme>(SettingsHelper.SelectedAppTheme);
+                        }, CoreDispatcherPriority.High));
+                }
             }
         }
 
@@ -39,13 +51,31 @@ namespace APKInstaller.Helpers
         /// </summary>
         public static ElementTheme RootTheme
         {
-            get => CurrentApplicationWindow?.Content is FrameworkElement rootElement ? rootElement.RequestedTheme : ElementTheme.Default;
+            get
+            {
+                if (CurrentApplicationWindow == null) { return ElementTheme.Default; }
+                if (CurrentApplicationWindow.Dispatcher.HasThreadAccess)
+                {
+                    return CurrentApplicationWindow.Content is FrameworkElement rootElement ? rootElement.RequestedTheme : ElementTheme.Default;
+                }
+                else
+                {
+                    return UIHelper.AwaitByTaskCompleteSource(() =>
+                        CurrentApplicationWindow.Dispatcher.AwaitableRunAsync(() =>
+                        {
+                            return CurrentApplicationWindow.Content is FrameworkElement rootElement ? rootElement.RequestedTheme : ElementTheme.Default;
+                        }, CoreDispatcherPriority.High));
+                }
+            }
             set
             {
-                if (CurrentApplicationWindow?.Content is FrameworkElement rootElement)
+                _ = CurrentApplicationWindow?.Dispatcher?.AwaitableRunAsync(() =>
                 {
-                    rootElement.RequestedTheme = value;
-                }
+                    if (CurrentApplicationWindow?.Content is FrameworkElement rootElement)
+                    {
+                        rootElement.RequestedTheme = value;
+                    }
+                });
 
                 SettingsHelper.Set(SettingsHelper.SelectedAppTheme, value);
                 UpdateSystemCaptionButtonColors();
@@ -70,16 +100,24 @@ namespace APKInstaller.Helpers
 
         public static bool IsDarkTheme()
         {
-            return RootTheme == ElementTheme.Default
-                ? Application.Current.RequestedTheme == ApplicationTheme.Dark
-                : RootTheme == ElementTheme.Dark;
+            return Window.Current != null
+                ? ActualTheme == ElementTheme.Default
+                    ? Application.Current.RequestedTheme == ApplicationTheme.Dark
+                    : ActualTheme == ElementTheme.Dark
+                : ActualTheme == ElementTheme.Default
+                    ? UISettings.GetColorValue(UIColorType.Background) == Colors.Black
+                    : ActualTheme == ElementTheme.Dark;
         }
 
-        public static bool IsDarkTheme(ElementTheme ElementTheme)
+        public static bool IsDarkTheme(ElementTheme ActualTheme)
         {
-            return ElementTheme == ElementTheme.Default
-                ? Application.Current.RequestedTheme == ApplicationTheme.Dark
-                : ElementTheme == ElementTheme.Dark;
+            return Window.Current != null
+                ? ActualTheme == ElementTheme.Default
+                    ? Application.Current.RequestedTheme == ApplicationTheme.Dark
+                    : ActualTheme == ElementTheme.Dark
+                : ActualTheme == ElementTheme.Default
+                    ? UISettings.GetColorValue(UIColorType.Background) == Colors.Black
+                    : ActualTheme == ElementTheme.Dark;
         }
 
         public static void UpdateSystemCaptionButtonColors()
@@ -90,20 +128,24 @@ namespace APKInstaller.Helpers
             Color ForegroundColor = IsDark || IsHighContrast ? Colors.White : Colors.Black;
             Color BackgroundColor = IsHighContrast ? Color.FromArgb(255, 0, 0, 0) : IsDark ? Color.FromArgb(255, 32, 32, 32) : Color.FromArgb(255, 243, 243, 243);
 
-            if (UIHelper.HasStatusBar)
+            _ = CurrentApplicationWindow?.Dispatcher?.AwaitableRunAsync(() =>
             {
-                StatusBar StatusBar = StatusBar.GetForCurrentView();
-                StatusBar.ForegroundColor = ForegroundColor;
-                StatusBar.BackgroundColor = BackgroundColor;
-                StatusBar.BackgroundOpacity = 0; // 透明度
-            }
-            else
-            {
-                ApplicationViewTitleBar TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-                TitleBar.ForegroundColor = TitleBar.ButtonForegroundColor = ForegroundColor;
-                TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
-                TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = UIHelper.TitleBarExtended ? Colors.Transparent : BackgroundColor;
-            }
+                if (UIHelper.HasStatusBar)
+                {
+                    StatusBar StatusBar = StatusBar.GetForCurrentView();
+                    StatusBar.ForegroundColor = ForegroundColor;
+                    StatusBar.BackgroundColor = BackgroundColor;
+                    StatusBar.BackgroundOpacity = 0; // 透明度
+                }
+                else
+                {
+                    bool ExtendViewIntoTitleBar = CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+                    ApplicationViewTitleBar TitleBar = ApplicationView.GetForCurrentView().TitleBar;
+                    TitleBar.ForegroundColor = TitleBar.ButtonForegroundColor = ForegroundColor;
+                    TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
+                    TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = ExtendViewIntoTitleBar ? Colors.Transparent : BackgroundColor;
+                }
+            });
         }
     }
 }

@@ -126,6 +126,9 @@
   <data name="ADBMissing" xml:space="preserve">
     <value>ADB ontbreekt</value>
   </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>In Analysis...</value>
+  </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>APK bestand</value>
   </data>
@@ -176,9 +179,6 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kopiëren</value>
-  </data>
-  <data name="Decompiling" xml:space="preserve">
-    <value>Decompiling...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Apparaten</value>
@@ -294,12 +294,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Bij gebruik van USB
-1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Schakel Ontwikkelaarsmodus in, open USB Debug
 3. Ga naar Instellingen cvan APK Installer, selecteer uw apparaat
 4. Ga terug, ga verder met de installatie
 #### Bij gebruik van WiFi
-1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
+1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
 2. Schakel Ontwikkelaarsmodus in, open Remote Debug
 3. Onthoud het IP-adres van uw apparaat
 3. Ga naar Instellingen cvan APK Installer, verbind en selecteer uw apparaat
