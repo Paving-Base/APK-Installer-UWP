@@ -29,7 +29,7 @@
         <Grid
             x:Name="CustomTitleBar"
             Grid.Column="1"
-            Height="{x:Bind helper:UIHelper.TitleBarHeight}"
+            Height="{x:Bind TitleBarHeight, Mode=OneWay}"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Background="{ThemeResource SystemControlTransparentBrush}">
@@ -44,7 +44,6 @@
                 MaxHeight="16"
                 Margin="16,0"
                 VerticalAlignment="Center"
-                x:Load="{x:Bind helper:UIHelper.TitleBarExtended}"
                 Source="/Assets/256x256.png"
                 Visibility="{x:Bind CoreAppFrame.CanGoBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             <TextBlock
@@ -53,7 +52,6 @@
                 Margin="0,0,16,2"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                x:Load="{x:Bind helper:UIHelper.TitleBarExtended}"
                 Foreground="{ThemeResource TitleBarForegroundBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Text="{x:Bind GetAppTitleFromSystem}"
@@ -63,6 +61,7 @@
         </Grid>
         <Border
             x:Name="AboutButtonBorder"
+            Grid.RowSpan="2"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Canvas.ZIndex="1"
@@ -70,8 +69,8 @@
             <Button
                 x:Name="AboutButton"
                 x:Uid="/TitleBar/AboutButton"
-                Width="{x:Bind helper:UIHelper.TitleBarHeight}"
-                Height="{x:Bind helper:UIHelper.TitleBarHeight}"
+                Width="32"
+                Height="{x:Bind TitleBarHeight, Mode=OneWay}"
                 Padding="0"
                 Click="Button_Click"
                 FocusVisualMargin="0"

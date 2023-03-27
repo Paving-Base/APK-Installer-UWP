@@ -3,6 +3,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 
 namespace APKInstaller.Helpers
@@ -75,6 +76,14 @@ namespace APKInstaller.Helpers
                     {
                         rootElement.RequestedTheme = value;
                     }
+
+                    if (WindowHelper.IsSupportedAppWindow)
+                    {
+                        foreach (FrameworkElement element in WindowHelper.ActiveWindows.Keys)
+                        {
+                            element.RequestedTheme = value;
+                        }
+                    }
                 });
 
                 SettingsHelper.Set(SettingsHelper.SelectedAppTheme, value);
@@ -144,6 +153,18 @@ namespace APKInstaller.Helpers
                     TitleBar.ForegroundColor = TitleBar.ButtonForegroundColor = ForegroundColor;
                     TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
                     TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = ExtendViewIntoTitleBar ? Colors.Transparent : BackgroundColor;
+                }
+
+                if (WindowHelper.IsSupportedAppWindow)
+                {
+                    foreach (AppWindow window in WindowHelper.ActiveWindows.Values)
+                    {
+                        bool ExtendViewIntoTitleBar = window.TitleBar.ExtendsContentIntoTitleBar;
+                        AppWindowTitleBar TitleBar = window.TitleBar;
+                        TitleBar.ForegroundColor = TitleBar.ButtonForegroundColor = ForegroundColor;
+                        TitleBar.BackgroundColor = TitleBar.InactiveBackgroundColor = BackgroundColor;
+                        TitleBar.ButtonBackgroundColor = TitleBar.ButtonInactiveBackgroundColor = ExtendViewIntoTitleBar ? Colors.Transparent : BackgroundColor;
+                    }
                 }
             });
         }

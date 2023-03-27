@@ -55,13 +55,13 @@ namespace APKInstaller.Controls
                 if (!string.IsNullOrEmpty(capability))
                 {
                     Paragraph paragraph = new();
-                    paragraph.Inlines.Add(new Run { Text = $"• {capability.GetPermissionName()}" });
+                    paragraph.Inlines.Add(new Run { Text = $"• {capability}" });
                     RichTextBlockFullCapabilities.Blocks.Add(paragraph);
                 }
                 if (RichTextBlockCapabilities.Blocks.Count < 3 && !string.IsNullOrEmpty(capability))
                 {
                     Paragraph paragraph = new();
-                    paragraph.Inlines.Add(new Run { Text = $"• {capability.GetPermissionName()}" });
+                    paragraph.Inlines.Add(new Run { Text = $"• {capability}" });
                     RichTextBlockCapabilities.Blocks.Add(paragraph);
                 }
             }

@@ -55,8 +55,6 @@ namespace APKInstaller.ViewModels
 
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InstallPage");
 
-        public static InstallViewModel Caches;
-
         public string AppLocaleName = string.Empty;
         public string InstallFormat => _loader.GetString("InstallFormat");
         public string VersionFormat => _loader.GetString("VersionFormat");
@@ -617,7 +615,6 @@ namespace APKInstaller.ViewModels
         {
             _url = Url;
             _page = Page;
-            Caches = this;
             _path = APKTemp;
             _operation = Operation;
         }
@@ -625,12 +622,9 @@ namespace APKInstaller.ViewModels
         public InstallViewModel(string Path, InstallPage Page, ProtocolForResultsOperation Operation = null)
         {
             _page = Page;
-            Caches = this;
             _operation = Operation;
             _path = string.IsNullOrWhiteSpace(Path) ? _path : Path;
         }
-
-        public static void SetPage(InstallPage Page) => Caches._page = Page;
 
         public async Task Refresh(bool force = true)
         {
@@ -676,6 +670,7 @@ namespace APKInstaller.ViewModels
                         return await FileIO.ReadTextAsync(file);
                     }
                 };
+                dialog.SetXAMLRoot(_page);
                 _ = await UIHelper.DispatcherQueue?.EnqueueAsync(async () => await dialog.ShowAsync());
                 SettingsHelper.Set(SettingsHelper.IsFirstRun, false);
             }
@@ -716,6 +711,7 @@ namespace APKInstaller.ViewModels
                     },
                     DefaultButton = ContentDialogButton.Primary
                 };
+                dialog.SetXAMLRoot(_page);
                 ContentDialogResult result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
@@ -737,6 +733,7 @@ namespace APKInstaller.ViewModels
                                 Content = new TextBlock { Text = ex.Message },
                                 DefaultButton = ContentDialogButton.Primary
                             };
+                            dialogs.SetXAMLRoot(_page);
                             ContentDialogResult results = await dialogs.ShowAsync();
                             if (results == ContentDialogResult.Primary)
                             {
@@ -760,6 +757,7 @@ namespace APKInstaller.ViewModels
                             Content = new TextBlock { Text = _loader.GetString("NoInternetInfo") },
                             DefaultButton = ContentDialogButton.Primary
                         };
+                        dialogs.SetXAMLRoot(_page);
                         ContentDialogResult results = await dialogs.ShowAsync();
                         if (results == ContentDialogResult.Primary)
                         {
@@ -857,6 +855,7 @@ namespace APKInstaller.ViewModels
                         CloseButtonText = _loader.GetString("Cancel"),
                         DefaultButton = ContentDialogButton.Primary
                     };
+                    dialog.SetXAMLRoot(_page);
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
@@ -1061,6 +1060,7 @@ namespace APKInstaller.ViewModels
                         FallbackContent = _loader.GetString("HowToConnectInfo"),
                         ContentInfo = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Tutorials/How%20To%20Connect%20WSA", "How%20To%20Connect%20WSA.md")
                     };
+                    dialog.SetXAMLRoot(_page);
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
@@ -1102,6 +1102,7 @@ namespace APKInstaller.ViewModels
                                 PrimaryButtonText = _loader.GetString("Retry"),
                                 Content = _loader.GetString("CannotConnectWSAInfo"),
                             };
+                            dialogs.SetXAMLRoot(_page);
                             ContentDialogResult results = await dialogs.ShowAsync();
                             if (results == ContentDialogResult.Primary)
                             {
@@ -1121,6 +1122,7 @@ namespace APKInstaller.ViewModels
                         SecondaryButtonText = _loader.GetString("GoToSetting"),
                         Content = _loader.GetString("NoDeviceInfo"),
                     };
+                    dialog.SetXAMLRoot(_page);
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
@@ -1128,7 +1130,7 @@ namespace APKInstaller.ViewModels
                     }
                     else if (result == ContentDialogResult.Secondary)
                     {
-                        UIHelper.Navigate(typeof(SettingsPage), null);
+                        _page.Frame?.Navigate(typeof(SettingsPage), null);
                     }
                 }
             }
@@ -1143,10 +1145,11 @@ namespace APKInstaller.ViewModels
                     FallbackContent = _loader.GetString("NoDeviceInfo10"),
                     ContentInfo = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Tutorials/How%20To%20Connect%20Device", "How%20To%20Connect%20Device.md")
                 };
+                dialog.SetXAMLRoot(_page);
                 ContentDialogResult result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    UIHelper.Navigate(typeof(SettingsPage), null);
+                    _page.Frame?.Navigate(typeof(SettingsPage), null);
                 }
             }
             return false;
@@ -1237,6 +1240,7 @@ namespace APKInstaller.ViewModels
                             CloseButtonText = _loader.GetString("IKnow"),
                             DefaultButton = ContentDialogButton.Close
                         };
+                        dialog.SetXAMLRoot(_page);
                         _ = dialog.ShowAsync();
                     }
                     return;
@@ -1396,6 +1400,7 @@ namespace APKInstaller.ViewModels
                             CloseButtonText = _loader.GetString("Cancel"),
                             DefaultButton = ContentDialogButton.Primary
                         };
+                        dialog.SetXAMLRoot(_page);
                         ContentDialogResult result = await dialog.ShowAsync();
                         if (result == ContentDialogResult.Primary)
                         {
@@ -1517,6 +1522,7 @@ namespace APKInstaller.ViewModels
                         PrimaryButtonText = _loader.GetString("Reinstall"),
                         CloseButtonText = _loader.GetString("Cancel")
                     };
+                    dialog.SetXAMLRoot(_page);
                     ContentDialogResult result = await dialog.ShowAsync();
                     if (result != ContentDialogResult.Primary) { return; }
                 }

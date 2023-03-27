@@ -12,8 +12,10 @@ using Windows.Security.Authorization.AppCapabilityAccess;
 using Windows.System.Profile;
 using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
 namespace APKInstaller
@@ -67,7 +69,7 @@ namespace APKInstaller
             base.OnShareTargetActivated(e);
         }
 
-        private void EnsureWindow(IActivatedEventArgs e)
+        private async void EnsureWindow(IActivatedEventArgs e)
         {
             if (MainWindow == null)
             {
@@ -120,10 +122,18 @@ namespace APKInstaller
                 // 并通过将所需信息作为导航参数传入来配置
                 // 参数
                 rootFrame.Navigate(typeof(MainPage), e);
-            }
 
-            // 确保当前窗口处于活动状态
-            MainWindow.Activate();
+                // 确保当前窗口处于活动状态
+                MainWindow.Activate();
+            }
+            else if (WindowHelper.IsSupportedAppWindow)
+            {
+                (AppWindow appWindow, Frame appWindowContentFrame) = await WindowHelper.CreateWindow();
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                ThemeHelper.Initialize();
+                appWindowContentFrame.Navigate(typeof(MainPage), e);
+                await appWindow.TryShowAsync();
+            }
         }
 
         /// <summary>

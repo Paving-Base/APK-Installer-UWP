@@ -3,6 +3,7 @@ using APKInstaller.Helpers;
 using APKInstaller.Models;
 using APKInstaller.Pages.SettingsPages;
 using Microsoft.Toolkit.Uwp;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ProcessForUWP.UWP;
 using System;
@@ -30,9 +31,9 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public static string DeviceFamily => AnalyticsInfo.VersionInfo.DeviceFamily.Replace('.', ' ');
 
-        public static string ToolkitVersion => Assembly.Load(new AssemblyName("Microsoft.Toolkit.Uwp")).GetName().Version.ToString();
+        public static string ToolkitVersion => Assembly.GetAssembly(typeof(HsvColor)).GetName().Version.ToString(3);
 
-        public static string SharpAdbClientVersion => Assembly.Load(new AssemblyName("AdvancedSharpAdbClient")).GetName().Version.ToString();
+        public static string SharpAdbClientVersion => Assembly.GetAssembly(typeof(IAdbClient)).GetName().Version.ToString();
 
         public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
             || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
@@ -56,19 +57,25 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public bool IsOnlyWSA
         {
-            get => SettingsHelper.Get<bool>(SettingsHelper.IsOnlyWSA);
+            get
+            {
+                bool value = SettingsHelper.Get<bool>(SettingsHelper.IsOnlyWSA);
+                _page.SelectDeviceBox.SelectionMode = value ? ListViewSelectionMode.None : ListViewSelectionMode.Single;
+                return value;
+            }
             set
             {
                 if (IsOnlyWSA != value)
                 {
                     SettingsHelper.Set(SettingsHelper.IsOnlyWSA, value);
                     _page.SelectDeviceBox.SelectionMode = value ? ListViewSelectionMode.None : ListViewSelectionMode.Single;
+                    RaisePropertyChangedEvent();
                     if (!value) { ChooseDevice(); }
                 }
             }
         }
 
-        public static bool ScanPairedDevice
+        public bool ScanPairedDevice
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.ScanPairedDevice);
             set
@@ -85,38 +92,74 @@ namespace APKInstaller.ViewModels.SettingsPages
                         ZeroconfHelper.DisposeConnectListener();
                     }
                     SettingsHelper.Set(SettingsHelper.ScanPairedDevice, value);
+                    RaisePropertyChangedEvent();
                 }
             }
         }
 
-        public static bool IsCloseADB
+        public bool IsCloseADB
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB);
-            set => SettingsHelper.Set(SettingsHelper.IsCloseADB, value);
+            set
+            {
+                if (IsCloseADB != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.IsCloseADB, value);
+                    RaisePropertyChangedEvent();
+                }
+            }
         }
 
-        public static bool IsCloseAPP
+        public bool IsCloseAPP
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.IsCloseAPP);
-            set => SettingsHelper.Set(SettingsHelper.IsCloseAPP, value);
+            set
+            {
+                if (IsCloseAPP != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.IsCloseAPP, value);
+                    RaisePropertyChangedEvent();
+                }
+            }
         }
 
-        public static bool ShowDialogs
+        public bool ShowDialogs
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.ShowDialogs);
-            set => SettingsHelper.Set(SettingsHelper.ShowDialogs, value);
+            set
+            {
+                if (ShowDialogs != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.ShowDialogs, value);
+                    RaisePropertyChangedEvent();
+                }
+            }
         }
 
-        public static bool ShowProgress
+        public bool ShowProgress
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.ShowProgress);
-            set => SettingsHelper.Set(SettingsHelper.ShowProgress, value);
+            set
+            {
+                if (ShowProgress != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.ShowProgress, value);
+                    RaisePropertyChangedEvent();
+                }
+            }
         }
 
-        public static bool AutoGetNetAPK
+        public bool AutoGetNetAPK
         {
             get => SettingsHelper.Get<bool>(SettingsHelper.AutoGetNetAPK);
-            set => SettingsHelper.Set(SettingsHelper.AutoGetNetAPK, value);
+            set
+            {
+                if (AutoGetNetAPK != value)
+                {
+                    SettingsHelper.Set(SettingsHelper.AutoGetNetAPK, value);
+                    RaisePropertyChangedEvent();
+                }
+            }
         }
 
         public string ADBPath
@@ -158,7 +201,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
-        public static int SelectedTheme
+        public int SelectedTheme
         {
             get => 2 - (int)ThemeHelper.RootTheme;
             set
@@ -166,6 +209,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                 if (SelectedTheme != value)
                 {
                     ThemeHelper.RootTheme = (ElementTheme)(2 - value);
+                    RaisePropertyChangedEvent();
                 }
             }
         }

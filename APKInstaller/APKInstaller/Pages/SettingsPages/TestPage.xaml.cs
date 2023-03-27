@@ -1,14 +1,15 @@
 ﻿using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
-using System.ComponentModel;
 using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using Windows.System;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -23,14 +24,21 @@ namespace APKInstaller.Pages.SettingsPages
     {
         internal bool IsExtendsTitleBar
         {
-            get => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+            get => this.IsAppWindow() ? this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar : CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
             set
             {
                 if (IsExtendsTitleBar != value)
                 {
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
+                    if (this.IsAppWindow())
+                    {
+                        this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar = value;
+                    }
+                    else
+                    {
+                        CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
+                    }
                     ThemeHelper.UpdateSystemCaptionButtonColors();
-                    UIHelper.MainPage?.UpdateTitleBarHeight();
+                    this.FindAscendant<MainPage>()?.UpdateTitleBarHeight();
                 }
             }
         }
@@ -74,13 +82,6 @@ namespace APKInstaller.Pages.SettingsPages
             || Package.Current.SignatureKind != PackageSignatureKind.Store
             || Package.Current.Status.Modified;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
-        {
-            if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
-        }
-
         public TestPage() => InitializeComponent();
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -91,10 +92,24 @@ namespace APKInstaller.Pages.SettingsPages
                     _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9NSHFKJ1D4BF&mode=mini"));
                     break;
                 case "OutPIP":
-                    _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                    if (this.IsAppWindow())
+                    {
+                        this.GetWindowForElement().Presenter.RequestPresentation(AppWindowPresentationKind.Default);
+                    }
+                    else if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.Default))
+                    {
+                        _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                    }
                     break;
                 case "EnterPIP":
-                    if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay)) { _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay); }
+                    if (this.IsAppWindow())
+                    {
+                        this.GetWindowForElement().Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
+                    }
+                    else if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                    {
+                        _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                    }
                     break;
                 case "Processes":
                     _ = Frame.Navigate(typeof(ProcessesPage));

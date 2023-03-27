@@ -1,11 +1,15 @@
 ﻿using AdvancedSharpAdbClient;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.SettingsPages;
-using System.IO;
+using System.ComponentModel;
+using System.Linq;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI.Core.Preview;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -17,17 +21,35 @@ namespace APKInstaller.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        private static bool IsWindowClosed=false;
+
         public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
+
+        internal bool IsExtendsTitleBar => this.IsAppWindow() ? this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar : CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+        internal double TitleBarHeight => IsExtendsTitleBar ? 32 : 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        {
+            if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+        }
 
         public MainPage()
         {
             InitializeComponent();
-            UIHelper.MainPage = this;
-            Window.Current.SetTitleBar(CustomTitleBar);
             UIHelper.DispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            if (!this.IsAppWindow())
+            {
+                Window.Current.SetTitleBar(CustomTitleBar);
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            }
+            else
+            {
+                this.GetWindowForElement().Closed += OnWindowClosed;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -48,23 +70,44 @@ namespace APKInstaller.Pages
             }
         }
 
+        private void OnWindowClosed(AppWindow sender, AppWindowClosedEventArgs args)
+        {
+            if (IsWindowClosed && WindowHelper.ActiveWindows.Count <= 1) { CleanCaches(); }
+        }
+
         private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (AppInstance.GetInstances().Count <= 1)
+            IsWindowClosed = true;
+            if (!(WindowHelper.IsSupportedAppWindow && WindowHelper.ActiveWindows.Any())) { CleanCaches(); }
+        }
+
+        private void CleanCaches()
+        {
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.AppInstance"))
+            {
+                if (AppInstance.GetInstances().Count <= 1)
+                {
+                    CachesHelper.CleanAllCaches(true);
+                    if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
+                    {
+                        try { new AdbClient().KillAdb(); } catch { }
+                    }
+                }
+                else
+                {
+                    CachesHelper.CleanAllCaches(false);
+                }
+            }
+            else
             {
                 CachesHelper.CleanAllCaches(true);
-
                 if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                 {
                     try { new AdbClient().KillAdb(); } catch { }
                 }
             }
-            else
-            {
-                CachesHelper.CleanAllCaches(false);
-            }
         }
 
-        internal void UpdateTitleBarHeight() => CustomTitleBar.Height = UIHelper.TitleBarHeight;
+        internal void UpdateTitleBarHeight() => RaisePropertyChangedEvent(nameof(TitleBarHeight));
     }
 }

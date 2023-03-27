@@ -17,10 +17,7 @@ namespace APKInstaller.Helpers
     public static partial class UIHelper
     {
         public static bool HasStatusBar => ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
-        public static bool TitleBarExtended => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
-        public static double TitleBarHeight => TitleBarExtended ? 32 : 0;
-        public static double PageTitlePadding => TitleBarHeight;
-
+        
         private static DispatcherQueue _dispatcherQueue;
         public static DispatcherQueue DispatcherQueue
         {
@@ -37,24 +34,14 @@ namespace APKInstaller.Helpers
 
     public static partial class UIHelper
     {
-        public static MainPage MainPage;
-
-        public static void Navigate(Type pageType, NavigationTransitionInfo TransitionInfo, object e = null)
-        {
-            _ = (DispatcherQueue?.EnqueueAsync(() => { _ = (MainPage?.CoreAppFrame.Navigate(pageType, e, TransitionInfo)); }));
-        }
-    }
-
-    public static partial class UIHelper
-    {
         public static string GetSizeString(this double size)
         {
             int index = 0;
-            while (true)
+            while (index <= 11)
             {
                 index++;
                 size /= 1024;
-                if (size is > 0.7 and < 716.8) { break; }
+                if (size > 0.7 && size < 716.8) { break; }
                 else if (size >= 716.8) { continue; }
                 else if (size <= 0.7)
                 {
@@ -71,10 +58,17 @@ namespace APKInstaller.Helpers
                 case 2: str = "MB"; break;
                 case 3: str = "GB"; break;
                 case 4: str = "TB"; break;
+                case 5: str = "PB"; break;
+                case 6: str = "EB"; break;
+                case 7: str = "ZB"; break;
+                case 8: str = "YB"; break;
+                case 9: str = "BB"; break;
+                case 10: str = "NB"; break;
+                case 11: str = "DB"; break;
                 default:
                     break;
             }
-            return $"{size:N2}{str}";
+            return $"{size:0.##}{str}";
         }
 
         public static string GetPermissionName(this string permission)
@@ -92,7 +86,7 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static double GetProgressValue<T>(this List<T> lists, T list)
+        public static double GetProgressValue<T>(this IList<T> lists, T list)
         {
             return (double)(lists.IndexOf(list) + 1) * 100 / lists.Count;
         }

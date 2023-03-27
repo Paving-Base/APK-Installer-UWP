@@ -28,10 +28,9 @@ namespace APKInstaller.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (InstallViewModel.Caches != null)
+            if (Provider != null)
             {
                 IsCaches = true;
-                Provider = InstallViewModel.Caches;
             }
             else
             {
