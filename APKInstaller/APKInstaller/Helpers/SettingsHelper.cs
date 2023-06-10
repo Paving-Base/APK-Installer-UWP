@@ -1,7 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
 using MetroLog;
 using Microsoft.Toolkit.Uwp.Helpers;
-using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -124,7 +123,7 @@ namespace APKInstaller.Helpers
     public class SystemTextJsonObjectSerializer : IObjectSerializer
     {
         // Specify your serialization settings
-        private readonly JsonSerializerSettings settings = new JsonSerializerSettings() { DefaultValueHandling = DefaultValueHandling.Ignore };
+        private readonly JsonSerializerSettings settings = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
 
         string IObjectSerializer.Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
 

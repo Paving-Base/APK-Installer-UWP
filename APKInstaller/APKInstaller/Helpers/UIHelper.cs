@@ -1,16 +1,12 @@
-﻿using APKInstaller.Pages;
-using Microsoft.Toolkit.Uwp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace APKInstaller.Helpers
 {
@@ -29,7 +25,7 @@ namespace APKInstaller.Helpers
             {
                 index++;
                 size /= 1024;
-                if (size > 0.7 && size < 716.8) { break; }
+                if (size is > 0.7 and < 716.8) { break; }
                 else if (size >= 716.8) { continue; }
                 else if (size <= 0.7)
                 {

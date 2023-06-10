@@ -468,7 +468,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         }
 
         public async void OnDeviceChanged(object sender, DeviceDataEventArgs e) => ConnectedList = (await new AdbClient().GetDevicesAsync()).Where(x => x.State == DeviceState.Online).ToList();
-        
+
         public void Dispose()
         {
             Dispose(true);

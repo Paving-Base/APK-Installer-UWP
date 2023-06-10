@@ -38,7 +38,7 @@ namespace APKInstaller.ViewModels
 {
     public class InstallViewModel : INotifyPropertyChanged
     {
-        private InstallPage _page;
+        private readonly InstallPage _page;
         private DeviceData _device;
         private readonly ProtocolForResultsOperation _operation;
         private static readonly string APKTemp = Path.Combine(CachesHelper.TempPath, "NetAPKTemp.apk");

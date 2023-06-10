@@ -12,7 +12,7 @@ namespace APKInstaller.Helpers
     {
         public static async Task<(bool isfound, IEnumerable<Package> info)> FindPackagesByName(string PackageFamilyName)
         {
-            PackageManager manager = new PackageManager();
+            PackageManager manager = new();
             IEnumerable<Package> WSAList = await Task.Run(() =>
             {
                 try

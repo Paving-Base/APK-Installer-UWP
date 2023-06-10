@@ -23,7 +23,7 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        private static bool IsWindowClosed=false;
+        private static bool IsWindowClosed = false;
 
         public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
 

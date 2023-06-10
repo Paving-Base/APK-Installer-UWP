@@ -147,7 +147,7 @@ namespace Zeroconf.Common
                         {
                             while (!Volatile.Read(ref shouldCancel))
                             {
-                                var res = await client.ReceiveAsync()
+                                UdpReceiveResult res = await client.ReceiveAsync()
                                                       .ConfigureAwait(false);
 
                                 onResponse(res.RemoteEndPoint.Address, res.Buffer);

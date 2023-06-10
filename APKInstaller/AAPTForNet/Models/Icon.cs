@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Versioning;
 
 namespace AAPTForNet.Models
 {

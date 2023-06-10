@@ -1,5 +1,4 @@
-﻿using APKInstaller.Pages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
@@ -43,11 +42,7 @@ namespace APKInstaller.Helpers
 
         public static AppWindow GetWindowForElement(this UIElement element)
         {
-            if (element.IsAppWindow())
-            {
-                return ActiveWindows[element.XamlRoot.Content];
-            }
-            return null;
+            return element.IsAppWindow() ? ActiveWindows[element.XamlRoot.Content] : null;
         }
 
         public static void SetXAMLRoot(this UIElement element, UIElement target)

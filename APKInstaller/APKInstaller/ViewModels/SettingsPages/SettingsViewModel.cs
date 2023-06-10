@@ -3,7 +3,6 @@ using APKInstaller.Helpers;
 using APKInstaller.Models;
 using APKInstaller.Pages.SettingsPages;
 using Microsoft.Toolkit.Uwp;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ProcessForUWP.UWP;
 using System;

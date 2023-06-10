@@ -1,5 +1,4 @@
-﻿using APKInstaller.Helpers;
-using APKInstaller.Models;
+﻿using APKInstaller.Models;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
