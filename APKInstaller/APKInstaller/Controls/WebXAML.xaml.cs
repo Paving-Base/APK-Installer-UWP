@@ -5,6 +5,7 @@ using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -15,11 +16,14 @@ namespace APKInstaller.Controls
 {
     public sealed partial class WebXAML : UserControl
     {
-        public static readonly DependencyProperty ContentInfoProperty = DependencyProperty.Register(
-           "ContentInfo",
-           typeof(GitInfo),
-           typeof(WebXAML),
-           new PropertyMetadata(default(GitInfo), OnContentChanged));
+        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+
+        public static readonly DependencyProperty ContentInfoProperty =
+            DependencyProperty.Register(
+                nameof(ContentInfo),
+                typeof(GitInfo),
+                typeof(WebXAML),
+                new PropertyMetadata(default(GitInfo), OnContentChanged));
 
         public GitInfo ContentInfo
         {
@@ -27,11 +31,12 @@ namespace APKInstaller.Controls
             set => SetValue(ContentInfoProperty, value);
         }
 
-        public static readonly DependencyProperty ContentUrlProperty = DependencyProperty.Register(
-           "ContentUrl",
-           typeof(Uri),
-           typeof(WebXAML),
-           new PropertyMetadata(default(Uri), OnContentChanged));
+        public static readonly DependencyProperty ContentUrlProperty =
+            DependencyProperty.Register(
+                nameof(ContentUrl),
+                typeof(Uri),
+                typeof(WebXAML),
+                new PropertyMetadata(default(Uri), OnContentChanged));
 
         public Uri ContentUrl
         {
@@ -39,11 +44,12 @@ namespace APKInstaller.Controls
             set => SetValue(ContentUrlProperty, value);
         }
 
-        public static readonly DependencyProperty ContentXAMLProperty = DependencyProperty.Register(
-           "ContentXAML",
-           typeof(string),
-           typeof(WebXAML),
-           new PropertyMetadata(default(string), OnContentChanged));
+        public static readonly DependencyProperty ContentXAMLProperty =
+            DependencyProperty.Register(
+                nameof(ContentXAML),
+                typeof(string),
+                typeof(WebXAML),
+                new PropertyMetadata(default(string), OnContentChanged));
 
         public string ContentXAML
         {
@@ -73,7 +79,7 @@ namespace APKInstaller.Controls
                     {
                         string xaml = await client.GetStringAsync(value);
                         if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
-                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
+                        UIElement = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                     }
                     catch
                     {
@@ -81,7 +87,7 @@ namespace APKInstaller.Controls
                         {
                             string xaml = await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API, false));
                             if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
-                            UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
+                            UIElement = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                         }
                         catch
                         {
@@ -92,7 +98,7 @@ namespace APKInstaller.Controls
                     {
                         if (UIElement != null)
                         {
-                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
+                            _ = DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
                         }
                     }
                 }
@@ -101,7 +107,7 @@ namespace APKInstaller.Controls
                     UIElement UIElement = null;
                     try
                     {
-                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(ContentXAML); });
+                        UIElement = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(ContentXAML); });
                     }
                     catch
                     {
@@ -111,7 +117,7 @@ namespace APKInstaller.Controls
                     {
                         if (UIElement != null)
                         {
-                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
+                            _ = DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
                         }
                     }
                 }
@@ -124,7 +130,7 @@ namespace APKInstaller.Controls
                     {
                         string xaml = await client.GetStringAsync(ContentUri);
                         if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
-                        UIElement = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
+                        UIElement = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                     }
                     catch
                     {
@@ -134,7 +140,7 @@ namespace APKInstaller.Controls
                     {
                         if (UIElement != null)
                         {
-                            _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
+                            _ = DispatcherQueue?.EnqueueAsync(() => this.Content = UIElement);
                         }
                     }
                 }

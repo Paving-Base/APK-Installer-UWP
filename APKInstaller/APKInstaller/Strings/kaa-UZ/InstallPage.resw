@@ -180,6 +180,9 @@
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kóshirip alıw</value>
   </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>Creating install session...</value>
+  </data>
   <data name="Devices" xml:space="preserve">
     <value>Qurılmalar</value>
   </data>
@@ -252,10 +255,6 @@
   <data name="Installing" xml:space="preserve">
     <value>Ornatılmaqta...</value>
   </data>
-  <data name="InstallingPercent" xml:space="preserve">
-    <value>Ornatılmaqta {0}...</value>
-    <comment>{0} - Progress.</comment>
-  </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>Sebep: </value>
   </data>
@@ -294,12 +293,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### USB járdeminde
-1. APK ornatıwshısı [sońǵı versiyasına](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Ornatıwshı") jańalanǵanına isenim kámil etiń
+1. APK ornatıwshısı [sońǵı versiyasına](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Ornatıwshı") jańalanǵanına isenim kámil etiń
 2. Baǵdarlamashı rejimin qosıń, USB arqalı nasazlıqtı sazlawdı ashıń
 3. APK ornatıwshınıń sazlawlar betine ótiń, qurılmańızdı tańlań
 4. Artqa qaytıń, ornatıwdı dawam etiń
 #### Wi-Fi járdeminde
-1. APK ornatıwshısı [sońǵı versiyasına](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Ornatıwshı") jańalanǵanına isenim kámil etiń
+1. APK ornatıwshısı [sońǵı versiyasına](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Ornatıwshı") jańalanǵanına isenim kámil etiń
 2. Baǵdarlamashı rejimin qosıń, aralıqtan nasazlıqtı sazlawdı ashıń
 3. Qurılmańızdıń IP mánzilin yadıńızda saqlań
 4. APK ornatıwshınıń sazlawlar betine ótiń, jalǵanıń hám qurılmańızdı tańlań
@@ -328,6 +327,10 @@
   <data name="PackageNameFormat" xml:space="preserve">
     <value>Baǵdarlamalar jıyındısınıń ataması: {0}</value>
     <comment>{0} - Package Name.</comment>
+  </data>
+  <data name="PostInstallFormat" xml:space="preserve">
+    <value>Cleaning cache ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Qayta ornatıw</value>
@@ -366,7 +369,7 @@
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
     <value>Shıǵarılmaqta {0}/{1}...</value>
-    <comment>{0} - Have done num. {1} - All num.</comment>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Jańalaw</value>
@@ -374,6 +377,10 @@
   <data name="UpdateFormat" xml:space="preserve">
     <value>{0} baǵdarlaması jańalansın ba?</value>
     <comment>{0} - AppName.</comment>
+  </data>
+  <data name="UploadingFormat" xml:space="preserve">
+    <value>Uploading {0} ({1}/{2})...</value>
+    <comment>{0} - Progress. {1} - Finnished count. {2} - Total count.</comment>
   </data>
   <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
     <value>Kod versiyası</value>
@@ -398,6 +405,10 @@ Bul kóp waqıt alıwı múmkin. Otırıp dem alıń.</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Xosh keldińiz!</value>
+  </data>
+  <data name="WriteSessionFormat" xml:space="preserve">
+    <value>Writing install session ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>Android ushın Windows tómengi sisteması iske túspekte</value>

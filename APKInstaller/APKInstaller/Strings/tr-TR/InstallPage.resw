@@ -136,7 +136,7 @@
     <value>Özellikler:</value>
   </data>
   <data name="AppNameFlyoutItem.Text" xml:space="preserve">
-    <value>Uygulama Adı</value>
+    <value>Wear Pro</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>İptal</value>
@@ -179,6 +179,9 @@
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kopyala</value>
+  </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>Creating install session...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Aygıtlar</value>
@@ -252,10 +255,6 @@
   <data name="Installing" xml:space="preserve">
     <value>Yükleniyor...</value>
   </data>
-  <data name="InstallingPercent" xml:space="preserve">
-    <value>Yükleniyor {0}...</value>
-    <comment>{0} - Progress.</comment>
-  </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>Neden:</value>
   </data>
@@ -294,12 +293,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### USB'yi Kullanma
-1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Yükleyici")
+1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Yükleyici")
 2. Geliştirici Modunu açın, USB Hata Ayıklamayı açın
 3. APK Installer'ın Ayarlar Sayfasına gidin, cihazınızı seçin
 4. Geri dönün, kuruluma devam edin
 #### Wifi Kullanımı
-1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Yükleyici")
+1. Lütfen APK Yükleyici'nin [en son sürüme] güncellendiğinden emin olun(https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Yükleyici")
 2. Geliştirici Modunu açın, Uzaktan Hata Ayıklamayı açın
 3. Cihazınızın IP adresini hatırlayın
 4. APK Installer'ın Ayarlar Sayfasına gidin, bağlanın ve cihazınızı seçin
@@ -328,6 +327,10 @@
   <data name="PackageNameFormat" xml:space="preserve">
     <value>Paket Adı: {0}</value>
     <comment>{0} - Package Name.</comment>
+  </data>
+  <data name="PostInstallFormat" xml:space="preserve">
+    <value>Cleaning cache ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Yeniden yükle</value>
@@ -366,7 +369,7 @@
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
     <value>Çıkarılıyor {0}/{1}...</value>
-    <comment>{0} - Have done num. {1} - All num.</comment>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Güncelle</value>
@@ -374,6 +377,10 @@
   <data name="UpdateFormat" xml:space="preserve">
     <value>{0} Güncellensin mi?</value>
     <comment>{0} - AppName.</comment>
+  </data>
+  <data name="UploadingFormat" xml:space="preserve">
+    <value>Uploading {0} ({1}/{2})...</value>
+    <comment>{0} - Progress. {1} - Finnished count. {2} - Total count.</comment>
   </data>
   <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
     <value>Sürüm Kodu</value>
@@ -398,6 +405,10 @@ Bu uzun sürebilir. Arkanıza yaslanın ve rahatlayın.</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Hoşgeldiniz!</value>
+  </data>
+  <data name="WriteSessionFormat" xml:space="preserve">
+    <value>Writing install session ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>WSA Çalışıyor</value>

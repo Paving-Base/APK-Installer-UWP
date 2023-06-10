@@ -8,6 +8,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>APKInstaller</RootNamespace>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
     <AssemblyName>APKInstaller</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>preview</LangVersion>
@@ -165,6 +166,7 @@
     <Compile Include="Helpers\PackageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
+    <Compile Include="Helpers\ThreadSwitcher.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Helpers\UpdateHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
@@ -813,7 +815,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Downloader">
-      <Version>3.0.4</Version>
+      <Version>3.0.6</Version>
     </PackageReference>
     <PackageReference Include="MetroLog">
       <Version>1.0.1</Version>
@@ -831,7 +833,7 @@
       <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.2</Version>
+      <Version>2.8.4</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>

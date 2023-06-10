@@ -1,22 +1,16 @@
 ﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using APKInstaller.Controls;
-using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
 using Microsoft.Toolkit.Uwp;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media.Imaging;
-using File = System.IO.File;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
@@ -62,50 +56,47 @@ namespace APKInstaller.ViewModels.ToolsPages
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
-        public ApplicationsViewModel(ApplicationsPage page)
-        {
-            _page = page;
-        }
+        public ApplicationsViewModel(ApplicationsPage page) => _page = page;
 
         public async Task GetDevices()
         {
             await Task.Run(async () =>
             {
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
-                devices = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online).ToList();
-                await UIHelper.DispatcherQueue?.EnqueueAsync(DeviceList.Clear);
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                devices = (await new AdbClient().GetDevicesAsync()).Where(x => x.State == DeviceState.Online).ToList();
+                await _page.DispatcherQueue?.EnqueueAsync(DeviceList.Clear);
                 if (devices.Count > 0)
                 {
                     foreach (DeviceData device in devices)
                     {
                         if (!string.IsNullOrEmpty(device.Name))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Name));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Name));
                         }
                         else if (!string.IsNullOrEmpty(device.Model))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Model));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Model));
                         }
                         else if (!string.IsNullOrEmpty(device.Product))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Product));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Product));
                         }
                         else if (!string.IsNullOrEmpty(device.Serial))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Serial));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Serial));
                         }
                         else
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add("Device"));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add("Device"));
                         }
                     }
-                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => { DeviceComboBox.ItemsSource = DeviceList; if (DeviceComboBox.SelectedIndex == -1) { DeviceComboBox.SelectedIndex = 0; } });
+                    await _page.DispatcherQueue?.EnqueueAsync(() => { DeviceComboBox.ItemsSource = DeviceList; if (DeviceComboBox.SelectedIndex == -1) { DeviceComboBox.SelectedIndex = 0; } });
                 }
                 else if (Applications != null)
                 {
-                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => Applications = null);
+                    await _page.DispatcherQueue?.EnqueueAsync(() => Applications = null);
                 }
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
             });
         }
 
@@ -118,19 +109,19 @@ namespace APKInstaller.ViewModels.ToolsPages
                 PackageManager manager = new(client, devices[index]);
                 foreach (KeyValuePair<string, string> app in apps)
                 {
-                    _ = UIHelper.DispatcherQueue?.EnqueueAsync(() => TitleBar.SetProgressValue((double)apps.ToList().IndexOf(app) * 100 / apps.Count));
+                    _ = _page.DispatcherQueue?.EnqueueAsync(() => TitleBar.SetProgressValue((double)apps.ToList().IndexOf(app) * 100 / apps.Count));
                     if (!string.IsNullOrEmpty(app.Key))
                     {
                         ConsoleOutputReceiver receiver = new();
-                        client.ExecuteRemoteCommand($"pidof {app.Key}", devices[index], receiver);
+                        await client.ExecuteRemoteCommandAsync($"pidof {app.Key}", devices[index], receiver);
                         bool isactive = !string.IsNullOrEmpty(receiver.ToString());
-                        FontIcon source = await UIHelper.DispatcherQueue.EnqueueAsync(() => { return new FontIcon { Glyph = "\xECAA" }; });
+                        FontIcon source = await _page.DispatcherQueue.EnqueueAsync(() => { return new FontIcon { Glyph = "\xECAA" }; });
                         Applications.Add(new APKInfo
                         {
                             Name = app.Key,
                             Icon = source,
                             IsActive = isactive,
-                            VersionInfo = manager.GetVersionInfo(app.Key),
+                            VersionInfo = await manager.GetVersionInfoAsync(app.Key),
                         });
                     }
                 }
@@ -142,13 +133,13 @@ namespace APKInstaller.ViewModels.ToolsPages
         {
             await Task.Run(async () =>
             {
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
                 AdvancedAdbClient client = new();
-                int index = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return DeviceComboBox.SelectedIndex; });
-                PackageManager manager = new(new AdvancedAdbClient(), devices[index]);
+                int index = await _page.DispatcherQueue?.EnqueueAsync(() => { return DeviceComboBox.SelectedIndex; });
+                PackageManager manager = new(client, devices[index]);
                 List<APKInfo> list = await CheckAPP(manager.Packages, index);
-                await UIHelper.DispatcherQueue?.EnqueueAsync(() => Applications = list);
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+                await _page.DispatcherQueue?.EnqueueAsync(() => Applications = list);
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
             });
         }
     }

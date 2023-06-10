@@ -7,6 +7,7 @@ using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -22,6 +23,7 @@ namespace APKInstaller.Pages
     {
         private bool IsCaches;
         internal InstallViewModel Provider;
+        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
 
         public InstallPage() => InitializeComponent();
 

@@ -180,6 +180,9 @@
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kopieren</value>
   </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>Creating install session...</value>
+  </data>
   <data name="Devices" xml:space="preserve">
     <value>Geräte</value>
   </data>
@@ -252,10 +255,6 @@
   <data name="Installing" xml:space="preserve">
     <value>Installiere...</value>
   </data>
-  <data name="InstallingPercent" xml:space="preserve">
-    <value>{0} wird installiert ...</value>
-    <comment>{0} - Progress.</comment>
-  </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>Grund: </value>
   </data>
@@ -294,12 +293,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Verwenden von USB
-1. Bitte stellen Sie sicher, dass APK Installer auf [die neueste Version] aktualisiert wurde (https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1. Bitte stellen Sie sicher, dass APK Installer auf [die neueste Version] aktualisiert wurde (https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Schalten Sie den Entwicklermodus ein, öffnen Sie USB Debug
 3. Gehen Sie zur Einstellungsseite des APK-Installationsprogramms, wählen Sie Ihr Gerät aus
 4. Gehen Sie zurück, setzen Sie die Installation fort
 #### Mit Wifi
-1. Bitte stellen Sie sicher, dass APK Installer auf [die neueste Version] aktualisiert wurde (https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1. Bitte stellen Sie sicher, dass APK Installer auf [die neueste Version] aktualisiert wurde (https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Schalten Sie den Entwicklermodus ein, öffnen Sie Remote Debug
 3. Merken Sie sich die IP-Adresse Ihres Geräts
 4. Gehen Sie zur Einstellungsseite des APK-Installationsprogramms, verbinden Sie sich und wählen Sie Ihr Gerät aus
@@ -329,6 +328,10 @@
   <data name="PackageNameFormat" xml:space="preserve">
     <value>Paketname: {0}</value>
     <comment>{0} - Package Name.</comment>
+  </data>
+  <data name="PostInstallFormat" xml:space="preserve">
+    <value>Cleaning cache ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Neu installieren</value>
@@ -367,7 +370,7 @@
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
     <value>Entpacken von {0}/{1}...</value>
-    <comment>{0} - Have done num. {1} - All num.</comment>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Aktualisierungen</value>
@@ -375,6 +378,10 @@
   <data name="UpdateFormat" xml:space="preserve">
     <value>Aktualisierungen ({0})?</value>
     <comment>{0} - AppName.</comment>
+  </data>
+  <data name="UploadingFormat" xml:space="preserve">
+    <value>Uploading {0} ({1}/{2})...</value>
+    <comment>{0} - Progress. {1} - Finnished count. {2} - Total count.</comment>
   </data>
   <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
     <value>Versionsnummer</value>
@@ -399,6 +406,10 @@ Dies kann lange dauern. Setze dich zurück und entspannen.</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Willkommen!</value>
+  </data>
+  <data name="WriteSessionFormat" xml:space="preserve">
+    <value>Writing install session ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>WSA wird ausgeführt</value>

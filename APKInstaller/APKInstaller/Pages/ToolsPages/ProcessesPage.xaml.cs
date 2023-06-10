@@ -18,6 +18,7 @@ namespace APKInstaller.Pages.ToolsPages
     public sealed partial class ProcessesPage : Page
     {
         private ProcessesViewModel Provider;
+        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
 
         public ProcessesPage() => InitializeComponent();
 
@@ -36,7 +37,7 @@ namespace APKInstaller.Pages.ToolsPages
             ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
-        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = UIHelper.DispatcherQueue?.EnqueueAsync(Provider.GetDevices);
+        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = DispatcherQueue?.EnqueueAsync(Provider.GetDevices);
 
         private void TitleBar_BackRequested(TitleBar sender, object e)
         {

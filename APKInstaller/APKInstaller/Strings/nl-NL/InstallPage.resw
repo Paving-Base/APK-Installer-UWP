@@ -180,6 +180,9 @@
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Kopiëren</value>
   </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>Creating install session...</value>
+  </data>
   <data name="Devices" xml:space="preserve">
     <value>Apparaten</value>
   </data>
@@ -252,10 +255,6 @@
   <data name="Installing" xml:space="preserve">
     <value>Installeren...</value>
   </data>
-  <data name="InstallingPercent" xml:space="preserve">
-    <value>{0} installeren...</value>
-    <comment>{0} - Progress.</comment>
-  </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>Reden: </value>
   </data>
@@ -294,12 +293,12 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### Bij gebruik van USB
-1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Schakel Ontwikkelaarsmodus in, open USB Debug
 3. Ga naar Instellingen cvan APK Installer, selecteer uw apparaat
 4. Ga terug, ga verder met de installatie
 #### Bij gebruik van WiFi
-1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1. Controleer of de APK Installer is bijgewerkt naar [de nieuwste versie](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Schakel Ontwikkelaarsmodus in, open Remote Debug
 3. Onthoud het IP-adres van uw apparaat
 3. Ga naar Instellingen cvan APK Installer, verbind en selecteer uw apparaat
@@ -328,6 +327,10 @@
   <data name="PackageNameFormat" xml:space="preserve">
     <value>Pakketnaam: {0}</value>
     <comment>{0} - Package Name.</comment>
+  </data>
+  <data name="PostInstallFormat" xml:space="preserve">
+    <value>Cleaning cache ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Opnieuw installeren</value>
@@ -367,7 +370,7 @@ ADB-server starten...</value>
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
     <value>Uitpakken {0}/{1}...</value>
-    <comment>{0} - Have done num. {1} - All num.</comment>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Bijwerken</value>
@@ -375,6 +378,10 @@ ADB-server starten...</value>
   <data name="UpdateFormat" xml:space="preserve">
     <value>{0} bijwerken?</value>
     <comment>{0} - AppName.</comment>
+  </data>
+  <data name="UploadingFormat" xml:space="preserve">
+    <value>Uploading {0} ({1}/{2})...</value>
+    <comment>{0} - Progress. {1} - Finnished count. {2} - Total count.</comment>
   </data>
   <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
     <value>Versienummer</value>
@@ -399,6 +406,10 @@ Dit kan lang duren. Leun achterover en ontspan.</value>
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Welkom!</value>
+  </data>
+  <data name="WriteSessionFormat" xml:space="preserve">
+    <value>Writing install session ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>WSA wordt uitgevoerd</value>

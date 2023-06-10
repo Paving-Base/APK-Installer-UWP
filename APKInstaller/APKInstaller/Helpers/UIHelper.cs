@@ -16,20 +16,8 @@ namespace APKInstaller.Helpers
 {
     public static partial class UIHelper
     {
+        public static DispatcherQueue DispatcherQueue { get; set; }
         public static bool HasStatusBar => ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
-        
-        private static DispatcherQueue _dispatcherQueue;
-        public static DispatcherQueue DispatcherQueue
-        {
-            get => _dispatcherQueue;
-            set
-            {
-                if (_dispatcherQueue != value)
-                {
-                    _dispatcherQueue = value;
-                }
-            }
-        }
     }
 
     public static partial class UIHelper

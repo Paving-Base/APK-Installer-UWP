@@ -127,7 +127,7 @@
     <value>ADB відсутній</value>
   </data>
   <data name="Analysis" xml:space="preserve">
-    <value>In Analysis...</value>
+    <value>У Аналізі...</value>
   </data>
   <data name="APKFileFlyoutItem.Text" xml:space="preserve">
     <value>Файл APK</value>
@@ -175,10 +175,13 @@
     <value>Ви впевнені, що хочете скасувати встановлення?</value>
   </data>
   <data name="ConnectPairedDevices" xml:space="preserve">
-    <value>Connecting Paired Devices...</value>
+    <value>Підключення приєднаних пристроїв...</value>
   </data>
   <data name="CopyFlyoutItem.Text" xml:space="preserve">
     <value>Копіювати</value>
+  </data>
+  <data name="CreateSession" xml:space="preserve">
+    <value>Creating install session...</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Пристрої</value>
@@ -252,10 +255,6 @@
   <data name="Installing" xml:space="preserve">
     <value>Встановлення...</value>
   </data>
-  <data name="InstallingPercent" xml:space="preserve">
-    <value>Встановлення {0}...</value>
-    <comment>{0} - Progress.</comment>
-  </data>
   <data name="InstallOutputTextBlock.Text" xml:space="preserve">
     <value>Причина: </value>
   </data>
@@ -294,24 +293,25 @@
   </data>
   <data name="NoDeviceInfo10" xml:space="preserve">
     <value>#### За допомогою USB
-1. Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1. Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Увімкніть режим розробника, відкрийте налагодження USB
 3. Перейдіть на сторінку налаштувань Інсталятора APK, виберіть свій пристрій
 4. Поверніться, відновіть встановлення
 #### За допомогою Wi-Fi
-1.Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9NSHFKJ1D4BF "APK Installer")
+1.Переконайтеся, що Інсталятор APK оновлено до [останньої версії](https://www.microsoft.com/store/productId/9P2JFQ43FPPG "APK Installer")
 2. Увімкніть режим розробника, відкрийте безпровідне надагодження
 3. Запам'ятайте IP-адресу вашого пристрою
 4. Перейдіть на сторінку налаштувань Інсталятора APK, підключіться та виберіть свій пристрій
 5. Поверніться, відновіть встановлення
 
-[Докладніше]({0})</value>
+[Докладніше]({0})
+  </value>
   </data>
   <data name="NoInternet" xml:space="preserve">
-    <value>Не вдалося підключитися до Інтернету</value>
+    <value>Не вдалося під'єднатися до Інтернету</value>
   </data>
   <data name="NoInternetInfo" xml:space="preserve">
-    <value>Перш ніж відкривати програму, підключіться до Інтернету.</value>
+    <value>Перш ніж відкривати програму, увімкнутися до Інтернету.</value>
   </data>
   <data name="NoPackageWranning" xml:space="preserve">
     <value>Для належної роботи програми спробуйте запустити пакет програм для Android.</value>
@@ -328,6 +328,10 @@
   <data name="PackageNameFormat" xml:space="preserve">
     <value>Назва пакета: {0}</value>
     <comment>{0} - Package Name.</comment>
+  </data>
+  <data name="PostInstallFormat" xml:space="preserve">
+    <value>Cleaning cache ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Перевстановити</value>
@@ -366,7 +370,7 @@
   </data>
   <data name="UnzippingFormat" xml:space="preserve">
     <value>Розпакування {0}/{1}...</value>
-    <comment>{0} - Have done num. {1} - All num.</comment>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Оновити</value>
@@ -374,6 +378,10 @@
   <data name="UpdateFormat" xml:space="preserve">
     <value>Оновити {0}?</value>
     <comment>{0} - AppName.</comment>
+  </data>
+  <data name="UploadingFormat" xml:space="preserve">
+    <value>Uploading {0} ({1}/{2})...</value>
+    <comment>{0} - Progress. {1} - Finnished count. {2} - Total count.</comment>
   </data>
   <data name="VersionCodeFlyoutItem.Text" xml:space="preserve">
     <value>Версія коду </value>
@@ -398,6 +406,10 @@
   </data>
   <data name="Welcome" xml:space="preserve">
     <value>Вітання!</value>
+  </data>
+  <data name="WriteSessionFormat" xml:space="preserve">
+    <value>Writing install session ({0}/{1})...</value>
+    <comment>{0} - Finnished count. {1} - Total count.</comment>
   </data>
   <data name="WSARunning" xml:space="preserve">
     <value>Підсистема Windows для Android працює</value>

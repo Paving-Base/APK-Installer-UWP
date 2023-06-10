@@ -10,12 +10,10 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authorization.AppCapabilityAccess;
 using Windows.System.Profile;
-using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
 namespace APKInstaller
@@ -77,6 +75,7 @@ namespace APKInstaller
                 RegisterExceptionHandlingSynchronizationContext();
                 Communication.InitializeAppServiceConnection();
                 CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
+                CrossPlatformFunc.RunProcessAsync = ADBHelper.RunProcessAsync;
                 CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
 
                 MainWindow = Window.Current;

@@ -19,6 +19,7 @@ namespace APKInstaller.Pages.AboutPages
     public sealed partial class InfosPage : Page
     {
         internal InfosViewModel Provider;
+        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
 
         public InfosPage() => InitializeComponent();
 

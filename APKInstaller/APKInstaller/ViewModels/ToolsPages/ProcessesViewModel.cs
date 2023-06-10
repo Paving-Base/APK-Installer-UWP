@@ -58,50 +58,47 @@ namespace APKInstaller.ViewModels.ToolsPages
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
-        public ProcessesViewModel(ProcessesPage page)
-        {
-            _page = page;
-        }
+        public ProcessesViewModel(ProcessesPage page) => _page = page;
 
         public async Task GetDevices()
         {
             await Task.Run(async () =>
             {
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
-                devices = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online).ToList();
-                await UIHelper.DispatcherQueue?.EnqueueAsync(DeviceList.Clear);
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                devices = (await new AdbClient().GetDevicesAsync()).Where(x => x.State == DeviceState.Online).ToList();
+                await _page.DispatcherQueue?.EnqueueAsync(DeviceList.Clear);
                 if (devices.Count > 0)
                 {
                     foreach (DeviceData device in devices)
                     {
                         if (!string.IsNullOrEmpty(device.Name))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Name));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Name));
                         }
                         else if (!string.IsNullOrEmpty(device.Model))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Model));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Model));
                         }
                         else if (!string.IsNullOrEmpty(device.Product))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Product));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Product));
                         }
                         else if (!string.IsNullOrEmpty(device.Serial))
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Serial));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add(device.Serial));
                         }
                         else
                         {
-                            await UIHelper.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add("Device"));
+                            await _page.DispatcherQueue?.EnqueueAsync(() => DeviceList.Add("Device"));
                         }
                     }
-                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => { DeviceComboBox.ItemsSource = DeviceList; if (DeviceComboBox.SelectedIndex == -1) { DeviceComboBox.SelectedIndex = 0; } });
+                    await _page.DispatcherQueue?.EnqueueAsync(() => { DeviceComboBox.ItemsSource = DeviceList; if (DeviceComboBox.SelectedIndex == -1) { DeviceComboBox.SelectedIndex = 0; } });
                 }
                 else if (Processes != null)
                 {
-                    await UIHelper.DispatcherQueue?.EnqueueAsync(() => Processes = null);
+                    await _page.DispatcherQueue?.EnqueueAsync(() => Processes = null);
                 }
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
             });
         }
 
@@ -109,12 +106,12 @@ namespace APKInstaller.ViewModels.ToolsPages
         {
             await Task.Run(async () =>
             {
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.ShowProgressRing));
                 AdvancedAdbClient client = new();
-                DeviceData device = await UIHelper.DispatcherQueue?.EnqueueAsync(() => { return devices[DeviceComboBox.SelectedIndex]; });
-                IEnumerable<AndroidProcess> list = DeviceExtensions.ListProcesses(client, device);
-                await UIHelper.DispatcherQueue?.EnqueueAsync(() => Processes = list);
-                _ = (UIHelper.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
+                DeviceData device = await _page.DispatcherQueue?.EnqueueAsync(() => { return devices[DeviceComboBox.SelectedIndex]; });
+                IEnumerable<AndroidProcess> list = await client.ListProcessesAsync(device);
+                await _page.DispatcherQueue?.EnqueueAsync(() => Processes = list);
+                _ = (_page.DispatcherQueue?.EnqueueAsync(TitleBar.HideProgressRing));
             });
         }
     }
