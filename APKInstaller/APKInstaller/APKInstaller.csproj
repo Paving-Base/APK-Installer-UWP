@@ -814,6 +814,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AdvancedSharpAdbClient">
+      <Version>2.5.7</Version>
+    </PackageReference>
     <PackageReference Include="Downloader">
       <Version>3.0.6</Version>
     </PackageReference>
@@ -860,10 +863,6 @@
     <ProjectReference Include="..\AAPTForNet\AAPTForNet.csproj">
       <Project>{691DC506-E415-49FA-8895-FD96DC06C69F}</Project>
       <Name>AAPTForNet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\AdvancedSharpAdbClient\AdvancedSharpAdbClient\AdvancedSharpAdbClient.csproj">
-      <Project>{9A19103F-16F7-4668-BE54-9A1E7A4F7556}</Project>
-      <Name>AdvancedSharpAdbClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zeroconf\Zeroconf.csproj">
       <Project>{8834781a-1057-4a00-83f5-dcfd0098b7fd}</Project>

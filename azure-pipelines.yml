@@ -38,14 +38,6 @@ steps:
   inputs:
     secureFile: 'where.pfx'
     
-- task: CmdLine@2
-  displayName: 'Clone SharpAdbClient'
-  inputs:
-    script: |
-      echo 'Cloning into sources folder at: $(Build.SourcesDirectory)\..\AdvancedSharpAdbClient'
-      git clone https://github.com/yungd1plomat/AdvancedSharpAdbClient.git --progress --branch main --single-branch --depth=1 $(Build.SourcesDirectory)\..\AdvancedSharpAdbClient
-      exit
-
 - task: VSBuild@1
   displayName: 'Restore Solution'
   inputs:
