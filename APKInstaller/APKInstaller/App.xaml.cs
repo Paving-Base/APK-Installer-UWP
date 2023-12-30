@@ -1,7 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
-using ProcessForUWP.UWP.Helpers;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -73,7 +72,6 @@ namespace APKInstaller
             {
                 RequestWifiAccess();
                 RegisterExceptionHandlingSynchronizationContext();
-                Communication.InitializeAppServiceConnection();
                 CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
                 CrossPlatformFunc.RunProcessAsync = ADBHelper.RunProcessAsync;
                 CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
@@ -173,16 +171,6 @@ namespace APKInstaller
                         break;
                 }
             }
-        }
-
-        /// <summary>
-        /// Handles connection requests to the app service
-        /// </summary>
-        /// <param name="args">Data about the background activation.</param>
-        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
-        {
-            base.OnBackgroundActivated(args);
-            Communication.OnBackgroundActivated(args);
         }
 
         private void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)

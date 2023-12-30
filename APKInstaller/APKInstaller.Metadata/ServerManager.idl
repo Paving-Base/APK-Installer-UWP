@@ -1,0 +1,19 @@
+namespace APKInstaller.Metadata
+{
+    [contractversion(1)]
+    apicontract APKInstallerContract{};
+
+    [default_interface]
+    [contract(APKInstallerContract, 1)]
+    runtimeclass ServerManager
+    {
+        ServerManager();
+
+        Boolean IsServerRunning { get; };
+
+        event Windows.Foundation.EventHandler<Boolean> ServerManagerDestructed;
+
+        UInt32 RunProcess(String filename, String command, IVector<String> errorOutput, IVector<String> standardOutput);
+        Windows.Foundation.IAsyncOperation<UInt32> RunProcessAsync(String filename, String command, IVector<String> errorOutput, IVector<String> standardOutput);
+    }
+}

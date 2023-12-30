@@ -27,12 +27,10 @@ namespace APKInstaller.Helpers
             return (WSAList != null && WSAList.Any(), WSAList);
         }
 
-        public static async void LaunchPackage(string packagefamilyname, string appname = "App") => await CommandHelper.ExecuteShellCommandAsync($@"explorer.exe shell:appsFolder\{packagefamilyname}!{appname}");
-
         public static async void LaunchWSAPackage(string packagename = "")
         {
-            (bool isfound, _) = await FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe");
-            if (isfound)
+            (bool isFound, _) = await FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe");
+            if (isFound)
             {
                 _ = await Launcher.LaunchUriAsync(new Uri($"wsa://{packagename}"));
             }

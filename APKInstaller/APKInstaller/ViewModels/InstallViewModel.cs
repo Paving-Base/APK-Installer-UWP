@@ -10,7 +10,6 @@ using APKInstaller.Pages.SettingsPages;
 using Downloader;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Connectivity;
-using ProcessForUWP.UWP;
 using SharpCompress.Archives;
 using SharpCompress.Common;
 using SharpCompress.Writers;
@@ -685,13 +684,13 @@ namespace APKInstaller.ViewModels
 
         private async Task CheckADB(bool force = false)
         {
-            if (!await Task.Run(() => FileEx.Exists(ADBPath)))
+            if (!await ADBHelper.CheckFileExistsAsync(ADBPath))
             {
                 ADBPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
             }
 
             checkadb:
-            if (force || !await Task.Run(() => FileEx.Exists(ADBPath)))
+            if (force || !await ADBHelper.CheckFileExistsAsync(ADBPath))
             {
                 StackPanel StackPanel = new();
                 StackPanel.Children.Add(
@@ -977,7 +976,7 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = _loader.GetString("Analysis");
                     try
                     {
-                        ApkInfo = await Task.Run(() => AAPTool.Decompile(_path));
+                        ApkInfo = await AAPTool.Decompile(_path);
                         AppLocaleName = ApkInfo.GetLocaleLabel();
                     }
                     catch (Exception ex)
@@ -1307,7 +1306,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await Task.Run(() => { return AAPTool.Decompile(_path); });
+                ApkInfo = await AAPTool.Decompile(_path);
             }
             catch (Exception ex)
             {

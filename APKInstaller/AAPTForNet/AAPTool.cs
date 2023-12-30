@@ -1,5 +1,4 @@
 ﻿using AAPTForNet.Models;
-using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +7,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace AAPTForNet
 {
@@ -140,56 +141,68 @@ namespace AAPTForNet
         /// </summary>
         /// <param name="path">Absolute path to .apk file</param>
         /// <returns>Filled apk if dump process is not failed</returns>
-        public static ApkInfo Decompile(string path)
-        {
-            path = CreateTempApk(path);
-            List<string> apks = new();
+        public static Task<ApkInfo> Decompile(string file) =>
+            StorageFile.GetFileFromPathAsync(file).AsTask().ContinueWith(x => Decompile(x.Result)).Unwrap();
 
-            if (path.EndsWith(".apk"))
+        /// <summary>
+        /// Start point. Begin decompile apk to extract resources
+        /// </summary>
+        /// <param name="path">Absolute path to .apk file</param>
+        /// <returns>Filled apk if dump process is not failed</returns>
+        public static async Task<ApkInfo> Decompile(StorageFile file)
+        {
+            List<string> apks = [];
+
+            if (file.FileType == ".apk")
             {
-                apks.Add(path);
+                file = await CreateTempApk(file);
+                apks.Add(file.Path);
             }
             else
             {
-                using ZipArchive archive = ZipFile.OpenRead(path);
-                if (!Directory.Exists(TempPath))
+                using (IRandomAccessStreamWithContentType random = await file.OpenReadAsync())
+                using (Stream stream = random.AsStream())
+                using (ZipArchive archive = new(stream, ZipArchiveMode.Read))
                 {
-                    Directory.CreateDirectory(TempPath);
-                }
-
-                foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains("/")))
-                {
-                    if (entry.Name.ToLower().EndsWith(".apk"))
+                    if (!Directory.Exists(TempPath))
                     {
-                        string APKTemp = Path.Combine(TempPath, entry.FullName);
-                        entry.ExtractToFile(APKTemp, true);
-                        apks.Add(APKTemp);
+                        Directory.CreateDirectory(TempPath);
+                    }
+
+                    foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains("/")))
+                    {
+                        if (entry.Name.ToLower().EndsWith(".apk"))
+                        {
+                            string APKTemp = Path.Combine(TempPath, entry.FullName);
+                            entry.ExtractToFile(APKTemp, true);
+                            apks.Add(APKTemp);
+                        }
                     }
                 }
 
                 if (!apks.Any())
                 {
-                    apks.Add(path);
+                    apks.Add(file.Path);
                 }
             }
 
-            List<ApkInfo> apkInfos = new();
-            foreach (string apkpath in apks)
+            List<ApkInfo> apkInfos = [];
+            foreach (string apkPath in apks)
             {
-                DumpModel manifest = ApkExtractor.ExtractManifest(apkpath);
+                DumpModel manifest = ApkExtractor.ExtractManifest(apkPath);
                 if (!manifest.IsSuccess)
                 {
                     continue;
                 }
 
                 ApkInfo apk = ApkParser.Parse(manifest);
-                apk.FullPath = apkpath;
-                apk.PackagePath = path;
+                apk.FullPath = apkPath;
+                apk.PackagePath = file.Path;
 
                 if (apk.Icon.IsImage)
                 {
                     // Included icon in manifest, extract it from apk
-                    apk.Icon.RealPath = ApkExtractor.ExtractIconImage(apkpath, apk.Icon);
+                    apk.Icon.RealPath = ApkExtractor.ExtractIconImage(apkPath, apk.Icon);
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && apk.Icon.IsHighDensity)
                     {
                         apkInfos.Add(apk);
@@ -197,7 +210,7 @@ namespace AAPTForNet
                     }
                 }
 
-                apk.Icon = ApkExtractor.ExtractLargestIcon(apkpath);
+                apk.Icon = ApkExtractor.ExtractLargestIcon(apkPath);
                 apkInfos.Add(apk);
             }
 
@@ -212,10 +225,10 @@ namespace AAPTForNet
             List<ApkInfo> infos = new();
             foreach (ApkInfos package in packages)
             {
-                foreach (ApkInfo baseapk in package.Apks.Where(x => !x.IsSplit))
+                foreach (ApkInfo baseApk in package.Apks.Where(x => !x.IsSplit))
                 {
-                    baseapk.SplitApks = package.Apks.Where(x => x.IsSplit).Where(x => x.VersionCode == baseapk.VersionCode).ToList();
-                    infos.Add(baseapk);
+                    baseApk.SplitApks = package.Apks.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
+                    infos.Add(baseApk);
                 }
             }
 
@@ -228,10 +241,8 @@ namespace AAPTForNet
             return info;
         }
 
-        private static string CreateTempApk(string sourceFile)
+        private static async Task<StorageFile> CreateTempApk(StorageFile sourceFile)
         {
-            string tempFile = Path.Combine(TempPath, Path.GetFileName(sourceFile));
-
             if (!Directory.Exists(TempPath))
             {
                 _ = Directory.CreateDirectory(TempPath);
@@ -239,8 +250,9 @@ namespace AAPTForNet
 
             try
             {
-                FileEx.CopyFile(sourceFile, tempFile, true);
-                return tempFile;
+                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(TempPath);
+                StorageFile temp = await sourceFile.CopyAsync(folder);
+                return temp;
             }
             catch
             {

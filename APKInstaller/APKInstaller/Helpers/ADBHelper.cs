@@ -1,11 +1,11 @@
 ﻿using AdvancedSharpAdbClient;
-using ProcessForUWP.UWP;
+using APKInstaller.Projection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace APKInstaller.Helpers
 {
@@ -25,136 +25,34 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static bool CheckFileExists(string path) => !string.IsNullOrWhiteSpace(path) && FileEx.Exists(path);
-
-        public static int RunProcess(string filename, string command, List<string> errorOutput, List<string> standardOutput)
+        public static bool CheckFileExists(string path)
         {
-            int code = 1;
-
-            ProcessStartInfo psi = new(filename, command)
+            try
             {
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true
-            };
-
-            using (ProcessEx process = ProcessEx.Start(psi))
-            {
-                CancellationTokenSource Token = new();
-
-                process.BeginOutputReadLine();
-
-                process.EnableRaisingEvents = true;
-
-                void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
-                {
-                    if (e.Data == null)
-                    {
-                        code = 0;
-                        Token.Cancel();
-                        return;
-                    }
-                    string line = e.Data ?? string.Empty;
-
-                    standardOutput?.Add(line);
-                }
-
-                void ErrorDataReceived(object sender, DataReceivedEventArgsEx e)
-                {
-                    string line = e.Data ?? string.Empty;
-
-                    errorOutput?.Add(line);
-                }
-
-                try
-                {
-                    process.OutputDataReceived += OnOutputDataReceived;
-                    process.ErrorDataReceived += ErrorDataReceived;
-                    while (!process.IsExited)
-                    {
-                        Token.Token.ThrowIfCancellationRequested();
-                    }
-                }
-                catch (Exception)
-                {
-                    process.Kill();
-                }
-                finally
-                {
-                    process.Close();
-                    process.OutputDataReceived -= OnOutputDataReceived;
-                }
+                return StorageFile.GetFileFromPathAsync(path).AwaitByTaskCompleteSource() is StorageFile file && file.IsOfType(StorageItemTypes.File);
             }
-
-            return code;
+            catch
+            {
+                return false;
+            }
         }
 
-        public static async Task<int> RunProcessAsync(string filename, string command, List<string> errorOutput, List<string> standardOutput, CancellationToken cancellationToken)
+        public static async Task<bool> CheckFileExistsAsync(string path)
         {
-            await ThreadSwitcher.ResumeBackgroundAsync();
-
-            int code = 1;
-
-            ProcessStartInfo psi = new(filename, command)
+            try
             {
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true
-            };
-
-            using (ProcessEx process = ProcessEx.Start(psi))
-            {
-                CancellationTokenSource Token = new();
-
-                process.BeginOutputReadLine();
-
-                process.EnableRaisingEvents = true;
-
-                void OnOutputDataReceived(object sender, DataReceivedEventArgsEx e)
-                {
-                    if (e.Data == null)
-                    {
-                        code = 0;
-                        Token.Cancel();
-                        return;
-                    }
-                    string line = e.Data ?? string.Empty;
-
-                    standardOutput?.Add(line);
-                }
-
-                void ErrorDataReceived(object sender, DataReceivedEventArgsEx e)
-                {
-                    string line = e.Data ?? string.Empty;
-
-                    errorOutput?.Add(line);
-                }
-
-                try
-                {
-                    process.OutputDataReceived += OnOutputDataReceived;
-                    process.ErrorDataReceived += ErrorDataReceived;
-                    while (!process.IsExited)
-                    {
-                        Token.Token.ThrowIfCancellationRequested();
-                    }
-                }
-                catch (Exception)
-                {
-                    process.Kill();
-                }
-                finally
-                {
-                    process.Close();
-                    process.OutputDataReceived -= OnOutputDataReceived;
-                }
+                return await StorageFile.GetFileFromPathAsync(path) is StorageFile file && file.IsOfType(StorageItemTypes.File);
             }
-
-            return code;
+            catch
+            {
+                return false;
+            }
         }
+
+        public static int RunProcess(string filename, string command, List<string> errorOutput, List<string> standardOutput) =>
+            (int)APKInstallerProjectionFactory.ServerManager.RunProcess(filename, command, errorOutput, standardOutput);
+
+        public static Task<int> RunProcessAsync(string filename, string command, List<string> errorOutput, List<string> standardOutput, CancellationToken cancellationToken) =>
+            APKInstallerProjectionFactory.ServerManager.RunProcessAsync(filename, command, errorOutput, standardOutput).AsTask(cancellationToken).ContinueWith(x => (int)x.Result);
     }
 }

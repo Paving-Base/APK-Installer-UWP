@@ -4,7 +4,6 @@ using APKInstaller.Models;
 using APKInstaller.Pages.SettingsPages;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.UI.Xaml.Controls;
-using ProcessForUWP.UWP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -456,7 +455,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             await Task.Run(async () =>
             {
                 string version = "Unknown";
-                if (await Task.Run(() => FileEx.Exists(ADBPath)))
+                if (await ADBHelper.CheckFileExistsAsync(ADBPath))
                 {
                     AdbServerStatus info = AdbServer.Instance.GetStatus();
                     if (info.IsRunning)
@@ -664,5 +663,5 @@ namespace APKInstaller.ViewModels.SettingsPages
         }
     }
 
-    public record class HyperlinkContent(string Content, Uri NavigateUri);
+    public record struct HyperlinkContent(string Content, Uri NavigateUri);
 }

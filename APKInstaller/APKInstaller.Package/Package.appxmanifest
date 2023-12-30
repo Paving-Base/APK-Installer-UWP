@@ -4,9 +4,9 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap uap5 rescap desktop">
+  IgnorableNamespaces="uap uap5 com rescap">
 
   <Identity
     Name="18184wherewhere.AndroidAppInstaller.UWP"
@@ -38,7 +38,10 @@
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="ms-resource:AppDescription"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          Square71x71Logo="Assets\SmallTile.png"
+          Square310x310Logo="Assets\LargeTile.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
             <uap:ShowOn Tile="square310x310Logo"/>
@@ -95,20 +98,56 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-        <uap:Extension Category="windows.appService">
-          <uap:AppService Name="ProcessForUWP.Delegate"/>
-        </uap:Extension>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="APKInstaller (Delegate)\APKInstaller.Delegate.exe" />
+      </Extensions>
+    </Application>
+    <Application Id="APKInstallerComServer"
+      Executable="APKInstaller.Server\APKInstaller.Server.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="APK Installer COM Server"
+        Description="The APK Installer COM server."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        AppListEntry="none" >
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          Square71x71Logo="Assets\SmallTile.png"
+          Square310x310Logo="Assets\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="portrait"/>
+          <uap:Rotation Preference="landscapeFlipped"/>
+          <uap:Rotation Preference="portraitFlipped"/>
+        </uap:InitialRotationPreference>
+      </uap:VisualElements>
+      <Extensions>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer
+              Executable="APKInstaller.Server\APKInstaller.Server.exe"
+              DisplayName="APK Installer Server"
+              LaunchAndActivationPermission="O:SYG:SYD:(A;;11;;;WD)(A;;11;;;RC)(A;;11;;;AC)(A;;11;;;AN)S:P(ML;;NX;;;S-1-16-0)">
+              <com:Class Id ="4036B695-CA92-45EA-8965-CE1947A6B269" DisplayName="APK Installer Server" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
       </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient"/>
-    <Capability Name="privateNetworkClientServer" />
-    <Capability Name="internetClientServer" />
-    <rescap:Capability Name="runFullTrust" />
-	<rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="broadFileSystemAccess" />
 	<rescap:Capability Name="confirmAppClose" />
+	<rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>

@@ -64,7 +64,7 @@ namespace AAPTForNet.Models
 
         public void AddSplit(ApkInfo info) => SplitApks.Add(info);
 
-        public void AddSplit(string path) => SplitApks.Add(AAPTool.Decompile(path));
+        public async void AddSplit(string path) => SplitApks.Add(await AAPTool.Decompile(path));
 
         internal ApkInfo Megre(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
 
