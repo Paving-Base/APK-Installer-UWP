@@ -26,7 +26,7 @@ pool:
 
 variables:
   solution: '*.sln'
-  buildProject: '**/APKInstaller (Package)/*.wapproj'
+  buildProject: '**/APKInstaller.Package/*.wapproj'
   buildPlatform: 'x86|x64|ARM|ARM64'
   buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'

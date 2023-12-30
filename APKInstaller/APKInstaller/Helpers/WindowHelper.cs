@@ -1,58 +1,77 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp;
+using Microsoft.Toolkit.Uwp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
-using Windows.UI.WindowManagement;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace APKInstaller.Helpers
 {
-    // Helpers class to allow the app to find the Window that contains an
-    // arbitrary UIElement (GetWindowForElement).  To do this, we keep track
-    // of all active Windows.  The app code must call WindowHelper.CreateWindow
-    // rather than "new Window" so we can keep track of all the relevant
-    // windows.  In the future, we would like to support this in platform APIs.
+    /// <summary>
+    /// Helpers class to allow the app to find the Window that contains an
+    /// arbitrary <see cref="UIElement"/> (GetWindowForElement(UIElement)).
+    /// To do this, we keep track of all active Windows. The app code must call
+    /// <see cref="CreateWindowAsync(Action{Window})"/> rather than "new <see cref="Window"/>()"
+    /// so we can keep track of all the relevant windows.
+    /// </summary>
     public static class WindowHelper
     {
-        public static bool IsSupportedAppWindow => ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow");
+        public static bool IsAppWindowSupported { get; } = ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow");
+        public static bool IsXamlRootSupported { get; } = ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "XamlRoot");
 
-        public static bool IsAppWindow(this UIElement element) => IsSupportedAppWindow && element?.XamlRoot?.Content != null && ActiveWindows.ContainsKey(element.XamlRoot.Content);
-
-        public static async Task<(AppWindow, Frame)> CreateWindow()
+        public static async Task<bool> CreateWindowAsync(Action<Window> launched)
         {
-            Frame newFrame = new();
-            AppWindow newWindow = await AppWindow.TryCreateAsync();
-            ElementCompositionPreview.SetAppWindowContent(newWindow, newFrame);
-            TrackWindow(newWindow, newFrame);
-            return (newWindow, newFrame);
-        }
-
-        public static void TrackWindow(this AppWindow window, Frame frame)
-        {
-            window.Closed += (sender, args) =>
+            CoreApplicationView newView = CoreApplication.CreateNewView();
+            int newViewId = await newView.Dispatcher.AwaitableRunAsync(() =>
             {
-                ActiveWindows?.Remove(frame);
-                frame.Content = null;
-                window = null;
-            };
-            ActiveWindows?.Add(frame, window);
+                Window newWindow = Window.Current;
+                launched(newWindow);
+                newWindow.TrackWindow();
+                Window.Current.Activate();
+                return ApplicationView.GetForCurrentView().Id;
+            });
+            return await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
         }
 
-        public static AppWindow GetWindowForElement(this UIElement element)
+        public static void TrackWindow(this Window window)
         {
-            return element.IsAppWindow() ? ActiveWindows[element.XamlRoot.Content] : null;
+            if (!ActiveWindows.ContainsKey(window.Dispatcher))
+            {
+                window.Closed += (sender, args) =>
+                {
+                    ActiveWindows.Remove(window.Dispatcher);
+                    window = null;
+                };
+                ActiveWindows[window.Dispatcher] = window;
+            }
         }
+
+        public static Size GetXAMLRootSize(this UIElement element) =>
+            IsXamlRootSupported && element.XamlRoot != null
+                ? element.XamlRoot.Size
+                : Window.Current is Window window
+                    ? window.Bounds.ToSize()
+                    : CoreApplication.MainView.CoreWindow.Bounds.ToSize();
+
+        public static UIElement GetXAMLRoot(this UIElement element) =>
+            IsXamlRootSupported && element.XamlRoot != null
+                ? element.XamlRoot.Content
+                : Window.Current is Window window
+                    ? window.Content : null;
 
         public static void SetXAMLRoot(this UIElement element, UIElement target)
         {
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "XamlRoot"))
+            if (IsXamlRootSupported)
             {
                 element.XamlRoot = target?.XamlRoot;
             }
         }
 
-        public static Dictionary<UIElement, AppWindow> ActiveWindows { get; } = IsSupportedAppWindow ? new() : null;
+        public static Dictionary<CoreDispatcher, Window> ActiveWindows { get; } = [];
     }
 }

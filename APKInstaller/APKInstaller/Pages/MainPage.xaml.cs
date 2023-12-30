@@ -2,14 +2,12 @@
 using APKInstaller.Helpers;
 using APKInstaller.Pages.SettingsPages;
 using System.ComponentModel;
-using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
-using Windows.System;
 using Windows.UI.Core.Preview;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -23,12 +21,10 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        private static bool IsWindowClosed = false;
 
         public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
 
-        internal bool IsExtendsTitleBar => this.IsAppWindow() ? this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar : CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
-        internal double TitleBarHeight => IsExtendsTitleBar ? 32 : 0;
+        internal double TitleBarHeight => !UIHelper.HasTitleBar ? 32 : 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -40,21 +36,13 @@ namespace APKInstaller.Pages
         public MainPage()
         {
             InitializeComponent();
-            UIHelper.DispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            if (!this.IsAppWindow())
-            {
-                Window.Current.SetTitleBar(CustomTitleBar);
-                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
-            }
-            else
-            {
-                this.GetWindowForElement().Closed += OnWindowClosed;
-            }
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            Window.Current.SetTitleBar(CustomTitleBar);
             _ = CoreAppFrame.Navigate(typeof(InstallPage), e.Parameter);
         }
 
@@ -70,18 +58,14 @@ namespace APKInstaller.Pages
             }
         }
 
-        private void OnWindowClosed(AppWindow sender, AppWindowClosedEventArgs args)
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (IsWindowClosed && WindowHelper.ActiveWindows.Count <= 1) { CleanCaches(); }
+            Deferral deferral = e.GetDeferral();
+            await CleanCachesAsync();
+            deferral.Complete();
         }
 
-        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
-        {
-            IsWindowClosed = true;
-            if (!(WindowHelper.IsSupportedAppWindow && WindowHelper.ActiveWindows.Any())) { CleanCaches(); }
-        }
-
-        private void CleanCaches()
+        private async Task CleanCachesAsync()
         {
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.AppInstance"))
             {
@@ -90,7 +74,7 @@ namespace APKInstaller.Pages
                     CachesHelper.CleanAllCaches(true);
                     if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                     {
-                        try { new AdbClient().KillAdb(); } catch { }
+                        try { await new AdbClient().KillAdbAsync(); } catch { }
                     }
                 }
                 else
@@ -103,7 +87,7 @@ namespace APKInstaller.Pages
                 CachesHelper.CleanAllCaches(true);
                 if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                 {
-                    try { new AdbClient().KillAdb(); } catch { }
+                    try { await new AdbClient().KillAdbAsync(); } catch { }
                 }
             }
         }

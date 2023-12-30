@@ -2,6 +2,7 @@
 using AAPTForNet.Models;
 using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
+using APKInstaller.Common;
 using APKInstaller.Controls.Dialogs;
 using APKInstaller.Helpers;
 using APKInstaller.Models;

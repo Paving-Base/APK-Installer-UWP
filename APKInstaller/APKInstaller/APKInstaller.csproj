@@ -122,6 +122,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\WeakEvent.cs" />
     <Compile Include="Controls\CapabilitiesInfoControl.xaml.cs">
       <DependentUpon>CapabilitiesInfoControl.xaml</DependentUpon>
     </Compile>
@@ -160,12 +161,12 @@
     <Compile Include="Helpers\Converter\StringToBoolConverter.cs" />
     <Compile Include="Helpers\DataTransferHelper.cs" />
     <Compile Include="Helpers\DownloadHelper.cs" />
-    <Compile Include="Helpers\ExceptionHandling.cs" />
+    <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Helpers\PackageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
-    <Compile Include="Helpers\ThreadSwitcher.cs" />
+    <Compile Include="Common\ThreadSwitcher.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Helpers\UpdateHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />

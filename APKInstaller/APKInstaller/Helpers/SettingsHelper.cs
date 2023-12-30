@@ -34,8 +34,8 @@ namespace APKInstaller.Helpers
 
         public static Type Get<Type>(string key) => LocalObject.Read<Type>(key);
         public static void Set(string key, object value) => LocalObject.Save(key, value);
-        public static void SetFile(string key, object value) => LocalObject.CreateFileAsync(key, value);
-        public static async Task<Type> GetFile<Type>(string key) => await LocalObject.ReadFileAsync<Type>(key);
+        public static Task<Type> GetFile<Type>(string key) => LocalObject.ReadFileAsync<Type>($"Settings/{key}");
+        public static Task SetFile<Type>(string key, Type value) => LocalObject.CreateFileAsync($"Settings/{key}", value);
 
         public static void SetDefaultSettings()
         {
@@ -104,10 +104,10 @@ namespace APKInstaller.Helpers
 
     public static partial class SettingsHelper
     {
-        public static readonly UISettings UISettings = new();
-        public static readonly ILogManager LogManager = LogManagerFactory.CreateLogManager();
+        public static UISettings UISettings { get; } = new();
+        public static ILogManager LogManager { get; } = LogManagerFactory.CreateLogManager();
         public static OSVersion OperatingSystemVersion => SystemInformation.Instance.OperatingSystemVersion;
-        private static readonly ApplicationDataStorageHelper LocalObject = ApplicationDataStorageHelper.GetCurrent(new SystemTextJsonObjectSerializer());
+        public static ApplicationDataStorageHelper LocalObject { get; } = ApplicationDataStorageHelper.GetCurrent(new NewtonsoftJsonObjectSerializer());
 
         static SettingsHelper() => SetDefaultSettings();
 
@@ -120,12 +120,12 @@ namespace APKInstaller.Helpers
         }
     }
 
-    public class SystemTextJsonObjectSerializer : IObjectSerializer
+    public class NewtonsoftJsonObjectSerializer : IObjectSerializer
     {
         // Specify your serialization settings
         private readonly JsonSerializerSettings settings = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
 
-        string IObjectSerializer.Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
+        public string Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
 
         public T Deserialize<T>(string value) => JsonConvert.DeserializeObject<T>(value, settings);
     }

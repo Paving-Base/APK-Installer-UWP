@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
-using Windows.System;
-using Windows.UI;
 
 namespace APKInstaller.Helpers
 {
     public static partial class UIHelper
     {
-        public static DispatcherQueue DispatcherQueue { get; set; }
-        public static bool HasStatusBar => ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
+        public static bool HasTitleBar => !CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+        public static bool HasStatusBar { get; } = ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
     }
 
     public static partial class UIHelper
@@ -99,27 +98,15 @@ namespace APKInstaller.Helpers
         public static string ExceptionToMessage(this Exception ex)
         {
             StringBuilder builder = new();
-            builder.Append('\n');
-            if (!string.IsNullOrWhiteSpace(ex.Message)) { builder.AppendLine($"Message: {ex.Message}"); }
-            builder.AppendLine($"HResult: {ex.HResult} (0x{Convert.ToString(ex.HResult, 16)})");
-            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { builder.AppendLine(ex.StackTrace); }
-            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { builder.Append($"HelperLink: {ex.HelpLink}"); }
+            _ = builder.Append('\n');
+            if (!string.IsNullOrWhiteSpace(ex.Message)) { _ = builder.AppendLine($"Message: {ex.Message}"); }
+            _ = builder.AppendLine($"HResult: {ex.HResult} (0x{Convert.ToString(ex.HResult, 16).ToUpperInvariant()})");
+            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { _ = builder.AppendLine(ex.StackTrace); }
+            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { _ = builder.Append($"HelperLink: {ex.HelpLink}"); }
             return builder.ToString();
         }
 
-        public static Color ColorMixing(Color c1, Color c2)
-        {
-            double a1 = c1.A / 255;
-            double a2 = c2.A / 255;
-            int a = Math.Min(c1.A + c2.A, 255);
-            int r = Convert.ToInt32(Math.Min((c1.R * a1) + (c2.R * a2), 255));
-            int g = Convert.ToInt32(Math.Min((c1.G * a1) + (c2.G * a2), 255));
-            int b = Convert.ToInt32(Math.Min((c1.B * a1) + (c2.B * a2), 255));
-            Color color_mixing = Color.FromArgb(Convert.ToByte(a), Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
-            return color_mixing;
-        }
-
-        public static TResult AwaitByTaskCompleteSource<TResult>(Func<Task<TResult>> function)
+        public static TResult AwaitByTaskCompleteSource<TResult>(this Task<TResult> function, CancellationToken cancellationToken = default)
         {
             TaskCompletionSource<TResult> taskCompletionSource = new();
             Task<TResult> task = taskCompletionSource.Task;
@@ -127,14 +114,14 @@ namespace APKInstaller.Helpers
             {
                 try
                 {
-                    TResult result = await function.Invoke().ConfigureAwait(false);
+                    TResult result = await function.ConfigureAwait(false);
                     taskCompletionSource.SetResult(result);
                 }
                 catch (Exception e)
                 {
                     taskCompletionSource.SetException(e);
                 }
-            });
+            }, cancellationToken);
             TResult taskResult = task.Result;
             return taskResult;
         }

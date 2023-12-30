@@ -9,7 +9,6 @@ using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using Windows.System;
 using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -24,19 +23,12 @@ namespace APKInstaller.Pages.SettingsPages
     {
         internal bool IsExtendsTitleBar
         {
-            get => this.IsAppWindow() ? this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar : CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
+            get => CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
             set
             {
                 if (IsExtendsTitleBar != value)
                 {
-                    if (this.IsAppWindow())
-                    {
-                        this.GetWindowForElement().TitleBar.ExtendsContentIntoTitleBar = value;
-                    }
-                    else
-                    {
-                        CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
-                    }
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = value;
                     ThemeHelper.UpdateSystemCaptionButtonColors();
                     this.FindAscendant<MainPage>()?.UpdateTitleBarHeight();
                 }
@@ -91,25 +83,11 @@ namespace APKInstaller.Pages.SettingsPages
                 case "Store":
                     _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9NSHFKJ1D4BF&mode=mini"));
                     break;
-                case "OutPIP":
-                    if (this.IsAppWindow())
-                    {
-                        this.GetWindowForElement().Presenter.RequestPresentation(AppWindowPresentationKind.Default);
-                    }
-                    else if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.Default))
-                    {
-                        _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                    }
+                case "OutPIP" when ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.Default):
+                    _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
                     break;
-                case "EnterPIP":
-                    if (this.IsAppWindow())
-                    {
-                        this.GetWindowForElement().Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
-                    }
-                    else if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
-                    {
-                        _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
-                    }
+                case "EnterPIP" when ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay):
+                    _ = ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
                     break;
                 case "Processes":
                     _ = Frame.Navigate(typeof(ProcessesPage));
