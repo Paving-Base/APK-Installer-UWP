@@ -55,7 +55,7 @@ namespace APKInstaller.Helpers
 
         public static async Task<List<string>> ConnectPairedDeviceAsync()
         {
-            List<string> results = new();
+            List<string> results = [];
             IReadOnlyList<IZeroconfHost> hosts = ConnectListener != null
                 ? ConnectListener.Hosts
                 : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.");

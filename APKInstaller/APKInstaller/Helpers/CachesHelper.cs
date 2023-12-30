@@ -13,9 +13,9 @@ namespace APKInstaller.Helpers
         {
             if (isall)
             {
-                if (Directory.Exists(TempPath.Substring(0, TempPath.LastIndexOf(@"\"))))
+                if (Directory.Exists(TempPath[..TempPath.LastIndexOf(@"\")]))
                 {
-                    try { Directory.Delete(TempPath.Substring(0, TempPath.LastIndexOf(@"\")), true); } catch { }
+                    try { Directory.Delete(TempPath[..TempPath.LastIndexOf(@"\")], true); } catch { }
                 }
             }
             else
@@ -31,9 +31,9 @@ namespace APKInstaller.Helpers
         {
             if (isall)
             {
-                if (Directory.Exists(OldTempPath.Substring(0, OldTempPath.LastIndexOf(@"\"))))
+                if (Directory.Exists(OldTempPath[..OldTempPath.LastIndexOf(@"\")]))
                 {
-                    try { Directory.Delete(OldTempPath.Substring(0, OldTempPath.LastIndexOf(@"\")), true); } catch { }
+                    try { Directory.Delete(OldTempPath[..OldTempPath.LastIndexOf(@"\")], true); } catch { }
                 }
             }
             else

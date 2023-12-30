@@ -33,7 +33,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         public string DeviceListFormat => _loader.GetString("DeviceListFormat");
         public string ConnectedListFormat => _loader.GetString("ConnectedListFormat");
 
-        public readonly ObservableCollection<MDNSDeviceData> DeviceList = new();
+        public readonly ObservableCollection<MDNSDeviceData> DeviceList = [];
 
         private string _code = string.Empty;
         public string Code
@@ -192,7 +192,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             if (AdbServer.Instance.GetStatus().IsRunning)
             {
                 ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
-                ConnectedList = (await new AdbClient().GetDevicesAsync()).Where(x => x.State == DeviceState.Online).ToList();
+                ConnectedList = (await new AdbClient().GetDevicesAsync()).Where(x => x.State != DeviceState.Offline).ToList();
             }
         }
 
@@ -258,7 +258,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     else if (pair.ToLowerInvariant().StartsWith("failed:"))
                     {
                         ConnectInfoSeverity = InfoBarSeverity.Error;
-                        ConnectInfoTitle = pair.Substring(8);
+                        ConnectInfoTitle = pair[8..];
                         ConnectInfoIsOpen = true;
                     }
                     else if (!string.IsNullOrWhiteSpace(pair))
@@ -339,7 +339,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     else if (pair.ToLowerInvariant().StartsWith("failed:"))
                     {
                         ConnectInfoSeverity = InfoBarSeverity.Error;
-                        ConnectInfoTitle = pair.Substring(8);
+                        ConnectInfoTitle = pair[8..];
                         ConnectInfoIsOpen = true;
                     }
                     else if (!string.IsNullOrWhiteSpace(pair))
@@ -468,7 +468,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
-        public async void OnDeviceChanged(object sender, DeviceDataEventArgs e) => ConnectedList = (await new AdbClient().GetDevicesAsync()).Where(x => x.State == DeviceState.Online).ToList();
+        public async void OnDeviceChanged(object sender, DeviceDataEventArgs e) => ConnectedList = (await new AdbClient().GetDevicesAsync()).Where(x => x.State != DeviceState.Offline).ToList();
 
         public void Dispose()
         {

@@ -69,7 +69,7 @@ namespace APKInstaller.Common
     {
         /// <inheritdoc/>
         public bool IsCompleted => Dispatcher is not DispatcherQueue dispatcher
-            || ThreadSwitcher.IsHasThreadAccessPropertyAvailable && dispatcher.HasThreadAccess;
+            || (ThreadSwitcher.IsHasThreadAccessPropertyAvailable && dispatcher.HasThreadAccess);
 
         /// <inheritdoc/>
         public void GetResult() { }

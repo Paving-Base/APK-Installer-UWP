@@ -93,7 +93,7 @@ namespace APKInstaller.Helpers
         public static ImmutableArray<CultureInfo> SupportCultures { get; } = SupportLanguages.Select(x => new CultureInfo(x)).ToImmutableArray();
 
         public static int FindIndexFromSupportLanguageCodes(string language) => Array.FindIndex(SupportLanguageCodes, code => code.Split(',', ' ').Any(x => x.Equals(language, StringComparison.OrdinalIgnoreCase)));
-        
+
         public static string GetCurrentLanguage()
         {
             IReadOnlyList<string> languages = GlobalizationPreferences.Languages;

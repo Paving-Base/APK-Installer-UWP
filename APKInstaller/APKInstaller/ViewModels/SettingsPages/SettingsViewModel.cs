@@ -442,11 +442,11 @@ namespace APKInstaller.ViewModels.SettingsPages
             {
                 string langcode = LanguageHelper.GetPrimaryLanguage();
                 ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InstallPage");
-                List<HyperlinkContent> values = new()
-                {
+                List<HyperlinkContent> values =
+                [
                     new(_loader.GetString("NoDevice10"),new Uri($"https://github.com/Paving-Base/APK-Installer/blob/screenshots/Documents/Tutorials/How%20To%20Connect%20Device/How%20To%20Connect%20Device.{langcode}.md")),
                     new(_loader.GetString("HowToConnect"),new Uri($"https://github.com/Paving-Base/APK-Installer/blob/screenshots/Documents/Tutorials/How%20To%20Connect%20WSA/How%20To%20Connect%20WSA.{langcode}.md"))
-                };
+                ];
                 return values;
             }
         }
@@ -489,7 +489,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             Caches = this;
         }
 
-        public void OnDeviceChanged(object sender, DeviceDataEventArgs e) => DeviceList = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online);
+        public void OnDeviceChanged(object sender, DeviceDataEventArgs e) => DeviceList = new AdbClient().GetDevices().Where(x => x.State != DeviceState.Offline);
 
         public async void CheckUpdate()
         {
@@ -630,7 +630,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                 else if (results.ToLowerInvariant().StartsWith("failed:"))
                 {
                     ConnectInfoSeverity = InfoBarSeverity.Error;
-                    ConnectInfoTitle = results.Substring(8);
+                    ConnectInfoTitle = results[8..];
                     ConnectInfoIsOpen = true;
                 }
                 else if (!string.IsNullOrWhiteSpace(results))

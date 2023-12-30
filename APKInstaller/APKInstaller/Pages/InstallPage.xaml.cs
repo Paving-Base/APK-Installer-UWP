@@ -50,7 +50,7 @@ namespace APKInstaller.Pages
                             IShareTargetActivatedEventArgs ShareTargetEventArgs = args as IShareTargetActivatedEventArgs;
                             ShareTargetEventArgs.ShareOperation.DismissUI();
                             Provider = new InstallViewModel(string.Empty, this);
-                            Provider.OpenAPK(ShareTargetEventArgs.ShareOperation.Data);
+                            _ = Provider.OpenAPKAsync(ShareTargetEventArgs.ShareOperation.Data);
                             break;
                         case ActivationKind.Protocol:
                             ProtocolActivatedEventArgs ProtocolArgs = args as ProtocolActivatedEventArgs;
@@ -108,13 +108,13 @@ namespace APKInstaller.Pages
             switch ((sender as FrameworkElement).Name)
             {
                 case "ActionButton":
-                    Provider.InstallAPP();
+                    _ = Provider.InstallAPPAsync();
                     break;
                 case "DownloadButton":
-                    Provider.LoadNetAPK();
+                    _ = Provider.LoadNetAPKAsync();
                     break;
                 case "FileSelectButton":
-                    Provider.OpenAPK();
+                    _ = Provider.OpenAPKAsync();
                     break;
                 case "MoreInfoFlyoutItem":
                     _ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
@@ -130,7 +130,7 @@ namespace APKInstaller.Pages
                     CancelFlyout.Hide();
                     break;
                 case "SecondaryActionButton":
-                    Provider.OpenAPP();
+                    _ = Provider.OpenAPPAsync();
                     break;
             }
         }
@@ -177,7 +177,7 @@ namespace APKInstaller.Pages
 
         private void Page_Drop(object sender, DragEventArgs e)
         {
-            Provider.OpenAPK(e.DataView);
+            _ = Provider.OpenAPKAsync(e.DataView);
             e.Handled = true;
         }
     }

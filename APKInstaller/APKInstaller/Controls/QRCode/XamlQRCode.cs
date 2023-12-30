@@ -36,10 +36,10 @@ namespace APKInstaller.Controls
                         group.Children.Add(
                             new PathGeometry
                             {
-                                Figures = new PathFigureCollection
-                                {
+                                Figures =
+                                [
                                     CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)
-                                }
+                                ]
                             });
                     }
                     else
@@ -79,10 +79,10 @@ namespace APKInstaller.Controls
                         RadiusFilterKind filterKind = GetRadiusFilterKind(xi, yi);
                         PathGeometry geometry = new()
                         {
-                            Figures = new PathFigureCollection
-                                {
+                            Figures =
+                                [
                                     CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)
-                                }
+                                ]
                         };
                         group.Children.Add(geometry);
                         if (CheckIsPositionMarker(xi, yi, drawableModulesCount, positionMarkerCount))
@@ -167,7 +167,7 @@ namespace APKInstaller.Controls
             {
                 IsClosed = true,
                 StartPoint = new Point(x_middle, y),
-                Segments = new PathSegmentCollection()
+                Segments = []
             };
 
             if (filterKind.HasFlag(RadiusFilterKind.TopLeft))
@@ -273,7 +273,7 @@ namespace APKInstaller.Controls
             double y_end = y + unitsPerModule;
             Size arcSize = new(unitsPerModule / 2, unitsPerModule / 2);
 
-            PathFigureCollection pathFigures = new();
+            PathFigureCollection pathFigures = [];
 
             if (filterKind.HasFlag(RadiusFilterKind.TopLeft))
             {
@@ -282,8 +282,8 @@ namespace APKInstaller.Controls
                     {
                         IsClosed = true,
                         StartPoint = new Point(x_middle, y),
-                        Segments = new PathSegmentCollection
-                        {
+                        Segments =
+                        [
                             new ArcSegment
                             {
                                 Point = new Point(x, y_middle),
@@ -297,7 +297,7 @@ namespace APKInstaller.Controls
                             {
                                 Point = new Point(x_middle, y)
                             }
-                        }
+                        ]
                     });
             }
 
@@ -308,8 +308,8 @@ namespace APKInstaller.Controls
                     {
                         IsClosed = true,
                         StartPoint = new Point(x, y_middle),
-                        Segments = new PathSegmentCollection
-                        {
+                        Segments =
+                        [
                             new ArcSegment
                             {
                                 Point = new Point(x_middle, y_end),
@@ -323,7 +323,7 @@ namespace APKInstaller.Controls
                             {
                                 Point = new Point(x, y_middle)
                             }
-                        }
+                        ]
                     });
             }
 
@@ -334,8 +334,8 @@ namespace APKInstaller.Controls
                     {
                         IsClosed = true,
                         StartPoint = new Point(x_middle, y_end),
-                        Segments = new PathSegmentCollection
-                        {
+                        Segments =
+                        [
                             new ArcSegment
                             {
                                 Point = new Point(x_end, y_middle),
@@ -349,7 +349,7 @@ namespace APKInstaller.Controls
                             {
                                 Point = new Point(x_middle, y_end)
                             }
-                        }
+                        ]
                     });
             }
 
@@ -360,8 +360,8 @@ namespace APKInstaller.Controls
                     {
                         IsClosed = true,
                         StartPoint = new Point(x_end, y_middle),
-                        Segments = new PathSegmentCollection
-                        {
+                        Segments =
+                        [
                             new ArcSegment
                             {
                                 Point = new Point(x_middle, y),
@@ -375,7 +375,7 @@ namespace APKInstaller.Controls
                             {
                                 Point = new Point(x_end, y_middle)
                             }
-                        }
+                        ]
                     });
             }
 

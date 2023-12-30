@@ -21,7 +21,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         public List<DeviceData> devices;
         private readonly ApplicationsPage _page;
 
-        private List<string> deviceList = new();
+        private List<string> deviceList = [];
         public List<string> DeviceList
         {
             get => deviceList;
@@ -102,7 +102,7 @@ namespace APKInstaller.ViewModels.ToolsPages
 
         public async Task<List<APKInfo>> CheckAPP(Dictionary<string, string> apps, int index)
         {
-            List<APKInfo> Applications = new();
+            List<APKInfo> Applications = [];
             await Task.Run(async () =>
             {
                 AdvancedAdbClient client = new();

@@ -22,7 +22,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         public List<DeviceData> devices;
         private readonly ProcessesPage _page;
 
-        private List<string> deviceList = new();
+        private List<string> deviceList = [];
         public List<string> DeviceList
         {
             get => deviceList;

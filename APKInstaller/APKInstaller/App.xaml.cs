@@ -12,7 +12,6 @@ using Windows.Foundation.Metadata;
 using Windows.Security.Authorization.AppCapabilityAccess;
 using Windows.System.Profile;
 using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
