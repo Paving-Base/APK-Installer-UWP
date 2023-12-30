@@ -37,17 +37,21 @@ steps:
   displayName: 'Download CA certificate'
   inputs:
     secureFile: 'where.pfx'
-    
+
 - task: VSBuild@1
   displayName: 'Restore Solution'
   inputs:
     platform: 'x64'
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:restore
-                  /p:GITHUB_ACTIONS=true'
+    msbuildArgs: '/t:restore'
     msbuildArchitecture: 'x64'
     maximumCpuCount: true
+
+- task: NuGetCommand@2
+  displayName: 'NuGet Restore'
+  inputs:
+    restoreSolution: '$(solution)'
 
 - task: VSBuild@1
   displayName: 'Build Solution'
@@ -55,8 +59,7 @@ steps:
     platform: 'x64'
     solution: '$(buildProject)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:GITHUB_ACTIONS=true
-                  /p:AppxBundlePlatforms="$(buildPlatform)"
+    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)"
                   /p:AppxPackageDir="$(appxPackageDir)"
                   /p:AppxBundle=Always
                   /p:UapAppxPackageBuildMode=SideloadOnly
