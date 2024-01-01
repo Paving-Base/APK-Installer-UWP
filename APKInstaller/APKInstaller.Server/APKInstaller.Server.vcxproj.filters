@@ -47,7 +47,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SharpADB.Server.rc">
+    <ResourceCompile Include="APKInstaller.Server.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
