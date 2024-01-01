@@ -164,16 +164,18 @@ namespace AAPTForNet
                 using (Stream stream = random.AsStream())
                 using (ZipArchive archive = new(stream, ZipArchiveMode.Read))
                 {
-                    if (!Directory.Exists(TempPath))
+                    string path = Path.Combine(TempPath, file.Name);
+
+                    if (!Directory.Exists(path))
                     {
-                        Directory.CreateDirectory(TempPath);
+                        Directory.CreateDirectory(path);
                     }
 
                     foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains("/")))
                     {
-                        if (entry.Name.ToLower().EndsWith(".apk"))
+                        if (entry.Name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
                         {
-                            string APKTemp = Path.Combine(TempPath, entry.FullName);
+                            string APKTemp = Path.Combine(path, entry.FullName);
                             entry.ExtractToFile(APKTemp, true);
                             apks.Add(APKTemp);
                         }
@@ -218,7 +220,7 @@ namespace AAPTForNet
 
             if (apkInfos.Count <= 1) { return apkInfos.FirstOrDefault(); }
 
-            List<ApkInfos> packages = apkInfos.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = x.ToList() }).ToList();
+            List<ApkInfos> packages = apkInfos.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = [.. x] }).ToList();
 
             if (packages.Count > 1) { throw new Exception("This is a Multiple Package."); }
 
@@ -251,7 +253,7 @@ namespace AAPTForNet
             try
             {
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(TempPath);
-                StorageFile temp = await sourceFile.CopyAsync(folder);
+                StorageFile temp = await sourceFile.CopyAsync(folder, sourceFile.Name, NameCollisionOption.GenerateUniqueName);
                 return temp;
             }
             catch

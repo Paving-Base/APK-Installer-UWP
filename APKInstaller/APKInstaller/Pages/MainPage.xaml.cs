@@ -21,6 +21,7 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        private static uint count = 0;
 
         public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
 
@@ -37,6 +38,7 @@ namespace APKInstaller.Pages
         {
             InitializeComponent();
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            count++;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -60,6 +62,7 @@ namespace APKInstaller.Pages
 
         private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
+            if (--count != 0) { return; }
             Deferral deferral = e.GetDeferral();
             await CleanCachesAsync();
             deferral.Complete();
@@ -67,20 +70,10 @@ namespace APKInstaller.Pages
 
         private async Task CleanCachesAsync()
         {
-            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.AppInstance"))
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.AppInstance")
+                && AppInstance.GetInstances().Count > 1)
             {
-                if (AppInstance.GetInstances().Count <= 1)
-                {
-                    CachesHelper.CleanAllCaches(true);
-                    if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
-                    {
-                        try { await new AdbClient().KillAdbAsync(); } catch { }
-                    }
-                }
-                else
-                {
-                    CachesHelper.CleanAllCaches(false);
-                }
+                CachesHelper.CleanAllCaches(false);
             }
             else
             {

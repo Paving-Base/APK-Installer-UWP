@@ -7,7 +7,7 @@ using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
-using Windows.System;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -48,7 +48,7 @@ namespace APKInstaller.Pages
 
         public InstallPage() => InitializeComponent();
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if (Provider != null)
@@ -57,18 +57,17 @@ namespace APKInstaller.Pages
                 return;
             }
             _isCaches = false;
-            string _path = string.Empty;
             if (e.Parameter is IActivatedEventArgs args)
             {
                 switch (args?.Kind)
                 {
                     case ActivationKind.File when args is IFileActivatedEventArgs fileActivatedEventArgs:
-                        _path = fileActivatedEventArgs.Files.FirstOrDefault().Path;
-                        Provider = new InstallViewModel(_path, this);
+                        Provider = new InstallViewModel(file: null, this);
+                        _ = Provider.OpenAPKAsync(fileActivatedEventArgs.Files);
                         break;
                     case ActivationKind.ShareTarget when args is IShareTargetActivatedEventArgs shareTargetEventArgs:
                         shareTargetEventArgs.ShareOperation.DismissUI();
-                        Provider = new InstallViewModel(string.Empty, this);
+                        Provider = new InstallViewModel(file: null, this);
                         _ = Provider.OpenAPKAsync(shareTargetEventArgs.ShareOperation.Data);
                         break;
                     case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
@@ -78,7 +77,7 @@ namespace APKInstaller.Pages
                             : protocolData.TryGetValue("Url", out object url)
                                 ? new InstallViewModel(url as Uri, this)
                                 : protocolData.TryGetValue("FilePath", out object filePath)
-                                    ? new InstallViewModel(filePath?.ToString(), this)
+                                    ? new InstallViewModel(await StorageFile.GetFileFromPathAsync(filePath?.ToString()), this)
                                     : new InstallViewModel(protocolArgs.Uri, this);
                         break;
                     case ActivationKind.ProtocolForResults when args is ProtocolForResultsActivatedEventArgs protocolForResultsArgs:
@@ -88,17 +87,17 @@ namespace APKInstaller.Pages
                             : ProtocolForResultsData.TryGetValue("Url", out url)
                                 ? new InstallViewModel(url as Uri, this, protocolForResultsArgs.ProtocolForResultsOperation)
                                 : ProtocolForResultsData.TryGetValue("FilePath", out filePath)
-                                    ? new InstallViewModel(filePath?.ToString(), this, protocolForResultsArgs.ProtocolForResultsOperation)
+                                    ? new InstallViewModel(await StorageFile.GetFileFromPathAsync(filePath?.ToString()), this, protocolForResultsArgs.ProtocolForResultsOperation)
                                     : new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
                         break;
                     default:
-                        Provider = new InstallViewModel(_path, this);
+                        Provider = new InstallViewModel(file: null, this);
                         break;
                 }
             }
             else
             {
-                Provider = new InstallViewModel(_path, this);
+                Provider = new InstallViewModel(file: null, this);
             }
             _ = Provider.Refresh(!_isCaches);
         }

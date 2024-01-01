@@ -26,7 +26,7 @@ namespace AAPTForNet.Models
         internal bool IsMarkup => IconName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase);
 
         // Not real icon, it refer to another
-        internal bool IsRefernce => IconName.StartsWith("0x");
+        internal bool IsReference => IconName.StartsWith("0x");
 
         internal bool IsHighDensity
         {

@@ -14,126 +14,6 @@
     Drop="Page_Drop"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d">
-    <Page.Resources>
-        <MenuFlyout x:Key="IconMenuFlyout">
-            <MenuFlyoutSubItem x:Uid="/InstallPage/CopyFlyoutItem">
-                <MenuFlyoutSubItem.Icon>
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8C8;" />
-                </MenuFlyoutSubItem.Icon>
-                <MenuFlyoutItem
-                    x:Uid="/InstallPage/IconFlyoutItem"
-                    Click="CopyBitmapItem_Click"
-                    Tag="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}"
-                    ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xECAA;" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutSubItem
-                    x:Name="InfosFlyoutItem"
-                    x:Uid="/InstallPage/InfosFlyoutItem"
-                    x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}"
-                    IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}">
-                    <MenuFlyoutSubItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                    </MenuFlyoutSubItem.Icon>
-                    <MenuFlyoutItem
-                        x:Uid="/InstallPage/AppNameFlyoutItem"
-                        Click="CopyStringItem_Click"
-                        Tag="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED35;" />
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem
-                        x:Uid="/InstallPage/VersionCodeFlyoutItem"
-                        Click="CopyStringItem_Click"
-                        Tag="{x:Bind Provider.ApkInfo.VersionCode, Mode=OneWay}"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem
-                        x:Uid="/InstallPage/PackageNameFlyoutItem"
-                        Click="CopyStringItem_Click"
-                        Tag="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                </MenuFlyoutSubItem>
-                <MenuFlyoutItem
-                    x:Name="APKFileFlyoutItem"
-                    x:Uid="/InstallPage/APKFileFlyoutItem"
-                    x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}"
-                    Click="CopyFileItem_Click"
-                    IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}"
-                    Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
-                    ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-            </MenuFlyoutSubItem>
-            <MenuFlyoutSubItem
-                x:Name="ShareFlyoutItem"
-                x:Uid="/InstallPage/ShareFlyoutItem"
-                x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}"
-                IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}">
-                <MenuFlyoutSubItem.Icon>
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72D;" />
-                </MenuFlyoutSubItem.Icon>
-                <MenuFlyoutItem
-                    x:Uid="/InstallPage/APKFileFlyoutItem"
-                    Click="ShareFileItem_Click"
-                    Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
-                    ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutSubItem x:Uid="/InstallPage/StoreLinkFlyoutItem">
-                    <MenuFlyoutSubItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71B;" />
-                    </MenuFlyoutSubItem.Icon>
-                    <MenuFlyoutItem
-                        Click="ShareUrlItem_Click"
-                        Tag="{x:Bind x:String.Format('https://play.google.com/store/apps/details?id={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
-                        Text="Google Play"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
-                    <MenuFlyoutItem
-                        Click="ShareUrlItem_Click"
-                        Tag="{x:Bind x:String.Format('https://f-droid.org/packages/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
-                        Text="F-Droid"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
-                    <MenuFlyoutItem
-                        Click="ShareUrlItem_Click"
-                        Tag="{x:Bind x:String.Format('https://www.coolapk.com/apps/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
-                        Text="Coolapk"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
-                    <MenuFlyoutItem
-                        Click="ShareUrlItem_Click"
-                        Tag="{x:Bind x:String.Format('https://www.amazon.com/gp/mas/dl/android?p={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
-                        Text="Amazon"
-                        ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
-                </MenuFlyoutSubItem>
-            </MenuFlyoutSubItem>
-            <MenuFlyoutItem
-                x:Name="MoreInfoFlyoutItem"
-                x:Uid="/InstallPage/MoreInfoFlyoutItem"
-                x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}"
-                Click="Button_Click"
-                IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, FallbackValue='False', Mode=OneWay}">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-        </MenuFlyout>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SystemControlTransparentBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -145,6 +25,125 @@
             Grid.Row="1"
             Margin="0,16,0,0"
             x:Load="{x:Bind Provider.IsInitialized, Mode=OneWay}">
+            <Grid.Resources>
+                <MenuFlyout x:Key="IconMenuFlyout">
+                    <MenuFlyoutSubItem x:Uid="/InstallPage/CopyFlyoutItem">
+                        <MenuFlyoutSubItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8C8;" />
+                        </MenuFlyoutSubItem.Icon>
+                        <MenuFlyoutItem
+                            x:Uid="/InstallPage/IconFlyoutItem"
+                            Click="CopyBitmapItem_Click"
+                            Tag="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}"
+                            ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xECAA;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSubItem
+                            x:Name="InfosFlyoutItem"
+                            x:Uid="/InstallPage/InfosFlyoutItem"
+                            x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                            IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                            <MenuFlyoutSubItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                            </MenuFlyoutSubItem.Icon>
+                            <MenuFlyoutItem
+                                x:Uid="/InstallPage/AppNameFlyoutItem"
+                                Click="CopyStringItem_Click"
+                                Tag="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED35;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/InstallPage/VersionCodeFlyoutItem"
+                                Click="CopyStringItem_Click"
+                                Tag="{x:Bind Provider.ApkInfo.VersionCode, Mode=OneWay}"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Uid="/InstallPage/PackageNameFlyoutItem"
+                                Click="CopyStringItem_Click"
+                                Tag="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem
+                            x:Name="APKFileFlyoutItem"
+                            x:Uid="/InstallPage/APKFileFlyoutItem"
+                            x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                            Click="CopyFileItem_Click"
+                            IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                            Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
+                            ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyoutSubItem>
+                    <MenuFlyoutSubItem
+                        x:Name="ShareFlyoutItem"
+                        x:Uid="/InstallPage/ShareFlyoutItem"
+                        x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                        IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                        <MenuFlyoutSubItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72D;" />
+                        </MenuFlyoutSubItem.Icon>
+                        <MenuFlyoutItem
+                            x:Uid="/InstallPage/APKFileFlyoutItem"
+                            Click="ShareFileItem_Click"
+                            Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
+                            ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSubItem x:Uid="/InstallPage/StoreLinkFlyoutItem">
+                            <MenuFlyoutSubItem.Icon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71B;" />
+                            </MenuFlyoutSubItem.Icon>
+                            <MenuFlyoutItem
+                                Click="ShareUrlItem_Click"
+                                Tag="{x:Bind x:String.Format('https://play.google.com/store/apps/details?id={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                                Text="Google Play"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
+                            <MenuFlyoutItem
+                                Click="ShareUrlItem_Click"
+                                Tag="{x:Bind x:String.Format('https://f-droid.org/packages/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                                Text="F-Droid"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
+                            <MenuFlyoutItem
+                                Click="ShareUrlItem_Click"
+                                Tag="{x:Bind x:String.Format('https://www.coolapk.com/apps/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                                Text="Coolapk"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
+                            <MenuFlyoutItem
+                                Click="ShareUrlItem_Click"
+                                Tag="{x:Bind x:String.Format('https://www.amazon.com/gp/mas/dl/android?p={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                                Text="Amazon"
+                                ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}" />
+                        </MenuFlyoutSubItem>
+                    </MenuFlyoutSubItem>
+                    <MenuFlyoutItem
+                        x:Name="MoreInfoFlyoutItem"
+                        x:Uid="/InstallPage/MoreInfoFlyoutItem"
+                        x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                        Click="Button_Click"
+                        IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -195,23 +194,23 @@
                     <TextBlock
                         x:Name="AppPublisher"
                         Grid.Row="2"
+                        x:Load="{x:Bind Provider.AppPublisherVisibility, Mode=OneWay}"
                         MaxLines="2"
                         Text="{x:Bind x:String.Format(Provider.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
-                        ToolTipService.ToolTip="{x:Bind AppPublisher.Text, Mode=OneWay}"
-                        x:Load="{x:Bind Provider.AppPublisherVisibility, Mode=OneWay}" />
+                        ToolTipService.ToolTip="{x:Bind AppPublisher.Text, Mode=OneWay}" />
                     <TextBlock
                         x:Name="AppVersion"
                         Grid.Row="3"
+                        x:Load="{x:Bind Provider.AppVersionVisibility, Mode=OneWay}"
                         Text="{x:Bind x:String.Format(Provider.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
-                        ToolTipService.ToolTip="{x:Bind AppVersion.Text, Mode=OneWay}"
-                        x:Load="{x:Bind Provider.AppVersionVisibility, Mode=OneWay}" />
+                        ToolTipService.ToolTip="{x:Bind AppVersion.Text, Mode=OneWay}" />
                     <Grid Grid.Row="4" Margin="0,24,0,0">
                         <controls:CapabilitiesInfoControl
                             x:Name="AppCapabilities"
                             x:Uid="/InstallPage/AppCapabilities"
-                            CapabilitiesList="{x:Bind Provider.ApkInfo.Permissions, Mode=OneWay}"
-                            x:Load="{x:Bind Provider.AppCapabilitiesVisibility, Mode=OneWay}" />
+                            x:Load="{x:Bind Provider.AppCapabilitiesVisibility, Mode=OneWay}"
+                            CapabilitiesList="{x:Bind Provider.ApkInfo.Permissions, Mode=OneWay}" />
                     </Grid>
                 </Grid>
                 <Border
@@ -221,11 +220,9 @@
                     Height="90"
                     Margin="12,0,0,0"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Top">
-                    <Image
-                        x:Name="AppIcon"
-                        ContextFlyout="{StaticResource IconMenuFlyout}"
-                        Source="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}" />
+                    VerticalAlignment="Top"
+                    ContextFlyout="{StaticResource IconMenuFlyout}">
+                    <Image x:Name="AppIcon" Source="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}" />
                 </Border>
             </Grid>
             <Grid
@@ -321,17 +318,17 @@
                         x:Uid="/InstallPage/InstallOutputTextBlock"
                         Grid.Row="0"
                         Margin="0,0,0,6"
+                        x:Load="{x:Bind Provider.InstallOutputVisibility, Mode=OneWay}"
                         TextWrapping="WrapWholeWords"
-                        ToolTipService.ToolTip="{x:Bind InstallOutputTextBlock.Text}"
-                        x:Load="{x:Bind Provider.InstallOutputVisibility, Mode=OneWay}" />
+                        ToolTipService.ToolTip="{x:Bind InstallOutputTextBlock.Text}" />
                     <ScrollViewer
                         x:Name="TextOutputScrollViewer"
                         Grid.Row="1"
                         MaxHeight="56"
+                        x:Load="{x:Bind Provider.TextOutputVisibility, Mode=OneWay}"
                         BorderBrush="{StaticResource SystemAccentColor}"
                         BorderThickness="3,3,3,3"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        x:Load="{x:Bind Provider.TextOutputVisibility, Mode=OneWay}">
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <TextBlock
                             x:Name="TextOutput"
                             Margin="6,6,6,6"
@@ -358,11 +355,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.ActionVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.ActionButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.ActionVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Image
                                         x:Name="ActionButtonImage"
@@ -387,11 +384,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.SecondaryActionVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.SecondaryActionButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.SecondaryActionVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <StackPanel>
                                     <Image
                                         x:Name="SecondaryActionButtonImage"
@@ -416,11 +413,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.FileSelectVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.FileSelectButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.FileSelectVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Image
                                         x:Name="FileSelectButtonImage"
@@ -437,11 +434,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.DownloadVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.DownloadButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.DownloadVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Image
                                         x:Name="DownloadButtonImage"
@@ -458,11 +455,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.CancelOperationVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.CancelOperationButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.CancelOperationVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <Button.Flyout>
                                     <Flyout x:Name="CancelFlyout" x:FieldModifier="Public">
                                         <StackPanel>
@@ -505,11 +502,11 @@
                                 Width="120"
                                 Height="32"
                                 Margin="12,0,0,0"
+                                x:Load="{x:Bind Provider.DeviceSelectVisibility, Mode=OneWay}"
                                 Click="Button_Click"
                                 IsEnabled="{x:Bind Provider.DeviceSelectButtonEnable, Mode=OneWay}"
                                 Style="{StaticResource AccentButtonStyle}"
-                                TabIndex="1"
-                                x:Load="{x:Bind Provider.DeviceSelectVisibility, Mode=OneWay}">
+                                TabIndex="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Image
                                         x:Name="DeviceSelectButtonImage"
@@ -533,11 +530,11 @@
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Top"
+                        x:Load="{x:Bind Provider.LaunchWhenReadyVisibility, Mode=OneWay}"
                         FocusVisualMargin="-7,-3"
                         IsChecked="{Binding IsOpenApp, Mode=TwoWay}"
                         ToolTipService.ToolTip="{x:Bind LaunchWhenReadyCheckbox.Content}"
-                        UseSystemFocusVisuals="True"
-                        x:Load="{x:Bind Provider.LaunchWhenReadyVisibility, Mode=OneWay}" />
+                        UseSystemFocusVisuals="True" />
                     <StackPanel
                         x:Name="TermsAndConditionsGrid"
                         Grid.Row="2"

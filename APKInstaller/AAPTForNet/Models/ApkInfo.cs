@@ -22,18 +22,18 @@ namespace AAPTForNet.Models
         public Icon Icon { get; set; } = Icon.Default;
         public SDKInfo MinSDK { get; set; } = SDKInfo.Unknown;
         public SDKInfo TargetSDK { get; set; } = SDKInfo.Unknown;
-        public List<ApkInfo> SplitApks { get; set; } = new();
-        public List<string> Features { get; set; } = new();
-        public List<string> Permissions { get; set; } = new();
+        public List<ApkInfo> SplitApks { get; set; } = [];
+        public List<string> Features { get; set; } = [];
+        public List<string> Permissions { get; set; } = [];
 
         /// <summary>
         /// Supported application binary interfaces
         /// </summary>
-        public List<string> SupportedABIs { get; set; } = new();
-        public List<string> SupportLocales { get; set; } = new();
-        public List<string> SupportScreens { get; set; } = new();
-        public List<string> SupportDensities { get; set; } = new();
-        public Dictionary<string, string> LocaleLabels { get; set; } = new();
+        public List<string> SupportedABIs { get; set; } = [];
+        public List<string> SupportLocales { get; set; } = [];
+        public List<string> SupportScreens { get; set; } = [];
+        public List<string> SupportDensities { get; set; } = [];
+        public Dictionary<string, string> LocaleLabels { get; set; } = [];
 
         /// <summary>
         /// Size of package, in bytes
@@ -66,7 +66,7 @@ namespace AAPTForNet.Models
 
         public async void AddSplit(string path) => SplitApks.Add(await AAPTool.Decompile(path));
 
-        internal ApkInfo Megre(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
+        internal ApkInfo Merge(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
 
         internal static ApkInfo Merge(IEnumerable<ApkInfo> apks) => Merge(null, apks);
 

@@ -15,6 +15,8 @@ using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace APKInstaller
@@ -70,7 +72,7 @@ namespace APKInstaller
             base.OnShareTargetActivated(e);
         }
 
-        private void EnsureWindow(IActivatedEventArgs e)
+        private async void EnsureWindow(IActivatedEventArgs e)
         {
             if (!isLoaded)
             {
@@ -80,12 +82,13 @@ namespace APKInstaller
             }
 
             Window window = Window.Current;
-            WindowHelper.TrackWindow(window);
 
             // 不要在窗口已包含内容时重复应用程序初始化，
             // 只需确保窗口处于活动状态
             if (window.Content is not Frame rootFrame)
             {
+                WindowHelper.TrackWindow(window);
+
                 ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
@@ -105,6 +108,29 @@ namespace APKInstaller
                 window.Content = rootFrame;
 
                 ThemeHelper.Initialize();
+            }
+            else
+            {
+                _ = await WindowHelper.CreateWindowAsync(x =>
+                {
+                    window = x;
+
+                    ApplicationView.PreferredLaunchViewSize = new Size(652, 414);
+                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+                    // 创建要充当导航上下文的框架，并导航到第一页
+                    rootFrame = new Frame();
+
+                    rootFrame.NavigationFailed += OnNavigationFailed;
+
+                    // 将框架放在当前窗口中
+                    window.Content = rootFrame;
+
+                    ThemeHelper.Initialize(window);
+                }).ConfigureAwait(false);
+                await window.Dispatcher.ResumeForegroundAsync();
             }
 
             if (e is LaunchActivatedEventArgs args)
