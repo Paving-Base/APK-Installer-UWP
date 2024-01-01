@@ -1,7 +1,9 @@
 ﻿using AAPTForNet.Models;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
-using APKInstaller.ViewModels.AboutPages;
+using APKInstaller.Pages.SettingsPages;
+using APKInstaller.ViewModels.SettingsPages;
+using APKInstaller.ViewModels.ToolsPages;
 using System;
 using Windows.Storage;
 using Windows.System;
@@ -11,15 +13,35 @@ using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
-namespace APKInstaller.Pages.AboutPages
+namespace APKInstaller.Pages.ToolsPages
 {
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
     public sealed partial class InfosPage : Page
     {
-        internal InfosViewModel Provider;
-        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+        #region Provider
+
+        /// <summary>
+        /// Identifies the <see cref="Provider"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ProviderProperty =
+            DependencyProperty.Register(
+                nameof(Provider),
+                typeof(InfosViewModel),
+                typeof(InfosPage),
+                null);
+
+        /// <summary>
+        /// Get the <see cref="InfosViewModel"/> of current <see cref="Page"/>.
+        /// </summary>
+        public InfosViewModel Provider
+        {
+            get => (InfosViewModel)GetValue(ProviderProperty);
+            private set => SetValue(ProviderProperty, value);
+        }
+
+        #endregion
 
         public InfosPage() => InitializeComponent();
 
@@ -30,7 +52,6 @@ namespace APKInstaller.Pages.AboutPages
             {
                 Provider = new InfosViewModel(info);
             }
-            DataContext = Provider;
         }
 
         private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)

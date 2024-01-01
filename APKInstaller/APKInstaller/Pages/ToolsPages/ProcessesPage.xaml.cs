@@ -28,16 +28,16 @@ namespace APKInstaller.Pages.ToolsPages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
+            ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
+            ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
         }
 
-        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = Provider.GetDevicesAsync();
+        private void OnDeviceListChanged(object sender, DeviceDataNotifyEventArgs e) => _ = Provider.GetDevicesAsync();
 
         private void TitleBar_BackRequested(TitleBar sender, object e)
         {

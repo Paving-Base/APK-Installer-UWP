@@ -1,9 +1,11 @@
 ﻿using AAPTForNet.Models;
 using APKInstaller.Helpers;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Resources;
 
-namespace APKInstaller.ViewModels.AboutPages
+namespace APKInstaller.ViewModels.ToolsPages
 {
     public class InfosViewModel : INotifyPropertyChanged
     {
@@ -33,49 +35,37 @@ namespace APKInstaller.ViewModels.AboutPages
         public string Features
         {
             get => _features;
-            set
-            {
-                if (_features != value)
-                {
-                    _features = value;
-                    RaisePropertyChangedEvent();
-                }
-            }
+            set => SetProperty(ref _features, value);
         }
 
         private string _permissions;
         public string Permissions
         {
             get => _permissions;
-            set
-            {
-                if (_permissions != value)
-                {
-                    _permissions = value;
-                    RaisePropertyChangedEvent();
-                }
-            }
+            set => SetProperty(ref _permissions, value);
         }
 
         private string _appLocaleName;
         public string AppLocaleName
         {
             get => _appLocaleName;
-            set
-            {
-                if (_appLocaleName != value)
-                {
-                    _appLocaleName = value;
-                    RaisePropertyChangedEvent();
-                }
-            }
+            set => SetProperty(ref _appLocaleName, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        private void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+        }
+
+        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        {
+            if (property == null ? value != null : !property.Equals(value))
+            {
+                property = value;
+                RaisePropertyChangedEvent(name);
+            }
         }
 
         public InfosViewModel(ApkInfo Info) => ApkInfo = Info ?? new();

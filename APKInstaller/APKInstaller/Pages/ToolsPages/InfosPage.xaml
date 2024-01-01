@@ -1,8 +1,8 @@
 ﻿<Page
-    x:Class="APKInstaller.Pages.AboutPages.InfosPage"
+    x:Class="APKInstaller.Pages.ToolsPages.InfosPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:aboutpages="using:APKInstaller.ViewModels.AboutPages"
+    xmlns:aboutpages="using:APKInstaller.ViewModels.ToolsPages"
     xmlns:controls="using:APKInstaller.Controls"
     xmlns:converter="using:APKInstaller.Helpers.Converter"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
@@ -11,6 +11,7 @@
     xmlns:models="using:AAPTForNet.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     d:DataContext="{d:DesignInstance Type=aboutpages:InfosViewModel}"
+    DataContext="{x:Bind Provider, Mode=OneWay}"
     mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
@@ -48,27 +49,27 @@
                     <Image
                         VerticalAlignment="Top"
                         AutomationProperties.AccessibilityView="Raw"
-                        Source="{Binding ApkInfo.Icon.RealPath}" />
+                        Source="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}" />
                     <StackPanel Grid.Column="1">
                         <RichTextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
                             <Paragraph>
-                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{Binding AppLocaleName}" />
+                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{x:Bind Provider.AppLocaleName, Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="-" />
-                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{Binding ApkInfo.PackageName}" />
+                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('v{0}', Provider.ApkInfo.VersionName), Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('({0})', Provider.ApkInfo.VersionCode), Mode=OneWay}" />
                             </Paragraph>
                             <Paragraph Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-                                <Run Text="{Binding ApkInfo.MinSDK}" />
+                                <Run Text="{x:Bind Provider.ApkInfo.MinSDK, Mode=OneWay}" />
                                 <Run Text="-" />
-                                <Run Text="{Binding ApkInfo.TargetSDK}" />
+                                <Run Text="{x:Bind Provider.ApkInfo.TargetSDK, Mode=OneWay}" />
                             </Paragraph>
                             <Paragraph Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                 <Run x:Uid="/InfosPage/PermissionsCount" />
-                                <Run Text="{Binding ApkInfo.Permissions.Count}" />
+                                <Run Text="{x:Bind Provider.ApkInfo.Permissions.Count, Mode=OneWay}" />
                                 <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text="|" />
                                 <Run x:Uid="/InfosPage/PackageSize" />
-                                <Run Text="{Binding ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}}" />
+                                <Run Text="{x:Bind Provider.ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}, Mode=OneWay}" />
                             </Paragraph>
                         </RichTextBlock>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
@@ -79,7 +80,7 @@
                                     Click="HyperlinkButton_Click"
                                     Style="{StaticResource TextButtonStyle}"
                                     Tag="OpenPackageFolder"
-                                    ToolTipService.ToolTip="{Binding ApkInfo.PackagePath}" />
+                                    ToolTipService.ToolTip="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}" />
                                 <HyperlinkButton
                                     x:Uid="/InfosPage/SharePackage"
                                     Margin="6,0"
@@ -125,7 +126,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.AppName}"
+                                Text="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -140,7 +141,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.PackageName}"
+                                Text="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -156,7 +157,7 @@
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 TextWrapping="WrapWholeWords">
-                                <Run Text="{Binding ApkInfo.VersionName}" />
+                                <Run Text="{x:Bind Provider.ApkInfo.VersionName, Mode=OneWay}" />
                                 <Run Text="{x:Bind x:String.Format('({0})', Provider.ApkInfo.VersionCode), Mode=OneWay}" />
                             </TextBlock>
 
@@ -172,7 +173,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.MinSDK}"
+                                Text="{x:Bind Provider.ApkInfo.MinSDK, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -187,7 +188,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.TargetSDK}"
+                                Text="{x:Bind Provider.ApkInfo.TargetSDK, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -206,7 +207,7 @@
                                 x:Load="{x:Bind Provider.ApkInfo.SupportedABIs.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.SupportedABIs, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', '}"
+                                Text="{x:Bind Provider.ApkInfo.SupportedABIs, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -221,7 +222,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.SupportScreens, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', '}"
+                                Text="{x:Bind Provider.ApkInfo.SupportScreens, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -240,7 +241,7 @@
                                 x:Load="{x:Bind Provider.ApkInfo.SupportDensities.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.SupportDensities, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', '}"
+                                Text="{x:Bind Provider.ApkInfo.SupportDensities, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -255,7 +256,7 @@
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}}"
+                                Text="{x:Bind Provider.ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -274,7 +275,7 @@
                                 x:Load="{x:Bind Provider.ApkInfo.SupportLocales.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                Text="{Binding ApkInfo.SupportLocales, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', '}"
+                                Text="{x:Bind Provider.ApkInfo.SupportLocales, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
                         </Grid>
                     </controls:SettingExpander>
@@ -291,7 +292,7 @@
                                 <TextBlock
                                     Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                     IsTextSelectionEnabled="True"
-                                    Text="{Binding Permissions}" />
+                                    Text="{x:Bind Provider.Permissions, Mode=OneWay}" />
                             </ScrollViewer>
                         </Grid>
                     </controls:SettingExpander>
@@ -308,7 +309,7 @@
                                 <TextBlock
                                     Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                     IsTextSelectionEnabled="True"
-                                    Text="{Binding Features}" />
+                                    Text="{x:Bind Provider.Features, Mode=OneWay}" />
                             </ScrollViewer>
                         </Grid>
                     </controls:SettingExpander>
@@ -317,7 +318,7 @@
                         x:Load="{x:Bind Provider.ApkInfo.IsBundle, Mode=OneWay}"
                         Header="{x:Bind x:String.Format(Provider.DependenciesHeaderFormat, Provider.ApkInfo.SplitApks.Count), Mode=OneWay}"
                         Icon="&#xE74C;"
-                        ItemsSource="{Binding ApkInfo.SplitApks}">
+                        ItemsSource="{x:Bind Provider.ApkInfo.SplitApks, Mode=OneWay}">
                         <controls:SettingExpander.ItemTemplate>
                             <DataTemplate x:DataType="models:ApkInfo">
                                 <controls:Setting Header="{x:Bind AppName}" Style="{StaticResource DefaultSettingExpanderItemStyle}">

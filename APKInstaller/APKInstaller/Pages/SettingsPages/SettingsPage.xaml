@@ -468,6 +468,7 @@
                                 HorizontalAlignment="Left"
                                 Background="Transparent"
                                 LinkClicked="MarkdownText_LinkClicked"
+                                LinkForeground="{ThemeResource HyperlinkForeground}"
                                 Text="{x:Bind Provider.AboutTextBlockText, Mode=OneWay}" />
                         </Grid>
                     </controls:SettingExpander>

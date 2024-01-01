@@ -1,6 +1,6 @@
 ﻿using APKInstaller.Helpers;
-using APKInstaller.Pages.AboutPages;
 using APKInstaller.Pages.SettingsPages;
+using APKInstaller.Pages.ToolsPages;
 using APKInstaller.ViewModels;
 using System;
 using System.Linq;
