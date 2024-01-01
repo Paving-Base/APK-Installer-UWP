@@ -1,4 +1,5 @@
-﻿using APKInstaller.Helpers;
+﻿using AdvancedSharpAdbClient;
+using APKInstaller.Helpers;
 using APKInstaller.Pages.AboutPages;
 using APKInstaller.Pages.SettingsPages;
 using APKInstaller.ViewModels;
@@ -21,8 +22,6 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class InstallPage : Page
     {
-        private bool _isCaches;
-
         #region Provider
 
         /// <summary>
@@ -53,11 +52,10 @@ namespace APKInstaller.Pages
             base.OnNavigatedTo(e);
             if (Provider != null)
             {
-                _isCaches = true;
-                return;
+                _ = Provider.Refresh(false);
+                _ = Provider.RegisterDeviceMonitor();
             }
-            _isCaches = false;
-            if (e.Parameter is IActivatedEventArgs args)
+            else if (e.Parameter is IActivatedEventArgs args)
             {
                 switch (args?.Kind)
                 {
@@ -99,7 +97,13 @@ namespace APKInstaller.Pages
             {
                 Provider = new InstallViewModel(file: null, this);
             }
-            _ = Provider.Refresh(!_isCaches);
+            _ = Provider.Refresh(true);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            _ = Provider.UnregisterDeviceMonitor();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

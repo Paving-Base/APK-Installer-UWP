@@ -4,9 +4,8 @@ using AdvancedSharpAdbClient.Models;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.ViewModels.ToolsPages;
-using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI;
-using Windows.System;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -20,17 +19,17 @@ namespace APKInstaller.Pages.ToolsPages
     /// </summary>
     public sealed partial class ApplicationsPage : Page
     {
-        private ApplicationsViewModel Provider;
-        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+        private readonly ApplicationsViewModel Provider;
 
-        public ApplicationsPage() => InitializeComponent();
+        public ApplicationsPage()
+        {
+            InitializeComponent();
+            Provider = new ApplicationsViewModel(Dispatcher) { TitleBar = TitleBar };
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            Provider = new ApplicationsViewModel(this);
-            DataContext = Provider;
-            Provider.TitleBar = TitleBar;
             ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
         }
 
@@ -40,7 +39,7 @@ namespace APKInstaller.Pages.ToolsPages
             ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
-        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = DispatcherQueue?.EnqueueAsync(Provider.GetDevices);
+        private void OnDeviceChanged(object sender, DeviceDataEventArgs e) => _ = Provider.GetDevicesAsync();
 
         private void TitleBar_BackRequested(TitleBar sender, object e)
         {
@@ -52,12 +51,12 @@ namespace APKInstaller.Pages.ToolsPages
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _ = Provider.GetApps();
+            _ = Provider.GetAppsAsync();
         }
 
         private void TitleBar_RefreshEvent(TitleBar sender, object e)
         {
-            _ = Provider.GetDevices().ContinueWith((Task) => _ = Provider.GetApps());
+            _ = Provider.GetDevicesAsync().ContinueWith(x => Provider.GetAppsAsync()).Unwrap();
         }
 
         private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -66,30 +65,20 @@ namespace APKInstaller.Pages.ToolsPages
             switch (Button.Name)
             {
                 case "Stop":
-                    new AdvancedAdbClient().StopApp(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
+                    _ = new AdbClient().StopAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
                     break;
                 case "Start":
-                    new AdvancedAdbClient().StartApp(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
+                    _ = new AdbClient().StartAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
                     break;
                 case "Uninstall":
                     break;
             }
         }
 
-        private void ListView_Loaded(object sender, RoutedEventArgs e)
-        {
-            ListView ListView = sender as ListView;
-            ItemsStackPanel StackPanel = ListView.FindDescendant<ItemsStackPanel>();
-            if (StackPanel != null)
-            {
-                StackPanel.Margin = new Thickness(14, 16, 14, 16);
-            }
-        }
-
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
             Provider.DeviceComboBox = sender as ComboBox;
-            _ = Provider.GetDevices();
+            _ = Provider.GetDevicesAsync();
         }
     }
 }

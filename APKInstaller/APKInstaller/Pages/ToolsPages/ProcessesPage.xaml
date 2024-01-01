@@ -6,12 +6,13 @@
     xmlns:cwuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:AdvancedSharpAdbClient.DeviceCommands.Models"
     xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
     d:DataContext="{d:DesignInstance Type=toolspages:ProcessesViewModel}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{x:Bind Provider}"
     mc:Ignorable="d">
     <Page.Resources>
-        <toolspages:ProcesseConverter x:Key="TextConverter" />
+        <toolspages:ProcessConverter x:Key="ProcessConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -31,21 +32,26 @@
                 x:Name="DeviceComboBox"
                 x:Uid="/ProcessesPage/DeviceComboBox"
                 VerticalAlignment="Center"
+                ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}"
                 Loaded="ComboBox_Loaded"
                 SelectionChanged="ComboBox_SelectionChanged" />
         </controls:TitleBar>
         <cwuc:DataGrid
+            x:Name="DataGrid"
             Grid.Row="1"
+            d:DataContext="{d:DesignInstance Type=models:AndroidProcess}"
             AutoGenerateColumns="False"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             CanUserSortColumns="True"
+            GridLinesVisibility="Horizontal"
             IsReadOnly="True"
-            ItemsSource="{Binding Processes, Mode=OneWay}">
+            ItemsSource="{x:Bind Provider.Processes, Mode=OneWay}"
+            Sorting="DataGrid_Sorting">
             <cwuc:DataGrid.Columns>
                 <cwuc:DataGridTextColumn
                     x:Uid="/ProcessesPage/Name"
-                    Binding="{Binding Name, Converter={StaticResource TextConverter}, ConverterParameter='Name'}"
+                    Binding="{Binding Name, Converter={StaticResource ProcessConverter}, ConverterParameter='Name'}"
                     Tag="Name" />
                 <cwuc:DataGridTextColumn
                     x:Uid="/ProcessesPage/ProcessId"
@@ -53,12 +59,12 @@
                     Tag="ProcessId" />
                 <cwuc:DataGridTextColumn
                     x:Uid="/ProcessesPage/State"
-                    Binding="{Binding State, Converter={StaticResource TextConverter}, ConverterParameter='State'}"
+                    Binding="{Binding State, Converter={StaticResource ProcessConverter}, ConverterParameter='State'}"
                     Tag="State" />
                 <cwuc:DataGridTextColumn
                     x:Uid="/ProcessesPage/ResidentSetSize"
-                    Binding="{Binding ResidentSetSize, Converter={StaticResource TextConverter}, ConverterParameter='Size'}"
-                    Tag="Resident Set Size" />
+                    Binding="{Binding ResidentSetSize, Converter={StaticResource ProcessConverter}, ConverterParameter='Size'}"
+                    Tag="ResidentSetSize" />
                 <cwuc:DataGridTextColumn
                     x:Uid="/ProcessesPage/Detail"
                     Binding="{Binding Name}"

@@ -706,7 +706,8 @@ namespace APKInstaller.ViewModels
                     }
                     WaitProgressText = _loader.GetString("Loading");
                 }
-                ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
+                ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
+                ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
             }
         }
 
@@ -1235,7 +1236,24 @@ namespace APKInstaller.ViewModels
             AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
         }
 
-        private async void OnDeviceChanged(object sender, DeviceDataEventArgs e)
+        public async Task RegisterDeviceMonitor()
+        {
+            await ThreadSwitcher.ResumeBackgroundAsync();
+            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            {
+                ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
+                ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
+            }
+        }
+
+        public async Task UnregisterDeviceMonitor()
+        {
+            await ThreadSwitcher.ResumeBackgroundAsync();
+            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            { ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged; }
+        }
+
+        private async void OnDeviceListChanged(object sender, DeviceDataNotifyEventArgs e)
         {
             if (IsInitialized && !IsInstalling)
             {

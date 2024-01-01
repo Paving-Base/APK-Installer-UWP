@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolspages="using:APKInstaller.ViewModels.ToolsPages"
     d:DataContext="{d:DesignInstance Type=toolspages:ApplicationsViewModel}"
+    DataContext="{x:Bind Provider}"
     mc:Ignorable="d">
     <Page.Resources>
         <toolspages:ApplicationConverter x:Key="ApplicationConverter" />
@@ -31,6 +32,7 @@
                 x:Name="DeviceComboBox"
                 x:Uid="/ApplicationsPage/DeviceComboBox"
                 VerticalAlignment="Center"
+                ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}"
                 Loaded="ComboBox_Loaded"
                 SelectionChanged="ComboBox_SelectionChanged" />
         </controls:TitleBar>
@@ -39,8 +41,7 @@
             Grid.Row="1"
             Padding="12,0,12,12"
             ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
-            ItemsSource="{x:Bind Provider.Applications, Mode=OneWay}"
-            Loaded="ListView_Loaded">
+            ItemsSource="{x:Bind Provider.Applications, Mode=OneWay}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical" Spacing="2" />
@@ -66,6 +67,7 @@
                                 <MenuFlyoutItem
                                     x:Uid="/ApplicationsPage/Uninstall"
                                     Click="MenuFlyoutItem_Click"
+                                    IsEnabled="False"
                                     Tag="{x:Bind Name}" />
                             </MenuFlyout>
                         </Border.Resources>
