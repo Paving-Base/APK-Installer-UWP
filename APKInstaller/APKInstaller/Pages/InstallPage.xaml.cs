@@ -21,9 +21,30 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class InstallPage : Page
     {
-        private bool IsCaches;
-        internal InstallViewModel Provider;
-        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+        private bool _isCaches;
+
+        #region Provider
+
+        /// <summary>
+        /// Identifies the <see cref="Provider"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ProviderProperty =
+            DependencyProperty.Register(
+                nameof(Provider),
+                typeof(InstallViewModel),
+                typeof(InstallPage),
+                null);
+
+        /// <summary>
+        /// Get the <see cref="InstallViewModel"/> of current <see cref="Page"/>.
+        /// </summary>
+        public InstallViewModel Provider
+        {
+            get => (InstallViewModel)GetValue(ProviderProperty);
+            private set => SetValue(ProviderProperty, value);
+        }
+
+        #endregion
 
         public InstallPage() => InitializeComponent();
 
@@ -32,142 +53,116 @@ namespace APKInstaller.Pages
             base.OnNavigatedTo(e);
             if (Provider != null)
             {
-                IsCaches = true;
+                _isCaches = true;
+                return;
+            }
+            _isCaches = false;
+            string _path = string.Empty;
+            if (e.Parameter is IActivatedEventArgs args)
+            {
+                switch (args?.Kind)
+                {
+                    case ActivationKind.File when args is IFileActivatedEventArgs fileActivatedEventArgs:
+                        _path = fileActivatedEventArgs.Files.FirstOrDefault().Path;
+                        Provider = new InstallViewModel(_path, this);
+                        break;
+                    case ActivationKind.ShareTarget when args is IShareTargetActivatedEventArgs shareTargetEventArgs:
+                        shareTargetEventArgs.ShareOperation.DismissUI();
+                        Provider = new InstallViewModel(string.Empty, this);
+                        _ = Provider.OpenAPKAsync(shareTargetEventArgs.ShareOperation.Data);
+                        break;
+                    case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
+                        ValueSet protocolData = protocolArgs.Data;
+                        Provider = protocolData?.Any() != true
+                            ? new InstallViewModel(protocolArgs.Uri, this)
+                            : protocolData.TryGetValue("Url", out object url)
+                                ? new InstallViewModel(url as Uri, this)
+                                : protocolData.TryGetValue("FilePath", out object filePath)
+                                    ? new InstallViewModel(filePath?.ToString(), this)
+                                    : new InstallViewModel(protocolArgs.Uri, this);
+                        break;
+                    case ActivationKind.ProtocolForResults when args is ProtocolForResultsActivatedEventArgs protocolForResultsArgs:
+                        ValueSet ProtocolForResultsData = protocolForResultsArgs.Data;
+                        Provider = ProtocolForResultsData?.Any() != true
+                            ? new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation)
+                            : ProtocolForResultsData.TryGetValue("Url", out url)
+                                ? new InstallViewModel(url as Uri, this, protocolForResultsArgs.ProtocolForResultsOperation)
+                                : ProtocolForResultsData.TryGetValue("FilePath", out filePath)
+                                    ? new InstallViewModel(filePath?.ToString(), this, protocolForResultsArgs.ProtocolForResultsOperation)
+                                    : new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
+                        break;
+                    default:
+                        Provider = new InstallViewModel(_path, this);
+                        break;
+                }
             }
             else
             {
-                IsCaches = false;
-                string _path = string.Empty;
-                if (e.Parameter is IActivatedEventArgs args)
-                {
-                    switch (args?.Kind)
-                    {
-                        case ActivationKind.File:
-                            _path = (args as IFileActivatedEventArgs).Files.First().Path;
-                            Provider = new InstallViewModel(_path, this);
-                            break;
-                        case ActivationKind.ShareTarget:
-                            IShareTargetActivatedEventArgs ShareTargetEventArgs = args as IShareTargetActivatedEventArgs;
-                            ShareTargetEventArgs.ShareOperation.DismissUI();
-                            Provider = new InstallViewModel(string.Empty, this);
-                            _ = Provider.OpenAPKAsync(ShareTargetEventArgs.ShareOperation.Data);
-                            break;
-                        case ActivationKind.Protocol:
-                            ProtocolActivatedEventArgs ProtocolArgs = args as ProtocolActivatedEventArgs;
-                            ValueSet ProtocolData = ProtocolArgs.Data;
-                            if (ProtocolData == null || !ProtocolData.Any())
-                            {
-                                Provider = new InstallViewModel(ProtocolArgs.Uri, this);
-                            }
-                            else
-                            {
-                                if (ProtocolData.ContainsKey("Url"))
-                                {
-                                    Provider = new InstallViewModel(ProtocolData["Url"] as Uri, this);
-                                }
-                                else if (ProtocolData.ContainsKey("FilePath"))
-                                {
-                                    Provider = new InstallViewModel(ProtocolData["FilePath"] as string, this);
-                                }
-                            }
-                            break;
-                        case ActivationKind.ProtocolForResults:
-                            ProtocolForResultsActivatedEventArgs ProtocolForResultsArgs = args as ProtocolForResultsActivatedEventArgs;
-                            ValueSet ProtocolForResultsData = ProtocolForResultsArgs.Data;
-                            if (ProtocolForResultsData == null || !ProtocolForResultsData.Any())
-                            {
-                                Provider = new InstallViewModel(ProtocolForResultsArgs.Uri, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
-                            }
-                            else
-                            {
-                                if (ProtocolForResultsData.ContainsKey("Url"))
-                                {
-                                    Provider = new InstallViewModel(ProtocolForResultsData["Url"] as Uri, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
-                                }
-                                else if (ProtocolForResultsData.ContainsKey("FilePath"))
-                                {
-                                    Provider = new InstallViewModel(ProtocolForResultsData["FilePath"] as string, this, ProtocolForResultsArgs.ProtocolForResultsOperation);
-                                }
-                            }
-                            break;
-                        default:
-                            Provider = new InstallViewModel(_path, this);
-                            break;
-                    }
-                }
-                else
-                {
-                    Provider = new InstallViewModel(_path, this);
-                }
+                Provider = new InstallViewModel(_path, this);
             }
-            DataContext = Provider;
+            _ = Provider.Refresh(!_isCaches);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement).Name)
+            switch ((sender as FrameworkElement)?.Name)
             {
-                case "ActionButton":
+                case nameof(ActionButton):
                     _ = Provider.InstallAPPAsync();
                     break;
-                case "DownloadButton":
+                case nameof(DownloadButton):
                     _ = Provider.LoadNetAPKAsync();
                     break;
-                case "FileSelectButton":
+                case nameof(FileSelectButton):
                     _ = Provider.OpenAPKAsync();
                     break;
-                case "MoreInfoFlyoutItem":
+                case nameof(MoreInfoFlyoutItem):
                     _ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
                     break;
-                case "DeviceSelectButton":
+                case nameof(DeviceSelectButton):
                     _ = Frame.Navigate(typeof(SettingsPage));
                     break;
-                case "CancelConfirmButton":
+                case nameof(CancelConfirmButton):
                     CancelFlyout.Hide();
-                    Provider.CloseAPP();
+                    _ = Provider.CloseAPPAsync();
                     break;
-                case "CancelContinueButton":
+                case nameof(CancelContinueButton):
                     CancelFlyout.Hide();
                     break;
-                case "SecondaryActionButton":
+                case nameof(SecondaryActionButton):
                     _ = Provider.OpenAPPAsync();
                     break;
             }
         }
 
-        private async void InitialLoadingUI_Loaded(object sender, RoutedEventArgs e)
-        {
-            await Provider.Refresh(!IsCaches);
-        }
-
         private void CopyFileItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyoutItem element = sender as MenuFlyoutItem;
-            DataTransferHelper.CopyFile(element.Tag.ToString(), element.Text);
+            if (sender is not MenuFlyoutItem element) { return; }
+            DataTransferHelper.CopyFile(element.Tag?.ToString(), element.Text);
         }
 
         private void CopyStringItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyoutItem element = sender as MenuFlyoutItem;
-            DataTransferHelper.CopyText(element.Tag.ToString(), element.Text);
+            if (sender is not MenuFlyoutItem element) { return; }
+            DataTransferHelper.CopyText(element.Tag?.ToString(), element.Text);
         }
 
         private void CopyBitmapItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyoutItem element = sender as MenuFlyoutItem;
-            DataTransferHelper.CopyBitmap(element.Tag.ToString(), element.Text);
+            if (sender is not MenuFlyoutItem element) { return; }
+            DataTransferHelper.CopyBitmap(element.Tag?.ToString(), element.Text);
         }
 
         private void ShareFileItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyoutItem element = sender as MenuFlyoutItem;
-            DataTransferHelper.ShareFile(element.Tag.ToString(), element.Text, element.Tag.ToString());
+            if (sender is not MenuFlyoutItem element) { return; }
+            DataTransferHelper.ShareFile(element.Tag?.ToString(), element.Text, element.Tag?.ToString());
         }
 
         private void ShareUrlItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuFlyoutItem element = sender as MenuFlyoutItem;
-            DataTransferHelper.ShareURL(new Uri(element.Tag.ToString()), element.Text, element.Tag.ToString());
+            if (sender is not MenuFlyoutItem element) { return; }
+            DataTransferHelper.ShareURL(new Uri(element.Tag?.ToString()), element.Text, element.Tag?.ToString());
         }
 
         private void Page_DragOver(object sender, DragEventArgs e)

@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Zeroconf.Interfaces;
 
 namespace APKInstaller.Models
 {
-    public class MDNSDeviceData : INotifyPropertyChanged
+    public class MDNSDeviceData(string name, string address, int port) : INotifyPropertyChanged
     {
-        public string Name { get; private set; }
-        public string Address { get; private set; }
-        public int Port { get; private set; }
+        public string Name { get; init; } = name;
+        public string Address { get; init; } = address;
+        public int Port { get; init; } = port;
 
         public string Host => $"{Address}:{Host}";
 
@@ -16,28 +17,26 @@ namespace APKInstaller.Models
         public bool ConnectingDevice
         {
             get => _connectingDevice;
-            set
-            {
-                if (_connectingDevice != value)
-                {
-                    _connectingDevice = value;
-                    RaisePropertyChangedEvent();
-                }
-            }
+            set => SetProperty(ref _connectingDevice, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
-            if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+            if (name != null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
-        public MDNSDeviceData(string name, string address, int port)
+        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            Name = name;
-            Address = address;
-            Port = port;
+            if (property == null ? value != null : !property.Equals(value))
+            {
+                property = value;
+                RaisePropertyChangedEvent(name);
+            }
         }
 
         public MDNSDeviceData(IZeroconfHost host) : this(host.DisplayName, host.IPAddress, host.Services.FirstOrDefault().Value.Port) { }

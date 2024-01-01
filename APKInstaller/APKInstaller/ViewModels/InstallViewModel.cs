@@ -259,92 +259,92 @@ namespace APKInstaller.ViewModels
             set => SetProperty(ref _cancelOperationButtonText, value);
         }
 
-        private Visibility _textOutputVisibility = Visibility.Collapsed;
-        public Visibility TextOutputVisibility
+        private bool _textOutputVisibility = false;
+        public bool TextOutputVisibility
         {
             get => _textOutputVisibility;
             set => SetProperty(ref _textOutputVisibility, value);
         }
 
-        private Visibility _installOutputVisibility = Visibility.Collapsed;
-        public Visibility InstallOutputVisibility
+        private bool _installOutputVisibility = false;
+        public bool InstallOutputVisibility
         {
             get => _installOutputVisibility;
             set => SetProperty(ref _installOutputVisibility, value);
         }
 
-        private Visibility _actionVisibility = Visibility.Collapsed;
-        public Visibility ActionVisibility
+        private bool _actionVisibility = false;
+        public bool ActionVisibility
         {
             get => _actionVisibility;
             set => SetProperty(ref _actionVisibility, value);
         }
 
-        private Visibility _secondaryActionVisibility = Visibility.Collapsed;
-        public Visibility SecondaryActionVisibility
+        private bool _secondaryActionVisibility = false;
+        public bool SecondaryActionVisibility
         {
             get => _secondaryActionVisibility;
             set => SetProperty(ref _secondaryActionVisibility, value);
         }
 
-        private Visibility _fileSelectVisibility = Visibility.Collapsed;
-        public Visibility FileSelectVisibility
+        private bool _fileSelectVisibility = false;
+        public bool FileSelectVisibility
         {
             get => _fileSelectVisibility;
             set => SetProperty(ref _fileSelectVisibility, value);
         }
 
-        private Visibility _downloadVisibility = Visibility.Collapsed;
-        public Visibility DownloadVisibility
+        private bool _downloadVisibility = false;
+        public bool DownloadVisibility
         {
             get => _downloadVisibility;
             set => SetProperty(ref _downloadVisibility, value);
         }
 
-        private Visibility _deviceSelectVisibility = Visibility.Collapsed;
-        public Visibility DeviceSelectVisibility
+        private bool _deviceSelectVisibility = false;
+        public bool DeviceSelectVisibility
         {
             get => _deviceSelectVisibility;
             set => SetProperty(ref _deviceSelectVisibility, value);
         }
 
-        private Visibility _cancelOperationVisibility = Visibility.Collapsed;
-        public Visibility CancelOperationVisibility
+        private bool _cancelOperationVisibility = false;
+        public bool CancelOperationVisibility
         {
             get => _cancelOperationVisibility;
             set => SetProperty(ref _cancelOperationVisibility, value);
         }
 
-        private Visibility _messagesToUserVisibility = Visibility.Collapsed;
-        public Visibility MessagesToUserVisibility
+        private bool _messagesToUserVisibility = false;
+        public bool MessagesToUserVisibility
         {
             get => _messagesToUserVisibility;
             set => SetProperty(ref _messagesToUserVisibility, value);
         }
 
-        private Visibility _launchWhenReadyVisibility = Visibility.Collapsed;
-        public Visibility LaunchWhenReadyVisibility
+        private bool _launchWhenReadyVisibility = false;
+        public bool LaunchWhenReadyVisibility
         {
             get => _launchWhenReadyVisibility;
             set => SetProperty(ref _launchWhenReadyVisibility, value);
         }
 
-        private Visibility _appVersionVisibility;
-        public Visibility AppVersionVisibility
+        private bool _appVersionVisibility;
+        public bool AppVersionVisibility
         {
             get => _appVersionVisibility;
             set => SetProperty(ref _appVersionVisibility, value);
         }
 
-        private Visibility _appPublisherVisibility;
-        public Visibility AppPublisherVisibility
+        private bool _appPublisherVisibility;
+        public bool AppPublisherVisibility
         {
             get => _appPublisherVisibility;
             set => SetProperty(ref _appPublisherVisibility, value);
         }
 
-        private Visibility _appCapabilitiesVisibility;
-        public Visibility AppCapabilitiesVisibility
+        private bool _appCapabilitiesVisibility;
+        public bool AppCapabilitiesVisibility
         {
             get => _appCapabilitiesVisibility;
             set => SetProperty(ref _appCapabilitiesVisibility, value);
@@ -782,7 +782,7 @@ namespace APKInstaller.ViewModels
                             InfoMessage = _loader.GetString("WaitingDevice");
                             DeviceSelectButtonText = _loader.GetString("Devices");
                             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
-                            ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
+                            ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
                         }
                         else
                         {
@@ -803,8 +803,8 @@ namespace APKInstaller.ViewModels
                 AppName = _loader.GetString("NoPackageWranning");
                 FileSelectButtonText = _loader.GetString("Select");
                 CancelOperationButtonText = _loader.GetString("Close");
-                FileSelectVisibility = CancelOperationVisibility = Visibility.Visible;
-                AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = Visibility.Collapsed;
+                FileSelectVisibility = CancelOperationVisibility = true;
+                AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
             }
             IsInitialized = true;
         }
@@ -968,7 +968,7 @@ namespace APKInstaller.ViewModels
                         InfoMessage = _loader.GetString("WaitingDevice");
                         DeviceSelectButtonText = _loader.GetString("Devices");
                         AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), AppLocaleName);
-                        ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
+                        ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
 
                         if (ShowDialogs)
                         {
@@ -1000,15 +1000,15 @@ namespace APKInstaller.ViewModels
                     {
                         ActionButtonText = _loader.GetString("Install");
                         AppName = string.Format(_loader.GetString("InstallFormat"), AppLocaleName);
-                        ActionVisibility = Visibility.Visible;
-                        LaunchWhenReadyVisibility = string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity) ? Visibility.Collapsed : Visibility.Visible;
+                        ActionVisibility = true;
+                        LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity);
                     }
                     else if (info.VersionCode < int.Parse(ApkInfo?.VersionCode))
                     {
                         ActionButtonText = _loader.GetString("Update");
                         AppName = string.Format(_loader.GetString("UpdateFormat"), AppLocaleName);
-                        ActionVisibility = Visibility.Visible;
-                        LaunchWhenReadyVisibility = string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity) ? Visibility.Collapsed : Visibility.Visible;
+                        ActionVisibility = true;
+                        LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity);
                     }
                     else
                     {
@@ -1016,8 +1016,8 @@ namespace APKInstaller.ViewModels
                         SecondaryActionButtonText = _loader.GetString("Launch");
                         AppName = string.Format(_loader.GetString("ReinstallFormat"), AppLocaleName);
                         TextOutput = string.Format(_loader.GetString("ReinstallOutput"), AppLocaleName);
-                        ActionVisibility = TextOutputVisibility = Visibility.Visible;
-                        SecondaryActionVisibility = string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity) ? Visibility.Collapsed : Visibility.Visible;
+                        ActionVisibility = TextOutputVisibility = true;
+                        SecondaryActionVisibility = !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity);
                     }
                     SDKInfo sdk = SDKInfo.GetInfo(await client.GetPropertyAsync(_device, "ro.build.version.sdk"));
                     if (sdk < ApkInfo.MinSDK)
@@ -1046,7 +1046,7 @@ namespace APKInstaller.ViewModels
             InfoMessage = _loader.GetString("WaitingDevice");
             DeviceSelectButtonText = _loader.GetString("Devices");
             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), AppLocaleName);
-            ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
+            ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
         }
 
         private void CheckOnlinePackage()
@@ -1060,8 +1060,8 @@ namespace APKInstaller.ViewModels
                 AppName = _loader.GetString("OnlinePackage");
                 DownloadButtonText = _loader.GetString("Download");
                 CancelOperationButtonText = _loader.GetString("Close");
-                DownloadVisibility = CancelOperationVisibility = Visibility.Visible;
-                AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = Visibility.Collapsed;
+                DownloadVisibility = CancelOperationVisibility = true;
+                AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
                 if (AutoGetNetAPK)
                 {
                     _ = LoadNetAPKAsync();
@@ -1076,7 +1076,7 @@ namespace APKInstaller.ViewModels
         public async Task LoadNetAPKAsync()
         {
             IsInstalling = true;
-            DownloadVisibility = Visibility.Collapsed;
+            DownloadVisibility = false;
             await ThreadSwitcher.ResumeBackgroundAsync();
             try
             {
@@ -1120,7 +1120,7 @@ namespace APKInstaller.ViewModels
                     InfoMessage = _loader.GetString("WaitingDevice");
                     DeviceSelectButtonText = _loader.GetString("Devices");
                     AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
-                    ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = Visibility.Visible;
+                    ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
                 }
             }
             IsInstalling = false;
@@ -1226,10 +1226,10 @@ namespace APKInstaller.ViewModels
             TextOutputVisibility =
             InstallOutputVisibility =
             LaunchWhenReadyVisibility =
-            MessagesToUserVisibility = Visibility.Collapsed;
+            MessagesToUserVisibility = false;
             AppVersionVisibility =
             AppPublisherVisibility =
-            AppCapabilitiesVisibility = Visibility.Visible;
+            AppCapabilitiesVisibility = true;
             AppxInstallBarIndeterminate =
             ActionButtonEnable =
             SecondaryActionButtonEnable =
@@ -1245,8 +1245,8 @@ namespace APKInstaller.ViewModels
             TextOutput = message;
             ApkInfo ??= new ApkInfo();
             AppName = _loader.GetString("CannotOpenPackage");
-            TextOutputVisibility = InstallOutputVisibility = Visibility.Visible;
-            AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = Visibility.Collapsed;
+            TextOutputVisibility = InstallOutputVisibility = true;
+            AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
         }
 
         private async void OnDeviceChanged(object sender, DeviceDataEventArgs e)
@@ -1327,9 +1327,9 @@ namespace APKInstaller.ViewModels
                 AppxInstallBarIndeterminate = true;
                 ProgressText = _loader.GetString("Installing");
                 CancelOperationButtonText = _loader.GetString("Cancel");
-                CancelOperationVisibility = Visibility.Visible;
-                ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = Visibility.Collapsed;
-                LaunchWhenReadyVisibility = string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity) ? Visibility.Collapsed : Visibility.Visible;
+                CancelOperationVisibility = true;
+                ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = false;
+                LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity);
                 if (ApkInfo?.IsSplit == true)
                 {
                     if (ShowProgress)
@@ -1401,18 +1401,18 @@ namespace APKInstaller.ViewModels
                 AppxInstallBarIndeterminate = true;
                 ActionButtonText = _loader.GetString("Reinstall");
                 SecondaryActionButtonText = _loader.GetString("Launch");
-                ActionVisibility = Visibility.Visible;
-                CancelOperationVisibility = LaunchWhenReadyVisibility = Visibility.Collapsed;
-                SecondaryActionVisibility = string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity) ? Visibility.Collapsed : Visibility.Visible;
+                ActionVisibility = true;
+                CancelOperationVisibility = LaunchWhenReadyVisibility = false;
+                SecondaryActionVisibility = !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity);
             }
             catch (Exception ex)
             {
                 SendResults(ex);
                 IsInstalling = false;
                 TextOutput = ex.Message;
-                TextOutputVisibility = InstallOutputVisibility = Visibility.Visible;
+                TextOutputVisibility = InstallOutputVisibility = true;
                 SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
-                ActionVisibility = SecondaryActionVisibility = CancelOperationVisibility = LaunchWhenReadyVisibility = Visibility.Collapsed;
+                ActionVisibility = SecondaryActionVisibility = CancelOperationVisibility = LaunchWhenReadyVisibility = false;
             }
 
             _page.CancelFlyout.Hide();
@@ -1487,6 +1487,8 @@ namespace APKInstaller.ViewModels
 
         public async Task OpenAPKAsync(DataPackageView data)
         {
+            if (data == null) { return; }
+
             WaitProgressText = _loader.GetString("CheckingPath");
             IsInitialized = false;
 
@@ -1497,12 +1499,12 @@ namespace APKInstaller.ViewModels
                 if (items.Count == 1)
                 {
                     IStorageItem storageItem = items.FirstOrDefault();
-                    await OpenPathAsync(storageItem);
+                    await OpenPathAsync(storageItem).ConfigureAwait(false);
                     return;
                 }
                 else if (items.Count >= 1)
                 {
-                    await CreateAPKSAsync(items);
+                    await CreateAPKSAsync(items).ConfigureAwait(false);
                     return;
                 }
             }
@@ -1512,13 +1514,13 @@ namespace APKInstaller.ViewModels
                 if (Directory.Exists(path))
                 {
                     StorageFolder storageItem = await StorageFolder.GetFolderFromPathAsync(path);
-                    await OpenPathAsync(storageItem);
+                    await OpenPathAsync(storageItem).ConfigureAwait(false);
                     return;
                 }
                 else if (File.Exists(path))
                 {
                     StorageFile storageItem = await StorageFile.GetFileFromPathAsync(path);
-                    await OpenPathAsync(storageItem);
+                    await OpenPathAsync(storageItem).ConfigureAwait(false);
                     return;
                 }
             }
@@ -1555,7 +1557,10 @@ namespace APKInstaller.ViewModels
                             }
                             IsInitialized = true;
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Info(ex.ExceptionToMessage(), ex);
+                        }
                         break;
                 }
                 IsInitialized = true;
@@ -1587,8 +1592,9 @@ namespace APKInstaller.ViewModels
                         }
                         continue;
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Info(ex.ExceptionToMessage(), ex);
                         continue;
                     }
                 }
@@ -1647,7 +1653,7 @@ namespace APKInstaller.ViewModels
             _operation.ReportCompleted(results);
         }
 
-        public async void CloseAPP()
+        public async Task CloseAPPAsync()
         {
             SendResults(new Exception($"{_loader.GetString("Install")} {_loader.GetString("Cancel")}"));
             await Dispatcher.ResumeForegroundAsync();
