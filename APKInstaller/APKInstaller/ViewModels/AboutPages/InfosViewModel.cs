@@ -1,6 +1,5 @@
 ﻿using AAPTForNet.Models;
 using APKInstaller.Helpers;
-using APKInstaller.Pages.AboutPages;
 using System.ComponentModel;
 using Windows.ApplicationModel.Resources;
 
@@ -8,7 +7,6 @@ namespace APKInstaller.ViewModels.AboutPages
 {
     public class InfosViewModel : INotifyPropertyChanged
     {
-        private readonly InfosPage _page;
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InfosPage");
 
         public string TitleFormat => _loader.GetString("TitleFormat");
@@ -80,11 +78,7 @@ namespace APKInstaller.ViewModels.AboutPages
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
-        public InfosViewModel(ApkInfo Info, InfosPage Page)
-        {
-            _page = Page;
-            ApkInfo = Info ?? new();
-        }
+        public InfosViewModel(ApkInfo Info) => ApkInfo = Info ?? new();
 
         private void UpdateInfos(ApkInfo value)
         {

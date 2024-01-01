@@ -1,4 +1,5 @@
 ﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
@@ -31,10 +32,9 @@ namespace APKInstaller
         {
             InitializeComponent();
             Suspending += OnSuspending;
-            CrossPlatformFunc.RunProcess = ADBHelper.RunProcess;
             UnhandledException += Application_UnhandledException;
-            CrossPlatformFunc.RunProcessAsync = ADBHelper.RunProcessAsync;
-            CrossPlatformFunc.CheckFileExists = ADBHelper.CheckFileExists;
+            LoggerProvider.SetLogProvider(new MetroLoggerFactory());
+            Factories.AdbCommandLineClientFactory = path => new AdbCommandClient(path);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.FocusVisualKind", "Reveal"))
             {

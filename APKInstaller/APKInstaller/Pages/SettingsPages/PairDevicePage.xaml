@@ -10,10 +10,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:APKInstaller.Models"
+    xmlns:models1="using:AdvancedSharpAdbClient.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:settingspages="using:APKInstaller.ViewModels.SettingsPages"
-    xmlns:sharpadbclient="using:AdvancedSharpAdbClient"
-    xmlns:sys="using:System"
     d:DataContext="{d:DesignInstance Type=settingspages:PairDeviceViewModel}"
     mc:Ignorable="d">
     <Page.Resources>
@@ -248,11 +247,11 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                     <controls:SettingsGroup
-                        Header="{x:Bind sys:String.Format(Provider.ConnectedListFormat, Provider.ConnectedList.Count), Mode=OneWay}"
+                        Header="{x:Bind x:String.Format(Provider.ConnectedListFormat, Provider.ConnectedList.Count), Mode=OneWay}"
                         ItemsSource="{x:Bind Provider.ConnectedList, Mode=OneWay}"
                         Visibility="{x:Bind Provider.ConnectedList, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
-                            <DataTemplate x:DataType="sharpadbclient:DeviceData">
+                            <DataTemplate x:DataType="models1:DeviceData">
                                 <controls:Setting
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"
@@ -267,7 +266,7 @@
                             IsOpen="{Binding ConnectInfoIsOpen, Mode=TwoWay}"
                             Severity="{Binding ConnectInfoSeverity, Mode=OneWay}" />
                     </controls:SettingsGroup>
-                    <controls:SettingsGroup Header="{x:Bind sys:String.Format(Provider.DeviceListFormat, Provider.DeviceList.Count), Mode=OneWay}" ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}">
+                    <controls:SettingsGroup Header="{x:Bind x:String.Format(Provider.DeviceListFormat, Provider.DeviceList.Count), Mode=OneWay}" ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
                             <DataTemplate x:DataType="models:MDNSDeviceData">
                                 <controls:Setting Header="{x:Bind Name}" Icon="&#xE8EA;">

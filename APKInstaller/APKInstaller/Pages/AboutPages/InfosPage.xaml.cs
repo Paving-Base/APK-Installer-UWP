@@ -28,7 +28,7 @@ namespace APKInstaller.Pages.AboutPages
             base.OnNavigatedTo(e);
             if (e.Parameter is ApkInfo info)
             {
-                Provider = new InfosViewModel(info, this);
+                Provider = new InfosViewModel(info);
             }
             DataContext = Provider;
         }

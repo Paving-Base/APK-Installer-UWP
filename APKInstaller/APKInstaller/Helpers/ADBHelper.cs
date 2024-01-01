@@ -1,9 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
-using APKInstaller.Projection;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -25,18 +22,6 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static bool CheckFileExists(string path)
-        {
-            try
-            {
-                return StorageFile.GetFileFromPathAsync(path).AwaitByTaskCompleteSource() is StorageFile file && file.IsOfType(StorageItemTypes.File);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public static async Task<bool> CheckFileExistsAsync(string path)
         {
             try
@@ -48,11 +33,5 @@ namespace APKInstaller.Helpers
                 return false;
             }
         }
-
-        public static int RunProcess(string filename, string command, List<string> errorOutput, List<string> standardOutput) =>
-            (int)APKInstallerProjectionFactory.ServerManager.RunProcess(filename, command, errorOutput, standardOutput);
-
-        public static Task<int> RunProcessAsync(string filename, string command, List<string> errorOutput, List<string> standardOutput, CancellationToken cancellationToken) =>
-            APKInstallerProjectionFactory.ServerManager.RunProcessAsync(filename, command, errorOutput, standardOutput).AsTask(cancellationToken).ContinueWith(x => (int)x.Result);
     }
 }

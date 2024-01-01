@@ -122,6 +122,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\AdbCommandClient.cs" />
+    <Compile Include="Common\Enumerable.cs" />
+    <Compile Include="Common\MetroLoggerFactory.cs" />
     <Compile Include="Common\WeakEvent.cs" />
     <Compile Include="Controls\CapabilitiesInfoControl.xaml.cs">
       <DependentUpon>CapabilitiesInfoControl.xaml</DependentUpon>
@@ -815,7 +818,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AdvancedSharpAdbClient">
-      <Version>2.5.8</Version>
+      <Version>3.0.9</Version>
     </PackageReference>
     <PackageReference Include="Downloader">
       <Version>3.0.6</Version>
@@ -843,9 +846,6 @@
     </PackageReference>
     <PackageReference Include="QRCoder">
       <Version>1.4.3</Version>
-    </PackageReference>
-    <PackageReference Include="SharpCompress">
-      <Version>0.35.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

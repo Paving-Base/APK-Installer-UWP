@@ -95,19 +95,19 @@
                     </MenuFlyoutSubItem.Icon>
                     <MenuFlyoutItem
                         Click="ShareUrlItem_Click"
-                        Tag="{x:Bind sys:String.Format('https://play.google.com/store/apps/details?id={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Tag="{x:Bind x:String.Format('https://play.google.com/store/apps/details?id={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
                         Text="Google Play" />
                     <MenuFlyoutItem
                         Click="ShareUrlItem_Click"
-                        Tag="{x:Bind sys:String.Format('https://f-droid.org/packages/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Tag="{x:Bind x:String.Format('https://f-droid.org/packages/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
                         Text="F-Droid" />
                     <MenuFlyoutItem
                         Click="ShareUrlItem_Click"
-                        Tag="{x:Bind sys:String.Format('https://www.coolapk.com/apps/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Tag="{x:Bind x:String.Format('https://www.coolapk.com/apps/{0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
                         Text="Coolapk" />
                     <MenuFlyoutItem
                         Click="ShareUrlItem_Click"
-                        Tag="{x:Bind sys:String.Format('https://www.amazon.com/gp/mas/dl/android?p={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Tag="{x:Bind x:String.Format('https://www.amazon.com/gp/mas/dl/android?p={0}', Provider.ApkInfo.PackageName), Mode=OneWay}"
                         Text="Amazon" />
                 </MenuFlyoutSubItem>
             </MenuFlyoutSubItem>
@@ -186,14 +186,14 @@
                         x:Name="AppPublisher"
                         Grid.Row="2"
                         MaxLines="2"
-                        Text="{x:Bind sys:String.Format(Provider.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Text="{x:Bind x:String.Format(Provider.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                         Visibility="{Binding AppPublisherVisibility}" />
                     <TextBlock
                         x:Name="AppVersion"
                         Grid.Row="3"
-                        Text="{x:Bind sys:String.Format(Provider.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
+                        Text="{x:Bind x:String.Format(Provider.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                         Visibility="{Binding AppVersionVisibility}" />
                     <Grid Grid.Row="4" Margin="0,24,0,0">
@@ -235,7 +235,7 @@
                     FontWeight="SemiBold"
                     MaxLines="2"
                     OpticalMarginAlignment="TrimSideBearings"
-                    Text="{x:Bind sys:String.Format(Provider.InstallFormat, Provider.ApkInfo.AppName), Mode=OneWay}"
+                    Text="{x:Bind x:String.Format(Provider.InstallFormat, Provider.ApkInfo.AppName), Mode=OneWay}"
                     TextTrimming="CharacterEllipsis"
                     ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
                 <Image

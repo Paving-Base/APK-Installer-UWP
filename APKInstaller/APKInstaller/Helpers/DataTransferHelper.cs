@@ -24,8 +24,7 @@ namespace APKInstaller.Helpers
         private static async Task<DataPackage> GetFileDataPackage(string filePath, string fileName, string description)
         {
             StorageFile file = await StorageFile.GetFileFromPathAsync(filePath);
-
-            IEnumerable<IStorageFile> files = new List<StorageFile> { file };
+            IEnumerable<IStorageFile> files = [file];
 
             DataPackage dataPackage = new();
             dataPackage.SetStorageItems(files);
@@ -52,7 +51,6 @@ namespace APKInstaller.Helpers
         private static async Task<DataPackage> GetBitmapDataPackage(string bitmapPath, string bitmapName, string description)
         {
             StorageFile file = await StorageFile.GetFileFromPathAsync(bitmapPath);
-
             RandomAccessStreamReference bitmap = RandomAccessStreamReference.CreateFromFile(file);
 
             DataPackage dataPackage = new();
@@ -88,9 +86,7 @@ namespace APKInstaller.Helpers
             if (DataTransferManager.IsSupported())
             {
                 DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-
                 dataTransferManager.DataRequested += (sender, args) => args.Request.Data = dataPackage;
-
                 // Show the Share UI
                 DataTransferManager.ShowShareUI();
             }

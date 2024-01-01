@@ -1,6 +1,5 @@
 ﻿using APKInstaller.Common;
 using Microsoft.Toolkit.Uwp.Helpers;
-using SharpCompress;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;

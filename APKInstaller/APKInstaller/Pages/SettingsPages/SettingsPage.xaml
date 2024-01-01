@@ -8,9 +8,9 @@
     xmlns:helpers="using:Microsoft.Toolkit.Uwp.Helpers"
     xmlns:interopservices="using:System.Runtime.InteropServices"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:AdvancedSharpAdbClient.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:settingspages="using:APKInstaller.ViewModels.SettingsPages"
-    xmlns:sharpadbclient="using:AdvancedSharpAdbClient"
     xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     d:DataContext="{d:DesignInstance Type=settingspages:SettingsViewModel}"
     NavigationCacheMode="Enabled"
@@ -73,7 +73,7 @@
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="sharpadbclient:DeviceData">
+                            <DataTemplate x:DataType="models:DeviceData">
                                 <controls:Setting
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"

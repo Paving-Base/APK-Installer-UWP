@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APKInstaller", "APKInstaller\APKInstaller\APKInstaller.csproj", "{47199534-DC12-4306-8DA0-55FBD5FF6637}"
+	ProjectSection(ProjectDependencies) = postProject
+		{36281370-06FB-4857-BCF8-FDD66C8DA631} = {36281370-06FB-4857-BCF8-FDD66C8DA631}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AAPTForNet", "APKInstaller\AAPTForNet\AAPTForNet.csproj", "{691DC506-E415-49FA-8895-FD96DC06C69F}"
 EndProject
@@ -15,6 +18,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APKInstaller.Server", "APKInstaller\APKInstaller.Server\APKInstaller.Server.vcxproj", "{FF249D4D-69F7-4934-BBD9-AB408CFB79BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APKInstaller.Projection", "APKInstaller\APKInstaller.Projection\APKInstaller.Projection.vcxproj", "{B88DAA2C-C7BD-4955-B27D-F9E770E3722D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{36281370-06FB-4857-BCF8-FDD66C8DA631} = {36281370-06FB-4857-BCF8-FDD66C8DA631}
+	EndProjectSection
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "APKInstaller.Package", "APKInstaller\APKInstaller.Package\APKInstaller.Package.wapproj", "{DDB8F017-87EC-4576-891F-758337624DD7}"
 EndProject

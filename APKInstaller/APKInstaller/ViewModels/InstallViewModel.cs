@@ -2,6 +2,9 @@
 using AAPTForNet.Models;
 using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
+using AdvancedSharpAdbClient.DeviceCommands.Models;
+using AdvancedSharpAdbClient.Models;
+using AdvancedSharpAdbClient.Receivers;
 using APKInstaller.Common;
 using APKInstaller.Controls.Dialogs;
 using APKInstaller.Helpers;
@@ -10,13 +13,12 @@ using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
 using Downloader;
 using Microsoft.Toolkit.Uwp.Connectivity;
-using SharpCompress.Archives;
-using SharpCompress.Common;
-using SharpCompress.Writers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -650,23 +652,20 @@ namespace APKInstaller.ViewModels
             }
             WaitProgressText = _loader.GetString("UnzipADB");
             await Task.Delay(1);
-            using (IArchive archive = ArchiveFactory.Open(ADBTemp))
+            using (ZipArchive archive = ZipFile.OpenRead(ADBTemp))
             {
                 WaitProgressIndeterminate = false;
-                IArchiveEntry[] entries = archive.Entries.ToArray();
-                int totalCount = entries.Length;
+                ReadOnlyCollection<ZipArchiveEntry> entries = archive.Entries;
+                int totalCount = entries.Count;
 
                 int progressed = 0;
                 string path = ApplicationData.Current.LocalFolder.Path;
 
-                foreach (IArchiveEntry entry in entries)
+                foreach (ZipArchiveEntry entry in entries)
                 {
                     WaitProgressValue = archive.Entries.GetProgressValue(entry);
                     WaitProgressText = string.Format(_loader.GetString("UnzippingFormat"), ++progressed, totalCount);
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(path, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
-                    }
+                    entry.ExtractToFile(Path.Combine(path, entry.FullName), true);
                 }
 
                 WaitProgressValue = 0;
@@ -992,12 +991,12 @@ namespace APKInstaller.ViewModels
                 try
                 {
                     AdbClient client = new();
-                    VersionInfo info = null;
+                    VersionInfo info = default;
                     if (ApkInfo != null && !ApkInfo.IsEmpty)
                     {
                         info = await client.GetPackageVersionAsync(_device, ApkInfo?.PackageName);
                     }
-                    if (info == null)
+                    if (info == default)
                     {
                         ActionButtonText = _loader.GetString("Install");
                         AppName = string.Format(_loader.GetString("InstallFormat"), AppLocaleName);
@@ -1303,12 +1302,12 @@ namespace APKInstaller.ViewModels
             try
             {
                 AdbClient client = new();
-                VersionInfo info = null;
+                VersionInfo info = default;
                 if (ApkInfo != null && !ApkInfo.IsEmpty)
                 {
                     info = await client.GetPackageVersionAsync(_device, ApkInfo?.PackageName).ConfigureAwait(false);
                 }
-                if (info != null && info.VersionCode >= int.Parse(ApkInfo?.VersionCode))
+                if (info != default && info.VersionCode >= int.Parse(ApkInfo?.VersionCode))
                 {
                     await Dispatcher.ResumeForegroundAsync();
                     ContentDialog dialog = new()
@@ -1337,14 +1336,13 @@ namespace APKInstaller.ViewModels
                     {
                         AppxInstallBarIndeterminate = false;
                         PackageManager manager = new(client, _device);
-                        manager.InstallProgressChanged += OnInstallProgressChanged;
-                        await manager.InstallMultiplePackageAsync([ApkInfo?.FullPath], ApkInfo?.PackageName, true).ConfigureAwait(false);
+                        await manager.InstallMultiplePackageAsync([ApkInfo?.FullPath], ApkInfo?.PackageName, OnInstallProgressChanged).ConfigureAwait(false);
                         AppxInstallBarValue = 100;
                     }
                     else
                     {
                         using FileStream apk = File.Open(ApkInfo.FullPath, FileMode.Open, FileAccess.Read);
-                        await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName).ConfigureAwait(false);
+                        await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName, OnInstallProgressChanged).ConfigureAwait(false);
                     }
                 }
                 else if (ApkInfo?.IsBundle == true)
@@ -1353,16 +1351,15 @@ namespace APKInstaller.ViewModels
                     {
                         AppxInstallBarIndeterminate = false;
                         PackageManager manager = new(client, _device);
-                        manager.InstallProgressChanged += OnInstallProgressChanged;
                         string[] strings = ApkInfo?.SplitApks?.Select(x => x.FullPath).ToArray();
-                        await manager.InstallMultiplePackageAsync(ApkInfo?.FullPath, strings, true).ConfigureAwait(false);
+                        await manager.InstallMultiplePackageAsync(ApkInfo?.FullPath, strings, OnInstallProgressChanged).ConfigureAwait(false);
                         AppxInstallBarValue = 100;
                     }
                     else
                     {
                         FileStream apk = File.Open(ApkInfo.FullPath, FileMode.Open, FileAccess.Read);
                         FileStream[] splits = ApkInfo.SplitApks.Select(x => File.Open(x.FullPath, FileMode.Open, FileAccess.Read)).ToArray();
-                        await client.InstallMultipleAsync(_device, apk, splits).ConfigureAwait(false);
+                        await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged).ConfigureAwait(false);
                         Array.ForEach(splits, (x) => x.Dispose());
                         apk.Dispose();
                     }
@@ -1373,14 +1370,13 @@ namespace APKInstaller.ViewModels
                     {
                         AppxInstallBarIndeterminate = false;
                         PackageManager manager = new(client, _device);
-                        manager.InstallProgressChanged += OnInstallProgressChanged;
-                        await manager.InstallPackageAsync(ApkInfo?.FullPath, true).ConfigureAwait(false);
+                        await manager.InstallPackageAsync(ApkInfo?.FullPath, OnInstallProgressChanged).ConfigureAwait(false);
                         AppxInstallBarValue = 100;
                     }
                     else
                     {
                         using FileStream apk = File.Open(ApkInfo.FullPath, FileMode.Open, FileAccess.Read);
-                        await client.InstallAsync(_device, apk).ConfigureAwait(false);
+                        await client.InstallAsync(_device, apk, OnInstallProgressChanged).ConfigureAwait(false);
                         apk.Dispose();
                     }
                 }
@@ -1421,7 +1417,7 @@ namespace APKInstaller.ViewModels
 
             _page.CancelFlyout.Hide();
 
-            void OnInstallProgressChanged(object sender, InstallProgressEventArgs e)
+            void OnInstallProgressChanged(InstallProgressEventArgs e)
             {
                 switch (e.State)
                 {
@@ -1546,11 +1542,11 @@ namespace APKInstaller.ViewModels
                         {
                             using (IRandomAccessStreamWithContentType random = await file.OpenReadAsync())
                             using (Stream stream = random.AsStream())
-                            using (IArchive archive = ArchiveFactory.Open(stream))
+                            using (ZipArchive archive = new(stream, ZipArchiveMode.Read))
                             {
-                                foreach (IArchiveEntry entry in archive.Entries.Where(x => !x.Key.Contains('/')))
+                                foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains('/')))
                                 {
-                                    if (entry.Key.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
+                                    if (entry.Name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
                                     {
                                         await OpenAPKAsync(file.Path).ConfigureAwait(false);
                                         return;
@@ -1580,10 +1576,10 @@ namespace APKInstaller.ViewModels
                     {
                         using IRandomAccessStreamWithContentType random = await file.OpenReadAsync();
                         using Stream stream = random.AsStream();
-                        using IArchive archive = ArchiveFactory.Open(stream);
-                        foreach (IArchiveEntry entry in archive.Entries.Where(x => !x.Key.Contains('/')))
+                        using ZipArchive archive = new(stream, ZipArchiveMode.Read);
+                        foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains('/')))
                         {
-                            if (entry.Key.ToLower().EndsWith(".apk"))
+                            if (entry.Name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
                             {
                                 await OpenAPKAsync(file.Path).ConfigureAwait(false);
                                 return;
@@ -1622,12 +1618,13 @@ namespace APKInstaller.ViewModels
 
                     using (FileStream zip = File.OpenWrite(temp))
                     {
-                        using IWriter zipWriter = WriterFactory.Open(zip, ArchiveType.Zip, CompressionType.Deflate);
+                        using ZipArchive zipWriter = new(zip, ZipArchiveMode.Create);
                         foreach (StorageFile apk in apkList)
                         {
                             using IRandomAccessStreamWithContentType random = await apk.OpenReadAsync();
                             using Stream stream = random.AsStream();
-                            zipWriter.Write(apk.Name, stream);
+                            using Stream entry = zipWriter.CreateEntry(apk.Name).Open();
+                            await stream.CopyToAsync(entry);
                         }
                     }
 
