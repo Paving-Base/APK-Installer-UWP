@@ -1,5 +1,4 @@
-﻿using AdvancedSharpAdbClient;
-using APKInstaller.Helpers;
+﻿using APKInstaller.Helpers;
 using APKInstaller.Pages.AboutPages;
 using APKInstaller.Pages.SettingsPages;
 using APKInstaller.ViewModels;

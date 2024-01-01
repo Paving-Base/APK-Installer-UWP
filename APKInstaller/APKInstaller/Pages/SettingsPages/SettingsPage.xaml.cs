@@ -8,10 +8,12 @@ using Microsoft.Toolkit.Uwp.UI;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -23,48 +25,53 @@ namespace APKInstaller.Pages.SettingsPages
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
-        internal SettingsViewModel Provider;
-        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+        #region Provider
+
+        /// <summary>
+        /// Identifies the <see cref="Provider"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ProviderProperty =
+            DependencyProperty.Register(
+                nameof(Provider),
+                typeof(SettingsViewModel),
+                typeof(SettingsPage),
+                null);
+
+        /// <summary>
+        /// Get the <see cref="SettingsViewModel"/> of current <see cref="Page"/>.
+        /// </summary>
+        public SettingsViewModel Provider
+        {
+            get => (SettingsViewModel)GetValue(ProviderProperty);
+            private set => SetValue(ProviderProperty, value);
+        }
+
+        #endregion
 
         public SettingsPage() => InitializeComponent();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (SettingsViewModel.Caches != null)
-            {
-                Provider = SettingsViewModel.Caches;
-            }
-            else
-            {
-                Provider = new SettingsViewModel(this);
-                if (Provider.UpdateDate == DateTime.MinValue) { Provider.CheckUpdate(); }
-            }
-            if (AdbServer.Instance.GetStatus().IsRunning)
-            {
-                ADBHelper.Monitor.DeviceChanged += Provider.OnDeviceChanged;
-                Provider.DeviceList = new AdbClient().GetDevices().Where(x => x.State == DeviceState.Online);
-            }
-            DataContext = Provider;
-            Provider.GetADBVersion();
-            //#if DEBUG
+            Provider ??= SettingsViewModel.Caches.TryGetValue(Dispatcher, out SettingsViewModel provider) ? provider : new SettingsViewModel(Dispatcher);
+            _ = Refresh();
+            _ = Provider.RegisterDeviceMonitor();
             GoToTestPage.Visibility = Visibility.Visible;
-            //#endif
-            SelectDeviceBox.SelectionMode = Provider.IsOnlyWSA ? ListViewSelectionMode.None : ListViewSelectionMode.Single;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            if (AdbServer.Instance.GetStatus().IsRunning) { ADBHelper.Monitor.DeviceChanged -= Provider.OnDeviceChanged; }
+            _ = Provider.UnregisterDeviceMonitor();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement).Tag as string)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Tag?.ToString())
             {
                 case "Pair":
-                    Provider.PairDevice(ConnectIP.Text, PairCode.Text);
+                    _ = Provider.PairDeviceAsync(ConnectIP.Text, PairCode.Text);
                     break;
                 case "Rate":
                     _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NSHFKJ1D4BF"));
@@ -73,17 +80,19 @@ namespace APKInstaller.Pages.SettingsPages
                     _ = Launcher.LaunchUriAsync(new Uri("https://t.me/PavingBase"));
                     break;
                 case "Reset":
-                    Reset.Flyout?.Hide();
-                    ApplicationData.Current.LocalSettings.Values.Clear();
+                    SettingsHelper.LocalObject.Clear();
                     SettingsHelper.SetDefaultSettings();
-                    _ = Frame.Navigate(typeof(SettingsPage));
-                    Frame.GoBack();
+                    if (Reset.Flyout is FlyoutBase flyout_reset)
+                    {
+                        flyout_reset.Hide();
+                    }
+                    _ = Refresh(true);
                     break;
                 case "ADBPath":
-                    Provider.ChangeADBPath();
+                    _ = Provider.ChangeADBPathAsync();
                     break;
                 case "Connect":
-                    Provider.ConnectDevice(ConnectIP.Text);
+                    _ = Provider.ConnectDeviceAsync(ConnectIP.Text);
                     break;
                 case "TestPage":
                     _ = Frame.Navigate(typeof(TestPage));
@@ -92,7 +101,7 @@ namespace APKInstaller.Pages.SettingsPages
                     _ = Frame.Navigate(typeof(PairDevicePage));
                     break;
                 case "CheckUpdate":
-                    Provider.CheckUpdate();
+                    _ = Provider.CheckUpdateAsync();
                     break;
                 case "WindowsColor":
                     _ = Launcher.LaunchUriAsync(new Uri("ms-settings:colors"));
@@ -107,7 +116,8 @@ namespace APKInstaller.Pages.SettingsPages
 
         private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement).Tag as string)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Tag?.ToString())
             {
                 case "ADBPath":
                     _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ADBPath[..Provider.ADBPath.LastIndexOf(@"\")]));
@@ -133,8 +143,7 @@ namespace APKInstaller.Pages.SettingsPages
 
         private void SelectDeviceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            object vs = (sender as ListView).SelectedItem;
-            if (vs is not null and DeviceData device)
+            if (sender is ListView { SelectedItem: DeviceData device })
             {
                 SettingsHelper.Set(SettingsHelper.DefaultDevice, device);
             }
@@ -142,7 +151,7 @@ namespace APKInstaller.Pages.SettingsPages
 
         private void InfoBar_Loaded(object sender, RoutedEventArgs e)
         {
-            FrameworkElement element = sender as FrameworkElement;
+            if (sender is not FrameworkElement element) { return; }
             if (element?.FindDescendant("Title") is TextBlock title)
             {
                 title.IsTextSelectionEnabled = true;
@@ -152,6 +161,8 @@ namespace APKInstaller.Pages.SettingsPages
                 message.IsTextSelectionEnabled = true;
             }
         }
+
+        public Task Refresh(bool reset = false) => Provider.Refresh(reset);
 
         private void GotoUpdate_Click(object sender, RoutedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri((sender as FrameworkElement).Tag.ToString()));
 

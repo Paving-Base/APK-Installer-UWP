@@ -68,7 +68,7 @@ namespace APKInstaller.Controls
             await Task.Run(async () =>
             {
                 if (Content == null) { return; }
-                if (Content is GitInfo ContentInfo && ContentInfo != default(GitInfo))
+                if (Content is GitInfo ContentInfo && ContentInfo != default)
                 {
                     string value = ContentInfo.FormatURL(GitInfo.GITHUB_API, false);
                     if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable) { return; }

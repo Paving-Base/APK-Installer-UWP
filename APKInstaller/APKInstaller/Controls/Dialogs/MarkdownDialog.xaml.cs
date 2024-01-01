@@ -107,7 +107,7 @@ namespace APKInstaller.Controls.Dialogs
             IsInitialized = false;
             title = Title ?? title;
             if (Content == null) { return; }
-            if (Content is GitInfo ContentInfo && ContentInfo != default(GitInfo))
+            if (Content is GitInfo ContentInfo && ContentInfo != default)
             {
                 string value = ContentInfo.FormatURL(GitInfo.GITHUB_API);
                 if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)

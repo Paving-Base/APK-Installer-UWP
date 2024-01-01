@@ -6,7 +6,6 @@ using APKInstaller.Common;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
-using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,6 @@ namespace APKInstaller.ViewModels.ToolsPages
         public TitleBar TitleBar;
         public ComboBox DeviceComboBox;
         public List<DeviceData> devices;
-        private readonly ProcessesPage _page;
 
         public string CachedSortedColumn { get; set; }
         public CoreDispatcher Dispatcher { get; } = dispatcher;

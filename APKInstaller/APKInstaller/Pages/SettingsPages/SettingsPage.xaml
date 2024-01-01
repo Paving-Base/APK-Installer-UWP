@@ -13,6 +13,7 @@
     xmlns:settingspages="using:APKInstaller.ViewModels.SettingsPages"
     xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     d:DataContext="{d:DesignInstance Type=settingspages:SettingsViewModel}"
+    DataContext="{x:Bind Provider, Mode=OneWay}"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d">
     <Grid>
@@ -45,7 +46,7 @@
                     <muxc:InfoBar
                         x:Uid="/SettingsPage/ModifiedInfoBar"
                         IsClosable="False"
-                        IsOpen="{Binding IsModified}"
+                        IsOpen="{x:Bind settingspages:SettingsViewModel.IsModified}"
                         Severity="Error">
                         <muxc:InfoBar.ActionButton>
                             <HyperlinkButton
@@ -58,15 +59,16 @@
                 <controls:WebXAML
                     x:Name="MessageBar"
                     x:Load="{x:Bind Provider.ShowMessages, Mode=OneWay}"
-                    Loaded="WebXAML_Loaded"
-                    Visibility="{Binding ShowMessages, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Loaded="WebXAML_Loaded" />
                 <controls:SettingsGroup x:Uid="/SettingsPage/DeviceSettingsHeader">
                     <ListView
                         x:Name="SelectDeviceBox"
                         x:FieldModifier="public"
                         ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
-                        ItemsSource="{Binding DeviceList, Mode=OneWay}"
-                        SelectionChanged="SelectDeviceBox_SelectionChanged">
+                        ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}"
+                        SelectedItem="{x:Bind Provider.SelectedDevice, Mode=OneWay}"
+                        SelectionChanged="SelectDeviceBox_SelectionChanged"
+                        SelectionMode="{x:Bind Provider.DeviceSelectionMode, Mode=OneWay}">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" Spacing="2" />
@@ -85,9 +87,9 @@
                     <controls:SettingExpander
                         x:Uid="/SettingsPage/OnlyWSASettings"
                         Icon="&#xE975;"
-                        IsExpanded="{Binding IsOnlyWSA, Converter={StaticResource BoolNegationConverter}}">
+                        IsExpanded="{x:Bind Provider.IsOnlyWSA, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
                         <controls:SettingExpander.ActionContent>
-                            <ToggleSwitch IsOn="{Binding IsOnlyWSA, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                            <ToggleSwitch IsOn="{x:Bind Provider.IsOnlyWSA, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                         </controls:SettingExpander.ActionContent>
                         <controls:Setting x:Uid="/SettingsPage/ConnectDevice" Style="{StaticResource DefaultSettingExpanderItemStyle}">
                             <Grid MinWidth="{StaticResource SettingCardContentMinWidth}" ColumnSpacing="8">
@@ -102,22 +104,24 @@
                                     PlaceholderText="127.0.0.1:58526" />
                                 <Grid Grid.Column="1">
                                     <muxc:ProgressRing
+                                        x:Name="ConnectProgress"
                                         Width="24"
                                         Height="24"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        x:Load="{x:Bind Provider.ConnectingDevice, Mode=OneWay}" />
                                     <Button
+                                        x:Name="ConnectButton"
                                         Width="40"
                                         Height="36"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        x:Load="{x:Bind Provider.ConnectingDevice, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                         Click="Button_Click"
                                         Content="&#xE71B;"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         IsEnabled="{x:Bind ConnectIP.(ui:TextBoxExtensions.IsValid), Mode=OneWay}"
-                                        Tag="Connect"
-                                        Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}" />
+                                        Tag="Connect" />
                                 </Grid>
                             </Grid>
                         </controls:Setting>
@@ -133,22 +137,24 @@
                                     PlaceholderText="888888" />
                                 <Grid Grid.Column="1">
                                     <muxc:ProgressRing
+                                        x:Name="PairProgress"
                                         Width="24"
                                         Height="24"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding PairingDevice, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        x:Load="{x:Bind Provider.PairingDevice, Mode=OneWay}" />
                                     <Button
+                                        x:Name="PairButton"
                                         Width="40"
                                         Height="36"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        x:Load="{x:Bind Provider.PairingDevice, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                         Click="Button_Click"
                                         Content="&#xE8D7;"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         IsEnabled="{x:Bind ConnectIP.(ui:TextBoxExtensions.IsValid), Mode=OneWay}"
-                                        Tag="Pair"
-                                        Visibility="{Binding PairingDevice, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}" />
+                                        Tag="Pair" />
                                 </Grid>
                             </Grid>
                         </controls:Setting>
@@ -172,7 +178,7 @@
                                     Padding="0,0,0,8"
                                     HorizontalScrollBarVisibility="Auto"
                                     VerticalScrollBarVisibility="Disabled">
-                                    <muxc:ItemsRepeater ItemsSource="{Binding ConnectHelpers}">
+                                    <muxc:ItemsRepeater ItemsSource="{x:Bind settingspages:SettingsViewModel.ConnectHelpers}">
                                         <muxc:ItemsRepeater.Layout>
                                             <muxc:StackLayout Orientation="Horizontal" Spacing="4" />
                                         </muxc:ItemsRepeater.Layout>
@@ -191,11 +197,11 @@
                     </controls:SettingExpander>
                     <muxc:InfoBar
                         x:Name="ConnectInfo"
-                        Title="{Binding ConnectInfoTitle}"
-                        IsOpen="{Binding ConnectInfoIsOpen, Mode=TwoWay}"
+                        Title="{x:Bind Provider.ConnectInfoTitle, Mode=OneWay}"
+                        x:Load="{x:Bind Provider.ConnectInfoIsOpen, Mode=OneWay}"
+                        IsOpen="{x:Bind Provider.ConnectInfoIsOpen, Mode=TwoWay}"
                         Loaded="InfoBar_Loaded"
-                        Severity="{Binding ConnectInfoSeverity}"
-                        Visibility="{Binding ConnectInfoIsOpen, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Severity="{x:Bind Provider.ConnectInfoSeverity, Mode=OneWay}" />
                     <controls:Setting
                         x:Uid="/SettingsPage/PairDeviceSettings"
                         Click="Button_Click"
@@ -203,18 +209,18 @@
                         IsClickEnabled="True"
                         Tag="PairDevice" />
                     <controls:Setting x:Uid="/SettingsPage/ScanPairedDeviceSettings" Icon="&#xE70C;">
-                        <ToggleSwitch IsOn="{Binding ScanPairedDevice, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ScanPairedDevice, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/DisplaySettingsHeader">
                     <controls:Setting x:Uid="/SettingsPage/ShowDialogsSettings" Icon="&#xE82F;">
-                        <ToggleSwitch IsOn="{Binding ShowDialogs, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowDialogs, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                     <controls:Setting x:Uid="/SettingsPage/ShowMessagesSettings" Icon="&#xE789;">
-                        <ToggleSwitch IsOn="{Binding ShowMessages, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowMessages, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                     <controls:Setting x:Uid="/SettingsPage/ShowProgressSettings" Icon="&#xF16A;">
-                        <ToggleSwitch IsOn="{Binding ShowProgress, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowProgress, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ThemesSettingsHeader">
@@ -225,7 +231,7 @@
                                 Click="HyperlinkButton_Click"
                                 Tag="WindowsColor" />
                         </controls:Setting.Description>
-                        <ComboBox SelectedIndex="{Binding SelectedTheme, Mode=TwoWay}">
+                        <ComboBox SelectedIndex="{x:Bind Provider.SelectedTheme, Mode=TwoWay}">
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeDark" />
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeLight" />
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeDefault" />
@@ -234,13 +240,13 @@
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ContentSettingsHeader">
                     <controls:Setting x:Uid="/SettingsPage/AutoGetNetAPKSettings" Icon="&#xE896;">
-                        <ToggleSwitch IsOn="{Binding AutoGetNetAPK, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.AutoGetNetAPK, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                     <controls:Setting x:Uid="/SettingsPage/CloseAPPSettings" Icon="&#xEDAE;">
-                        <ToggleSwitch IsOn="{Binding IsCloseAPP, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseAPP, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                     <controls:Setting x:Uid="/SettingsPage/CloseADBSettings" Icon="&#xE756;">
-                        <ToggleSwitch IsOn="{Binding IsCloseADB, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseADB, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
                     </controls:Setting>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ConfigsSettingsHeader">
@@ -248,7 +254,7 @@
                         <controls:Setting.Description>
                             <HyperlinkButton
                                 Click="HyperlinkButton_Click"
-                                Content="{Binding ADBPath}"
+                                Content="{x:Bind Provider.ADBPath, Mode=OneWay}"
                                 Tag="ADBPath" />
                         </controls:Setting.Description>
                         <Button
@@ -301,7 +307,7 @@
                                 Grid.Column="1"
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{Binding ADBVersion}"
+                                Text="{x:Bind Provider.ADBVersion, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -329,7 +335,7 @@
                                 Grid.Column="1"
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{Binding ToolkitVersion}"
+                                Text="{x:Bind settingspages:SettingsViewModel.ToolkitVersion}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -343,7 +349,7 @@
                                 Grid.Column="1"
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{Binding SharpAdbClientVersion}"
+                                Text="{x:Bind settingspages:SettingsViewModel.SharpAdbClientVersion}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -357,7 +363,7 @@
                                 Grid.Column="1"
                                 Padding="32,0,0,8"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{Binding DeviceFamily}"
+                                Text="{x:Bind settingspages:SettingsViewModel.DeviceFamily}"
                                 TextWrapping="WrapWholeWords" />
 
                             <TextBlock
@@ -393,12 +399,12 @@
                     </controls:SettingExpander>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/AboutSettingsHeader">
-                    <controls:SettingExpander Header="{Binding VersionTextBlockText}" Icon="&#xE117;">
+                    <controls:SettingExpander Header="{x:Bind settingspages:SettingsViewModel.VersionTextBlockText}" Icon="&#xE117;">
                         <controls:SettingExpander.Description>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Style="{StaticResource SecondaryTextStyle}" TextWrapping="WrapWholeWords">
                                     <Run x:Uid="/SettingsPage/LastChecked" />
-                                    <Run Text="{Binding UpdateDate}" />
+                                    <Run Text="{x:Bind Provider.UpdateDate, Mode=OneWay}" />
                                 </TextBlock>
                                 <ScrollViewer
                                     Margin="0,0,0,-8"
@@ -436,22 +442,25 @@
                                 Orientation="Horizontal"
                                 Spacing="18">
                                 <muxc:ProgressRing
+                                    x:Name="UpdateProgress"
                                     Width="24"
                                     Height="24"
-                                    IsActive="{Binding CheckingUpdate}"
-                                    Visibility="{Binding CheckingUpdate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    x:Load="{x:Bind Provider.CheckingUpdate, Mode=OneWay}"
+                                    IsActive="{x:Bind Provider.CheckingUpdate, Mode=OneWay}" />
                                 <TextBlock
+                                    x:Name="UpdateText"
                                     x:Uid="/SettingsPage/CheckingUpdates"
                                     VerticalAlignment="Center"
+                                    x:Load="{x:Bind Provider.CheckingUpdate, Mode=OneWay}"
                                     FontWeight="SemiBold"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Visibility="{Binding CheckingUpdate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                 <Button
+                                    x:Name="UpdateButton"
                                     x:Uid="/SettingsPage/CheckUpdates"
                                     HorizontalAlignment="Right"
+                                    x:Load="{x:Bind Provider.CheckingUpdate, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                     Click="Button_Click"
-                                    Tag="CheckUpdate"
-                                    Visibility="{Binding CheckingUpdate, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}" />
+                                    Tag="CheckUpdate" />
                             </controls:StackPanel>
                         </controls:SettingExpander.ActionContent>
                         <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
@@ -459,26 +468,26 @@
                                 HorizontalAlignment="Left"
                                 Background="Transparent"
                                 LinkClicked="MarkdownText_LinkClicked"
-                                Text="{Binding AboutTextBlockText}" />
+                                Text="{x:Bind Provider.AboutTextBlockText, Mode=OneWay}" />
                         </Grid>
                     </controls:SettingExpander>
                     <muxc:InfoBar
                         x:Name="UpdateState"
-                        Title="{Binding UpdateStateTitle}"
+                        Title="{x:Bind Provider.UpdateStateTitle, Mode=OneWay}"
+                        x:Load="{x:Bind Provider.UpdateStateIsOpen, Mode=OneWay}"
                         IsClosable="True"
-                        IsOpen="{Binding UpdateStateIsOpen, Mode=TwoWay}"
+                        IsOpen="{x:Bind Provider.UpdateStateIsOpen, Mode=TwoWay}"
                         Loaded="InfoBar_Loaded"
-                        Message="{Binding UpdateStateMessage}"
-                        Severity="{Binding UpdateStateSeverity}"
-                        Visibility="{Binding UpdateStateIsOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                        Message="{x:Bind Provider.UpdateStateMessage, Mode=OneWay}"
+                        Severity="{x:Bind Provider.UpdateStateSeverity, Mode=OneWay}">
                         <muxc:InfoBar.ActionButton>
                             <Button
                                 x:Name="GotoUpdate"
                                 x:Uid="/SettingsPage/GoToUpdate"
                                 HorizontalAlignment="Right"
                                 Click="GotoUpdate_Click"
-                                Tag="{Binding GotoUpdateTag}"
-                                Visibility="{Binding GotoUpdateVisibility}" />
+                                Tag="{x:Bind Provider.GotoUpdateTag, Mode=OneWay}"
+                                Visibility="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}" />
                         </muxc:InfoBar.ActionButton>
                     </muxc:InfoBar>
                     <controls:Setting x:Uid="/SettingsPage/ContactMeSettings" Icon="&#xE779;">

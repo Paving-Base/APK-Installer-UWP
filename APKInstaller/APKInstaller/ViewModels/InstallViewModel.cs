@@ -801,7 +801,7 @@ namespace APKInstaller.ViewModels
             if (IsOnlyWSA)
             {
                 WaitProgressText = _loader.GetString("FindingWSA");
-                if (await PackageHelper.FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe").ContinueWith(x=>x.Result.isfound).ConfigureAwait(false))
+                if (await PackageHelper.FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe").ContinueWith(x => x.Result.isfound).ConfigureAwait(false))
                 {
                     await Dispatcher.ResumeForegroundAsync();
                     WaitProgressText = _loader.GetString("FoundWSA");
@@ -1257,10 +1257,8 @@ namespace APKInstaller.ViewModels
         {
             if (IsInitialized && !IsInstalling)
             {
-                if (await CheckDeviceAsync().ConfigureAwait(false) && _device != null)
-                {
-                    await CheckAPKAsync().ConfigureAwait(false);
-                }
+                await CheckDeviceAsync().ConfigureAwait(false);
+                await CheckAPKAsync().ConfigureAwait(false);
             }
         }
 
