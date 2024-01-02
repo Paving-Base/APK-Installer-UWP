@@ -5,6 +5,7 @@ using APKInstaller.ViewModels.SettingsPages;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -16,41 +17,39 @@ namespace APKInstaller.Pages.SettingsPages
     /// </summary>
     public sealed partial class PairDevicePage : Page
     {
-        internal PairDeviceViewModel Provider;
-        public DispatcherQueue DispatcherQueue { get; } = DispatcherQueue.GetForCurrentThread();
+        private readonly PairDeviceViewModel Provider;
 
         public PairDevicePage()
         {
             InitializeComponent();
-            Provider = new PairDeviceViewModel(this);
+            Provider = new PairDeviceViewModel(Dispatcher)
+            { HideQRScanFlyout = QRScanButton.Flyout is FlyoutBase flyoutBase ? flyoutBase.Hide : null };
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            Provider = new PairDeviceViewModel(this);
-            DataContext = Provider;
             Provider.InitializeConnectListener();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            Provider.Dispose();
+            _ = Provider.DisposeAsync();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            FrameworkElement element = sender as FrameworkElement;
+            if (sender is not FrameworkElement element) { return; }
             switch (element.Name)
             {
                 case "PairButton":
-                    _ = Provider.ConnectWithPairingCode(element.Tag as MDNSDeviceData);
+                    _ = Provider.ConnectWithPairingCodeAsync(element.Tag as MDNSDeviceData);
                     break;
                 case "ConnectButton":
                     _ = PairToggleButton.IsChecked == true && !string.IsNullOrWhiteSpace(Provider.Code)
-                        ? Provider.ConnectWithPairingCode(Provider.IPAddress, Provider.Code)
-                        : Provider.ConnectWithPairingCode(Provider.IPAddress);
+                        ? Provider.ConnectWithPairingCodeAsync(Provider.IPAddress, Provider.Code)
+                        : Provider.ConnectWithoutPairingCodeAsync(Provider.IPAddress);
                     break;
                 default:
                     break;
@@ -79,7 +78,5 @@ namespace APKInstaller.Pages.SettingsPages
         private void Flyout_Opening(object sender, object e) => Provider.InitializeQRScan();
 
         private void Flyout_Closed(object sender, object e) => Provider.DisposeQRScan();
-
-        public void HideQRScanFlyout() => QRScanButton.Flyout?.Hide();
     }
 }

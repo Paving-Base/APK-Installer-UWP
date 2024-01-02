@@ -18,7 +18,7 @@ namespace APKInstaller.Pages.ToolsPages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class InfosPage : Page
+    public sealed partial class InformationPage : Page
     {
         #region Provider
 
@@ -28,35 +28,36 @@ namespace APKInstaller.Pages.ToolsPages
         public static readonly DependencyProperty ProviderProperty =
             DependencyProperty.Register(
                 nameof(Provider),
-                typeof(InfosViewModel),
-                typeof(InfosPage),
+                typeof(InformationViewModel),
+                typeof(InformationPage),
                 null);
 
         /// <summary>
-        /// Get the <see cref="InfosViewModel"/> of current <see cref="Page"/>.
+        /// Get the <see cref="InformationViewModel"/> of current <see cref="Page"/>.
         /// </summary>
-        public InfosViewModel Provider
+        public InformationViewModel Provider
         {
-            get => (InfosViewModel)GetValue(ProviderProperty);
+            get => (InformationViewModel)GetValue(ProviderProperty);
             private set => SetValue(ProviderProperty, value);
         }
 
         #endregion
 
-        public InfosPage() => InitializeComponent();
+        public InformationPage() => InitializeComponent();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if (e.Parameter is ApkInfo info)
             {
-                Provider = new InfosViewModel(info);
+                Provider = new InformationViewModel(info);
             }
         }
 
         private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement).Tag as string)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Tag?.ToString())
             {
                 case "SharePackage":
                     DataTransferHelper.ShareFile(Provider.ApkInfo.PackagePath, Provider.ApkInfo.AppName);

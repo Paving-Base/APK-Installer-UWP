@@ -404,7 +404,7 @@
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Style="{StaticResource SecondaryTextStyle}" TextWrapping="WrapWholeWords">
                                     <Run x:Uid="/SettingsPage/LastChecked" />
-                                    <Run Text="{x:Bind Provider.UpdateDate, Mode=OneWay}" />
+                                    <Run Text="{x:Bind Provider.UpdateDate.LocalDateTime, Mode=OneWay}" />
                                 </TextBlock>
                                 <ScrollViewer
                                     Margin="0,0,0,-8"
@@ -437,7 +437,7 @@
                             </StackPanel>
                         </controls:SettingExpander.Description>
                         <controls:SettingExpander.ActionContent>
-                            <controls:StackPanel
+                            <controls:StackPanelEx
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal"
                                 Spacing="18">
@@ -461,7 +461,7 @@
                                     x:Load="{x:Bind Provider.CheckingUpdate, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                     Click="Button_Click"
                                     Tag="CheckUpdate" />
-                            </controls:StackPanel>
+                            </controls:StackPanelEx>
                         </controls:SettingExpander.ActionContent>
                         <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
                             <cwuc:MarkdownTextBlock
@@ -486,9 +486,9 @@
                                 x:Name="GotoUpdate"
                                 x:Uid="/SettingsPage/GoToUpdate"
                                 HorizontalAlignment="Right"
+                                x:Load="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}"
                                 Click="GotoUpdate_Click"
-                                Tag="{x:Bind Provider.GotoUpdateTag, Mode=OneWay}"
-                                Visibility="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}" />
+                                Tag="{x:Bind Provider.GotoUpdateTag, Mode=OneWay}" />
                         </muxc:InfoBar.ActionButton>
                     </muxc:InfoBar>
                     <controls:Setting x:Uid="/SettingsPage/ContactMeSettings" Icon="&#xE779;">

@@ -107,7 +107,8 @@ namespace APKInstaller.Pages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement)?.Name)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Name)
             {
                 case nameof(ActionButton):
                     _ = Provider.InstallAPPAsync();
@@ -119,7 +120,7 @@ namespace APKInstaller.Pages
                     _ = Provider.OpenAPKAsync();
                     break;
                 case nameof(MoreInfoFlyoutItem):
-                    _ = Frame.Navigate(typeof(InfosPage), Provider.ApkInfo);
+                    _ = Frame.Navigate(typeof(InformationPage), Provider.ApkInfo);
                     break;
                 case nameof(DeviceSelectButton):
                     _ = Frame.Navigate(typeof(SettingsPage));

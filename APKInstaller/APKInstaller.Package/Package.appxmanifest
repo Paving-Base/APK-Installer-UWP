@@ -145,6 +145,8 @@
 
   <Capabilities>
     <Capability Name="internetClient"/>
+    <Capability Name="internetClientServer" />
+    <Capability Name="privateNetworkClientServer" />
     <rescap:Capability Name="broadFileSystemAccess" />
 	<rescap:Capability Name="confirmAppClose" />
 	<rescap:Capability Name="packageQuery" />

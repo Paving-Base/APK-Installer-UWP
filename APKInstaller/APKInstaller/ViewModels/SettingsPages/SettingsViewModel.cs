@@ -143,12 +143,12 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public bool ShowProgress
         {
-            get => SettingsHelper.Get<bool>(SettingsHelper.ShowProgress);
+            get => SettingsHelper.Get<bool>(SettingsHelper.IsUploadAPK);
             set
             {
                 if (ShowProgress != value)
                 {
-                    SettingsHelper.Set(SettingsHelper.ShowProgress, value);
+                    SettingsHelper.Set(SettingsHelper.IsUploadAPK, value);
                     RaisePropertyChangedEvent();
                 }
             }
@@ -193,9 +193,9 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
-        public DateTime UpdateDate
+        public DateTimeOffset UpdateDate
         {
-            get => SettingsHelper.Get<DateTime>(SettingsHelper.UpdateDate);
+            get => SettingsHelper.Get<DateTimeOffset>(SettingsHelper.UpdateDate);
             set
             {
                 if (UpdateDate != value)
@@ -475,7 +475,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                         UpdateStateTitle = _loader.GetString("UpToDate");
                     }
                 }
-                UpdateDate = DateTime.Now;
+                UpdateDate = DateTimeOffset.Now;
             }
             finally
             {

@@ -1,9 +1,11 @@
-﻿using APKInstaller.Models;
+﻿using APKInstaller.Common;
+using APKInstaller.Models;
 using Microsoft.Toolkit.Uwp.Connectivity;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -17,11 +19,14 @@ namespace APKInstaller.Controls.Dialogs
     {
         private object title;
 
-        public static readonly DependencyProperty FallbackContentProperty = DependencyProperty.Register(
-           "FallbackContent",
-           typeof(string),
-           typeof(MarkdownDialog),
-           new PropertyMetadata("{0}"));
+        #region FallbackContent
+
+        public static readonly DependencyProperty FallbackContentProperty =
+            DependencyProperty.Register(
+                nameof(FallbackContent),
+                typeof(string),
+                typeof(MarkdownDialog),
+                new PropertyMetadata("{0}"));
 
         public string FallbackContent
         {
@@ -29,11 +34,16 @@ namespace APKInstaller.Controls.Dialogs
             set => SetValue(FallbackContentProperty, value);
         }
 
-        public static readonly DependencyProperty ContentInfoProperty = DependencyProperty.Register(
-           "ContentInfo",
-           typeof(GitInfo),
-           typeof(MarkdownDialog),
-           new PropertyMetadata(default(GitInfo), OnContentChanged));
+        #endregion
+
+        #region ContentInfo
+
+        public static readonly DependencyProperty ContentInfoProperty =
+            DependencyProperty.Register(
+                nameof(ContentInfo),
+                typeof(GitInfo),
+                typeof(MarkdownDialog),
+                new PropertyMetadata(default(GitInfo), OnContentChanged));
 
         public GitInfo ContentInfo
         {
@@ -41,11 +51,16 @@ namespace APKInstaller.Controls.Dialogs
             set => SetValue(ContentInfoProperty, value);
         }
 
-        public static readonly DependencyProperty ContentUrlProperty = DependencyProperty.Register(
-           "ContentUrl",
-           typeof(Uri),
-           typeof(MarkdownDialog),
-           new PropertyMetadata(default(Uri), OnContentChanged));
+        #endregion
+
+        #region ContentUrl
+
+        public static readonly DependencyProperty ContentUrlProperty =
+            DependencyProperty.Register(
+                nameof(ContentUrl),
+                typeof(Uri),
+                typeof(MarkdownDialog),
+                new PropertyMetadata(default(Uri), OnContentChanged));
 
         public Uri ContentUrl
         {
@@ -53,11 +68,16 @@ namespace APKInstaller.Controls.Dialogs
             set => SetValue(ContentUrlProperty, value);
         }
 
-        public static readonly DependencyProperty ContentTextProperty = DependencyProperty.Register(
-           "ContentText",
-           typeof(string),
-           typeof(MarkdownDialog),
-           new PropertyMetadata(default(string), OnContentChanged));
+        #endregion
+
+        #region ContentText
+
+        public static readonly DependencyProperty ContentTextProperty =
+            DependencyProperty.Register(
+                nameof(ContentText),
+                typeof(string),
+                typeof(MarkdownDialog),
+                new PropertyMetadata(default(string), OnContentChanged));
 
         public string ContentText
         {
@@ -65,11 +85,16 @@ namespace APKInstaller.Controls.Dialogs
             set => SetValue(ContentTextProperty, value);
         }
 
-        public static readonly DependencyProperty ContentTaskProperty = DependencyProperty.Register(
-           "ContentTask",
-           typeof(Func<Task<string>>),
-           typeof(MarkdownDialog),
-           new PropertyMetadata(null, OnContentChanged));
+        #endregion
+
+        #region ContentTask
+
+        public static readonly DependencyProperty ContentTaskProperty =
+            DependencyProperty.Register(
+                nameof(ContentTask),
+                typeof(Func<Task<string>>),
+                typeof(MarkdownDialog),
+                new PropertyMetadata(null, OnContentChanged));
 
         public Func<Task<string>> ContentTask
         {
@@ -82,34 +107,45 @@ namespace APKInstaller.Controls.Dialogs
             (d as MarkdownDialog).UpdateContent(e.NewValue);
         }
 
+        #endregion
+
         private bool isInitialized;
         internal bool IsInitialized
         {
             get => isInitialized;
-            private set
-            {
-                isInitialized = value;
-                RaisePropertyChangedEvent();
-            }
+            private set => SetProperty(ref isInitialized, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void RaisePropertyChangedEvent([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        private async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
-            if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
+            if (name != null)
+            {
+                await Dispatcher.ResumeForegroundAsync();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        {
+            if (property == null ? value != null : !property.Equals(value))
+            {
+                property = value;
+                RaisePropertyChangedEvent(name);
+            }
         }
 
         public MarkdownDialog() => InitializeComponent();
 
-        private async void UpdateContent(object Content)
+        private async void UpdateContent(object content)
         {
             IsInitialized = false;
             title = Title ?? title;
-            if (Content == null) { return; }
-            if (Content is GitInfo ContentInfo && ContentInfo != default)
+            if (content == null) { return; }
+            if (content is GitInfo contentInfo && contentInfo != default)
             {
-                string value = ContentInfo.FormatURL(GitInfo.GITHUB_API);
+                string value = contentInfo.FormatURL(GitInfo.GITHUB_API);
                 if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                 {
                     MarkdownText.Text = string.Format(FallbackContent, value);
@@ -128,7 +164,7 @@ namespace APKInstaller.Controls.Dialogs
                 {
                     try
                     {
-                        string text = await client.GetStringAsync(ContentInfo.FormatURL(GitInfo.JSDELIVR_API));
+                        string text = await client.GetStringAsync(contentInfo.FormatURL(GitInfo.JSDELIVR_API));
                         if (string.IsNullOrWhiteSpace(text)) { throw new ArgumentNullException(nameof(text)); }
                         MarkdownText.Text = text;
                         Title = null;
@@ -140,11 +176,11 @@ namespace APKInstaller.Controls.Dialogs
                     }
                 }
             }
-            else if (Content is Func<Task<string>> ContentTask && ContentTask != default)
+            else if (content is Func<Task<string>> contentTask && contentTask != default)
             {
                 try
                 {
-                    string text = await ContentTask();
+                    string text = await contentTask();
                     if (string.IsNullOrWhiteSpace(text)) { throw new ArgumentNullException(nameof(text)); }
                     MarkdownText.Text = text;
                     Title = null;
@@ -155,30 +191,30 @@ namespace APKInstaller.Controls.Dialogs
                     Title ??= title;
                 }
             }
-            else if (Content is string ContentText && ContentText != default)
+            else if (content is string contentText && contentText != default)
             {
-                MarkdownText.Text = ContentText;
+                MarkdownText.Text = contentText;
                 Title = null;
             }
-            else if (Content is Uri ContentUri && ContentUri != default)
+            else if (content is Uri contentUri && contentUri != default)
             {
                 if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                 {
-                    MarkdownText.Text = string.Format(FallbackContent, ContentUri.ToString());
+                    MarkdownText.Text = string.Format(FallbackContent, contentUri.ToString());
                     Title ??= title;
                     return;
                 }
                 using HttpClient client = new();
                 try
                 {
-                    string text = await client.GetStringAsync(ContentUri);
+                    string text = await client.GetStringAsync(contentUri);
                     if (string.IsNullOrWhiteSpace(text)) { throw new ArgumentNullException(nameof(text)); }
                     MarkdownText.Text = text;
                     Title = null;
                 }
                 catch
                 {
-                    MarkdownText.Text = string.Format(FallbackContent, ContentUri.ToString());
+                    MarkdownText.Text = string.Format(FallbackContent, contentUri.ToString());
                     Title ??= title;
                 }
             }

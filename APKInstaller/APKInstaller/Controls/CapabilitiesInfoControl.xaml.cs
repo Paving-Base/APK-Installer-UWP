@@ -12,17 +12,14 @@ namespace APKInstaller.Controls
     {
         public CapabilitiesInfoControl() => InitializeComponent();
 
-        public static readonly DependencyProperty HeadTextProperty = DependencyProperty.Register(
-           "HeadText",
-           typeof(string),
-           typeof(CapabilitiesInfoControl),
-           new PropertyMetadata(default(string)));
+        #region HeadText
 
-        public static readonly DependencyProperty CapabilitiesListProperty = DependencyProperty.Register(
-           "CapabilitiesList",
-           typeof(List<string>),
-           typeof(CapabilitiesInfoControl),
-           new PropertyMetadata(default(List<string>), OnCapabilitiesListChanged));
+        public static readonly DependencyProperty HeadTextProperty =
+            DependencyProperty.Register(
+                nameof(HeadText),
+                typeof(string),
+                typeof(CapabilitiesInfoControl),
+                new PropertyMetadata(default(string)));
 
         [Localizable(true)]
         public string HeadText
@@ -31,9 +28,20 @@ namespace APKInstaller.Controls
             set => SetValue(HeadTextProperty, value);
         }
 
-        public List<string> CapabilitiesList
+        #endregion
+
+        #region CapabilitiesList
+
+        public static readonly DependencyProperty CapabilitiesListProperty =
+            DependencyProperty.Register(
+                nameof(CapabilitiesList),
+                typeof(IEnumerable<string>),
+                typeof(CapabilitiesInfoControl),
+                new PropertyMetadata(default(IEnumerable<string>), OnCapabilitiesListChanged));
+
+        public IEnumerable<string> CapabilitiesList
         {
-            get => (List<string>)GetValue(CapabilitiesListProperty);
+            get => (IEnumerable<string>)GetValue(CapabilitiesListProperty);
             set => SetValue(CapabilitiesListProperty, value);
         }
 
@@ -41,6 +49,8 @@ namespace APKInstaller.Controls
         {
             ((CapabilitiesInfoControl)d).GetTextBlock();
         }
+
+        #endregion
 
         private void GetTextBlock()
         {
@@ -62,7 +72,8 @@ namespace APKInstaller.Controls
                     RichTextBlockCapabilities.Blocks.Add(paragraph);
                 }
             }
-            if (RichTextBlockFullCapabilities.Blocks.Count <= 3) { MoreButton.Visibility = Visibility.Collapsed; }
+            if (RichTextBlockFullCapabilities.Blocks.Count <= 3)
+            { MoreButton.Visibility = Visibility.Collapsed; }
         }
 
         private void MoreButton_Click(object sender, RoutedEventArgs e)

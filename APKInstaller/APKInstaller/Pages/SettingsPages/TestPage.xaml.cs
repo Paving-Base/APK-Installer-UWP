@@ -78,7 +78,8 @@ namespace APKInstaller.Pages.SettingsPages
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            switch ((sender as FrameworkElement).Tag as string)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Tag?.ToString())
             {
                 case "Store":
                     _ = Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9NSHFKJ1D4BF&mode=mini"));

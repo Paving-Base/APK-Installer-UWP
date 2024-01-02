@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Windows.UI.Core;
 using Zeroconf.Interfaces;
 
 namespace APKInstaller.Models
@@ -40,6 +43,8 @@ namespace APKInstaller.Models
         }
 
         public MDNSDeviceData(IZeroconfHost host) : this(host.DisplayName, host.IPAddress, host.Services.FirstOrDefault().Value.Port) { }
+
+        public Task SetConnectingDevice(bool value, CoreDispatcher dispatcher) => dispatcher.AwaitableRunAsync(() => ConnectingDevice = value);
 
         public override string ToString() => $"{Name} - {Host}";
     }

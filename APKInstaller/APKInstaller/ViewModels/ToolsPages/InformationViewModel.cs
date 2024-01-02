@@ -1,13 +1,12 @@
 ﻿using AAPTForNet.Models;
 using APKInstaller.Helpers;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Windows.ApplicationModel.Resources;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public class InfosViewModel : INotifyPropertyChanged
+    public class InformationViewModel : INotifyPropertyChanged
     {
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InfosPage");
 
@@ -68,7 +67,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
         }
 
-        public InfosViewModel(ApkInfo Info) => ApkInfo = Info ?? new();
+        public InformationViewModel(ApkInfo Info) => ApkInfo = Info ?? new();
 
         private void UpdateInfos(ApkInfo value)
         {

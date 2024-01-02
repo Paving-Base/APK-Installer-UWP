@@ -60,14 +60,14 @@ namespace APKInstaller.Pages.ToolsPages
 
         private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            FrameworkElement Button = sender as FrameworkElement;
-            switch (Button.Name)
+            if (sender is not FrameworkElement element) { return; }
+            switch (element.Name)
             {
                 case "Stop":
-                    _ = new AdbClient().StopAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
+                    _ = new AdbClient().StopAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], element.Tag?.ToString());
                     break;
                 case "Start":
-                    _ = new AdbClient().StartAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], Button.Tag.ToString());
+                    _ = new AdbClient().StartAppAsync(Provider.devices[DeviceComboBox.SelectedIndex], element.Tag?.ToString());
                     break;
                 case "Uninstall":
                     break;

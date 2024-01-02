@@ -10,10 +10,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:APKInstaller.Models"
-    xmlns:models1="using:AdvancedSharpAdbClient.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:sacm="using:AdvancedSharpAdbClient.Models"
     xmlns:settingspages="using:APKInstaller.ViewModels.SettingsPages"
     d:DataContext="{d:DesignInstance Type=settingspages:PairDeviceViewModel}"
+    DataContext="{x:Bind Provider}"
     mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
@@ -63,15 +64,17 @@
                                     Margin="0,12"
                                     HorizontalAlignment="Center">
                                     <TextBlock
+                                        x:Name="QRScanTextBlock"
                                         x:Uid="/PairDevicePage/QRScanTextBlock"
                                         HorizontalAlignment="Center"
-                                        TextWrapping="Wrap"
-                                        Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}" />
+                                        x:Load="{x:Bind Provider.ConnectingDevice, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                        TextWrapping="Wrap" />
                                     <TextBlock
+                                        x:Name="ConnectLogText"
                                         HorizontalAlignment="Center"
-                                        Text="{Binding ConnectLogText}"
-                                        TextWrapping="Wrap"
-                                        Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        x:Load="{x:Bind Provider. ConnectingDevice, Mode=OneWay}"
+                                        Text="{x:Bind Provider.ConnectLogText, Mode=OneWay}"
+                                        TextWrapping="Wrap" />
                                 </Grid>
                                 <Grid
                                     Grid.Row="1"
@@ -83,10 +86,13 @@
                                     <controls:QRCode
                                         Padding="8"
                                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                        Content="{Binding QRCodeText}"
+                                        Content="{x:Bind Provider.QRCodeText, Mode=OneWay}"
                                         Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                         RequestedTheme="Light" />
-                                    <Border CornerRadius="{StaticResource OverlayCornerRadius}" Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Border
+                                        x:Name="QRCodeCover"
+                                        x:Load="{x:Bind Provider.ConnectingDevice, Mode=OneWay}"
+                                        CornerRadius="{StaticResource OverlayCornerRadius}">
                                         <contract8Present:Border.Background>
                                             <AcrylicBrush
                                                 contract8Present:TintLuminosityOpacity="0"
@@ -106,7 +112,7 @@
                                             Height="50"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            IsActive="{Binding ConnectingDevice}" />
+                                            IsActive="{x:Bind Provider.ConnectingDevice, Mode=OneWay}" />
                                     </Border>
                                 </Grid>
                             </Grid>
@@ -162,7 +168,7 @@
                                             BorderThickness="0,1,1,1"
                                             CornerRadius="{Binding Source={StaticResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                                             FontSize="12"
-                                            IsChecked="{Binding IsChecked, ElementName=PairToggleButton, Converter={StaticResource BoolNegationConverter}, Mode=TwoWay}" />
+                                            IsChecked="{x:Bind PairToggleButton.IsChecked, Converter={StaticResource BoolNegationConverter}, Mode=TwoWay}" />
                                     </StackPanel>
                                 </Grid>
                                 <Grid
@@ -174,9 +180,10 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid
+                                        x:Name="PairGirdRoot"
                                         Grid.Row="0"
-                                        RowSpacing="8"
-                                        Visibility="{Binding IsChecked, ElementName=PairToggleButton, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        x:Load="{x:Bind PairToggleButton.IsChecked.Value, Mode=OneWay}"
+                                        RowSpacing="8">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
@@ -185,37 +192,39 @@
                                             x:Uid="/PairDevicePage/IPAddressBox"
                                             Grid.Row="0"
                                             PlaceholderText="127.0.0.1:58526"
-                                            Text="{Binding IPAddress, Mode=TwoWay}"
+                                            Text="{x:Bind Provider.IPAddress, Mode=TwoWay}"
                                             TextChanged="IPAddressBox_TextChanged" />
                                         <TextBox
                                             x:Uid="/PairDevicePage/PairCodeBox"
                                             Grid.Row="1"
                                             PlaceholderText="888888"
-                                            Text="{Binding Code, Mode=TwoWay}" />
+                                            Text="{x:Bind Provider.Code, Mode=TwoWay}" />
                                     </Grid>
                                     <Grid
+                                        x:Name="ConnectGirdRoot"
                                         Grid.Row="0"
                                         RowSpacing="8"
-                                        Visibility="{Binding IsChecked, ElementName=ConnectToggleButton, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        Visibility="{x:Bind ConnectToggleButton.IsChecked.Value, Mode=OneWay}">
                                         <TextBox
                                             x:Uid="/PairDevicePage/IPAddressBox"
                                             PlaceholderText="127.0.0.1:58526"
-                                            Text="{Binding IPAddress, Mode=TwoWay}"
+                                            Text="{x:Bind Provider.IPAddress, Mode=TwoWay}"
                                             TextChanged="IPAddressBox_TextChanged" />
                                     </Grid>
                                     <Grid Grid.Row="1" HorizontalAlignment="Right">
                                         <muxc:ProgressRing
+                                            x:Name="ConnectProgress"
                                             Width="24"
                                             Height="24"
                                             Margin="12,4"
-                                            IsActive="{Binding ConnectingDevice}"
-                                            Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            x:Load="{x:Bind Provider.ConnectingDevice, Mode=OneWay}"
+                                            IsActive="{x:Bind Provider.ConnectingDevice, Mode=OneWay}" />
                                         <Button
                                             x:Name="ConnectButton"
                                             x:Uid="/PairDevicePage/ConnectButton"
+                                            x:Load="{x:Bind Provider.ConnectingDevice, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                             Click="Button_Click"
-                                            IsEnabled="{Binding IPAddress, Converter={StaticResource StringRegexToBoolConverter}, ConverterParameter={StaticResource IPAddressRegexPattern}}"
-                                            Visibility="{Binding ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true'}" />
+                                            IsEnabled="{Binding IPAddress, Converter={StaticResource StringRegexToBoolConverter}, ConverterParameter={StaticResource IPAddressRegexPattern}, Mode=OneWay}" />
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -251,7 +260,7 @@
                         ItemsSource="{x:Bind Provider.ConnectedList, Mode=OneWay}"
                         Visibility="{x:Bind Provider.ConnectedList, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
-                            <DataTemplate x:DataType="models1:DeviceData">
+                            <DataTemplate x:DataType="sacm:DeviceData">
                                 <controls:Setting
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"
@@ -259,12 +268,15 @@
                             </DataTemplate>
                         </controls:SettingsGroup.ItemTemplate>
                     </controls:SettingsGroup>
-                    <controls:SettingsGroup Margin="0,2,0,0" Visibility="{Binding ConnectInfoIsOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <controls:SettingsGroup
+                        x:Name="ConnectInfoSettings"
+                        Margin="0,2,0,0"
+                        x:Load="{x:Bind Provider.ConnectInfoIsOpen, Mode=OneWay}">
                         <muxc:InfoBar
                             x:Name="ConnectInfo"
-                            Title="{Binding ConnectInfoTitle, Mode=OneWay}"
-                            IsOpen="{Binding ConnectInfoIsOpen, Mode=TwoWay}"
-                            Severity="{Binding ConnectInfoSeverity, Mode=OneWay}" />
+                            Title="{x:Bind Provider.ConnectInfoTitle, Mode=OneWay}"
+                            IsOpen="{x:Bind Provider.ConnectInfoIsOpen, Mode=TwoWay}"
+                            Severity="{x:Bind Provider.ConnectInfoSeverity, Mode=OneWay}" />
                     </controls:SettingsGroup>
                     <controls:SettingsGroup Header="{x:Bind x:String.Format(Provider.DeviceListFormat, Provider.DeviceList.Count), Mode=OneWay}" ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
@@ -317,7 +329,7 @@
                     x:Name="CodeTextBox"
                     Grid.Column="1"
                     PlaceholderText="888888"
-                    Text="{Binding Code, Mode=TwoWay}" />
+                    Text="{x:Bind Provider.Code, Mode=TwoWay}" />
             </Grid>
         </Grid>
     </Grid>

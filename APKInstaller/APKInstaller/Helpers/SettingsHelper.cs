@@ -23,9 +23,9 @@ namespace APKInstaller.Helpers
         public const string IsFirstRun = nameof(IsFirstRun);
         public const string IsCloseADB = nameof(IsCloseADB);
         public const string IsCloseAPP = nameof(IsCloseAPP);
+        public const string IsUploadAPK = nameof(IsUploadAPK);
         public const string ShowDialogs = nameof(ShowDialogs);
         public const string ShowMessages = nameof(ShowMessages);
-        public const string ShowProgress = nameof(ShowProgress);
         public const string AutoGetNetAPK = nameof(AutoGetNetAPK);
         public const string DefaultDevice = nameof(DefaultDevice);
         public const string CurrentLanguage = nameof(CurrentLanguage);
@@ -53,7 +53,7 @@ namespace APKInstaller.Helpers
             }
             if (!LocalObject.KeyExists(UpdateDate))
             {
-                LocalObject.Save(UpdateDate, new DateTime());
+                LocalObject.Save(UpdateDate, new DateTimeOffset());
             }
             if (!LocalObject.KeyExists(IsFirstRun))
             {
@@ -67,6 +67,10 @@ namespace APKInstaller.Helpers
             {
                 LocalObject.Save(IsCloseAPP, true);
             }
+            if (!LocalObject.KeyExists(IsUploadAPK))
+            {
+                LocalObject.Save(IsUploadAPK, false);
+            }
             if (!LocalObject.KeyExists(ShowDialogs))
             {
                 LocalObject.Save(ShowDialogs, true);
@@ -74,10 +78,6 @@ namespace APKInstaller.Helpers
             if (!LocalObject.KeyExists(ShowMessages))
             {
                 LocalObject.Save(ShowMessages, true);
-            }
-            if (!LocalObject.KeyExists(ShowProgress))
-            {
-                LocalObject.Save(ShowProgress, true);
             }
             if (!LocalObject.KeyExists(AutoGetNetAPK))
             {

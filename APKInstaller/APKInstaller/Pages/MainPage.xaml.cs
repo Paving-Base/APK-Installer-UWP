@@ -21,7 +21,7 @@ namespace APKInstaller.Pages
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        private static uint count = 0;
+        public static uint WindowCount { get; set; } = 0;
 
         public readonly string GetAppTitleFromSystem = ResourceLoader.GetForViewIndependentUse()?.GetString("AppName") ?? Package.Current.DisplayName;
 
@@ -38,7 +38,7 @@ namespace APKInstaller.Pages
         {
             InitializeComponent();
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
-            count++;
+            WindowCount++;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -62,7 +62,7 @@ namespace APKInstaller.Pages
 
         private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (--count != 0) { return; }
+            if (--WindowCount != 0) { return; }
             Deferral deferral = e.GetDeferral();
             await CleanCachesAsync();
             deferral.Complete();

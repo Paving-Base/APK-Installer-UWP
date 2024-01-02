@@ -1,5 +1,4 @@
-﻿using AdvancedSharpAdbClient;
-using AdvancedSharpAdbClient.Models;
+﻿using AdvancedSharpAdbClient.Models;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Models;
@@ -7,7 +6,6 @@ using APKInstaller.ViewModels.SettingsPages;
 using Microsoft.Toolkit.Uwp.UI;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
