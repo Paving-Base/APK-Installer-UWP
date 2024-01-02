@@ -5,19 +5,17 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace AAPTForNet
 {
     /// <summary>
     /// Android Assert Packing Tool for NET
     /// </summary>
-    public class AAPTool : Process
+    public static class AAPTool
     {
         private enum DumpTypes
         {
@@ -27,29 +25,9 @@ namespace AAPTForNet
         }
 
         private static readonly string AppPath = Package.Current.InstalledLocation.Path;
-#if NET5_0_OR_GREATER
-        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}", "AppPackages");
-#else
-        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{GetCurrentProcess().Id}", "AppPackages");
-#endif
+        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}", "AppPackages");
 
-        protected AAPTool()
-        {
-            StartInfo.FileName = AppPath + @"\Tools\aapt.exe";
-            StartInfo.CreateNoWindow = true;
-            StartInfo.UseShellExecute = false; // For read output data
-            StartInfo.RedirectStandardError = true;
-            StartInfo.RedirectStandardOutput = true;
-            StartInfo.StandardOutputEncoding = Encoding.UTF8;
-        }
-
-        protected new bool Start(string args)
-        {
-            StartInfo.Arguments = args;
-            return Start();
-        }
-
-        private static DumpModel Dump(
+        private static async Task<DumpModel> DumpAsync(
             string path,
             string args,
             DumpTypes type,
@@ -58,27 +36,36 @@ namespace AAPTForNet
 
             int index = 0;
             bool terminated = false;
-            AAPTool aapt = new();
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = Path.Combine(AppPath + @"\Tools\aapt.exe"),
+                CreateNoWindow = true,
+                UseShellExecute = false, // For read output data
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                StandardOutputEncoding = Encoding.UTF8
+            };
             List<string> output = [];    // Messages from output stream
 
             switch (type)
             {
                 case DumpTypes.Manifest:
-                    aapt.Start($"dump badging \"{path}\"");
+                    startInfo.Arguments = $"dump badging \"{path}\"";
                     break;
                 case DumpTypes.Resources:
-                    aapt.Start($"dump --values resources \"{path}\"");
+                    startInfo.Arguments = $"dump --values resources \"{path}\"";
                     break;
                 case DumpTypes.XmlTree:
-                    aapt.Start($"dump xmltree \"{path}\" {args}");
+                    startInfo.Arguments = $"dump xmltree \"{path}\" {args}";
                     break;
                 default:
                     return new DumpModel(path, false, output);
             }
 
+            using Process aapt = Process.Start(startInfo);
             while (!aapt.StandardOutput.EndOfStream && !terminated)
             {
-                string msg = aapt.StandardOutput.ReadLine();
+                string msg = await aapt.StandardOutput.ReadLineAsync();
 
                 if (callback(msg, index))
                 {
@@ -99,7 +86,9 @@ namespace AAPTForNet
 
             while (!aapt.StandardError.EndOfStream)
             {
-                output.Add(aapt.StandardError.ReadLine());
+                await aapt.StandardError.ReadLineAsync()
+                    .ContinueWith(x => output.Add(x.Result))
+                    .ConfigureAwait(false);
             }
 
             try
@@ -110,30 +99,32 @@ namespace AAPTForNet
             catch { }
 
             // Dump xml tree get only 1 message when failed, the others are 2.
-            bool isSuccess = type != DumpTypes.XmlTree ?
-                output.Count > 2 : output.Count > 0;
+            bool isSuccess =
+                type != DumpTypes.XmlTree
+                    ? output.Count > 2
+                    : output.Count > 0;
             return new DumpModel(path, isSuccess, output);
         }
 
-        internal static DumpModel DumpManifest(string path)
+        internal static Task<DumpModel> DumpManifestAsync(string path)
         {
-            return Dump(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
+            return DumpAsync(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
         }
 
-        internal static DumpModel DumpResources(string path, Func<string, int, bool> callback)
+        internal static Task<DumpModel> DumpResourcesAsync(string path, Func<string, int, bool> callback)
         {
-            return Dump(path, string.Empty, DumpTypes.Resources, callback);
+            return DumpAsync(path, string.Empty, DumpTypes.Resources, callback);
         }
 
-        internal static DumpModel DumpXmlTree(string path, string asset, Func<string, int, bool> callback = null)
+        internal static Task<DumpModel> DumpXmlTreeAsync(string path, string asset, Func<string, int, bool> callback = null)
         {
             callback ??= ((_, __) => false);
-            return Dump(path, asset, DumpTypes.XmlTree, callback);
+            return DumpAsync(path, asset, DumpTypes.XmlTree, callback);
         }
 
-        internal static DumpModel DumpManifestTree(string path, Func<string, int, bool> callback = null)
+        internal static Task<DumpModel> DumpManifestTreeAsync(string path, Func<string, int, bool> callback = null)
         {
-            return DumpXmlTree(path, "AndroidManifest.xml", callback);
+            return DumpXmlTreeAsync(path, "AndroidManifest.xml", callback);
         }
 
         /// <summary>
@@ -151,17 +142,19 @@ namespace AAPTForNet
         /// <returns>Filled apk if dump process is not failed</returns>
         public static async Task<ApkInfo> Decompile(StorageFile file)
         {
-            List<string> apks = [];
+            List<string> apkList = [];
 
-            if (file.FileType == ".apk")
+            if (file.FileType.Equals(".apk", StringComparison.OrdinalIgnoreCase))
             {
-                file = await CreateTempApk(file);
-                apks.Add(file.Path);
+                if (!file.Path.StartsWith(ApplicationData.Current.LocalFolder.Path))
+                {
+                    file = await CreateTempApk(file).ConfigureAwait(false);
+                }
+                apkList.Add(file.Path);
             }
             else
             {
-                using (IRandomAccessStreamWithContentType random = await file.OpenReadAsync())
-                using (Stream stream = random.AsStream())
+                using (Stream stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
                 using (ZipArchive archive = new(stream, ZipArchiveMode.Read))
                 {
                     string path = Path.Combine(TempPath, file.Name);
@@ -177,21 +170,21 @@ namespace AAPTForNet
                         {
                             string APKTemp = Path.Combine(path, entry.FullName);
                             entry.ExtractToFile(APKTemp, true);
-                            apks.Add(APKTemp);
+                            apkList.Add(APKTemp);
                         }
                     }
                 }
 
-                if (!apks.Any())
+                if (apkList.Count <= 0)
                 {
-                    apks.Add(file.Path);
+                    apkList.Add(file.Path);
                 }
             }
 
-            List<ApkInfo> apkInfos = [];
-            foreach (string apkPath in apks)
+            List<ApkInfo> apkInfo = [];
+            foreach (string apkPath in apkList)
             {
-                DumpModel manifest = ApkExtractor.ExtractManifest(apkPath);
+                DumpModel manifest = await ApkExtractor.ExtractManifestAsync(apkPath).ConfigureAwait(false);
                 if (!manifest.IsSuccess)
                 {
                     continue;
@@ -204,43 +197,25 @@ namespace AAPTForNet
                 if (apk.Icon.IsImage)
                 {
                     // Included icon in manifest, extract it from apk
-                    apk.Icon.RealPath = ApkExtractor.ExtractIconImage(apkPath, apk.Icon);
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && apk.Icon.IsHighDensity)
+                    apk.Icon.RealPath = await ApkExtractor.ExtractIconImageAsync(apkPath, apk.Icon).ConfigureAwait(false);
+                    if (await apk.Icon.IsHighDensityAsync().ConfigureAwait(false))
                     {
-                        apkInfos.Add(apk);
+                        apkInfo.Add(apk);
                         continue;
                     }
                 }
 
-                apk.Icon = ApkExtractor.ExtractLargestIcon(apkPath);
-                apkInfos.Add(apk);
+                apk.Icon = await ApkExtractor.ExtractLargestIconAsync(apkPath).ConfigureAwait(false);
+                apkInfo.Add(apk);
             }
 
-            if (!apkInfos.Any()) { return new ApkInfo(); }
+            if (apkInfo.Count <= 1) { return apkInfo.FirstOrDefault(); }
 
-            if (apkInfos.Count <= 1) { return apkInfos.FirstOrDefault(); }
+            ApkInfos package = apkInfo.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = [.. x] }).FirstOrDefault();
+            ApkInfo baseApk = package.Apks.Where(x => !x.IsSplit).FirstOrDefault();
+            baseApk.SplitApks = package.Apks.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
 
-            List<ApkInfos> packages = apkInfos.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = [.. x] }).ToList();
-
-            if (packages.Count > 1) { throw new Exception("This is a Multiple Package."); }
-
-            List<ApkInfo> infos = [];
-            foreach (ApkInfos package in packages)
-            {
-                foreach (ApkInfo baseApk in package.Apks.Where(x => !x.IsSplit))
-                {
-                    baseApk.SplitApks = package.Apks.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
-                    infos.Add(baseApk);
-                }
-            }
-
-            if (infos.Count > 1) { throw new Exception("There are more than one base APK in this Package."); }
-
-            if (!infos.Any()) { throw new Exception("There are all dependents in this Package."); }
-
-            ApkInfo info = infos.FirstOrDefault();
-
-            return info;
+            return baseApk;
         }
 
         private static async Task<StorageFile> CreateTempApk(StorageFile sourceFile)

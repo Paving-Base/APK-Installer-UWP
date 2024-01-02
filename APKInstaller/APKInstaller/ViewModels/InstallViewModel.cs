@@ -1542,8 +1542,7 @@ namespace APKInstaller.ViewModels
                     }
                     try
                     {
-                        using (IRandomAccessStreamWithContentType random = await file.OpenReadAsync())
-                        using (Stream stream = random.AsStream())
+                        using Stream stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
                         using (ZipArchive archive = new(stream, ZipArchiveMode.Read))
                         {
                             foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains('/')))
@@ -1579,8 +1578,7 @@ namespace APKInstaller.ViewModels
                 }
                 try
                 {
-                    using IRandomAccessStreamWithContentType random = await file.OpenReadAsync();
-                    using Stream stream = random.AsStream();
+                    using Stream stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
                     using ZipArchive archive = new(stream, ZipArchiveMode.Read);
                     foreach (ZipArchiveEntry entry in archive.Entries.Where(x => !x.FullName.Contains('/')))
                     {
@@ -1627,8 +1625,7 @@ namespace APKInstaller.ViewModels
                     using ZipArchive zipWriter = new(zip, ZipArchiveMode.Create);
                     foreach (StorageFile apk in apkList)
                     {
-                        using IRandomAccessStreamWithContentType random = await apk.OpenReadAsync();
-                        using Stream stream = random.AsStream();
+                        using Stream stream = await apk.OpenStreamForReadAsync().ConfigureAwait(false);
                         using Stream entry = zipWriter.CreateEntry(apk.Name).Open();
                         await stream.CopyToAsync(entry);
                     }

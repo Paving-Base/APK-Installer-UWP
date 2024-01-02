@@ -10,7 +10,7 @@ namespace AAPTForNet.Filters
     /// <remarks>https://developer.android.com/ndk/guides/abis</remarks>
     internal class ABIFilter : BaseFilter
     {
-        private string[] Segments = Array.Empty<string>();
+        private string[] Segments = [];
 
         public override bool CanHandle(string msg) => msg.StartsWith("native-code:");
 

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Detector = AAPTForNet.ResourceDetector;
 
@@ -13,25 +14,20 @@ namespace AAPTForNet
     internal class ApkExtractor
     {
         private static int id = 0;
-
-#if NET
-        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}");
-#else
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}");
-#endif
 
-        public static DumpModel ExtractManifest(string path)
+        public static Task<DumpModel> ExtractManifestAsync(string path)
         {
-            return AAPTool.DumpManifest(path);
+            return AAPTool.DumpManifestAsync(path);
         }
 
         /// <summary>
         /// Find the icon with maximum config (largest), then extract to file
         /// </summary>
         /// <param name="path"></param>
-        public static Icon ExtractLargestIcon(string path)
+        public static async Task<Icon> ExtractLargestIconAsync(string path)
         {
-            Dictionary<string, Icon> iconTable = ExtractIconTable(path);
+            Dictionary<string, Icon> iconTable = await ExtractIconTableAsync(path).ConfigureAwait(false);
 
             if (iconTable.Count == 0)
             {
@@ -41,40 +37,40 @@ namespace AAPTForNet
             if (iconTable.Values.All(i => i.IsReference))
             {
                 string refID = iconTable.Values.FirstOrDefault().IconName;
-                iconTable = ExtractIconTable(path, refID);
+                iconTable = await ExtractIconTableAsync(path, refID).ConfigureAwait(false);
             }
 
             if (iconTable.Values.All(i => i.IsMarkup))
             {
                 // Try dumping markup asset and get icon
                 string asset = iconTable.Values.FirstOrDefault().IconName;
-                iconTable = DumpMarkupIcon(path, asset);
+                iconTable = await DumpMarkupIconAsync(path, asset).ConfigureAwait(false);
             }
 
             Icon largestIcon = ExtractLargestIcon(iconTable);
-            largestIcon.RealPath = ExtractIconImage(path, largestIcon);
+            largestIcon.RealPath = await ExtractIconImageAsync(path, largestIcon).ConfigureAwait(false);
 
             return largestIcon;
         }
 
-        private static Dictionary<string, Icon> DumpMarkupIcon(string path, string asset, int startIndex = -1)
+        private static async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(string path, string asset)
         {
-            Dictionary<string, Icon> output = DumpMarkupIcon(path, asset, out startIndex);
-
+            RefStruct<int> startIndex = -1;
+            Dictionary<string, Icon> output = await DumpMarkupIconAsync(path, asset, startIndex).ConfigureAwait(false);
             return output.Count == 0 && startIndex < 5
-                ? DumpMarkupIcon(path, asset, startIndex + 1)
+                ? await DumpMarkupIconAsync(path, asset).ConfigureAwait(false)
                 : output;
         }
 
-        private static Dictionary<string, Icon> DumpMarkupIcon(
-            string path, string asset, out int lastTryIndex, int start = -1)
+        private static async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(
+            string path, string asset, RefStruct<int> lastTryIndex, int start = -1)
         {
             // Not found any icon image in package?,
             // it maybe a markup file
             // try getting some images from markup.
             lastTryIndex = -1;
 
-            DumpModel tree = AAPTool.DumpXmlTree(path, asset);
+            DumpModel tree = await AAPTool.DumpXmlTreeAsync(path, asset).ConfigureAwait(false);
             if (!tree.IsSuccess)
             {
                 return [];
@@ -90,17 +86,17 @@ namespace AAPTForNet
                 if (Detector.IsBitmapElement(msg))
                 {
                     string iconID = tree.Messages[i + 1].Split('@')[1];
-                    return ExtractIconTable(path, iconID);
+                    return await ExtractIconTableAsync(path, iconID).ConfigureAwait(false);
                 }
             }
 
             return [];
         }
 
-        private static Dictionary<string, Icon> ExtractIconTable(string path)
+        private static async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path)
         {
-            string iconID = ExtractIconID(path);
-            return ExtractIconTable(path, iconID);
+            string iconID = await ExtractIconIDAsync(path).ConfigureAwait(false);
+            return await ExtractIconTableAsync(path, iconID).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -108,10 +104,10 @@ namespace AAPTForNet
         /// </summary>
         /// <param name="path"></param>
         /// <returns>icon id</returns>
-        private static string ExtractIconID(string path)
+        private static async Task<string> ExtractIconIDAsync(string path)
         {
             int iconIndex = 0;
-            DumpModel manifestTree = AAPTool.DumpManifestTree(
+            DumpModel manifestTree = await AAPTool.DumpManifestTreeAsync(
                 path,
                 (m, i) =>
                 {
@@ -122,7 +118,7 @@ namespace AAPTForNet
                     }
                     return false;
                 }
-            );
+            ).ConfigureAwait(false);
 
             if (iconIndex == 0) // Package without launcher icon
             {
@@ -138,7 +134,7 @@ namespace AAPTForNet
             return string.Empty;
         }
 
-        private static Dictionary<string, Icon> ExtractIconTable(string path, string iconID)
+        private static async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path, string iconID)
         {
             if (string.IsNullOrEmpty(iconID))
             {
@@ -147,7 +143,7 @@ namespace AAPTForNet
 
             bool matchedEntry = false;
             List<int> indexes = [];  // Get position of icon in resource list
-            DumpModel resTable = AAPTool.DumpResources(path, (m, i) =>
+            DumpModel resTable = await AAPTool.DumpResourcesAsync(path, (m, i) =>
             {
                 // Dump resources and get icons,
                 // terminate when meet the end of mipmap entry,
@@ -173,7 +169,7 @@ namespace AAPTForNet
                     }
                 }
                 return false;
-            });
+            }).ConfigureAwait(false);
 
             return CreateIconTable(indexes, resTable.Messages);
         }
@@ -181,14 +177,14 @@ namespace AAPTForNet
         // Create table like below
         //  configs  |    mdpi           hdpi    ...    anydpi
         //  icon     |    icon1          icon2   ...    icon4
-        private static Dictionary<string, Icon> CreateIconTable(List<int> positions, List<string> messages)
+        private static Dictionary<string, Icon> CreateIconTable(ICollection<int> positions, IList<string> messages)
         {
             if (positions.Count == 0 || messages.Count <= 2)    // If dump failed
             {
                 return [];
             }
 
-            const char seperator = '\"';
+            const char separator = '\"';
             // Prevent duplicate key when add to Dictionary,
             // because comparison statement with 'hdpi' in config's values,
             // reverse list and get first elem with LINQ
@@ -198,7 +194,7 @@ namespace AAPTForNet
             {
                 if (!iconTable.ContainsKey(cfg))
                 {
-                    iconTable.Add(cfg, new Icon(iconName));
+                    iconTable[cfg] = new Icon(iconName);
                 }
             }
             string msg, resValue, config;
@@ -226,7 +222,7 @@ namespace AAPTForNet
                         if (Detector.IsResourceValue(resValue))
                         {
                             // Resource value is icon url
-                            string iconName = resValue.Split(seperator)
+                            string iconName = resValue.Split(separator)
                                 .FirstOrDefault(n => n.Contains('/'));
                             AddIcon2Table(config, iconName);
                             break;
@@ -251,7 +247,7 @@ namespace AAPTForNet
         /// <param name="path">path to apk file</param>
         /// <param name="icon"></param>
         /// <returns>Absolute path to extracted image</returns>
-        public static string ExtractIconImage(string path, Icon icon)
+        public static async Task<string> ExtractIconImageAsync(string path, Icon icon)
         {
             if (Icon.Default.Equals(icon))
             {
@@ -265,17 +261,17 @@ namespace AAPTForNet
 
             string IconPath = Path.Combine(TempPath, $@"AAPToolTempImage-{id++}.png");
 
-            TryExtractIconImage(path, icon.IconName, IconPath);
+            await TryExtractIconImageAsync(path, icon.IconName, IconPath).ConfigureAwait(false);
             return IconPath;
         }
 
-        private static void TryExtractIconImage(string path, string iconName, string desFile)
+        private static async Task TryExtractIconImageAsync(string path, string iconName, string desFile)
         {
             try
             {
-                ExtractIconImage(path, iconName, desFile);
+                await ExtractIconImageAsync(path, iconName, desFile).ConfigureAwait(false);
             }
-            catch (ArgumentException) { }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -284,24 +280,22 @@ namespace AAPTForNet
         /// <param name="path"></param>
         /// <param name="iconName"></param>
         /// <param name="desFile"></param>
-        private static void ExtractIconImage(string path, string iconName, string desFile)
+        private static async Task ExtractIconImageAsync(string path, string iconName, string desFile)
         {
             if (iconName.EndsWith(".xml") || !File.Exists(path))
             {
                 throw new ArgumentException("Invalid params");
             }
 
-            using ZipArchive archive = ZipFile.OpenRead(path);
-            ZipArchiveEntry entry;
+            StorageFile file = await StorageFile.GetFileFromPathAsync(path);
+            using Stream stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+            using ZipArchive archive = new(stream, ZipArchiveMode.Read);
 
-            for (int i = archive.Entries.Count - 1; i > 0; i--)
+            foreach (ZipArchiveEntry entry in archive.Entries)
             {
-                entry = archive.Entries[i];
-
                 if (entry.Name.Equals(iconName) ||
                     entry.FullName.Equals(iconName))
                 {
-
                     entry.ExtractToFile(desFile, true);
                     break;
                 }
@@ -316,8 +310,8 @@ namespace AAPTForNet
             }
 
             Icon icon = Icon.Default;
-            List<string> configNames = [.. Enum.GetNames(typeof(Configs))];
-            configNames.Sort(new ConfigComparer());
+            string[] configNames = Enum.GetNames(typeof(Configs));
+            Array.Sort(configNames, new ConfigComparer());
 
             foreach (string cfg in configNames)
             {
@@ -347,6 +341,14 @@ namespace AAPTForNet
                 _ = Enum.TryParse(y, out Configs ey);
                 return ex > ey ? -1 : 1;
             }
+        }
+
+        private readonly struct RefStruct<T>(T value)
+        {
+            public T Value { get; } = value;
+
+            public static implicit operator T(RefStruct<T> @struct) => @struct.Value;
+            public static implicit operator RefStruct<T>(T value) => new(value);
         }
     }
 }

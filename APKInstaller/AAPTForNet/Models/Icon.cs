@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace AAPTForNet.Models
 {
@@ -28,29 +31,6 @@ namespace AAPTForNet.Models
         // Not real icon, it refer to another
         internal bool IsReference => IconName.StartsWith("0x");
 
-        internal bool IsHighDensity
-        {
-            get
-            {
-                if (!IsImage || !File.Exists(RealPath))
-                {
-                    return false;
-                }
-
-                try
-                {
-                    // Load from unsupported format will throw an exception.
-                    // But icon can be packed without extension
-                    using Bitmap image = new(RealPath);
-                    return image.Width > hdpiWidth;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
         /// <summary>
         /// Icon name can be an asset image (real icon image),
         /// markup file (actually it's image, but packed to xml)
@@ -62,6 +42,28 @@ namespace AAPTForNet.Models
         {
             IconName = iconName ?? string.Empty;
             RealPath = "/Assets/256x256.png";
+        }
+
+        internal async Task<bool> IsHighDensityAsync()
+        {
+            if (!IsImage || !File.Exists(RealPath))
+            {
+                return false;
+            }
+
+            try
+            {
+                // Load from unsupported format will throw an exception.
+                // But icon can be packed without extension
+                StorageFile file = await StorageFile.GetFileFromPathAsync(RealPath);
+                using IRandomAccessStreamWithContentType stream = await file.OpenReadAsync();
+                BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                return decoder.PixelWidth > hdpiWidth;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public override string ToString() => IconName;

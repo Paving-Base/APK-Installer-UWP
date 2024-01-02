@@ -62,10 +62,6 @@ namespace AAPTForNet.Models
 
         public bool IsBundle => SplitApks != null && SplitApks.Any();
 
-        public void AddSplit(ApkInfo info) => SplitApks.Add(info);
-
-        public async void AddSplit(string path) => SplitApks.Add(await AAPTool.Decompile(path));
-
         internal ApkInfo Merge(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
 
         internal static ApkInfo Merge(IEnumerable<ApkInfo> apks) => Merge(null, apks);

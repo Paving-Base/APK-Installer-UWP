@@ -6,7 +6,7 @@ namespace AAPTForNet.Filters
 {
     internal class DensityFilter : BaseFilter
     {
-        private string[] Segments = Array.Empty<string>();
+        private string[] Segments = [];
 
         public override bool CanHandle(string msg) => msg.StartsWith("densities:");
 

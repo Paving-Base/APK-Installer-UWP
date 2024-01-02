@@ -5,22 +5,22 @@ namespace AAPTForNet.Filters
 {
     internal class LabelFilter : BaseFilter
     {
-        private readonly List<string> Msessges = [];
-        private string[] Segments => string.Join(string.Empty, Msessges).Split(Seperator);
+        private readonly List<string> Messages = [];
+        private string[] Segments => string.Join(string.Empty, Messages).Split(Seperator);
 
         public override bool CanHandle(string msg) => msg.StartsWith("application-label-");
 
         public override void AddMessage(string msg)
         {
-            if (!Msessges.Contains(msg))
+            if (!Messages.Contains(msg))
             {
-                Msessges.Add(msg);
+                Messages.Add(msg);
             }
         }
 
         public override ApkInfo GetAPK() => new() { LocaleLabels = GetApplicationLabels() };
 
-        public override void Clear() => Msessges.Clear();
+        public override void Clear() => Messages.Clear();
 
         private Dictionary<string, string> GetApplicationLabels()
         {
