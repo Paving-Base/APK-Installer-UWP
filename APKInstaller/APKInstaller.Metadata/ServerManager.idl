@@ -3,6 +3,8 @@ namespace APKInstaller.Metadata
     [contractversion(1)]
     apicontract APKInstallerContract{};
 
+    delegate Boolean DumpDelegate(String line, Int32 index);
+
     [default_interface]
     [contract(APKInstallerContract, 1)]
     runtimeclass ServerManager
@@ -15,5 +17,6 @@ namespace APKInstaller.Metadata
 
         UInt32 RunProcess(String filename, String command, IVector<String> errorOutput, IVector<String> standardOutput);
         Windows.Foundation.IAsyncOperation<UInt32> RunProcessAsync(String filename, String command, IVector<String> errorOutput, IVector<String> standardOutput);
+        Windows.Foundation.IAsyncOperation<UInt32> DumpAsync(String filename, String command, DumpDelegate callback, IVector<String> output);
     }
 }

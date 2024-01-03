@@ -36,7 +36,7 @@ namespace Zeroconf.Common
             IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn = null)
         {
             // populate list with all adapters if none specified
-            if (netInterfacesToSendRequestOn == null || !netInterfacesToSendRequestOn.Any())
+            if (netInterfacesToSendRequestOn?.Any() == true)
             {
                 netInterfacesToSendRequestOn = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
             }
@@ -62,7 +62,7 @@ namespace Zeroconf.Common
             // http://stackoverflow.com/questions/2192548/specifying-what-network-interface-an-udp-multicast-should-go-to-in-net
 
             // Xamarin doesn't support this
-            if (!adapter.GetIPProperties().MulticastAddresses.Any())
+            if (adapter.GetIPProperties().MulticastAddresses.Count is not > 0)
             {
                 return; // most of VPN adapters will be skipped
             }
@@ -199,7 +199,7 @@ namespace Zeroconf.Common
         {
             return Task.WhenAll(
                 System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
-                    .Where(a => a.GetIPProperties().MulticastAddresses.Any()) // Xamarin doesn't support this
+                    .Where(a => a.GetIPProperties().MulticastAddresses.Count > 0) // Xamarin doesn't support this
                     .Where(a => a.SupportsMulticast)
                     .Where(a => a.OperationalStatus == OperationalStatus.Up)
                     .Where(a => a.NetworkInterfaceType != NetworkInterfaceType.Loopback)

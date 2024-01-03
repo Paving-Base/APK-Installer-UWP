@@ -69,7 +69,7 @@ namespace APKInstaller.Pages
                         break;
                     case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
                         ValueSet protocolData = protocolArgs.Data;
-                        Provider = protocolData?.Any() != true
+                        Provider = protocolData?.Count is > 0
                             ? new InstallViewModel(protocolArgs.Uri, this)
                             : protocolData.TryGetValue("Url", out object url)
                                 ? new InstallViewModel(url as Uri, this)
@@ -79,7 +79,7 @@ namespace APKInstaller.Pages
                         break;
                     case ActivationKind.ProtocolForResults when args is ProtocolForResultsActivatedEventArgs protocolForResultsArgs:
                         ValueSet ProtocolForResultsData = protocolForResultsArgs.Data;
-                        Provider = ProtocolForResultsData?.Any() != true
+                        Provider = ProtocolForResultsData?.Count is > 0
                             ? new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation)
                             : ProtocolForResultsData.TryGetValue("Url", out url)
                                 ? new InstallViewModel(url as Uri, this, protocolForResultsArgs.ProtocolForResultsOperation)

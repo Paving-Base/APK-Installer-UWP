@@ -60,10 +60,10 @@ namespace APKInstaller.Pages.ToolsPages
             switch (element.Tag?.ToString())
             {
                 case "SharePackage":
-                    DataTransferHelper.ShareFile(Provider.ApkInfo.PackagePath, Provider.ApkInfo.AppName);
+                    DataTransferHelper.ShareFile(Provider.ApkInfo.PackagePath, Provider.AppLocaleName);
                     break;
                 case "OpenPackageFolder":
-                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ApkInfo.PackagePath[..Provider.ApkInfo.PackagePath.LastIndexOf(@"\")]));
+                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ApkInfo.PackagePath.GetFileDirectory()));
                     break;
                 default:
                     break;

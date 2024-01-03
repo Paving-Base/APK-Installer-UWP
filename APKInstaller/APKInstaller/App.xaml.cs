@@ -1,8 +1,10 @@
-﻿using AdvancedSharpAdbClient;
+﻿using AAPTForNet;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
+using APKInstaller.Projection;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -32,6 +34,7 @@ namespace APKInstaller
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            AAPTool.DumpOverrideAsync = ADBHelper.DumpAsync;
             UnhandledException += Application_UnhandledException;
             LoggerProvider.SetLogProvider(new MetroLoggerFactory());
             Factories.AdbCommandLineClientFactory = path => new AdbCommandClient(path);

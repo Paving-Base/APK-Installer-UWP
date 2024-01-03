@@ -6,16 +6,18 @@ namespace APKInstaller.Helpers
 {
     public static class CachesHelper
     {
-        public static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "Caches", $"{Process.GetCurrentProcess().Id}");
-        public static readonly string OldTempPath = Path.Combine(Path.GetTempPath(), @"APKInstaller\Caches", $"{Process.GetCurrentProcess().Id}");
+        public static readonly string TempPathBase = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "Caches");
+        public static readonly string TempPath = Path.Combine(TempPathBase, $"{Process.GetCurrentProcess().Id}");
+        public static readonly string OldTempPathBase = Path.Combine(Path.GetTempPath(), @"APKInstaller\Caches");
+        public static readonly string OldTempPath = Path.Combine(OldTempPathBase, $"{Process.GetCurrentProcess().Id}");
 
-        public static void CleanCaches(bool isall)
+        public static void CleanCaches(bool isAll)
         {
-            if (isall)
+            if (isAll)
             {
-                if (Directory.Exists(TempPath[..TempPath.LastIndexOf(@"\")]))
+                if (Directory.Exists(TempPathBase))
                 {
-                    try { Directory.Delete(TempPath[..TempPath.LastIndexOf(@"\")], true); } catch { }
+                    try { Directory.Delete(TempPathBase, true); } catch { }
                 }
             }
             else
@@ -27,13 +29,13 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static void CleanOldCaches(bool isall)
+        public static void CleanOldCaches(bool isAll)
         {
-            if (isall)
+            if (isAll)
             {
-                if (Directory.Exists(OldTempPath[..OldTempPath.LastIndexOf(@"\")]))
+                if (Directory.Exists(OldTempPathBase))
                 {
-                    try { Directory.Delete(OldTempPath[..OldTempPath.LastIndexOf(@"\")], true); } catch { }
+                    try { Directory.Delete(OldTempPathBase, true); } catch { }
                 }
             }
             else
@@ -45,10 +47,10 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static void CleanAllCaches(bool isall)
+        public static void CleanAllCaches(bool isAll)
         {
-            CleanCaches(isall);
-            CleanOldCaches(isall);
+            CleanCaches(isAll);
+            CleanOldCaches(isAll);
         }
     }
 }

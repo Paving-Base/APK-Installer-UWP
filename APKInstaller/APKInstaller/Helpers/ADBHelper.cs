@@ -1,5 +1,8 @@
 ﻿using AdvancedSharpAdbClient;
+using APKInstaller.Metadata;
+using APKInstaller.Projection;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -21,6 +24,9 @@ namespace APKInstaller.Helpers
                 return _monitor;
             }
         }
+
+        public static Task DumpAsync(string filename, string command, Func<string, int, bool> callback, IList<string> output) =>
+            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, new DumpDelegate(callback), output).AsTask();
 
         public static async Task<bool> CheckFileExistsAsync(string path)
         {

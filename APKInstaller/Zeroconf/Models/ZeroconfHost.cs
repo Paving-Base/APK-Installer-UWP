@@ -79,7 +79,7 @@ namespace Zeroconf.Models
             sb.AppendLine("| ----------------------------------------------");
             sb.AppendLine($"| Id: {Id}\n| DisplayName: {DisplayName}\n| IPs: {string.Join(", ", IPAddresses)}\n| Services: {services.Count}");
 
-            if (services.Any())
+            if (services.Count > 0)
             {
                 int i = 0;
                 foreach (KeyValuePair<string, IService> service in services)

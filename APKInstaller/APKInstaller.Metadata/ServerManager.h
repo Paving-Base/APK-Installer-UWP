@@ -20,8 +20,10 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         unsigned int RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
         IAsyncOperation<unsigned int> RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
+        IAsyncOperation<unsigned int> DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output);
 
     private:
+        const size_t defaultBufferSize = 1024;
         event<EventHandler<bool>> m_serverManagerDestructedEvent;
 
         static void CreatePipeWithSecurityAttributes(PHANDLE hReadPipe, PHANDLE hWritePipe, LPSECURITY_ATTRIBUTES lpPipeAttributes, int nSize)
@@ -86,7 +88,7 @@ namespace winrt::APKInstaller::Metadata::implementation
             }
         }
 
-        inline const hstring BuildCommandLine(hstring fileName, hstring command)
+        inline const hstring BuildCommandLine(const hstring fileName, const hstring command)
         {
             // Construct a StringBuilder with the appropriate command line
             // to pass to CreateProcess.  If the filename isn't already
@@ -96,6 +98,81 @@ namespace winrt::APKInstaller::Metadata::implementation
             const bool fileNameIsQuoted = !fileName.empty() && fileName.starts_with('"') && fileName.ends_with('"');
             return fileNameIsQuoted ? fileName + ' ' + command : '"' + fileName + L"\" " + command;
         }
+
+        inline void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode) const
+        {
+            const size_t bufferLen = defaultBufferSize;
+            char* buffer = new char[bufferLen];
+            memset(buffer, '\0', bufferLen);
+            DWORD recLen = 0;
+            std::wstringstream line = {};
+            do
+            {
+                if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))
+                {
+                    break;
+                }
+                if (recLen <= 0) { break; }
+
+                const int dBufSize = MultiByteToWideChar(encode, 0, buffer, recLen, NULL, 0);
+                wchar_t* dBuf = new wchar_t[dBufSize];
+                wmemset(dBuf, '\0', dBufSize);
+                const int nRet = MultiByteToWideChar(encode, 0, buffer, recLen, dBuf, dBufSize);
+
+                if (nRet > 0)
+                {
+                    for (int i = 0; i < nRet; i++)
+                    {
+                        if (dBuf[i] == L'\r')
+                        {
+                            continue;
+                        }
+                        else if (dBuf[i] == L'\n')
+                        {
+                            if (line.rdbuf()->in_avail())
+                            {
+                                output.Append(line.str());
+                                line.str(L"");
+                            }
+                        }
+                        else
+                        {
+                            line << dBuf[i];
+                        }
+                    }
+                }
+                else
+                {
+                    for (DWORD i = 0; i < recLen; i++)
+                    {
+                        if (buffer[i] == '\r')
+                        {
+                            continue;
+                        }
+                        else if (buffer[i] == '\n')
+                        {
+                            if (line.rdbuf()->in_avail())
+                            {
+                                output.Append(line.str());
+                                line.str(L"");
+                            }
+                        }
+                        else
+                        {
+                            line << buffer[i];
+                        }
+                    }
+                }
+
+                delete dBuf;
+                if (recLen < bufferLen) { break; }
+            } while (recLen > 0);
+            if (line.rdbuf()->in_avail())
+            {
+                output.Append(line.str());
+            }
+            delete buffer;
+		}
     };
 }
 

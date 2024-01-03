@@ -553,9 +553,9 @@ namespace APKInstaller.ViewModels
         private async Task DownloadADBAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            if (!Directory.Exists(ADBTemp[..ADBTemp.LastIndexOf(@"\")]))
+            if (!Directory.Exists(CachesHelper.TempPath))
             {
-                _ = Directory.CreateDirectory(ADBTemp[..ADBTemp.LastIndexOf(@"\")]);
+                _ = Directory.CreateDirectory(CachesHelper.TempPath);
             }
             else if (Directory.Exists(ADBTemp))
             {
@@ -719,7 +719,7 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = _loader.GetString("Analysis");
                     try
                     {
-                        ApkInfo = await AAPTool.Decompile(_file).ConfigureAwait(false);
+                        ApkInfo = await AAPTool.DecompileAsync(_file).ConfigureAwait(false);
                         _appLocaleName = ApkInfo.GetLocaleLabel();
                     }
                     catch (Exception ex)
@@ -764,7 +764,7 @@ namespace APKInstaller.ViewModels
                             ActionButtonText = _loader.GetString("Install");
                             InfoMessage = _loader.GetString("WaitingDevice");
                             DeviceSelectButtonText = _loader.GetString("Devices");
-                            AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
+                            AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
                             ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
                         }
                         else
@@ -975,7 +975,7 @@ namespace APKInstaller.ViewModels
                 {
                     AdbClient client = new();
                     VersionInfo info = default;
-                    if (ApkInfo != null && !ApkInfo.IsEmpty)
+                    if (ApkInfo?.IsEmpty == false)
                     {
                         info = await client.GetPackageVersionAsync(_device, ApkInfo?.PackageName);
                     }
@@ -1036,7 +1036,7 @@ namespace APKInstaller.ViewModels
         {
             Regex[] UriRegex = [new(@":\?source=(.*)"), new(@"://(.*)")];
             string Uri = UriRegex[0].IsMatch(_url.ToString()) ? UriRegex[0].Match(_url.ToString()).Groups[1].Value : UriRegex[1].Match(_url.ToString()).Groups[1].Value;
-            Uri Url = Uri.ValidateAndGetUri();
+            Uri Url = Uri.TryGetUri();
             if (Url != null)
             {
                 _url = Url;
@@ -1075,7 +1075,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await AAPTool.Decompile(_file).ConfigureAwait(false);
+                ApkInfo = await AAPTool.DecompileAsync(_file).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -1102,7 +1102,7 @@ namespace APKInstaller.ViewModels
                     ActionButtonText = _loader.GetString("Install");
                     InfoMessage = _loader.GetString("WaitingDevice");
                     DeviceSelectButtonText = _loader.GetString("Devices");
-                    AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), ApkInfo?.AppName);
+                    AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
                     ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
                 }
             }
@@ -1114,9 +1114,9 @@ namespace APKInstaller.ViewModels
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_url != null)
             {
-                if (!Directory.Exists(APKTemp[..APKTemp.LastIndexOf(@"\")]))
+                if (!Directory.Exists(CachesHelper.TempPath))
                 {
-                    _ = Directory.CreateDirectory(APKTemp[..APKTemp.LastIndexOf(@"\")]);
+                    _ = Directory.CreateDirectory(CachesHelper.TempPath);
                 }
                 else if (Directory.Exists(APKTemp))
                 {
@@ -1265,7 +1265,7 @@ namespace APKInstaller.ViewModels
             AdbClient client = new();
             IEnumerable<DeviceData> devices = await client.GetDevicesAsync().ConfigureAwait(false);
             ConsoleOutputReceiver receiver = new();
-            if (!devices.Any()) { return false; }
+            if (devices?.Any() != true) { return false; }
             foreach (DeviceData device in devices)
             {
                 if (device == null || forces ? device.State == DeviceState.Offline : device.State != DeviceState.Online) { continue; }
@@ -1604,11 +1604,12 @@ namespace APKInstaller.ViewModels
             }
             else if (apkList.Count >= 1)
             {
-                string temp = Path.Combine(CachesHelper.TempPath, $"TempSplitAPK.apks");
+                string tempBase = CachesHelper.TempPath;
+                string temp = Path.Combine(tempBase, $"TempSplitAPK.apks");
 
-                if (!Directory.Exists(temp[..temp.LastIndexOf(@"\")]))
+                if (!Directory.Exists(tempBase))
                 {
-                    _ = Directory.CreateDirectory(temp[..temp.LastIndexOf(@"\")]);
+                    _ = Directory.CreateDirectory(tempBase);
                 }
                 else if (Directory.Exists(temp))
                 {

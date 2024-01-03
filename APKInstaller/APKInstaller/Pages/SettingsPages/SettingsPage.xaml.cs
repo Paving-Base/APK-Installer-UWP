@@ -118,7 +118,7 @@ namespace APKInstaller.Pages.SettingsPages
             switch (element.Tag?.ToString())
             {
                 case "ADBPath":
-                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ADBPath[..Provider.ADBPath.LastIndexOf(@"\")]));
+                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ADBPath.GetFileDirectory()));
                     break;
                 case "LogFolder":
                     _ = await Launcher.LaunchFolderAsync(await ApplicationData.Current.LocalFolder.CreateFolderAsync("MetroLogs", CreationCollisionOption.OpenIfExists));

@@ -118,7 +118,7 @@ namespace APKInstaller.Helpers
 
         public static string GetLocaleLabel(this ApkInfo info)
         {
-            if (info.LocaleLabels.Any())
+            if (info.LocaleLabels?.Count is > 0)
             {
                 int index = -1;
                 string language = ApplicationLanguages.PrimaryLanguageOverride;

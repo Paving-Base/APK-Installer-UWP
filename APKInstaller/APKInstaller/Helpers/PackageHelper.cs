@@ -8,7 +8,7 @@ using Windows.System;
 
 namespace APKInstaller.Helpers
 {
-    internal class PackageHelper
+    public class PackageHelper
     {
         public static async Task<(bool isfound, IEnumerable<Package> info)> FindPackagesByName(string PackageFamilyName)
         {
@@ -17,14 +17,14 @@ namespace APKInstaller.Helpers
             {
                 try
                 {
-                    return manager.FindPackagesForUser("", PackageFamilyName);
+                    return manager.FindPackagesForUser(string.Empty, PackageFamilyName);
                 }
                 catch
                 {
                     return null;
                 }
             });
-            return (WSAList != null && WSAList.Any(), WSAList);
+            return (WSAList?.Any() == true, WSAList);
         }
 
         public static async void LaunchWSAPackage(string packagename = "")

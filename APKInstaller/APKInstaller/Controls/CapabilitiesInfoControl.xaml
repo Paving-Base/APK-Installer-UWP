@@ -24,6 +24,7 @@
         <TextBlock
             x:Name="HeaderTextBlock"
             Grid.Row="0"
+            HorizontalAlignment="Left"
             Text="{x:Bind HeadText, Mode=OneWay}"
             TextWrapping="WrapWholeWords"
             ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
@@ -34,11 +35,13 @@
             <Grid>
                 <RichTextBlock
                     x:Name="RichTextBlockCapabilities"
+                    HorizontalAlignment="Left"
                     IsTextSelectionEnabled="True"
                     Opacity="0.6"
                     TextWrapping="Wrap" />
                 <RichTextBlock
                     x:Name="RichTextBlockFullCapabilities"
+                    HorizontalAlignment="Left"
                     IsTextSelectionEnabled="True"
                     LostFocus="Root_LostFocus"
                     Opacity="0.6"
@@ -46,7 +49,7 @@
                     Visibility="Collapsed" />
             </Grid>
         </ScrollViewer>
-        <Button
+        <HyperlinkButton
             x:Name="MoreButton"
             x:Uid="/CapabilitiesInfoControl/MoreButton"
             Grid.Row="2"
@@ -55,7 +58,6 @@
             Background="Transparent"
             BorderThickness="0"
             Click="MoreButton_Click"
-            Foreground="{StaticResource SystemAccentColor}"
             TabIndex="4"
             UseSystemFocusVisuals="True" />
     </Grid>

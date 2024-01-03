@@ -170,6 +170,7 @@
                     <TextBlock
                         x:Name="AppName"
                         Grid.Row="0"
+                        HorizontalAlignment="Left"
                         FontSize="{ThemeResource PivotHeaderItemFontSize}"
                         FontWeight="SemiLight"
                         OpticalMarginAlignment="TrimSideBearings"
@@ -186,6 +187,7 @@
                         <TextBlock
                             x:Name="AppSignatureInfoText"
                             Margin="0,6,0,0"
+                            HorizontalAlignment="Left"
                             MaxLines="1"
                             Text="Trusted App"
                             TextTrimming="CharacterEllipsis"
@@ -194,6 +196,7 @@
                     <TextBlock
                         x:Name="AppPublisher"
                         Grid.Row="2"
+                        HorizontalAlignment="Left"
                         x:Load="{x:Bind Provider.AppPublisherVisibility, Mode=OneWay}"
                         MaxLines="2"
                         Text="{x:Bind x:String.Format(Provider.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
@@ -202,6 +205,7 @@
                     <TextBlock
                         x:Name="AppVersion"
                         Grid.Row="3"
+                        HorizontalAlignment="Left"
                         x:Load="{x:Bind Provider.AppVersionVisibility, Mode=OneWay}"
                         Text="{x:Bind x:String.Format(Provider.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind AppVersion.Text, Mode=OneWay}" />
@@ -271,6 +275,7 @@
                     Opacity="1">
                     <TextBlock
                         x:Name="ProgressText"
+                        HorizontalAlignment="Left"
                         Text="{x:Bind Provider.ProgressText, Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{x:Bind ProgressText.Text, Mode=OneWay}" />
@@ -300,6 +305,7 @@
                             x:Name="InfoMessageTextBlock"
                             Grid.Row="0"
                             Margin="0,0,0,6"
+                            HorizontalAlignment="Left"
                             Text="{x:Bind Provider.InfoMessage, Mode=OneWay}"
                             TextWrapping="WrapWholeWords"
                             ToolTipService.ToolTip="{x:Bind InfoMessageTextBlock.Text, Mode=OneWay}" />
@@ -307,6 +313,7 @@
                             x:Name="WarningMessageModificationPackage"
                             Grid.Row="1"
                             Margin="0,0,0,6"
+                            HorizontalAlignment="Left"
                             x:Load="False"
                             FontWeight="Bold"
                             TextWrapping="WrapWholeWords"
@@ -318,6 +325,7 @@
                         x:Uid="/InstallPage/InstallOutputTextBlock"
                         Grid.Row="0"
                         Margin="0,0,0,6"
+                        HorizontalAlignment="Left"
                         x:Load="{x:Bind Provider.InstallOutputVisibility, Mode=OneWay}"
                         TextWrapping="WrapWholeWords"
                         ToolTipService.ToolTip="{x:Bind InstallOutputTextBlock.Text}" />
@@ -332,6 +340,7 @@
                         <TextBlock
                             x:Name="TextOutput"
                             Margin="6,6,6,6"
+                            HorizontalAlignment="Left"
                             IsTextSelectionEnabled="True"
                             Text="{x:Bind Provider.TextOutput, Mode=OneWay}"
                             TextWrapping="WrapWholeWords"
@@ -566,6 +575,7 @@
             <TextBlock
                 x:Name="WaitProgressText"
                 Margin="0,6,0,0"
+                HorizontalAlignment="Left"
                 Text="{x:Bind Provider.WaitProgressText, Mode=OneWay}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />

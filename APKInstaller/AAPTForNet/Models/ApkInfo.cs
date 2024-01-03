@@ -60,7 +60,7 @@ namespace AAPTForNet.Models
 
         public bool IsSplit => SplitName != "Unknown";
 
-        public bool IsBundle => SplitApks != null && SplitApks.Any();
+        public bool IsBundle => SplitApks?.Count is > 0;
 
         internal ApkInfo Merge(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Connectivity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,24 +36,22 @@ namespace APKInstaller.Helpers
                     break;
                 }
             }
-            string str = string.Empty;
-            switch (index)
+            string str = index switch
             {
-                case 0: str = "B"; break;
-                case 1: str = "KB"; break;
-                case 2: str = "MB"; break;
-                case 3: str = "GB"; break;
-                case 4: str = "TB"; break;
-                case 5: str = "PB"; break;
-                case 6: str = "EB"; break;
-                case 7: str = "ZB"; break;
-                case 8: str = "YB"; break;
-                case 9: str = "BB"; break;
-                case 10: str = "NB"; break;
-                case 11: str = "DB"; break;
-                default:
-                    break;
-            }
+                0 => "B",
+                1 => "KB",
+                2 => "MB",
+                3 => "GB",
+                4 => "TB",
+                5 => "PB",
+                6 => "EB",
+                7 => "ZB",
+                8 => "YB",
+                9 => "BB",
+                10 => "NB",
+                11 => "DB",
+                _ => string.Empty,
+            };
             return $"{size:0.##}{str}";
         }
 
@@ -76,23 +75,35 @@ namespace APKInstaller.Helpers
             return (double)(lists.IndexOf(list) + 1) * 100 / lists.Count;
         }
 
-        public static double GetProgressValue<T>(this IEnumerable<T> lists, T list)
+        public static Uri TryGetUri(this string url)
         {
-            return (double)(lists.ToList().IndexOf(list) + 1) * 100 / lists.Count();
+            url.TryGetUri(out Uri uri);
+            return uri;
         }
 
-        public static Uri ValidateAndGetUri(this string uriString)
+        public static bool TryGetUri(this string url, out Uri uri)
         {
-            Uri uri = null;
+            uri = default;
+            if (string.IsNullOrWhiteSpace(url)) { return false; }
             try
             {
-                uri = new Uri(uriString.Contains("://") ? uriString : uriString.Contains("//") ? uriString.Replace("//", "://") : $"http://{uriString}");
+                return Uri.TryCreate(
+                    url.Contains("://") ? url
+                    : url.Contains("//") ? url.Replace("//", "://")
+                    : $"http://{url}", UriKind.RelativeOrAbsolute, out uri);
             }
-            catch (FormatException e)
+            catch (FormatException ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Error(e.ExceptionToMessage(), e);
+                SettingsHelper.LogManager.GetLogger(nameof(NetworkHelper)).Warn(ex.ExceptionToMessage(), ex);
             }
-            return uri;
+            return false;
+        }
+
+        public static string GetFileDirectory(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) { return string.Empty; }
+            int index = path.LastIndexOf('\\');
+            return index == -1 ? string.Empty : path[..index];
         }
 
         public static string ExceptionToMessage(this Exception ex)

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace APKInstaller.Helpers
 {
-    internal class AddressHelper
+    public class AddressHelper
     {
         public static async Task<List<string>> GetAddressID(string mac)
         {
             List<string> addresses = [];
             Regex Regex = new($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
             List<string> lines = [];
-            _ = await APKInstallerProjectionFactory.ServerManager.RunProcessAsync(string.Empty, $"arp -a|findstr {mac}", null, lines);
+            _ = await APKInstallerProjectionFactory.ServerManager.RunProcessAsync("powershell.exe", $"arp -a|findstr {mac}", null, lines);
             foreach (string line in lines)
             {
                 if (Regex.IsMatch(line))

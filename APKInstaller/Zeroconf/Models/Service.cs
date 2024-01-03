@@ -23,7 +23,7 @@ namespace Zeroconf.Models
 
             sb.Append($"\t| Service: {Name}\n\t| ServiceName: {ServiceName}\n\t| Port: {Port}\n\t| TTL: {Ttl}\n\t| PropertySets: {properties.Count}");
 
-            if (properties.Any())
+            if (properties.Count > 0)
             {
                 sb.AppendLine();
                 for (int i = 0; i < properties.Count; i++)
