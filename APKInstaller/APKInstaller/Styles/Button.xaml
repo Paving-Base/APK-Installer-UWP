@@ -9,6 +9,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="MinHeight" Value="0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Background" Value="{ThemeResource HyperlinkButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource HyperlinkButtonForeground}" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
@@ -24,7 +25,7 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
-                            FontWeight="SemiBold"
+                            FontWeight="{TemplateBinding FontWeight}"
                             TextWrapping="Wrap" />
 
                         <VisualStateManager.VisualStateGroups>
@@ -247,7 +248,7 @@
                                 AutomationProperties.AccessibilityView="Raw">
                                 <Thumb.Template>
                                     <ControlTemplate TargetType="Thumb">
-                                        <Rectangle Fill="Transparent" />
+                                        <Rectangle Fill="{ThemeResource SystemControlTransparentBrush}" />
                                     </ControlTemplate>
                                 </Thumb.Template>
                             </Thumb>

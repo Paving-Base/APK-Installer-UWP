@@ -453,7 +453,7 @@
                                 AutomationProperties.AccessibilityView="Raw">
                                 <Thumb.Template>
                                     <ControlTemplate TargetType="Thumb">
-                                        <Rectangle Fill="Transparent" />
+                                        <Rectangle Fill="{ThemeResource SystemControlTransparentBrush}" />
                                     </ControlTemplate>
                                 </Thumb.Template>
                             </Thumb>

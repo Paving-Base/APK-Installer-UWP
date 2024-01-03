@@ -623,9 +623,11 @@ namespace APKInstaller.ViewModels.SettingsPages
         {
             await Dispatcher.ResumeForegroundAsync();
 
-            FileOpenPicker FileOpen = new();
-            FileOpen.FileTypeFilter.Add(".exe");
-            FileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            FileOpenPicker FileOpen = new()
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder
+            };
+            FileOpen.FileTypeFilter.Add("adb.exe");
 
             StorageFile file = await FileOpen.PickSingleFileAsync();
             if (file != null)

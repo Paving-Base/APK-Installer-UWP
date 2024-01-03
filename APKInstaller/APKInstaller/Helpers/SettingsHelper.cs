@@ -41,7 +41,7 @@ namespace APKInstaller.Helpers
         {
             if (!LocalObject.KeyExists(ADBPath))
             {
-                LocalObject.Save(ADBPath, Path.Combine(ApplicationData.Current.LocalFolder.Path, @"platform-tools\adb.exe"));
+                LocalObject.Save(ADBPath, @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe");
             }
             if (!LocalObject.KeyExists(IsOpenApp))
             {

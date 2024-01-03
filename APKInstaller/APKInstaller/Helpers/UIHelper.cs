@@ -1,7 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -94,7 +93,7 @@ namespace APKInstaller.Helpers
             }
             catch (FormatException ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(NetworkHelper)).Warn(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Warn(ex.ExceptionToMessage(), ex);
             }
             return false;
         }

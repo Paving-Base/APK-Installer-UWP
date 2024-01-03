@@ -5,7 +5,6 @@ using AdvancedSharpAdbClient.Models;
 using APKInstaller.Common;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
-using APKInstaller.Pages.ToolsPages;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;

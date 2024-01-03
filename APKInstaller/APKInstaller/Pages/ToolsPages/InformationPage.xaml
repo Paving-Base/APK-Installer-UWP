@@ -51,7 +51,10 @@
                         AutomationProperties.AccessibilityView="Raw"
                         Source="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}" />
                     <StackPanel Grid.Column="1">
-                        <RichTextBlock IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords">
+                        <RichTextBlock
+                            HorizontalAlignment="Left"
+                            IsTextSelectionEnabled="True"
+                            TextWrapping="WrapWholeWords">
                             <Paragraph>
                                 <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{x:Bind Provider.AppLocaleName, Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="-" />
@@ -96,7 +99,11 @@
                         x:Uid="/InfosPage/BasicInfoSettings"
                         Icon="&#xE783;"
                         IsExpanded="True">
-                        <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
+                        <Grid
+                            Margin="0,0,0,8"
+                            ColumnSpacing="32"
+                            RowSpacing="8"
+                            Style="{StaticResource SettingExpanderContentGridStyle}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -113,165 +120,155 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-
                             <TextBlock
                                 x:Uid="/InfosPage/AppName"
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Uid="/InfosPage/PackageName"
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Uid="/InfosPage/Version"
                                 Grid.Row="2"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 TextWrapping="WrapWholeWords">
                                 <Run Text="{x:Bind Provider.ApkInfo.VersionName, Mode=OneWay}" />
                                 <Run Text="{x:Bind x:String.Format('({0})', Provider.ApkInfo.VersionCode), Mode=OneWay}" />
                             </TextBlock>
-
                             <TextBlock
                                 x:Uid="/InfosPage/MinSDK"
                                 Grid.Row="3"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.MinSDK, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Uid="/InfosPage/TargetSDK"
                                 Grid.Row="4"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="4"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.TargetSDK, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Name="SupportedArchitectures"
                                 x:Uid="/InfosPage/SupportedArchitectures"
                                 Grid.Row="5"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportedABIs.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 x:Name="SupportedABIs"
                                 Grid.Row="5"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportedABIs.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.SupportedABIs, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Uid="/InfosPage/SupportScreenSizes"
                                 Grid.Row="6"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.SupportScreens, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Name="SupportResolutions"
                                 x:Uid="/InfosPage/SupportResolutions"
                                 Grid.Row="7"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportDensities.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 x:Name="SupportDensities"
                                 Grid.Row="7"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportDensities.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.SupportDensities, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Uid="/InfosPage/PackageSize"
                                 Grid.Row="8"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 Grid.Row="8"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
-
                             <TextBlock
                                 x:Name="Languages"
                                 x:Uid="/InfosPage/Languages"
                                 Grid.Row="9"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportLocales.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
                                 x:Name="SupportLocales"
                                 Grid.Row="9"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportLocales.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
@@ -290,6 +287,7 @@
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Disabled">
                                 <TextBlock
+                                    HorizontalAlignment="Left"
                                     Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Provider.Permissions, Mode=OneWay}" />
@@ -307,6 +305,7 @@
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Disabled">
                                 <TextBlock
+                                    HorizontalAlignment="Left"
                                     Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Provider.Features, Mode=OneWay}" />

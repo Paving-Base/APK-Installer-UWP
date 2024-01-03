@@ -13,6 +13,7 @@ using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
 using Downloader;
 using Microsoft.Toolkit.Uwp.Connectivity;
+using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -529,9 +530,11 @@ namespace APKInstaller.ViewModels
                 {
                     await Dispatcher.ResumeForegroundAsync();
 
-                    FileOpenPicker fileOpen = new();
-                    fileOpen.FileTypeFilter.Add(".exe");
-                    fileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+                    FileOpenPicker fileOpen = new()
+                    {
+                        SuggestedStartLocation = PickerLocationId.ComputerFolder
+                    };
+                    fileOpen.FileTypeFilter.Add("adb.exe");
 
                     StorageFile file = await fileOpen.PickSingleFileAsync();
                     await ThreadSwitcher.ResumeBackgroundAsync();
@@ -552,6 +555,14 @@ namespace APKInstaller.ViewModels
 
         private async Task DownloadADBAsync()
         {
+            await Dispatcher.ResumeForegroundAsync();
+            FolderPicker folderPicker = new()
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads
+            };
+            folderPicker.FileTypeFilter.Add("*");
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (!Directory.Exists(CachesHelper.TempPath))
             {
@@ -639,22 +650,37 @@ namespace APKInstaller.ViewModels
                 WaitProgressIndeterminate = false;
                 ReadOnlyCollection<ZipArchiveEntry> entries = archive.Entries;
                 int totalCount = entries.Count;
-
                 int progressed = 0;
-                string path = ApplicationData.Current.LocalFolder.Path;
 
                 foreach (ZipArchiveEntry entry in entries)
                 {
                     WaitProgressValue = archive.Entries.GetProgressValue(entry);
                     WaitProgressText = string.Format(_loader.GetString("UnzippingFormat"), ++progressed, totalCount);
-                    entry.ExtractToFile(Path.Combine(path, entry.FullName), true);
+                    if (string.IsNullOrWhiteSpace(entry.Name)) { continue; }
+                    StorageFolder tempFolder = folder;
+                    string[] parts = entry.FullName.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < parts.Length; )
+                    {
+                        string part = parts[i];
+                        if (++i == parts.Length)
+                        {
+                            StorageFile file = await tempFolder.CreateFileAsync(part, CreationCollisionOption.ReplaceExisting);
+                            using Stream stream = await file.OpenStreamForWriteAsync().ConfigureAwait(false);
+                            using Stream entryStream = entry.Open();
+                            await entryStream.CopyToAsync(stream).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            tempFolder = await tempFolder.CreateFolderAsync(part, CreationCollisionOption.OpenIfExists);
+                        }
+                    }
                 }
 
                 WaitProgressValue = 0;
                 WaitProgressIndeterminate = true;
                 WaitProgressText = _loader.GetString("UnzipComplete");
             }
-            ADBPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, @"platform-tools\adb.exe");
+            ADBPath = Path.Combine(folder.Path, @"platform-tools\adb.exe");
         }
 
         private async Task InitializeADBAsync()
@@ -1034,12 +1060,11 @@ namespace APKInstaller.ViewModels
 
         private void CheckOnlinePackage()
         {
-            Regex[] UriRegex = [new(@":\?source=(.*)"), new(@"://(.*)")];
-            string Uri = UriRegex[0].IsMatch(_url.ToString()) ? UriRegex[0].Match(_url.ToString()).Groups[1].Value : UriRegex[1].Match(_url.ToString()).Groups[1].Value;
-            Uri Url = Uri.TryGetUri();
-            if (Url != null)
+            Regex[] uriRegex = [new(@":\?source=(.*)"), new(@"://(.*)")];
+            string uri = uriRegex[0].IsMatch(_url.ToString()) ? uriRegex[0].Match(_url.ToString()).Groups[1].Value : uriRegex[1].Match(_url.ToString()).Groups[1].Value;
+            if (uri.TryGetUri(out Uri url))
             {
-                _url = Url;
+                _url = url;
                 AppName = _loader.GetString("OnlinePackage");
                 DownloadButtonText = _loader.GetString("Download");
                 CancelOperationButtonText = _loader.GetString("Close");
@@ -1353,7 +1378,7 @@ namespace APKInstaller.ViewModels
                         }
                         break;
                     case not null when IsUploadAPK:
-                            await client.InstallPackageAsync(_device, ApkInfo.FullPath, OnInstallProgressChanged).ConfigureAwait(false);
+                        await client.InstallPackageAsync(_device, ApkInfo.FullPath, OnInstallProgressChanged).ConfigureAwait(false);
                         break;
                     case not null:
                         using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
@@ -1451,12 +1476,14 @@ namespace APKInstaller.ViewModels
         {
             await Dispatcher.ResumeForegroundAsync();
 
-            FileOpenPicker FileOpen = new();
+            FileOpenPicker FileOpen = new()
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder
+            };
             FileOpen.FileTypeFilter.Add(".apk");
             FileOpen.FileTypeFilter.Add(".apks");
             FileOpen.FileTypeFilter.Add(".apkm");
             FileOpen.FileTypeFilter.Add(".xapk");
-            FileOpen.SuggestedStartLocation = PickerLocationId.ComputerFolder;
 
             StorageFile file = await FileOpen.PickSingleFileAsync();
             if (file != null)

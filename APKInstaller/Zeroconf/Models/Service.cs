@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Zeroconf.Interfaces;
 
@@ -8,7 +7,7 @@ namespace Zeroconf.Models
 {
     internal class Service : IService
     {
-        private readonly List<IReadOnlyDictionary<string, string>> properties = new();
+        private readonly List<IReadOnlyDictionary<string, string>> properties = [];
 
         public string Name { get; set; }
         public string ServiceName { get; set; }

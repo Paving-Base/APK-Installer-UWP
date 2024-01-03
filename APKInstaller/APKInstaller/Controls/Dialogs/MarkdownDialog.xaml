@@ -18,7 +18,7 @@
         <ScrollViewer x:Name="MarkdownScrollViewer" Visibility="{x:Bind IsInitialized, Mode=OneWay}">
             <controls:MarkdownTextBlock
                 x:Name="MarkdownText"
-                Background="Transparent"
+                Background="{ThemeResource SystemControlTransparentBrush}"
                 LinkClicked="MarkdownText_LinkClicked"
                 Text="# Helper" />
         </ScrollViewer>

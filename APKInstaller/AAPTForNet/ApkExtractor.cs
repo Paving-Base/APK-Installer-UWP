@@ -282,7 +282,7 @@ namespace AAPTForNet
         /// <param name="desFile"></param>
         private static async Task ExtractIconImageAsync(string path, string iconName, string desFile)
         {
-            if (iconName.EndsWith(".xml") || !File.Exists(path))
+            if (iconName.EndsWith(".xml"))
             {
                 throw new ArgumentException("Invalid params");
             }

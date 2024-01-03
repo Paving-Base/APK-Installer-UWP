@@ -45,7 +45,7 @@
                                 <controls:Setting
                                     Padding="{StaticResource SettingExpanderHeaderPadding}"
                                     VerticalAlignment="Center"
-                                    Background="Transparent"
+                                    Background="{ThemeResource SystemControlTransparentBrush}"
                                     BorderThickness="0"
                                     Content="{TemplateBinding ActionContent}"
                                     Description="{TemplateBinding Description}"

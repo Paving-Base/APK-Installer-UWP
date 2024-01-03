@@ -28,7 +28,7 @@ namespace AAPTForNet
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}", "AppPackages");
         private static readonly string LocalPath = ApplicationData.Current.LocalFolder.Path is string path ? path.Substring(0, path.LastIndexOf('\\')) : string.Empty;
 
-        public static Func<string, string, Func<string, int, bool>, IList<string>, Task> DumpOverrideAsync;
+        public static Func<string, string, Func<string, int, bool>, IList<string>, int, Task> DumpOverrideAsync;
 
         private static Task<DumpModel> DumpAsync(
             string path,
@@ -80,7 +80,7 @@ namespace AAPTForNet
             while (!aapt.StandardOutput.EndOfStream && !terminated)
             {
                 string msg = await aapt.StandardOutput.ReadLineAsync().ConfigureAwait(false);
-
+                output.Add(msg);
                 if (terminated = callback(msg, index))
                 {
                     try
@@ -93,8 +93,6 @@ namespace AAPTForNet
                 {
                     index++;
                 }
-
-                output.Add(msg);
             }
 
             while (!aapt.StandardError.EndOfStream)
@@ -144,7 +142,7 @@ namespace AAPTForNet
                     return new DumpModel(path, false, output);
             }
 
-            await DumpOverrideAsync(fileName, arguments, callback, output).ConfigureAwait(false);
+            await DumpOverrideAsync(fileName, arguments, callback, output, Encoding.UTF8.CodePage).ConfigureAwait(false);
 
             // Dump xml tree get only 1 message when failed, the others are 2.
             bool isSuccess =
@@ -194,7 +192,9 @@ namespace AAPTForNet
 
             if (file.FileType.Equals(".apk", StringComparison.OrdinalIgnoreCase))
             {
-                if (DumpOverrideAsync != null && !file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase))
+                if (DumpOverrideAsync == null ? !file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
+                    : !(file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
+                    || await file.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024))
                 {
                     file = await CreateTempApk(file).ConfigureAwait(false);
                 }

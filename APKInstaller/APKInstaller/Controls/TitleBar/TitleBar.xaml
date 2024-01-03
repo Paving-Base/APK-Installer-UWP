@@ -84,7 +84,7 @@
                                     x:Name="DragRegion"
                                     Grid.Column="1"
                                     Grid.ColumnSpan="3"
-                                    Background="Transparent" />
+                                    Background="{ThemeResource SystemControlTransparentBrush}" />
 
                                 <Grid
                                     x:Name="ContentGrid"

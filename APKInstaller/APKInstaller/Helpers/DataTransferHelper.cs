@@ -23,7 +23,9 @@ namespace APKInstaller.Helpers
 
         private static async Task<DataPackage> GetFileDataPackage(string filePath, string fileName, string description)
         {
-            StorageFile file = await StorageFile.GetFileFromPathAsync(filePath);
+            StorageFile file = await (filePath.StartsWith("ms-", StringComparison.OrdinalIgnoreCase) && filePath.TryGetUri(out Uri uri)
+                ? StorageFile.GetFileFromApplicationUriAsync(uri)
+                : StorageFile.GetFileFromPathAsync(filePath));
             IEnumerable<IStorageFile> files = [file];
 
             DataPackage dataPackage = new();

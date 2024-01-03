@@ -43,14 +43,14 @@
                         <MenuFlyoutSubItem
                             x:Name="InfosFlyoutItem"
                             x:Uid="/InstallPage/InfosFlyoutItem"
-                            x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
-                            IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                            x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                             </MenuFlyoutSubItem.Icon>
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/AppNameFlyoutItem"
                                 Click="CopyStringItem_Click"
+                                IsEnabled="{x:Bind Provider.ApkInfo.AppName, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
                                 Tag="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
@@ -60,6 +60,7 @@
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/VersionCodeFlyoutItem"
                                 Click="CopyStringItem_Click"
+                                IsEnabled="{x:Bind Provider.ApkInfo.VersionCode, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
                                 Tag="{x:Bind Provider.ApkInfo.VersionCode, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
@@ -69,6 +70,7 @@
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/PackageNameFlyoutItem"
                                 Click="CopyStringItem_Click"
+                                IsEnabled="{x:Bind Provider.ApkInfo.PackageName, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
                                 Tag="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
@@ -81,8 +83,8 @@
                             x:Uid="/InstallPage/APKFileFlyoutItem"
                             x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                             Click="CopyFileItem_Click"
-                            IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
-                            Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
+                            IsEnabled="{x:Bind Provider.ApkInfo.PackagePath, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
+                            Tag="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}"
                             ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
@@ -92,21 +94,24 @@
                     <MenuFlyoutSubItem
                         x:Name="ShareFlyoutItem"
                         x:Uid="/InstallPage/ShareFlyoutItem"
-                        x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
-                        IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                        x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
                         <MenuFlyoutSubItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72D;" />
                         </MenuFlyoutSubItem.Icon>
                         <MenuFlyoutItem
                             x:Uid="/InstallPage/APKFileFlyoutItem"
                             Click="ShareFileItem_Click"
-                            Tag="{x:Bind Provider.ApkInfo.FullPath, Mode=OneWay}"
+                            IsEnabled="{x:Bind Provider.ApkInfo.PackagePath, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
+                            Tag="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}"
                             ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutSubItem x:Uid="/InstallPage/StoreLinkFlyoutItem">
+                        <MenuFlyoutSubItem
+                            x:Name="StoreLinkFlyoutItem"
+                            x:Uid="/InstallPage/StoreLinkFlyoutItem"
+                            IsEnabled="{x:Bind Provider.ApkInfo.PackageName, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}">
                             <MenuFlyoutSubItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71B;" />
                             </MenuFlyoutSubItem.Icon>
@@ -136,8 +141,7 @@
                         x:Name="MoreInfoFlyoutItem"
                         x:Uid="/InstallPage/MoreInfoFlyoutItem"
                         x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
-                        Click="Button_Click"
-                        IsEnabled="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                        Click="Button_Click">
                         <MenuFlyoutItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                         </MenuFlyoutItem.Icon>

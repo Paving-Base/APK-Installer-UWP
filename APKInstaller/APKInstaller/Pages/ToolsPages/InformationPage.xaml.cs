@@ -1,8 +1,6 @@
 ﻿using AAPTForNet.Models;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
-using APKInstaller.Pages.SettingsPages;
-using APKInstaller.ViewModels.SettingsPages;
 using APKInstaller.ViewModels.ToolsPages;
 using System;
 using Windows.Storage;

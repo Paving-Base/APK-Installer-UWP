@@ -2,6 +2,7 @@
     x:Class="APKInstaller.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="using:APKInstaller.Helpers.Converter"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +12,7 @@
                 <ResourceDictionary Source="ms-appx:///Themes/CustomStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--  Other app resources here  -->
+            <converter:StringToBoolConverter x:Key="StringToBoolConverter" />
             <converters:BoolNegationConverter x:Name="BoolNegationConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:StringVisibilityConverter x:Key="StringVisibilityConverter" />

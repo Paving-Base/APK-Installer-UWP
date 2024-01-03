@@ -54,7 +54,7 @@
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
           <uap:Rotation Preference="portraitFlipped"/>
-		</uap:InitialRotationPreference>
+        </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.protocol">
@@ -148,8 +148,8 @@
     <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
     <rescap:Capability Name="broadFileSystemAccess" />
-	<rescap:Capability Name="confirmAppClose" />
-	<rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="confirmAppClose" />
+    <rescap:Capability Name="packageQuery" />
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>

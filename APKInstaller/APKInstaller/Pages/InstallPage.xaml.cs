@@ -3,7 +3,6 @@ using APKInstaller.Pages.SettingsPages;
 using APKInstaller.Pages.ToolsPages;
 using APKInstaller.ViewModels;
 using System;
-using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
@@ -165,7 +164,7 @@ namespace APKInstaller.Pages
         private void ShareUrlItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not MenuFlyoutItem element) { return; }
-            DataTransferHelper.ShareURL(new Uri(element.Tag?.ToString()), element.Text, element.Tag?.ToString());
+            DataTransferHelper.ShareURL(element.Tag?.ToString().TryGetUri(), element.Text, element.Tag?.ToString());
         }
 
         private void Page_DragOver(object sender, DragEventArgs e)

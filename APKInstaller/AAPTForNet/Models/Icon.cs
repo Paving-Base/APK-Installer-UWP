@@ -41,7 +41,7 @@ namespace AAPTForNet.Models
         internal Icon(string iconName)
         {
             IconName = iconName ?? string.Empty;
-            RealPath = "/Assets/256x256.png";
+            RealPath = "ms-appx:///Assets/256x256.png";
         }
 
         internal async Task<bool> IsHighDensityAsync()

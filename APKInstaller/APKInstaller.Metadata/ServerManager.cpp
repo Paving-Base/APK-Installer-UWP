@@ -84,15 +84,8 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         const UINT encode = GetConsoleOutputCP();
 
-        if (standardOutput)
-        {
-            ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
-        }
-
-        if (errorOutput)
-        {
-            ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
-        }
+        ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
+        ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
 
         if (WaitForSingleObject(processInfo.hProcess, 5000) == WAIT_TIMEOUT)
         {
@@ -175,33 +168,22 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         const UINT encode = GetConsoleOutputCP();
 
-        if (standardOutput)
-        {
-            ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
-        }
+        ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
+        ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
 
-        if (errorOutput)
-        {
-            ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
-        }
-
-        if (WaitForSingleObject(processInfo.hProcess, 5000) == WAIT_TIMEOUT)
-        {
-            TerminateProcess(processInfo.hProcess, (UINT)-1);
-        }
+        co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5));
 
         DWORD _exitCode = 0;
+        WaitForProcessExitAsync(processInfo);
         GetExitCodeProcess(processInfo.hProcess, &_exitCode);
 
         CloseHandle(parentOutputPipeHandle);
         CloseHandle(parentErrorPipeHandle);
-        CloseHandle(processInfo.hProcess);
-        CloseHandle(processInfo.hThread);
 
         co_return _exitCode;
     }
 
-    IAsyncOperation<unsigned int> Metadata::implementation::ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output)
+    IAsyncOperation<unsigned int> Metadata::implementation::ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode)
     {
         const hstring commandLine = BuildCommandLine(filename, command);
 
@@ -264,124 +246,20 @@ namespace winrt::APKInstaller::Metadata::implementation
         CloseHandle(childOutputPipeHandle);
         CloseHandle(childErrorPipeHandle);
 
-        const UINT encode = GetConsoleOutputCP();
-
-        const size_t bufferLen = defaultBufferSize;
-        char* buffer = new char[bufferLen];
-        memset(buffer, '\0', bufferLen);
-        DWORD recLen = 0;
-        int index = 0;
-        bool terminated = false;
-        std::wstringstream line = {};
-        do
+        if (ReadFromPipe(parentOutputPipeHandle, callback, output, encode))
         {
-            if (!ReadFile(parentOutputPipeHandle, buffer, bufferLen, &recLen, NULL))
-            {
-                break;
-            }
-            if (recLen <= 0) { break; }
-
-            const int dBufSize = MultiByteToWideChar(encode, 0, buffer, recLen, NULL, 0);
-            wchar_t* dBuf = new wchar_t[dBufSize];
-            wmemset(dBuf, '\0', dBufSize);
-            const int nRet = MultiByteToWideChar(encode, 0, buffer, recLen, dBuf, dBufSize);
-
-            if (nRet > 0)
-            {
-                for (int i = 0; i < nRet; i++)
-                {
-                    if (dBuf[i] == L'\r')
-                    {
-                        continue;
-                    }
-                    else if (dBuf[i] == L'\n')
-                    {
-                        if (line.rdbuf()->in_avail())
-                        {
-                            hstring msg = (hstring)line.str();
-
-                            if ((terminated = callback(msg, index)) == true)
-                            {
-                                try
-                                {
-                                    TerminateProcess(processInfo.hProcess, S_OK);
-                                }
-                                catch (...) {}
-                            }
-                            else
-                            {
-                                index++;
-                            }
-
-                            output.Append(msg);
-                            line.str(L"");
-                        }
-                    }
-                    else
-                    {
-                        line << dBuf[i];
-                    }
-                }
-            }
-            else
-            {
-                for (DWORD i = 0; i < recLen; i++)
-                {
-                    if (buffer[i] == '\r')
-                    {
-                        continue;
-                    }
-                    else if (buffer[i] == '\n')
-                    {
-                        if (line.rdbuf()->in_avail())
-                        {
-                            std::wstring msg = line.str();
-
-                            if ((terminated = callback(msg, index)) == true)
-                            {
-                                try
-                                {
-                                    TerminateProcess(processInfo.hProcess, S_OK);
-                                }
-                                catch (...) {}
-                            }
-                            else
-                            {
-                                index++;
-                            }
-
-                            output.Append(msg);
-                            line.str(L"");
-                        }
-                    }
-                    else
-                    {
-                        line << buffer[i];
-                    }
-                }
-            }
-
-            delete dBuf;
-            if (recLen < bufferLen) { break; }
-        } while (recLen > 0 && !terminated);
-        if (line.rdbuf()->in_avail())
-        {
-            std::wstring msg = line.str();
-            if ((terminated = callback(msg, index)) == false) { index++; }
-            output.Append(msg);
+            goto end;
         }
-        delete buffer;
 
         ReadFromPipe(parentErrorPipeHandle, output, encode);
-        TerminateProcess(processInfo.hProcess, S_OK);
 
+        end:
         DWORD _exitCode = 0;
+        WaitForProcessExitAsync(processInfo);
         GetExitCodeProcess(processInfo.hProcess, &_exitCode);
 
         CloseHandle(parentOutputPipeHandle);
         CloseHandle(parentErrorPipeHandle);
-        CloseHandle(processInfo.hProcess);
-        CloseHandle(processInfo.hThread);
 
         co_return _exitCode;
     }

@@ -25,8 +25,8 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static Task DumpAsync(string filename, string command, Func<string, int, bool> callback, IList<string> output) =>
-            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, new DumpDelegate(callback), output).AsTask();
+        public static Task DumpAsync(string filename, string command, Func<string, int, bool> callback, IList<string> output, int encode) =>
+            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, new DumpDelegate(callback), output, encode).AsTask();
 
         public static async Task<bool> CheckFileExistsAsync(string path)
         {

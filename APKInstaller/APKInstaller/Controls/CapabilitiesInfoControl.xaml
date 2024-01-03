@@ -3,23 +3,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:APKInstaller.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid
         x:Name="Root"
         Margin="-10"
         Padding="10"
-        BorderBrush="{ThemeResource SystemAccentColor}">
+        BorderBrush="{ThemeResource AccentFillColorDefaultBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition x:Name="CapabilitiesHeight" Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition x:Name="CapabilitiesHeight" Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock
             x:Name="HeaderTextBlock"
@@ -55,9 +54,9 @@
             Grid.Row="2"
             Padding="0"
             AutomationProperties.Name="Show more capabilitiesMore"
-            Background="Transparent"
-            BorderThickness="0"
             Click="MoreButton_Click"
+            FontWeight="Normal"
+            Style="{StaticResource TextButtonStyle}"
             TabIndex="4"
             UseSystemFocusVisuals="True" />
     </Grid>

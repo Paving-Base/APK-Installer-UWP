@@ -92,7 +92,7 @@ namespace APKInstaller.Helpers
 
         public static ImmutableArray<CultureInfo> SupportCultures { get; } = SupportLanguages.Select(x => new CultureInfo(x)).ToImmutableArray();
 
-        public static int FindIndexFromSupportLanguageCodes(string language) => Array.FindIndex(SupportLanguageCodes, code => code.Split(',', ' ').Any(x => x.Equals(language, StringComparison.OrdinalIgnoreCase)));
+        public static int FindIndexFromSupportLanguageCodes(string language) => Array.FindIndex(SupportLanguageCodes, code => code.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Any(x => x.Equals(language, StringComparison.OrdinalIgnoreCase)));
 
         public static string GetCurrentLanguage()
         {
@@ -137,13 +137,11 @@ namespace APKInstaller.Helpers
                 }
                 if (index != -1)
                 {
-                    string code = SupportLanguageCodes[index].ToLowerInvariant();
-                    foreach (KeyValuePair<string, string> label in info.LocaleLabels)
+                    string code = SupportLanguageCodes[index];
+                    KeyValuePair<string, string> label = info.LocaleLabels.FirstOrDefault(x => code.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).Any(code => code.Equals(x.Key, StringComparison.OrdinalIgnoreCase)));
+                    if (!string.IsNullOrWhiteSpace(label.Value))
                     {
-                        if (code.ToLowerInvariant().Contains(label.Key.ToLowerInvariant()))
-                        {
-                            return label.Value;
-                        }
+                        return label.Value;
                     }
                 }
             }
