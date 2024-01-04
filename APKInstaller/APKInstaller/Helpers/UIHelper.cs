@@ -125,7 +125,7 @@ namespace APKInstaller.Helpers
                 try
                 {
                     TResult result = await function.ConfigureAwait(false);
-                    taskCompletionSource.SetResult(result);
+                    _ = taskCompletionSource.TrySetResult(result);
                 }
                 catch (Exception e)
                 {
@@ -145,7 +145,7 @@ namespace APKInstaller.Helpers
                 try
                 {
                     TResult result = await function.AsTask(cancellationToken);
-                    taskCompletionSource.SetResult(result);
+                    _ = taskCompletionSource.TrySetResult(result);
                 }
                 catch (Exception e)
                 {

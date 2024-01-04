@@ -824,7 +824,7 @@ namespace APKInstaller.ViewModels
             if (IsOnlyWSA)
             {
                 WaitProgressText = _loader.GetString("FindingWSA");
-                if (await PackageHelper.FindPackagesByName("MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe").ContinueWith(x => x.Result.isfound).ConfigureAwait(false))
+                if (await Launcher.FindUriSchemeHandlersAsync("wsa").AsTask().ContinueWith(x => x.Result?.Count is > 0).ConfigureAwait(false))
                 {
                     await Dispatcher.ResumeForegroundAsync();
                     WaitProgressText = _loader.GetString("FoundWSA");
@@ -1357,33 +1357,33 @@ namespace APKInstaller.ViewModels
                 switch (ApkInfo)
                 {
                     case { IsSplit: true } when IsUploadAPK:
-                        await client.InstallMultiplePackageAsync(_device, [ApkInfo.FullPath], ApkInfo.PackageName, OnInstallProgressChanged).ConfigureAwait(false);
+                        await client.InstallMultiplePackageAsync(_device, [ApkInfo.FullPath], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                         break;
                     case { IsSplit: true }:
                         using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                         {
-                            await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName, OnInstallProgressChanged).ConfigureAwait(false);
+                            await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                         }
                         break;
                     case { IsBundle: true } when IsUploadAPK:
                         IEnumerable<string> strings = ApkInfo.SplitApks?.Select(x => x.FullPath);
-                        await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged).ConfigureAwait(false);
+                        await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                         break;
                     case { IsBundle: true }:
                         using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                         {
                             IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(ApkInfo.SplitApks.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
-                            await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged).ConfigureAwait(false);
+                            await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             Array.ForEach(splits, x => x.Dispose());
                         }
                         break;
                     case not null when IsUploadAPK:
-                        await client.InstallPackageAsync(_device, ApkInfo.FullPath, OnInstallProgressChanged).ConfigureAwait(false);
+                        await client.InstallPackageAsync(_device, ApkInfo.FullPath, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                         break;
                     case not null:
                         using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                         {
-                            await client.InstallAsync(_device, apk, OnInstallProgressChanged).ConfigureAwait(false);
+                            await client.InstallAsync(_device, apk, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                         }
                         break;
                 }

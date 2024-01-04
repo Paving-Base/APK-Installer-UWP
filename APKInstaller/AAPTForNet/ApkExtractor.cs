@@ -104,7 +104,7 @@ namespace AAPTForNet
         /// <returns>icon id</returns>
         private async Task<string> ExtractIconIDAsync(string path)
         {
-            int iconIndex = 0;
+            int iconIndex = -1;
             TaskCompletionSource<string> source = new();
 
             _ = AAPTool.DumpManifestTreeAsync(
@@ -114,15 +114,21 @@ namespace AAPTForNet
                     if (m.Contains("android:icon"))
                     {
                         iconIndex = i;
-                        source.SetResult(m);
+                        _ = source.TrySetResult(m);
                         return true;
                     }
                     return false;
-                }).ContinueWith(x => source.SetResult(null));
+                }).ContinueWith(x =>
+                {
+                    if (iconIndex == -1)
+                    {
+                        _ = source.TrySetResult(null);
+                    }
+                });
 
             string msg = await source.Task.ConfigureAwait(false);
 
-            return iconIndex == 0 ? string.Empty : msg.Split('@')[1];
+            return iconIndex == -1 ? string.Empty : msg.Split('@')[1];
         }
 
         private async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path, string iconID)
