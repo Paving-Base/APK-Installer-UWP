@@ -100,11 +100,11 @@ namespace winrt::APKInstaller::Metadata::implementation
         }
 
         static IAsyncAction WaitForProcessExitAsync(const PROCESS_INFORMATION processInfo)
-		{
+        {
             co_await resume_on_signal(processInfo.hProcess);
             CloseHandle(processInfo.hProcess);
             CloseHandle(processInfo.hThread);
-		}
+        }
 
         inline void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode) const
         {
@@ -194,6 +194,15 @@ namespace winrt::APKInstaller::Metadata::implementation
             delete [] buffer;
         }
 
+        inline IAsyncAction ProcessCallback(DumpDelegate callback, hstring line, int index, bool &terminated) const
+        {
+            co_await resume_background();
+            if (!terminated && callback(line, index))
+            {
+                terminated = true;
+            }
+        }
+
         inline bool ReadFromPipe(const HANDLE hPipeRead, DumpDelegate callback, const IVector<hstring> output, const UINT encode) const
         {
             const size_t bufferLen = defaultBufferSize;
@@ -202,93 +211,86 @@ namespace winrt::APKInstaller::Metadata::implementation
             bool terminated = false;
             DWORD recLen = 0;
             int index = 0;
-            if (output)
+            std::wstringstream line = {};
+            do
             {
-                std::wstringstream line = {};
-                do
+                if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))
                 {
-                    if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))
-                    {
-                        break;
-                    }
-                    if (recLen <= 0) { break; }
+                    break;
+                }
+                if (recLen <= 0) { break; }
 
-                    const int dBufSize = MultiByteToWideChar(encode, 0, buffer, recLen, NULL, 0);
-                    wchar_t* dBuf = new wchar_t[dBufSize];
-                    wmemset(dBuf, '\0', dBufSize);
-                    const int nRet = MultiByteToWideChar(encode, 0, buffer, recLen, dBuf, dBufSize);
+                const int dBufSize = MultiByteToWideChar(encode, 0, buffer, recLen, NULL, 0);
+                wchar_t* dBuf = new wchar_t[dBufSize];
+                wmemset(dBuf, '\0', dBufSize);
+                const int nRet = MultiByteToWideChar(encode, 0, buffer, recLen, dBuf, dBufSize);
 
-                    if (nRet > 0)
+                if (nRet > 0)
+                {
+                    for (int i = 0; i < nRet; i++)
                     {
-                        for (int i = 0; i < nRet; i++)
+                        if (dBuf[i] == L'\r')
                         {
-                            if (dBuf[i] == L'\r')
-                            {
-                                continue;
-                            }
-                            else if (dBuf[i] == L'\n')
+                            continue;
+                        }
+                        else if (dBuf[i] == L'\n')
+                        {
+                            if (line.rdbuf()->in_avail())
                             {
                                 hstring msg = (hstring)line.str();
                                 line.str(L"");
                                 output.Append(msg);
-                                if ((terminated = callback(msg, index)) == true)
-                                {
-                                    delete[] dBuf;
-                                    goto end;
-                                }
-                                else
-                                {
-                                    index++;
-                                }
-                            }
-                            else
-                            {
-                                line << dBuf[i];
+                                ProcessCallback(callback, msg, index, terminated);
+                                if (terminated) { goto end; }
+                                index++;
                             }
                         }
-                    }
-                    else
-                    {
-                        for (DWORD i = 0; i < recLen; i++)
+                        else
                         {
-                            if (buffer[i] == '\r')
+                            line << dBuf[i];
+                        }
+                        if (terminated) { break; }
+                    }
+                }
+                else
+                {
+                    for (DWORD i = 0; i < recLen; i++)
+                    {
+                        if (buffer[i] == '\r')
+                        {
+                            continue;
+                        }
+                        else if (buffer[i] == '\n')
+                        {
+                            if (line.rdbuf()->in_avail())
                             {
-                                continue;
-                            }
-                            else if (buffer[i] == '\n')
-                            {
-                                if (line.rdbuf()->in_avail())
-                                {
-                                    output.Append(line.str());
-                                    line.str(L"");
-                                }
-                            }
-                            else
-                            {
-                                line << buffer[i];
+                                hstring msg = (hstring)line.str();
+                                line.str(L"");
+                                output.Append(msg);
+                                ProcessCallback(callback, msg, index, terminated);
+                                if (terminated) { goto end; }
+                                index++;
                             }
                         }
+                        else
+                        {
+                            line << buffer[i];
+                        }
                     }
-
-                    delete[] dBuf;
-                    if (recLen < bufferLen) { break; }
-                } while (recLen > 0);
-                if (line.rdbuf()->in_avail())
-                {
-                    output.Append(line.str());
                 }
-            }
-            else
+
+                delete[] dBuf;
+                if (recLen < bufferLen) { break; }
+            } while (recLen > 0 && !terminated);
+            if (line.rdbuf()->in_avail())
             {
-                do
-                {
-                    if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))
-                    {
-                        break;
-                    }
-                } while (recLen > 0);
+                hstring msg = (hstring)line.str();
+                line.str(L"");
+                output.Append(msg);
+                ProcessCallback(callback, msg, index, terminated);
+                index++;
             }
-            end:
+        end:
             delete[] buffer;
             return terminated;
         }

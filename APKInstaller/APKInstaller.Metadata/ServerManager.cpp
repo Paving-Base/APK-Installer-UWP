@@ -171,19 +171,23 @@ namespace winrt::APKInstaller::Metadata::implementation
         ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
         ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
 
-        co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5));
+        if (co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5)))
+        {
+			TerminateProcess(processInfo.hProcess, (UINT)-1);
+		}
 
         DWORD _exitCode = 0;
-        WaitForProcessExitAsync(processInfo);
         GetExitCodeProcess(processInfo.hProcess, &_exitCode);
 
         CloseHandle(parentOutputPipeHandle);
         CloseHandle(parentErrorPipeHandle);
+        CloseHandle(processInfo.hProcess);
+        CloseHandle(processInfo.hThread);
 
         co_return _exitCode;
     }
 
-    IAsyncOperation<unsigned int> Metadata::implementation::ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode)
+    IAsyncOperation<unsigned int> ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode)
     {
         const hstring commandLine = BuildCommandLine(filename, command);
 

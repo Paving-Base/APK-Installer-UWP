@@ -16,10 +16,8 @@ namespace AAPTForNet
         private static int id = 0;
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}");
 
-        public static Task<DumpModel> ExtractManifestAsync(string path)
-        {
-            return AAPTool.DumpManifestAsync(path);
-        }
+        public static Task<DumpModel> ExtractManifestAsync(string path) =>
+            AAPTool.DumpManifestAsync(path);
 
         /// <summary>
         /// Find the icon with maximum config (largest), then extract to file
@@ -107,31 +105,24 @@ namespace AAPTForNet
         private static async Task<string> ExtractIconIDAsync(string path)
         {
             int iconIndex = 0;
-            DumpModel manifestTree = await AAPTool.DumpManifestTreeAsync(
+            TaskCompletionSource<string> source = new();
+
+            _ = AAPTool.DumpManifestTreeAsync(
                 path,
                 (m, i) =>
                 {
                     if (m.Contains("android:icon"))
                     {
                         iconIndex = i;
+                        source.SetResult(m);
                         return true;
                     }
                     return false;
-                }
-            ).ConfigureAwait(false);
+                }).ContinueWith(x => source.SetResult(null));
 
-            if (iconIndex == 0) // Package without launcher icon
-            {
-                return string.Empty;
-            }
+            string msg = await source.Task.ConfigureAwait(false);
 
-            if (manifestTree.IsSuccess)
-            {
-                string msg = manifestTree.Messages[iconIndex];
-                return msg.Split('@')[1];
-            }
-
-            return string.Empty;
+            return iconIndex == 0 ? string.Empty : msg.Split('@')[1];
         }
 
         private static async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path, string iconID)

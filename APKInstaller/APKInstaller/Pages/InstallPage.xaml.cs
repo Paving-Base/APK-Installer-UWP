@@ -52,6 +52,7 @@ namespace APKInstaller.Pages
             {
                 _ = Provider.Refresh(false);
                 _ = Provider.RegisterDeviceMonitor();
+                return;
             }
             else if (e.Parameter is IActivatedEventArgs args)
             {
@@ -60,12 +61,12 @@ namespace APKInstaller.Pages
                     case ActivationKind.File when args is IFileActivatedEventArgs fileActivatedEventArgs:
                         Provider = new InstallViewModel(file: null, this);
                         _ = Provider.OpenAPKAsync(fileActivatedEventArgs.Files);
-                        break;
+                        return;
                     case ActivationKind.ShareTarget when args is IShareTargetActivatedEventArgs shareTargetEventArgs:
                         shareTargetEventArgs.ShareOperation.DismissUI();
                         Provider = new InstallViewModel(file: null, this);
                         _ = Provider.OpenAPKAsync(shareTargetEventArgs.ShareOperation.Data);
-                        break;
+                        return;
                     case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
                         ValueSet protocolData = protocolArgs.Data;
                         Provider = protocolData?.Count is > 0

@@ -21,7 +21,7 @@ namespace AAPTForNet
         {
             Manifest = 0,
             Resources = 1,
-            XmlTree = 2,
+            XmlTree = 2
         }
 
         private static readonly string AppPath = Package.Current.InstalledLocation.Path;
@@ -77,21 +77,34 @@ namespace AAPTForNet
             }
 
             using Process aapt = Process.Start(startInfo);
-            while (!aapt.StandardOutput.EndOfStream && !terminated)
+            if (callback == null)
             {
-                string msg = await aapt.StandardOutput.ReadLineAsync().ConfigureAwait(false);
-                output.Add(msg);
-                if (terminated = callback(msg, index))
+                while (!aapt.StandardOutput.EndOfStream)
                 {
-                    try
-                    {
-                        aapt.Kill();
-                    }
-                    catch { }
+                    await aapt.StandardOutput.ReadLineAsync()
+                        .ContinueWith(x => output.Add(x.Result))
+                        .ConfigureAwait(false);
                 }
-                else
+            }
+            else
+            {
+                while (!aapt.StandardOutput.EndOfStream && !terminated)
                 {
-                    index++;
+                    string msg = await aapt.StandardOutput.ReadLineAsync().ConfigureAwait(false);
+                    output.Add(msg);
+                    if (terminated = callback?.Invoke(msg, index) == true)
+                    {
+                        try
+                        {
+                            aapt.Kill();
+                        }
+                        catch { }
+                        goto end;
+                    }
+                    else
+                    {
+                        index++;
+                    }
                 }
             }
 
@@ -102,12 +115,16 @@ namespace AAPTForNet
                     .ConfigureAwait(false);
             }
 
-            try
+            end:
+            _ = Task.Run(() =>
             {
-                aapt.WaitForExit();
-                aapt.Close();
-            }
-            catch { }
+                try
+                {
+                    aapt.WaitForExit(5000);
+                    aapt.Dispose();
+                }
+                catch { }
+            });
 
             // Dump xml tree get only 1 message when failed, the others are 2.
             bool isSuccess =
@@ -152,34 +169,17 @@ namespace AAPTForNet
             return new DumpModel(path, isSuccess, output);
         }
 
-        internal static Task<DumpModel> DumpManifestAsync(string path)
-        {
-            return DumpAsync(path, string.Empty, DumpTypes.Manifest, (msg, i) => false);
-        }
+        internal static Task<DumpModel> DumpManifestAsync(string path) =>
+            DumpAsync(path, string.Empty, DumpTypes.Manifest, null);
 
-        internal static Task<DumpModel> DumpResourcesAsync(string path, Func<string, int, bool> callback)
-        {
-            return DumpAsync(path, string.Empty, DumpTypes.Resources, callback);
-        }
+        internal static Task<DumpModel> DumpResourcesAsync(string path, Func<string, int, bool> callback = null) =>
+            DumpAsync(path, string.Empty, DumpTypes.Resources, callback);
 
-        internal static Task<DumpModel> DumpXmlTreeAsync(string path, string asset, Func<string, int, bool> callback = null)
-        {
-            callback ??= ((_, __) => false);
-            return DumpAsync(path, asset, DumpTypes.XmlTree, callback);
-        }
+        internal static Task<DumpModel> DumpXmlTreeAsync(string path, string asset, Func<string, int, bool> callback = null) =>
+            DumpAsync(path, asset, DumpTypes.XmlTree, callback);
 
-        internal static Task<DumpModel> DumpManifestTreeAsync(string path, Func<string, int, bool> callback = null)
-        {
-            return DumpXmlTreeAsync(path, "AndroidManifest.xml", callback);
-        }
-
-        /// <summary>
-        /// Start point. Begin decompile apk to extract resources
-        /// </summary>
-        /// <param name="path">Absolute path to .apk file</param>
-        /// <returns>Filled apk if dump process is not failed</returns>
-        public static Task<ApkInfo> DecompileAsync(string file) =>
-            StorageFile.GetFileFromPathAsync(file).AsTask().ContinueWith(x => DecompileAsync(x.Result)).Unwrap();
+        internal static Task<DumpModel> DumpManifestTreeAsync(string path, Func<string, int, bool> callback = null) =>
+            DumpXmlTreeAsync(path, "AndroidManifest.xml", callback);
 
         /// <summary>
         /// Start point. Begin decompile apk to extract resources
@@ -229,18 +229,18 @@ namespace AAPTForNet
                 }
             }
 
-            List<ApkInfo> apkInfo = [];
-            foreach (string apkPath in apkList)
+            ApkInfo[] apkInfo = await Task.WhenAll(apkList.Select(async apkPath =>
             {
                 DumpModel manifest = await ApkExtractor.ExtractManifestAsync(apkPath).ConfigureAwait(false);
                 if (!manifest.IsSuccess)
                 {
-                    continue;
+                    return null;
                 }
 
                 ApkInfo apk = ApkParser.Parse(manifest);
                 apk.FullPath = apkPath;
                 apk.PackagePath = file.Path;
+                apk.PackageSize = await StorageFile.GetFileFromPathAsync(apkPath).AsTask().ContinueWith(x => x.Result.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size)).Unwrap();
 
                 if (apk.Icon.IsImage)
                 {
@@ -248,20 +248,19 @@ namespace AAPTForNet
                     apk.Icon.RealPath = await ApkExtractor.ExtractIconImageAsync(apkPath, apk.Icon).ConfigureAwait(false);
                     if (await apk.Icon.IsHighDensityAsync().ConfigureAwait(false))
                     {
-                        apkInfo.Add(apk);
-                        continue;
+                        return apk;
                     }
                 }
 
                 apk.Icon = await ApkExtractor.ExtractLargestIconAsync(apkPath).ConfigureAwait(false);
-                apkInfo.Add(apk);
-            }
+                return apk;
+            })).ContinueWith(x => x.Result.OfType<ApkInfo>().ToArray()).ConfigureAwait(false);
 
-            if (apkInfo.Count <= 1) { return apkInfo.FirstOrDefault(); }
+            if (apkInfo.Length <= 1) { return apkInfo.FirstOrDefault(); }
 
-            ApkInfos package = apkInfo.GroupBy(x => x.PackageName).Select(x => new ApkInfos { PackageName = x.Key, Apks = [.. x] }).FirstOrDefault();
-            ApkInfo baseApk = package.Apks.Where(x => !x.IsSplit).FirstOrDefault();
-            baseApk.SplitApks = package.Apks.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
+            IGrouping<string, ApkInfo> package = apkInfo.GroupBy(x => x.PackageName).FirstOrDefault();
+            ApkInfo baseApk = package.Where(x => !x.IsSplit).FirstOrDefault();
+            baseApk.SplitApks = package.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
 
             return baseApk;
         }

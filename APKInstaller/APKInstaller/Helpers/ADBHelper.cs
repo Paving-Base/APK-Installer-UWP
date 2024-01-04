@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace APKInstaller.Helpers
@@ -26,7 +27,7 @@ namespace APKInstaller.Helpers
         }
 
         public static Task DumpAsync(string filename, string command, Func<string, int, bool> callback, IList<string> output, int encode) =>
-            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, new DumpDelegate(callback), output, encode).AsTask();
+            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, callback == null ? null : new DumpDelegate(callback), output, encode).AsTask();
 
         public static async Task<bool> CheckFileExistsAsync(string path)
         {

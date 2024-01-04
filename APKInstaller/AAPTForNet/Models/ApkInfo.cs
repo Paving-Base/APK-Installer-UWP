@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace AAPTForNet.Models
 {
@@ -38,20 +39,7 @@ namespace AAPTForNet.Models
         /// <summary>
         /// Size of package, in bytes
         /// </summary>
-        public long PackageSize
-        {
-            get
-            {
-                try
-                {
-                    return new FileInfo(FullPath).Length;
-                }
-                catch
-                {
-                    return 0;
-                }
-            }
-        }
+        public ulong PackageSize { get; set; } = 0;
 
         /// <summary>
         /// Determines whether this package is filled or not
@@ -166,12 +154,5 @@ namespace AAPTForNet.Models
 
             return init;
         }
-    }
-
-    internal class ApkInfos
-    {
-        public string PackageName { get; set; }
-        public string VersionCode { get; set; }
-        public List<ApkInfo> Apks { get; set; }
     }
 }
