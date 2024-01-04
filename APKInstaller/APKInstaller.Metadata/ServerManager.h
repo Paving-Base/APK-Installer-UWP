@@ -99,13 +99,6 @@ namespace winrt::APKInstaller::Metadata::implementation
             return fileNameIsQuoted ? fileName + ' ' + command : '"' + fileName + L"\" " + command;
         }
 
-        static IAsyncAction WaitForProcessExitAsync(const PROCESS_INFORMATION processInfo)
-        {
-            co_await resume_on_signal(processInfo.hProcess);
-            CloseHandle(processInfo.hProcess);
-            CloseHandle(processInfo.hThread);
-        }
-
         inline void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode) const
         {
             const size_t bufferLen = defaultBufferSize;
@@ -173,7 +166,7 @@ namespace winrt::APKInstaller::Metadata::implementation
                         }
                     }
 
-                    delete [] dBuf;
+                    delete[] dBuf;
                     if (recLen < bufferLen) { break; }
                 } while (recLen > 0);
                 if (line.rdbuf()->in_avail())
@@ -191,16 +184,20 @@ namespace winrt::APKInstaller::Metadata::implementation
                     }
                 } while (recLen > 0);
             }
-            delete [] buffer;
+            delete[] buffer;
         }
 
-        inline IAsyncAction ProcessCallback(DumpDelegate callback, hstring line, int index, bool &terminated) const
+        inline IAsyncAction ProcessCallback(DumpDelegate callback, hstring line, int index, bool& terminated) const
         {
             co_await resume_background();
-            if (!terminated && callback(line, index))
+            try
             {
-                terminated = true;
+                if (!terminated && callback(line, index))
+                {
+                    terminated = true;
+                }
             }
+            catch (...) {}
         }
 
         inline bool ReadFromPipe(const HANDLE hPipeRead, DumpDelegate callback, const IVector<hstring> output, const UINT encode) const

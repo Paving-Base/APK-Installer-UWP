@@ -125,6 +125,7 @@
     <Compile Include="Common\AdbCommandClient.cs" />
     <Compile Include="Common\Enumerable.cs" />
     <Compile Include="Common\MetroLoggerFactory.cs" />
+    <Compile Include="Common\OOPAAPTool.cs" />
     <Compile Include="Common\WeakEvent.cs" />
     <Compile Include="Controls\CapabilitiesInfoControl.xaml.cs">
       <DependentUpon>CapabilitiesInfoControl.xaml</DependentUpon>
@@ -158,6 +159,7 @@
     <Compile Include="Helpers\CachesHelper.cs" />
     <Compile Include="Helpers\Converter\DoubleToBoolConverter.cs" />
     <Compile Include="Helpers\Converter\EmptyObjectToVisibilityConverter.cs" />
+    <Compile Include="Helpers\Converter\FileSizeToFriendlyStringConverter.cs" />
     <Compile Include="Helpers\Converter\JoinEnumerableConverter.cs" />
     <Compile Include="Helpers\Converter\StringRegexToBoolConverter.cs" />
     <Compile Include="Helpers\Converter\StringRegexToObjectConverter.cs" />

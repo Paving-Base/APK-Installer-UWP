@@ -50,8 +50,8 @@
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/AppNameFlyoutItem"
                                 Click="CopyStringItem_Click"
-                                IsEnabled="{x:Bind Provider.ApkInfo.AppName, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
-                                Tag="{x:Bind Provider.ApkInfo.AppName, Mode=OneWay}"
+                                IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
+                                Tag="{Binding ApkInfo.AppName, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED35;" />
@@ -60,8 +60,8 @@
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/VersionCodeFlyoutItem"
                                 Click="CopyStringItem_Click"
-                                IsEnabled="{x:Bind Provider.ApkInfo.VersionCode, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
-                                Tag="{x:Bind Provider.ApkInfo.VersionCode, Mode=OneWay}"
+                                IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
+                                Tag="{Binding ApkInfo.VersionCode, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
@@ -70,8 +70,8 @@
                             <MenuFlyoutItem
                                 x:Uid="/InstallPage/PackageNameFlyoutItem"
                                 Click="CopyStringItem_Click"
-                                IsEnabled="{x:Bind Provider.ApkInfo.PackageName, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
-                                Tag="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}"
+                                IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
+                                Tag="{Binding ApkInfo.PackageName, Mode=OneWay}"
                                 ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
@@ -83,8 +83,8 @@
                             x:Uid="/InstallPage/APKFileFlyoutItem"
                             x:Load="{x:Bind Provider.ApkInfo.IsEmpty, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                             Click="CopyFileItem_Click"
-                            IsEnabled="{x:Bind Provider.ApkInfo.PackagePath, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
-                            Tag="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}"
+                            IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
+                            Tag="{Binding ApkInfo.PackagePath, Mode=OneWay}"
                             ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
@@ -101,7 +101,7 @@
                         <MenuFlyoutItem
                             x:Uid="/InstallPage/APKFileFlyoutItem"
                             Click="ShareFileItem_Click"
-                            IsEnabled="{x:Bind Provider.ApkInfo.PackagePath, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
+                            IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
                             Tag="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}"
                             ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
                             <MenuFlyoutItem.Icon>

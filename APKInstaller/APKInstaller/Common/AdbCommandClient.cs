@@ -1,5 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Logs;
+using APKInstaller.Metadata;
 using APKInstaller.Projection;
 using System;
 using System.Collections;
@@ -13,11 +14,21 @@ namespace APKInstaller.Common
 {
     public class AdbCommandClient(string adbPath, bool isForce = false, ILogger<AdbCommandLineClient> logger = null) : AdbCommandLineClient(adbPath, isForce, logger)
     {
+        private ServerManager serverManager = null;
+        private ServerManager ServerManager
+        {
+            get
+            {
+                serverManager ??= APKInstallerProjectionFactory.ServerManager;
+                return serverManager;
+            }
+        }
+
         protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput) =>
-            (int)APKInstallerProjectionFactory.ServerManager.RunProcess(filename, command, AsVector(errorOutput), AsVector(standardOutput));
+            (int)ServerManager.RunProcess(filename, command, AsVector(errorOutput), AsVector(standardOutput));
 
         protected override Task<int> RunProcessAsync(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, CancellationToken cancellationToken = default) =>
-            APKInstallerProjectionFactory.ServerManager.RunProcessAsync(filename, command, AsVector(errorOutput), AsVector(standardOutput)).AsTask(cancellationToken).ContinueWith(x => (int)x.Result);
+            ServerManager.RunProcessAsync(filename, command, AsVector(errorOutput), AsVector(standardOutput)).AsTask(cancellationToken).ContinueWith(x => (int)x.Result);
 
         private IList<T> AsVector<T>(ICollection<T> collection) => collection switch
         {

@@ -173,8 +173,8 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         if (co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5)))
         {
-			TerminateProcess(processInfo.hProcess, (UINT)-1);
-		}
+            TerminateProcess(processInfo.hProcess, (UINT)-1);
+        }
 
         DWORD _exitCode = 0;
         GetExitCodeProcess(processInfo.hProcess, &_exitCode);
@@ -250,20 +250,30 @@ namespace winrt::APKInstaller::Metadata::implementation
         CloseHandle(childOutputPipeHandle);
         CloseHandle(childErrorPipeHandle);
 
-        if (ReadFromPipe(parentOutputPipeHandle, callback, output, encode))
+        if (callback && ReadFromPipe(parentOutputPipeHandle, callback, output, encode))
         {
+            TerminateProcess(processInfo.hProcess, (UINT)-1);
             goto end;
         }
-
+        else
+        {
+            ReadFromPipe(parentOutputPipeHandle, output, encode);
+        }
         ReadFromPipe(parentErrorPipeHandle, output, encode);
 
-        end:
+    end:
+        if (co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5)))
+        {
+            TerminateProcess(processInfo.hProcess, (UINT)-1);
+        }
+
         DWORD _exitCode = 0;
-        WaitForProcessExitAsync(processInfo);
         GetExitCodeProcess(processInfo.hProcess, &_exitCode);
 
         CloseHandle(parentOutputPipeHandle);
         CloseHandle(parentErrorPipeHandle);
+        CloseHandle(processInfo.hProcess);
+        CloseHandle(processInfo.hThread);
 
         co_return _exitCode;
     }

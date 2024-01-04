@@ -745,7 +745,7 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = _loader.GetString("Analysis");
                     try
                     {
-                        ApkInfo = await AAPTool.DecompileAsync(_file).ConfigureAwait(false);
+                        ApkInfo = await new OOPAAPTool().DecompileAsync(_file).ConfigureAwait(false);
                         _appLocaleName = ApkInfo.GetLocaleLabel();
                     }
                     catch (Exception ex)
@@ -1100,7 +1100,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await AAPTool.DecompileAsync(_file).ConfigureAwait(false);
+                ApkInfo = await new AAPTool().DecompileAsync(_file).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

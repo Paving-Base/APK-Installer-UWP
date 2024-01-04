@@ -5,7 +5,6 @@
     xmlns:aboutpages="using:APKInstaller.ViewModels.ToolsPages"
     xmlns:controls="using:APKInstaller.Controls"
     xmlns:converter="using:APKInstaller.Helpers.Converter"
-    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:AAPTForNet.Models"
@@ -17,7 +16,7 @@
         <ResourceDictionary>
             <converter:DoubleToBoolConverter x:Key="DoubleToBoolConverter" />
             <converter:JoinEnumerableConverter x:Key="JoinEnumerableConverter" />
-            <converters:FileSizeToFriendlyStringConverter x:Key="FileSizeToFriendlyStringConverter" />
+            <converter:FileSizeToFriendlyStringConverter x:Key="FileSizeToFriendlyStringConverter" />
         </ResourceDictionary>
     </Page.Resources>
     <Grid>

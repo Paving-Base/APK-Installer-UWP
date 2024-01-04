@@ -15,33 +15,33 @@ namespace AAPTForNet
     /// <summary>
     /// Android Assert Packing Tool for NET
     /// </summary>
-    public static class AAPTool
+    public class AAPTool
     {
-        private enum DumpTypes
+        protected enum DumpTypes
         {
             Manifest = 0,
             Resources = 1,
             XmlTree = 2
         }
 
-        private static readonly string AppPath = Package.Current.InstalledLocation.Path;
-        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}", "AppPackages");
-        private static readonly string LocalPath = ApplicationData.Current.LocalFolder.Path is string path ? path.Substring(0, path.LastIndexOf('\\')) : string.Empty;
+        protected static string AppPath { get; } = Package.Current.InstalledLocation.Path;
+        protected static string TempPath { get; } = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}", "AppPackages");
+        protected static string LocalPath { get; } = ApplicationData.Current.LocalFolder.Path is string path ? path.Substring(0, path.LastIndexOf('\\')) : string.Empty;
 
-        public static Func<string, string, Func<string, int, bool>, IList<string>, int, Task> DumpOverrideAsync;
+        protected virtual bool HasDumpOverride { get; } = false;
 
-        private static Task<DumpModel> DumpAsync(
+        protected virtual Task<DumpModel> DumpAsync(
             string path,
             string args,
             DumpTypes type,
             Func<string, int, bool> callback)
         {
-            return DumpOverrideAsync == null || path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
+            return !HasDumpOverride || path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
                 ? DumpByProcessAsync(path, args, type, callback)
                 : DumpByOverrideAsync(path, args, type, callback);
         }
 
-        private static async Task<DumpModel> DumpByProcessAsync(
+        protected virtual async Task<DumpModel> DumpByProcessAsync(
             string path,
             string args,
             DumpTypes type,
@@ -134,51 +134,22 @@ namespace AAPTForNet
             return new DumpModel(path, isSuccess, output);
         }
 
-        private static async Task<DumpModel> DumpByOverrideAsync(
+        protected virtual Task<DumpModel> DumpByOverrideAsync(
             string path,
             string args,
             DumpTypes type,
-            Func<string, int, bool> callback)
-        {
-            string fileName = Path.Combine(AppPath + @"\Tools\aapt.exe");
-            List<string> output = [];    // Messages from output stream
-            string arguments = string.Empty;
+            Func<string, int, bool> callback) => null;
 
-            switch (type)
-            {
-                case DumpTypes.Manifest:
-                    arguments = $"dump badging \"{path}\"";
-                    break;
-                case DumpTypes.Resources:
-                    arguments = $"dump --values resources \"{path}\"";
-                    break;
-                case DumpTypes.XmlTree:
-                    arguments = $"dump xmltree \"{path}\" {args}";
-                    break;
-                default:
-                    return new DumpModel(path, false, output);
-            }
-
-            await DumpOverrideAsync(fileName, arguments, callback, output, Encoding.UTF8.CodePage).ConfigureAwait(false);
-
-            // Dump xml tree get only 1 message when failed, the others are 2.
-            bool isSuccess =
-                type != DumpTypes.XmlTree
-                    ? output.Count > 2
-                    : output.Count > 0;
-            return new DumpModel(path, isSuccess, output);
-        }
-
-        internal static Task<DumpModel> DumpManifestAsync(string path) =>
+        internal Task<DumpModel> DumpManifestAsync(string path) =>
             DumpAsync(path, string.Empty, DumpTypes.Manifest, null);
 
-        internal static Task<DumpModel> DumpResourcesAsync(string path, Func<string, int, bool> callback = null) =>
+        internal Task<DumpModel> DumpResourcesAsync(string path, Func<string, int, bool> callback = null) =>
             DumpAsync(path, string.Empty, DumpTypes.Resources, callback);
 
-        internal static Task<DumpModel> DumpXmlTreeAsync(string path, string asset, Func<string, int, bool> callback = null) =>
+        internal Task<DumpModel> DumpXmlTreeAsync(string path, string asset, Func<string, int, bool> callback = null) =>
             DumpAsync(path, asset, DumpTypes.XmlTree, callback);
 
-        internal static Task<DumpModel> DumpManifestTreeAsync(string path, Func<string, int, bool> callback = null) =>
+        internal Task<DumpModel> DumpManifestTreeAsync(string path, Func<string, int, bool> callback = null) =>
             DumpXmlTreeAsync(path, "AndroidManifest.xml", callback);
 
         /// <summary>
@@ -186,13 +157,13 @@ namespace AAPTForNet
         /// </summary>
         /// <param name="path">Absolute path to .apk file</param>
         /// <returns>Filled apk if dump process is not failed</returns>
-        public static async Task<ApkInfo> DecompileAsync(StorageFile file)
+        public async Task<ApkInfo> DecompileAsync(StorageFile file)
         {
             List<string> apkList = [];
 
             if (file.FileType.Equals(".apk", StringComparison.OrdinalIgnoreCase))
             {
-                if (DumpOverrideAsync == null ? !file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
+                if (!HasDumpOverride ? !file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
                     : !(file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
                     || await file.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024))
                 {
@@ -229,9 +200,10 @@ namespace AAPTForNet
                 }
             }
 
+            ApkExtractor apkExtractor = new(this);
             ApkInfo[] apkInfo = await Task.WhenAll(apkList.Select(async apkPath =>
             {
-                DumpModel manifest = await ApkExtractor.ExtractManifestAsync(apkPath).ConfigureAwait(false);
+                DumpModel manifest = await apkExtractor.ExtractManifestAsync(apkPath).ConfigureAwait(false);
                 if (!manifest.IsSuccess)
                 {
                     return null;
@@ -240,19 +212,30 @@ namespace AAPTForNet
                 ApkInfo apk = ApkParser.Parse(manifest);
                 apk.FullPath = apkPath;
                 apk.PackagePath = file.Path;
-                apk.PackageSize = await StorageFile.GetFileFromPathAsync(apkPath).AsTask().ContinueWith(x => x.Result.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size)).Unwrap();
+
+                Task<ulong> task = StorageFile
+                    .GetFileFromPathAsync(apkPath).AsTask()
+                    .ContinueWith(x =>
+                        x.Result.GetBasicPropertiesAsync().AsTask()
+                        .ContinueWith(x => apk.PackageSize = x.Result.Size)).Unwrap();
 
                 if (apk.Icon.IsImage)
                 {
                     // Included icon in manifest, extract it from apk
-                    apk.Icon.RealPath = await ApkExtractor.ExtractIconImageAsync(apkPath, apk.Icon).ConfigureAwait(false);
+                    apk.Icon.RealPath = await apkExtractor.ExtractIconImageAsync(apkPath, apk.Icon).ConfigureAwait(false);
                     if (await apk.Icon.IsHighDensityAsync().ConfigureAwait(false))
                     {
                         return apk;
                     }
                 }
 
-                apk.Icon = await ApkExtractor.ExtractLargestIconAsync(apkPath).ConfigureAwait(false);
+                Icon icon = await apkExtractor.ExtractLargestIconAsync(apkPath).ConfigureAwait(false);
+                if (icon != Icon.Default)
+                {
+                    apk.Icon = icon;
+                }
+
+                await task.ConfigureAwait(false);
                 return apk;
             })).ContinueWith(x => x.Result.OfType<ApkInfo>().ToArray()).ConfigureAwait(false);
 

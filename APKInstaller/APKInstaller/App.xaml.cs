@@ -34,7 +34,6 @@ namespace APKInstaller
         {
             InitializeComponent();
             Suspending += OnSuspending;
-            AAPTool.DumpOverrideAsync = ADBHelper.DumpAsync;
             UnhandledException += Application_UnhandledException;
             LoggerProvider.SetLogProvider(new MetroLoggerFactory());
             Factories.AdbCommandLineClientFactory = path => new AdbCommandClient(path);

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using Microsoft.Toolkit;
+using System;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
 
 namespace APKInstaller.Helpers.Converter
 {
-    public class JoinEnumerableConverter : IValueConverter
+    public class FileSizeToFriendlyStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            object result = value is IEnumerable list ? string.Join(parameter.ToString(), list.OfType<object>()) : value;
+            string result = Converters.ToFileSizeString(System.Convert.ToInt64(value));
             return targetType.IsInstanceOfType(result) ? result : XamlBindingHelper.ConvertValue(targetType, result);
         }
 
