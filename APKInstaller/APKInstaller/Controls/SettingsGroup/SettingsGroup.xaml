@@ -6,13 +6,13 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <controls:StackPanelEx Orientation="Vertical" Spacing="2">
-                        <controls:StackPanelEx.ChildrenTransitions>
+                    <StackPanel Orientation="Vertical" Spacing="2">
+                        <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <ReorderThemeTransition />
                             </TransitionCollection>
-                        </controls:StackPanelEx.ChildrenTransitions>
-                    </controls:StackPanelEx>
+                        </StackPanel.ChildrenTransitions>
+                    </StackPanel>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

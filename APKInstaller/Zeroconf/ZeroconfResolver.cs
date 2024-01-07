@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -18,11 +17,6 @@ namespace Zeroconf
     /// </summary>
     public static partial class ZeroconfResolver
     {
-        /// <summary>
-        /// The logger to use when logging messages.
-        /// </summary>
-        private static readonly ILogger logger = NullLogger.Instance;
-
         private static readonly AsyncLock ResolverLock = new();
         private static readonly INetworkInterface NetworkInterface = new NetworkInterface();
 
@@ -53,7 +47,7 @@ namespace Zeroconf
                 string name = firstPtr?.PTRDNAME.Split('.')[0] ?? string.Empty;
                 string addrString = address.ToString();
 
-                logger.LogDebug($"IP: {addrString}, {(string.IsNullOrEmpty(name) ? string.Empty : $"Name: {name}, ")}Bytes: {buffer.Length}, IsResponse: {resp.header.QR}");
+                Debug.WriteLine($"IP: {addrString}, {(string.IsNullOrEmpty(name) ? string.Empty : $"Name: {name}, ")}Bytes: {buffer.Length}, IsResponse: {resp.header.QR}");
 
                 if (resp.header.QR)
                 {
@@ -67,7 +61,7 @@ namespace Zeroconf
                 }
             }
 
-            logger.LogDebug($"Looking for {string.Join(", ", options.Protocols)} with scantime {options.ScanTime}");
+            Debug.WriteLine($"Looking for {string.Join(", ", options.Protocols)} with scantime {options.ScanTime}");
 
             await NetworkInterface.NetworkRequestAsync(
                 requestBytes,
@@ -167,7 +161,7 @@ namespace Zeroconf
                     Dictionary<string, string> set = [];
                     foreach (string txt in txtRec.TXT)
                     {
-                        string[] split = txt.Split(new[] { '=' }, 2);
+                        string[] split = txt.Split(['='], 2);
                         if (split.Length == 1)
                         {
                             if (!string.IsNullOrWhiteSpace(split[0]))

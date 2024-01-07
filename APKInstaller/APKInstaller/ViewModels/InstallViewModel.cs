@@ -13,7 +13,6 @@ using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
 using Downloader;
 using Microsoft.Toolkit.Uwp.Connectivity;
-using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -432,7 +431,7 @@ namespace APKInstaller.ViewModels
                 ADBPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
             }
 
-            checkadb:
+            checkAdb:
             if (force || !await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
                 await Dispatcher.ResumeForegroundAsync();
@@ -466,7 +465,7 @@ namespace APKInstaller.ViewModels
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    downloadadb:
+                    downloadAdb:
                     if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     {
                         try
@@ -490,7 +489,7 @@ namespace APKInstaller.ViewModels
                             await ThreadSwitcher.ResumeBackgroundAsync();
                             if (results == ContentDialogResult.Primary)
                             {
-                                goto downloadadb;
+                                goto downloadAdb;
                             }
                             else
                             {
@@ -516,7 +515,7 @@ namespace APKInstaller.ViewModels
                         await ThreadSwitcher.ResumeBackgroundAsync();
                         if (results == ContentDialogResult.Primary)
                         {
-                            goto checkadb;
+                            goto checkAdb;
                         }
                         else
                         {
@@ -534,7 +533,7 @@ namespace APKInstaller.ViewModels
                     {
                         SuggestedStartLocation = PickerLocationId.ComputerFolder
                     };
-                    fileOpen.FileTypeFilter.Add("adb.exe");
+                    fileOpen.FileTypeFilter.Add(".exe");
 
                     StorageFile file = await fileOpen.PickSingleFileAsync();
                     await ThreadSwitcher.ResumeBackgroundAsync();
@@ -594,7 +593,7 @@ namespace APKInstaller.ViewModels
                 }
                 downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                 downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                downloadadb:
+                downloadAdb:
                 WaitProgressText = _loader.GetString("WaitDownload");
                 _ = downloader.DownloadFileTaskAsync("https://dl.google.com/android/repository/platform-tools-latest-windows.zip", ADBTemp).ConfigureAwait(false);
                 while (totalBytesToReceive <= 0)
@@ -602,7 +601,7 @@ namespace APKInstaller.ViewModels
                     await Task.Delay(1);
                     if (isCompleted)
                     {
-                        goto downloadfinish;
+                        goto downloadFinish;
                     }
                 }
                 WaitProgressIndeterminate = false;
@@ -614,7 +613,7 @@ namespace APKInstaller.ViewModels
                 }
                 WaitProgressIndeterminate = true;
                 WaitProgressValue = 0;
-                downloadfinish:
+                downloadFinish:
                 if (exception != null)
                 {
                     await Dispatcher.ResumeForegroundAsync();
@@ -631,7 +630,7 @@ namespace APKInstaller.ViewModels
                     await ThreadSwitcher.ResumeBackgroundAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        goto downloadadb;
+                        goto downloadAdb;
                     }
                     else
                     {
@@ -659,7 +658,7 @@ namespace APKInstaller.ViewModels
                     if (string.IsNullOrWhiteSpace(entry.Name)) { continue; }
                     StorageFolder tempFolder = folder;
                     string[] parts = entry.FullName.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < parts.Length; )
+                    for (int i = 0; i < parts.Length;)
                     {
                         string part = parts[i];
                         if (++i == parts.Length)
@@ -694,7 +693,7 @@ namespace APKInstaller.ViewModels
                 {
                     WaitProgressText = _loader.GetString("CheckingADB");
                     await CheckADBAsync().ConfigureAwait(false);
-                    startadb:
+                    startAdb:
                     WaitProgressText = _loader.GetString("StartingADB");
                     try
                     {
@@ -704,7 +703,7 @@ namespace APKInstaller.ViewModels
                     {
                         SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Warn(ex.ExceptionToMessage(), ex);
                         await CheckADBAsync(true).ConfigureAwait(false);
-                        goto startadb;
+                        goto startAdb;
                     }
                 }
                 WaitProgressText = _loader.GetString("Loading");
@@ -767,7 +766,7 @@ namespace APKInstaller.ViewModels
                 }
                 else
                 {
-                    checkdevice:
+                    checkDevice:
                     WaitProgressText = _loader.GetString("Checking");
                     if (await CheckDeviceAsync().ConfigureAwait(false) && _device != null)
                     {
@@ -799,7 +798,7 @@ namespace APKInstaller.ViewModels
                         }
                         if (ShowDialogs && await ShowDeviceDialogAsync())
                         {
-                            goto checkdevice;
+                            goto checkDevice;
                         }
                     }
                 }
@@ -842,7 +841,7 @@ namespace APKInstaller.ViewModels
                     await ThreadSwitcher.ResumeBackgroundAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        startwsa:
+                        startWSA:
                         CancellationTokenSource tokenSource = new(TimeSpan.FromMinutes(5));
                         try
                         {
@@ -877,7 +876,7 @@ namespace APKInstaller.ViewModels
                             await ThreadSwitcher.ResumeBackgroundAsync();
                             if (results == ContentDialogResult.Primary)
                             {
-                                goto startwsa;
+                                goto startWSA;
                             }
                         }
                         catch (Exception e)
@@ -901,7 +900,7 @@ namespace APKInstaller.ViewModels
                             await ThreadSwitcher.ResumeBackgroundAsync();
                             if (results == ContentDialogResult.Primary)
                             {
-                                goto startwsa;
+                                goto startWSA;
                             }
                         }
                     }
@@ -958,7 +957,7 @@ namespace APKInstaller.ViewModels
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_file != null || _url != null)
             {
-                checkdevice:
+                checkDevice:
                 if (await CheckDeviceAsync().ConfigureAwait(false) && _device != null)
                 {
                     await CheckAPKAsync().ConfigureAwait(false);
@@ -983,7 +982,7 @@ namespace APKInstaller.ViewModels
                         {
                             if (await ShowDeviceDialogAsync().ConfigureAwait(false))
                             {
-                                goto checkdevice;
+                                goto checkDevice;
                             }
                         }
                     }
@@ -1169,7 +1168,7 @@ namespace APKInstaller.ViewModels
                     }
                     downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                     downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                    downloadapk:
+                    downloadApk:
                     ProgressText = _loader.GetString("WaitDownload");
                     _ = downloader.DownloadFileTaskAsync(_url.ToString(), APKTemp);
                     while (totalBytesToReceive <= 0)
@@ -1177,7 +1176,7 @@ namespace APKInstaller.ViewModels
                         await Task.Delay(1);
                         if (isCompleted)
                         {
-                            goto downloadfinish;
+                            goto downloadFinish;
                         }
                     }
                     AppxInstallBarIndeterminate = false;
@@ -1190,7 +1189,7 @@ namespace APKInstaller.ViewModels
                     ProgressText = _loader.GetString("Loading");
                     AppxInstallBarIndeterminate = true;
                     AppxInstallBarValue = 0;
-                    downloadfinish:
+                    downloadFinish:
                     if (exception != null)
                     {
                         await Dispatcher.ResumeForegroundAsync();
@@ -1207,7 +1206,7 @@ namespace APKInstaller.ViewModels
                         await ThreadSwitcher.ResumeBackgroundAsync();
                         if (result == ContentDialogResult.Primary)
                         {
-                            goto downloadapk;
+                            goto downloadApk;
                         }
                         else
                         {
@@ -1463,11 +1462,11 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        public async Task OpenAPKAsync(StorageFile path)
+        public async Task OpenAPKAsync(StorageFile file)
         {
-            if (path != null)
+            if (file != null)
             {
-                _file = path;
+                _file = file;
                 await Refresh().ConfigureAwait(false);
             }
         }

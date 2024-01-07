@@ -59,7 +59,7 @@ namespace Zeroconf.DNS
                     // work out the existing domain name, copy this pointer
                     RecordReader newRecordReader = new(m_Data, ((length & 0x3f) << 8) | ReadByte());
                     return bytes.Count > 0
-                        ? Encoding.UTF8.GetString(bytes.ToArray(), 0, bytes.Count) + newRecordReader.ReadDomainName()
+                        ? Encoding.UTF8.GetString([.. bytes], 0, bytes.Count) + newRecordReader.ReadDomainName()
                         : newRecordReader.ReadDomainName();
                 }
 
@@ -71,7 +71,7 @@ namespace Zeroconf.DNS
                 }
                 bytes.Add((byte)'.');
             }
-            return bytes.Count == 0 ? "." : Encoding.UTF8.GetString(bytes.ToArray(), 0, bytes.Count);
+            return bytes.Count == 0 ? "." : Encoding.UTF8.GetString([.. bytes], 0, bytes.Count);
         }
 
         public string ReadString()
@@ -83,7 +83,7 @@ namespace Zeroconf.DNS
                 bytes.Add(ReadByte());
             }
 
-            return Encoding.UTF8.GetString(bytes.ToArray(), 0, bytes.Count);
+            return Encoding.UTF8.GetString([.. bytes], 0, bytes.Count);
         }
 
         // changed 28 augustus 2008

@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -16,16 +15,6 @@ namespace Zeroconf.Common
 {
     internal class NetworkInterface : INetworkInterface
     {
-        /// <summary>
-        /// The logger to use when logging messages.
-        /// </summary>
-        private readonly ILogger<NetworkInterface> logger;
-
-        public NetworkInterface(ILogger<NetworkInterface> logger = null)
-        {
-            this.logger = logger ?? NullLogger<NetworkInterface>.Instance;
-        }
-
         public async Task NetworkRequestAsync(
             byte[] requestBytes,
             TimeSpan scanTime,
@@ -98,7 +87,7 @@ namespace Zeroconf.Common
 
             int ifaceIndex = p.Index;
 
-            logger.LogDebug($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
+            Debug.WriteLine($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
 
             using UdpClient client = new();
             for (int i = 0; i < retries; i++)
@@ -129,15 +118,15 @@ namespace Zeroconf.Common
                     client.ExclusiveAddressUse = false;
 
                     IPEndPoint localEp = new(IPAddress.Any, 5353);
-                    logger.LogDebug($"Attempting to bind to {localEp} on adapter {adapter.Name}");
+                    Debug.WriteLine($"Attempting to bind to {localEp} on adapter {adapter.Name}");
 
                     socket.Bind(localEp);
-                    logger.LogDebug($"Bound to {localEp}");
+                    Debug.WriteLine($"Bound to {localEp}");
 
                     IPAddress multicastAddress = IPAddress.Parse("224.0.0.251");
                     MulticastOption multOpt = new(multicastAddress, ifaceIndex);
                     socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, multOpt);
-                    logger.LogDebug("Bound to multicast address");
+                    Debug.WriteLine("Bound to multicast address");
 
                     // Start a receive loop
                     bool shouldCancel = false;
@@ -160,11 +149,11 @@ namespace Zeroconf.Common
                     }, cancellationToken);
 
                     IPEndPoint broadcastEp = new(IPAddress.Parse("224.0.0.251"), 5353);
-                    logger.LogDebug($"About to send on iface {adapter.Name}");
+                    Debug.WriteLine($"About to send on iface {adapter.Name}");
 
                     await client.SendAsync(requestBytes, requestBytes.Length, broadcastEp)
                                 .ConfigureAwait(false);
-                    logger.LogDebug($"Sent mDNS query on iface {adapter.Name}");
+                    Debug.WriteLine($"Sent mDNS query on iface {adapter.Name}");
 
                     // wait for responses
                     await Task.Delay(scanTime, cancellationToken)
@@ -174,7 +163,7 @@ namespace Zeroconf.Common
 
                     ((IDisposable)client).Dispose();
 
-                    logger.LogDebug("Done Scanning");
+                    Debug.WriteLine("Done Scanning");
 
                     await recTask.ConfigureAwait(false);
 
@@ -182,7 +171,7 @@ namespace Zeroconf.Common
                 }
                 catch (Exception e)
                 {
-                    logger.LogError($"Execption with network request, IP {ipv4Address}\n: {e}");
+                    Debug.WriteLine($"Execption with network request, IP {ipv4Address}\n: {e}");
                     if (i + 1 >= retries) // last one, pass underlying out
                     {
                         // Ensure all inner info is captured                            
@@ -226,7 +215,7 @@ namespace Zeroconf.Common
                     return;
                 }
 
-                logger.LogDebug($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
+                Debug.WriteLine($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
 
                 using UdpClient client = new();
                 Socket socket = client.Client;
@@ -263,7 +252,7 @@ namespace Zeroconf.Common
                         }
                         catch (Exception ex)
                         {
-                            logger.LogError($"Callback threw an exception: {ex}");
+                            Debug.WriteLine($"Callback threw an exception: {ex}");
                         }
                     }
                     catch when (cancellationToken.IsCancellationRequested)
@@ -272,7 +261,7 @@ namespace Zeroconf.Common
                     }
                 }
 
-                logger.LogDebug($"Done listening for mDNS packets on {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}.");
+                Debug.WriteLine($"Done listening for mDNS packets on {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}.");
 
                 cancellationToken.ThrowIfCancellationRequested();
             }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();

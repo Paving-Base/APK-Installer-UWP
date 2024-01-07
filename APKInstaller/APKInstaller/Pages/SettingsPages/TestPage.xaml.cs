@@ -70,7 +70,7 @@ namespace APKInstaller.Pages.SettingsPages
             }
         }
 
-        internal bool IsDevelopment => Package.Current.IsDevelopmentMode
+        internal bool IsDevelopment { get; } = Package.Current.IsDevelopmentMode
             || Package.Current.SignatureKind != PackageSignatureKind.Store
             || Package.Current.Status.Modified;
 

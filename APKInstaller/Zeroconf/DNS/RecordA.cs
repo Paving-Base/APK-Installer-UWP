@@ -18,18 +18,14 @@ records.
 
 namespace Zeroconf.DNS
 {
-    internal class RecordA : Record
+    internal class RecordA(RecordReader rr) : Record
     {
-        public string Address;
-
-        public RecordA(RecordReader rr)
-        {
-            Address = string.Format("{0}.{1}.{2}.{3}",
+        public string Address =
+            string.Format("{0}.{1}.{2}.{3}",
                 rr.ReadByte(),
                 rr.ReadByte(),
                 rr.ReadByte(),
                 rr.ReadByte());
-        }
 
         public override string ToString()
         {

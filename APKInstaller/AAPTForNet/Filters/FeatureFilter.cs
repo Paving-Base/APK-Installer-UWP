@@ -13,7 +13,7 @@ namespace AAPTForNet.Filters
         {
             // uses-feature: name='<per>'
             // -> ["uses-feature: name=", "<per, get this value!!!>", ""]
-            Features.Add(msg.Split(Seperator)[1]);
+            Features.Add(msg.Split(Separator)[1]);
         }
 
         public override ApkInfo GetAPK() => new() { Features = Features };

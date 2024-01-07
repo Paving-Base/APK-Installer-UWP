@@ -66,20 +66,12 @@
 
 namespace Zeroconf.DNS
 {
-    internal class RecordSRV : Record
+    internal class RecordSRV(RecordReader rr) : Record
     {
-        public ushort PRIORITY;
-        public ushort WEIGHT;
-        public ushort PORT;
-        public string TARGET;
-
-        public RecordSRV(RecordReader rr)
-        {
-            PRIORITY = rr.ReadUInt16();
-            WEIGHT = rr.ReadUInt16();
-            PORT = rr.ReadUInt16();
-            TARGET = rr.ReadDomainName();
-        }
+        public ushort PRIORITY = rr.ReadUInt16();
+        public ushort WEIGHT = rr.ReadUInt16();
+        public ushort PORT = rr.ReadUInt16();
+        public string TARGET = rr.ReadDomainName();
 
         public override string ToString()
         {

@@ -2,16 +2,10 @@
 
 namespace Zeroconf.Models
 {
-    public readonly struct DomainService : IEquatable<DomainService>
+    public readonly struct DomainService(string domain, string service) : IEquatable<DomainService>
     {
-        public string Domain { get; }
-        public string Service { get; }
-
-        public DomainService(string domain, string service)
-        {
-            Domain = domain;
-            Service = service;
-        }
+        public string Domain { get; } = domain;
+        public string Service { get; } = service;
 
         public void Deconstruct(out string domain, out string service)
         {
@@ -26,7 +20,7 @@ namespace Zeroconf.Models
 
         public override bool Equals(object obj)
         {
-            return obj is not null && obj is DomainService && Equals((DomainService)obj);
+            return obj is not null && obj is DomainService service && Equals(service);
         }
 
         public override int GetHashCode()

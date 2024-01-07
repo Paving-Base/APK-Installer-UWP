@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Zeroconf.DNS
@@ -104,14 +103,7 @@ namespace Zeroconf.DNS
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
 
-        public byte[] Data
-        {
-            get
-            {
-                List<byte> data = [.. WriteName(QName), .. WriteShort((ushort)QType), .. WriteShort((ushort)QClass)];
-                return data.ToArray();
-            }
-        }
+        public byte[] Data => [.. WriteName(QName), .. WriteShort((ushort)QType), .. WriteShort((ushort)QClass)];
 
         private byte[] WriteShort(ushort sValue)
         {

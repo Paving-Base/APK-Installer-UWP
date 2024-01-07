@@ -186,7 +186,7 @@ namespace Zeroconf
         }
 
         /// <summary>
-        ///     Returns all available domains with services on them
+        /// Returns all available domains with services on them
         /// </summary>
         /// <param name="options"></param>
         /// <param name="callback">Called per record returned as they come in.</param>

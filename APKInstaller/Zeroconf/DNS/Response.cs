@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Zeroconf.DNS
 {
@@ -51,7 +52,7 @@ namespace Zeroconf.DNS
             Authorities = [];
             Additionals = [];
 
-            //    Server = new IPEndPoint(0,0);
+            //Server = new IPEndPoint(0, 0);
             Error = "";
             MessageSize = 0;
             TimeStamp = DateTime.Now;
@@ -99,164 +100,45 @@ namespace Zeroconf.DNS
         ///// <summary>
         ///// List of RecordMX in Response.Answers
         ///// </summary>
-        //public RecordMX[] RecordsMX
-        //{
-        //    get
-        //    {
-        //        List<RecordMX> list = new List<RecordMX>();
-        //        foreach (AnswerRR answerRR in this.Answers)
-        //        {
-        //            RecordMX record = answerRR.RECORD as RecordMX;
-        //            if(record!=null)
-        //                list.Add(record);
-        //        }
-        //        list.Sort();
-        //        return list.ToArray();
-        //    }
-        //}
+        //public RecordMX[] RecordsMX => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordMX>().ToArray();
 
         /// <summary>
         /// List of RecordTXT in Response.Answers
         /// </summary>
-        public RecordTXT[] RecordsTXT
-        {
-            get
-            {
-                List<RecordTXT> list = [];
-                foreach (AnswerRR answerRR in this.Answers)
-                {
-                    if (answerRR.RECORD is RecordTXT record)
-                    {
-                        list.Add(record);
-                    }
-                }
-                return list.ToArray();
-            }
-        }
+        public RecordTXT[] RecordsTXT => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordTXT>().ToArray();
 
         /// <summary>
         /// List of RecordA in Response.Answers
         /// </summary>
-        public RecordA[] RecordsA
-        {
-            get
-            {
-                List<RecordA> list = [];
-                foreach (AnswerRR answerRR in this.Answers)
-                {
-                    if (answerRR.RECORD is RecordA record)
-                    {
-                        list.Add(record);
-                    }
-                }
-                return list.ToArray();
-            }
-        }
+        public RecordA[] RecordsA => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordA>().ToArray();
 
         /// <summary>
         /// List of RecordPTR in Response.Answers
         /// </summary>
-        public RecordPTR[] RecordsPTR
-        {
-            get
-            {
-                List<RecordPTR> list = [];
-                foreach (AnswerRR answerRR in this.Answers)
-                {
-                    if (answerRR.RECORD is RecordPTR record)
-                    {
-                        list.Add(record);
-                    }
-                }
-                return list.ToArray();
-            }
-        }
+        public RecordPTR[] RecordsPTR => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordPTR>().ToArray();
 
         ///// <summary>
         ///// List of RecordCNAME in Response.Answers
         ///// </summary>
-        //public RecordCNAME[] RecordsCNAME
-        //{
-        //    get
-        //    {
-        //        List<RecordCNAME> list = new List<RecordCNAME>();
-        //        foreach (AnswerRR answerRR in this.Answers)
-        //        {
-        //            RecordCNAME record = answerRR.RECORD as RecordCNAME;
-        //            if (record != null)
-        //                list.Add(record);
-        //        }
-        //        return list.ToArray();
-        //    }
-        //}
+        //public RecordCNAME[] RecordsCNAME => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordCNAME>().ToArray();
 
         /// <summary>
         /// List of RecordAAAA in Response.Answers
         /// </summary>
-        public RecordAAAA[] RecordsAAAA
-        {
-            get
-            {
-                List<RecordAAAA> list = [];
-                foreach (AnswerRR answerRR in this.Answers)
-                {
-                    if (answerRR.RECORD is RecordAAAA record)
-                    {
-                        list.Add(record);
-                    }
-                }
-                return list.ToArray();
-            }
-        }
+        public RecordAAAA[] RecordsAAAA => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordAAAA>().ToArray();
 
         ///// <summary>
         ///// List of RecordNS in Response.Answers
         ///// </summary>
-        //public RecordNS[] RecordsNS
-        //{
-        //    get
-        //    {
-        //        List<RecordNS> list = new List<RecordNS>();
-        //        foreach (AnswerRR answerRR in this.Answers)
-        //        {
-        //            RecordNS record = answerRR.RECORD as RecordNS;
-        //            if (record != null)
-        //                list.Add(record);
-        //        }
-        //        return list.ToArray();
-        //    }
-        //}
+        //public RecordNS[] RecordsNS => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordNS>().ToArray();
 
         ///// <summary>
         ///// List of RecordSOA in Response.Answers
         ///// </summary>
-        //public RecordSOA[] RecordsSOA
-        //{
-        //    get
-        //    {
-        //        List<RecordSOA> list = new List<RecordSOA>();
-        //        foreach (AnswerRR answerRR in this.Answers)
-        //        {
-        //            RecordSOA record = answerRR.RECORD as RecordSOA;
-        //            if (record != null)
-        //                list.Add(record);
-        //        }
-        //        return list.ToArray();
-        //    }
-        //}
+        //public RecordSOA[] RecordsSOA => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordSOA>().ToArray();
 
-        public RR[] RecordsRR
-        {
-            get
-            {
-                List<RR> list = [.. this.Answers, .. this.Authorities, .. this.Additionals];
-                return list.ToArray();
-            }
-        }
+        public RR[] RecordsRR => [.. Answers, .. Authorities, .. Additionals];
 
-        public bool IsQueryResponse
-        {
-            get { return header.QR; }
-        }
+        public bool IsQueryResponse => header.QR;
     }
 }

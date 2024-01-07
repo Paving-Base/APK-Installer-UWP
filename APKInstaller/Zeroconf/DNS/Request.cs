@@ -35,7 +35,7 @@ namespace Zeroconf.DNS
                     data.AddRange(q.Data);
                 }
 
-                return data.ToArray();
+                return [.. data];
             }
         }
     }

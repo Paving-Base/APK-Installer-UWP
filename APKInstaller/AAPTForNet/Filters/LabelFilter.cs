@@ -6,7 +6,7 @@ namespace AAPTForNet.Filters
     internal class LabelFilter : BaseFilter
     {
         private readonly List<string> Messages = [];
-        private string[] Segments => string.Join(string.Empty, Messages).Split(Seperator);
+        private string[] Segments => string.Join(string.Empty, Messages).Split(Separator);
 
         public override bool CanHandle(string msg) => msg.StartsWith("application-label-");
 

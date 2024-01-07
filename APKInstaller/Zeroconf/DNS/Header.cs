@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Zeroconf.DNS
 {
@@ -207,22 +206,15 @@ namespace Zeroconf.DNS
         /// <summary>
         /// Represents the header as a byte array
         /// </summary>
-        public byte[] Data
-        {
-            get
-            {
-                List<byte> data =
-                [
-                    .. WriteShort(ID),
-                    .. WriteShort(Flags),
-                    .. WriteShort(QDCOUNT),
-                    .. WriteShort(ANCOUNT),
-                    .. WriteShort(NSCOUNT),
-                    .. WriteShort(ARCOUNT),
-                ];
-                return data.ToArray();
-            }
-        }
+        public byte[] Data =>
+        [
+            .. WriteShort(ID),
+            .. WriteShort(Flags),
+            .. WriteShort(QDCOUNT),
+            .. WriteShort(ANCOUNT),
+            .. WriteShort(NSCOUNT),
+            .. WriteShort(ARCOUNT),
+        ];
 
         private byte[] WriteShort(ushort sValue)
         {

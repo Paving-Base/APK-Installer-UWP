@@ -2,7 +2,7 @@ namespace APKInstaller.Projection
 {
     [default_interface]
     [contract(APKInstaller.Metadata.APKInstallerContract, 1)]
-    runtimeclass APKInstallerProjectionFactory
+    static runtimeclass APKInstallerProjectionFactory
     {
         static APKInstaller.Metadata.ServerManager ServerManager { get; };
     }

@@ -9,13 +9,10 @@
 
 namespace Zeroconf.DNS
 {
-    internal class RecordAAAA : Record
+    internal class RecordAAAA(RecordReader rr) : Record
     {
-        public string Address;
-
-        public RecordAAAA(RecordReader rr)
-        {
-            Address = string.Format("{0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}:{6:x}:{7:x}",
+        public string Address =
+            string.Format("{0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}:{6:x}:{7:x}",
                 rr.ReadUInt16(),
                 rr.ReadUInt16(),
                 rr.ReadUInt16(),
@@ -24,7 +21,6 @@ namespace Zeroconf.DNS
                 rr.ReadUInt16(),
                 rr.ReadUInt16(),
                 rr.ReadUInt16());
-        }
 
         public override string ToString()
         {

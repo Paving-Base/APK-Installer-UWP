@@ -19,7 +19,11 @@ namespace APKInstaller.Common
         {
             get
             {
-                serverManager ??= APKInstallerProjectionFactory.ServerManager;
+                if (serverManager?.IsServerRunning == true)
+                {
+                    return serverManager;
+                }
+                serverManager = APKInstallerProjectionFactory.ServerManager;
                 return serverManager;
             }
         }

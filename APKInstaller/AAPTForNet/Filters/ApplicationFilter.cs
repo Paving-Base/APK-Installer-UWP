@@ -8,7 +8,7 @@ namespace AAPTForNet.Filters
 
         public override bool CanHandle(string msg) => msg.StartsWith("application:");
 
-        public override void AddMessage(string msg = "") => Segments = msg.Split(Seperator);
+        public override void AddMessage(string msg = "") => Segments = msg.Split(Separator);
 
         public override ApkInfo GetAPK()
         {

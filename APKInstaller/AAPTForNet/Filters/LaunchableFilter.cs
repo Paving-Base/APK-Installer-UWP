@@ -8,7 +8,7 @@ namespace AAPTForNet.Filters
 
         public override bool CanHandle(string msg) => msg.StartsWith("launchable-activity:");
 
-        public override void AddMessage(string msg) => LaunchableActivity = msg.Split(Seperator)[1];
+        public override void AddMessage(string msg) => LaunchableActivity = msg.Split(Separator)[1];
 
         public override ApkInfo GetAPK() => new() { LaunchableActivity = LaunchableActivity };
 

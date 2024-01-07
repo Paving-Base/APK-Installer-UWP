@@ -13,7 +13,7 @@ namespace AAPTForNet.Filters
         {
             // uses-permission: name='<per>'
             // -> ["uses-permission: name=", "<per, get this value!!!>", ""]
-            Permissions.Add(msg.Split(Seperator)[1]);
+            Permissions.Add(msg.Split(Separator)[1]);
         }
 
         public override ApkInfo GetAPK() => new() { Permissions = Permissions };

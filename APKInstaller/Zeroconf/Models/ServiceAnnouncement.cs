@@ -3,16 +3,10 @@ using Zeroconf.Interfaces;
 
 namespace Zeroconf.Models
 {
-    public readonly struct ServiceAnnouncement : IEquatable<ServiceAnnouncement>
+    public readonly struct ServiceAnnouncement(AdapterInformation adapterInformation, IZeroconfHost host) : IEquatable<ServiceAnnouncement>
     {
-        public AdapterInformation AdapterInformation { get; }
-        public IZeroconfHost Host { get; }
-
-        public ServiceAnnouncement(AdapterInformation adapterInformation, IZeroconfHost host)
-        {
-            AdapterInformation = adapterInformation;
-            Host = host ?? throw new ArgumentNullException(nameof(host));
-        }
+        public AdapterInformation AdapterInformation { get; } = adapterInformation;
+        public IZeroconfHost Host { get; } = host ?? throw new ArgumentNullException(nameof(host));
 
         public void Deconstruct(out AdapterInformation adapterInformation, out IZeroconfHost host)
         {

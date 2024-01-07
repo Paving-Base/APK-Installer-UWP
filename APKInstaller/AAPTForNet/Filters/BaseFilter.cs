@@ -4,7 +4,7 @@ namespace AAPTForNet.Filters
 {
     internal abstract class BaseFilter
     {
-        protected const char Seperator = '\'';
+        protected const char Separator = '\'';
         protected const string DefaultEmptyValue = "Unknown";
 
         public abstract bool CanHandle(string msg);

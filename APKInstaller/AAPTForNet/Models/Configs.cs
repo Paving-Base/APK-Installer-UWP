@@ -8,6 +8,6 @@
         hdpi = 4,
         xhdpi = 8,
         xxhdpi = 16,
-        xxxhdpi = 32,
+        xxxhdpi = 32
     }
 }

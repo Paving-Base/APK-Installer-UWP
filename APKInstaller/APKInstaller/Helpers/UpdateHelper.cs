@@ -2,10 +2,15 @@
 using Newtonsoft.Json;
 using System;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Web.Http;
+using Windows.Web.Http.Filters;
+using HttpClient = System.Net.Http.HttpClient;
+using HttpResponseMessage = System.Net.Http.HttpResponseMessage;
+using HttpStatusCode = System.Net.HttpStatusCode;
 
 namespace APKInstaller.Helpers
 {
@@ -14,7 +19,13 @@ namespace APKInstaller.Helpers
         private const string KKPP_API = "https://v2.kkpp.cc/repos/{0}/{1}/releases/latest";
         private const string GITHUB_API = "https://api.github.com/repos/{0}/{1}/releases/latest";
 
-        public static async Task<UpdateInfo> CheckUpdateAsync(string username, string repository, PackageVersion currentVersion = new PackageVersion())
+        public static Task<UpdateInfo> CheckUpdateAsync(string username, string repository)
+        {
+            PackageVersion currentVersion = Package.Current.Id.Version;
+            return CheckUpdateAsync(username, repository, currentVersion);
+        }
+
+        public static async Task<UpdateInfo> CheckUpdateAsync(string username, string repository, PackageVersion currentVersion)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -26,42 +37,34 @@ namespace APKInstaller.Helpers
                 throw new ArgumentNullException(nameof(repository));
             }
 
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-            HttpClient client = new();
+            using HttpClientHandler clientHandler = new();
+            using HttpClient client = new(clientHandler);
+
+            using (HttpBaseProtocolFilter filter = new())
+            {
+                Uri host = new("https://api.github.com");
+                HttpCookieManager cookieManager = filter.CookieManager;
+                foreach (HttpCookie item in cookieManager.GetCookies(host))
+                {
+                    clientHandler.CookieContainer.SetCookies(host, item.ToString());
+                }
+            }
+
             client.DefaultRequestHeaders.Add("User-Agent", username);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             string url = string.Format(GITHUB_API, username, repository);
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpResponseMessage response = await client.GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK) { return null; }
+            string responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             UpdateInfo result = JsonConvert.DeserializeObject<UpdateInfo>(responseBody);
 
             if (result != null)
             {
-                if (currentVersion.Major <= 0 && currentVersion.Minor <= 0 && currentVersion.Build <= 0 && currentVersion.Revision <= 0)
-                {
-                    currentVersion = Package.Current.Id.Version;
-                }
-
                 SystemVersionInfo newVersionInfo = GetAsVersionInfo(result.TagName);
-                int major = currentVersion.Major <= 0 ? 0 : currentVersion.Major;
-                int minor = currentVersion.Minor <= 0 ? 0 : currentVersion.Minor;
-                int build = currentVersion.Build <= 0 ? 0 : currentVersion.Build;
-                int revision = currentVersion.Revision <= 0 ? 0 : currentVersion.Revision;
-
-                SystemVersionInfo currentVersionInfo = new(major, minor, build, revision);
-
-                return new UpdateInfo
-                {
-                    Changelog = result?.Changelog,
-                    CreatedAt = Convert.ToDateTime(result?.CreatedAt),
-                    Assets = result.Assets,
-                    IsPreRelease = result.IsPreRelease,
-                    PublishedAt = Convert.ToDateTime(result?.PublishedAt),
-                    TagName = result.TagName,
-                    ApiUrl = result?.ApiUrl,
-                    ReleaseUrl = result?.ReleaseUrl,
-                    IsExistNewVersion = newVersionInfo > currentVersionInfo
-                };
+                result.IsExistNewVersion = newVersionInfo > currentVersion;
+                result.Version = newVersionInfo;
+                return result;
             }
 
             return null;
@@ -69,15 +72,14 @@ namespace APKInstaller.Helpers
 
         private static SystemVersionInfo GetAsVersionInfo(string version)
         {
-            System.Collections.Generic.List<int> nums = GetVersionNumbers(version).Split('.').Select(int.Parse).ToList();
-
-            return nums.Count <= 1
-                ? new SystemVersionInfo(nums[0], 0, 0, 0)
-                : nums.Count <= 2
-                    ? new SystemVersionInfo(nums[0], nums[1], 0, 0)
-                    : nums.Count <= 3
-                        ? new SystemVersionInfo(nums[0], nums[1], nums[2], 0)
-                        : new SystemVersionInfo(nums[0], nums[1], nums[2], nums[3]);
+            int[] numbs = GetVersionNumbers(version).Split('.').Select(int.Parse).ToArray();
+            return numbs.Length <= 1
+                ? new SystemVersionInfo(numbs[0], 0, 0, 0)
+                : numbs.Length <= 2
+                    ? new SystemVersionInfo(numbs[0], numbs[1], 0, 0)
+                    : numbs.Length <= 3
+                        ? new SystemVersionInfo(numbs[0], numbs[1], numbs[2], 0)
+                        : new SystemVersionInfo(numbs[0], numbs[1], numbs[2], numbs[3]);
         }
 
         private static string GetVersionNumbers(string version)

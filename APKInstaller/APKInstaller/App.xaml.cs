@@ -1,10 +1,8 @@
-﻿using AAPTForNet;
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
-using APKInstaller.Projection;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;

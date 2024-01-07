@@ -59,7 +59,7 @@
                 <controls:WebXAML
                     x:Name="MessageBar"
                     x:Load="{x:Bind Provider.ShowMessages, Mode=OneWay}"
-                    Loaded="WebXAML_Loaded" />
+                    ContentInfo="{x:Bind settingspages:SettingsViewModel.GitInfo}" />
                 <controls:SettingsGroup x:Uid="/SettingsPage/DeviceSettingsHeader">
                     <ListView
                         x:Name="SelectDeviceBox"
@@ -441,7 +441,7 @@
                             </StackPanel>
                         </controls:SettingExpander.Description>
                         <controls:SettingExpander.ActionContent>
-                            <controls:StackPanelEx
+                            <StackPanel
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal"
                                 Spacing="18">
@@ -465,7 +465,7 @@
                                     x:Load="{x:Bind Provider.CheckingUpdate, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                                     Click="Button_Click"
                                     Tag="CheckUpdate" />
-                            </controls:StackPanelEx>
+                            </StackPanel>
                         </controls:SettingExpander.ActionContent>
                         <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
                             <cwuc:MarkdownTextBlock
@@ -490,9 +490,9 @@
                                 x:Name="GotoUpdate"
                                 x:Uid="/SettingsPage/GoToUpdate"
                                 HorizontalAlignment="Right"
-                                x:Load="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}"
                                 Click="GotoUpdate_Click"
-                                Tag="{x:Bind Provider.GotoUpdateTag, Mode=OneWay}" />
+                                Tag="{x:Bind Provider.GotoUpdateTag, Mode=OneWay}"
+                                Visibility="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}" />
                         </muxc:InfoBar.ActionButton>
                     </muxc:InfoBar>
                     <controls:Setting x:Uid="/SettingsPage/ContactMeSettings" Icon="&#xE779;">

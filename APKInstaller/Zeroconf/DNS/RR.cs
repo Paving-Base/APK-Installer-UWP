@@ -127,27 +127,9 @@ namespace Zeroconf.DNS
         }
     }
 
-    internal class AnswerRR : RR
-    {
-        public AnswerRR(RecordReader br)
-            : base(br)
-        {
-        }
-    }
+    internal class AnswerRR(RecordReader br) : RR(br);
 
-    internal class AuthorityRR : RR
-    {
-        public AuthorityRR(RecordReader br)
-            : base(br)
-        {
-        }
-    }
+    internal class AuthorityRR(RecordReader br) : RR(br);
 
-    internal class AdditionalRR : RR
-    {
-        public AdditionalRR(RecordReader br)
-            : base(br)
-        {
-        }
-    }
+    internal class AdditionalRR(RecordReader br) : RR(br);
 }

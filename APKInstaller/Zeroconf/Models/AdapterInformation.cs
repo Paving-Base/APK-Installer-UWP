@@ -2,16 +2,10 @@
 
 namespace Zeroconf.Models
 {
-    public readonly struct AdapterInformation : IEquatable<AdapterInformation>
+    public readonly struct AdapterInformation(string address, string name) : IEquatable<AdapterInformation>
     {
-        public string Address { get; }
-        public string Name { get; }
-
-        public AdapterInformation(string address, string name)
-        {
-            Address = address;
-            Name = name;
-        }
+        public string Address { get; } = address;
+        public string Name { get; } = name;
 
         public void Deconstruct(out string address, out string name)
         {

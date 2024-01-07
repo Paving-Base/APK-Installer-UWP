@@ -5,16 +5,16 @@ namespace AAPTForNet.Filters
 {
     internal class SDKFilter : BaseFilter
     {
-        private readonly List<string> Msessges = [];
-        private string[] Segments => string.Join(string.Empty, Msessges).Split(Seperator);
+        private readonly List<string> Messages = [];
+        private string[] Segments => string.Join(string.Empty, Messages).Split(Separator);
 
         public override bool CanHandle(string msg) => msg.StartsWith("sdkVersion:") || msg.StartsWith("targetSdkVersion:");
 
         public override void AddMessage(string msg)
         {
-            if (!Msessges.Contains(msg))
+            if (!Messages.Contains(msg))
             {
-                Msessges.Add(msg);
+                Messages.Add(msg);
             }
         }
 
@@ -27,7 +27,7 @@ namespace AAPTForNet.Filters
             };
         }
 
-        public override void Clear() => Msessges.Clear();
+        public override void Clear() => Messages.Clear();
 
         private string GetMinSDKVersion()
         {

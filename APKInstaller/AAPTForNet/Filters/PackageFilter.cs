@@ -1,5 +1,4 @@
 ﻿using AAPTForNet.Models;
-using System;
 
 namespace AAPTForNet.Filters
 {
@@ -9,20 +8,17 @@ namespace AAPTForNet.Filters
 
         public override bool CanHandle(string msg) => msg.StartsWith("package:");
 
-        public override void AddMessage(string msg) => Segments = msg.Split(Seperator);
+        public override void AddMessage(string msg) => Segments = msg.Split(Separator);
 
-        public override ApkInfo GetAPK()
+        public override ApkInfo GetAPK() => new()
         {
-            return new ApkInfo
-            {
-                SplitName = GetValueOrDefault("split"),
-                PackageName = GetValueOrDefault("package"),
-                VersionName = GetValueOrDefault("versionName"),
-                VersionCode = GetValueOrDefault("versionCode"),
-            };
-        }
+            SplitName = GetValueOrDefault("split"),
+            PackageName = GetValueOrDefault("package"),
+            VersionName = GetValueOrDefault("versionName"),
+            VersionCode = GetValueOrDefault("versionCode"),
+        };
 
-        public override void Clear() => Segments = Array.Empty<string>();
+        public override void Clear() => Segments = [];
 
         private string GetValueOrDefault(string key)
         {

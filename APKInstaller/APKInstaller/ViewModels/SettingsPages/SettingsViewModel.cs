@@ -26,21 +26,23 @@ namespace APKInstaller.ViewModels.SettingsPages
 {
     public class SettingsViewModel : INotifyPropertyChanged
     {
-        private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
+        private static readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
 
         public static ConditionalWeakTable<CoreDispatcher, SettingsViewModel> Caches { get; } = [];
 
         public CoreDispatcher Dispatcher { get; }
 
-        public static string DeviceFamily => AnalyticsInfo.VersionInfo.DeviceFamily.Replace('.', ' ');
+        public static GitInfo GitInfo { get; } = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Announcements", "Announcements.xaml");
 
-        public static string ToolkitVersion => Assembly.GetAssembly(typeof(HsvColor)).GetName().Version.ToString(3);
+        public static string DeviceFamily { get; } = AnalyticsInfo.VersionInfo.DeviceFamily.Replace('.', ' ');
 
-        public static string SharpAdbClientVersion => Assembly.GetAssembly(typeof(IAdbClient)).GetName().Version.ToString();
+        public static string ToolkitVersion { get; } = Assembly.GetAssembly(typeof(HsvColor)).GetName().Version.ToString(3);
+
+        public static string SharpAdbClientVersion { get; } = Assembly.GetAssembly(typeof(IAdbClient)).GetName().Version.ToString();
 
         public static string VersionTextBlockText { get; } = $"{ResourceLoader.GetForViewIndependentUse().GetString("AppName") ?? Package.Current.DisplayName} v{Package.Current.Id.Version.ToFormattedString(3)}";
 
-        public static bool IsModified => Package.Current.PublisherDisplayName != "wherewhere"
+        public static bool IsModified { get; } = Package.Current.PublisherDisplayName != "wherewhere"
             || Package.Current.Id.Name != "18184wherewhere.AndroidAppInstaller.UWP"
             || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
             || (Package.Current.Id.Publisher != "CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5" && Package.Current.Id.Publisher != "CN=where");
@@ -233,8 +235,8 @@ namespace APKInstaller.ViewModels.SettingsPages
             set => SetProperty(ref _gotoUpdateTag, value);
         }
 
-        private static bool _gotoUpdateVisibility;
-        public bool GotoUpdateVisibility
+        private static Visibility _gotoUpdateVisibility = Visibility.Collapsed;
+        public Visibility GotoUpdateVisibility
         {
             get => _gotoUpdateVisibility;
             set => SetProperty(ref _gotoUpdateVisibility, value);
@@ -254,7 +256,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             set => SetProperty(ref _updateStateMessage, value);
         }
 
-        private static InfoBarSeverity _updateStateSeverity;
+        private static InfoBarSeverity _updateStateSeverity = InfoBarSeverity.Success;
         public InfoBarSeverity UpdateStateSeverity
         {
             get => _updateStateSeverity;
@@ -289,7 +291,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             set => SetProperty(ref _connectInfoIsOpen, value);
         }
 
-        private static InfoBarSeverity _connectInfoSeverity;
+        private static InfoBarSeverity _connectInfoSeverity = InfoBarSeverity.Success;
         public InfoBarSeverity ConnectInfoSeverity
         {
             get => _connectInfoSeverity;
@@ -317,7 +319,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             set => SetProperty(ref _aboutTextBlockText, value);
         }
 
-        public static ListViewSelectionMode _deviceSelectionMode;
+        public static ListViewSelectionMode _deviceSelectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode DeviceSelectionMode
         {
             get => _deviceSelectionMode;
@@ -453,7 +455,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     UpdateStateIsOpen = true;
                     UpdateStateMessage = ex.Message;
                     UpdateStateSeverity = InfoBarSeverity.Error;
-                    GotoUpdateVisibility = false;
+                    GotoUpdateVisibility = Visibility.Collapsed;
                     UpdateStateTitle = _loader.GetString("CheckFailed");
                 }
                 if (info != null)
@@ -462,7 +464,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     {
                         UpdateStateIsOpen = true;
                         GotoUpdateTag = info.ReleaseUrl;
-                        GotoUpdateVisibility = true;
+                        GotoUpdateVisibility = Visibility.Visible;
                         UpdateStateSeverity = InfoBarSeverity.Warning;
                         UpdateStateTitle = _loader.GetString("FindUpdate");
                         UpdateStateMessage = $"{VersionTextBlockText} -> {info.TagName}";
@@ -470,7 +472,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     else
                     {
                         UpdateStateIsOpen = true;
-                        GotoUpdateVisibility = false;
+                        GotoUpdateVisibility = Visibility.Collapsed;
                         UpdateStateSeverity = InfoBarSeverity.Success;
                         UpdateStateTitle = _loader.GetString("UpToDate");
                     }
@@ -627,7 +629,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             {
                 SuggestedStartLocation = PickerLocationId.ComputerFolder
             };
-            FileOpen.FileTypeFilter.Add("adb.exe");
+            FileOpen.FileTypeFilter.Add(".exe");
 
             StorageFile file = await FileOpen.PickSingleFileAsync();
             if (file != null)
