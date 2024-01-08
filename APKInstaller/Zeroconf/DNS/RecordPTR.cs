@@ -25,9 +25,6 @@ namespace Zeroconf.DNS
     {
         public string PTRDNAME = rr.ReadDomainName();
 
-        public override string ToString()
-        {
-            return PTRDNAME;
-        }
+        public override string ToString() => PTRDNAME;
     }
 }

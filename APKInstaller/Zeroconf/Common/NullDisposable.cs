@@ -2,7 +2,7 @@
 
 namespace Zeroconf.Common
 {
-    internal sealed class NullDisposable : IDisposable
+    internal readonly struct NullDisposable : IDisposable
     {
         public void Dispose()
         {

@@ -105,14 +105,10 @@ namespace Zeroconf.DNS
 
         public byte[] Data => [.. WriteName(QName), .. WriteShort((ushort)QType), .. WriteShort((ushort)QClass)];
 
-        private byte[] WriteShort(ushort sValue)
-        {
-            return BitConverter.GetBytes(Header.HostToNetworkOrder((short)sValue));
-        }
+        private byte[] WriteShort(ushort sValue) =>
+            BitConverter.GetBytes(Header.HostToNetworkOrder((short)sValue));
 
-        public override string ToString()
-        {
-            return string.Format("{0,-32}\t{1}\t{2}", QName, QClass, QType);
-        }
+        public override string ToString() =>
+            string.Format("{0,-32}\t{1}\t{2}", QName, QClass, QType);
     }
 }

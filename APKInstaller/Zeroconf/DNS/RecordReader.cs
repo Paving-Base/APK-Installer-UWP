@@ -24,15 +24,11 @@ namespace Zeroconf.DNS
         }
 
 
-        public byte ReadByte()
-        {
-            return Position >= m_Data.Length ? (byte)0 : m_Data[Position++];
-        }
+        public byte ReadByte() =>
+            Position >= m_Data.Length ? (byte)0 : m_Data[Position++];
 
-        public ushort ReadUInt16()
-        {
-            return (ushort)((ReadByte() << 8) | ReadByte());
-        }
+        public ushort ReadUInt16() =>
+            (ushort)((ReadByte() << 8) | ReadByte());
 
         public ushort ReadUInt16(int offset)
         {
@@ -40,10 +36,8 @@ namespace Zeroconf.DNS
             return ReadUInt16();
         }
 
-        public uint ReadUInt32()
-        {
-            return (uint)((ReadUInt16() << 16) | ReadUInt16());
-        }
+        public uint ReadUInt32() =>
+            (uint)((ReadUInt16() << 16) | ReadUInt16());
 
         public string ReadDomainName()
         {

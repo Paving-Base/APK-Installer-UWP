@@ -73,13 +73,11 @@ namespace Zeroconf.DNS
         public ushort PORT = rr.ReadUInt16();
         public string TARGET = rr.ReadDomainName();
 
-        public override string ToString()
-        {
-            return string.Format("{0} {1} {2} {3}",
+        public override string ToString() =>
+            string.Format("{0} {1} {2} {3}",
                 PRIORITY,
                 WEIGHT,
                 PORT,
                 TARGET);
-        }
     }
 }

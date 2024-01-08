@@ -13,15 +13,11 @@ namespace Zeroconf.Models
             name = Name;
         }
 
-        public bool Equals(AdapterInformation other)
-        {
-            return string.Equals(Address, other.Address) && string.Equals(Name, other.Name);
-        }
+        public bool Equals(AdapterInformation other) =>
+            string.Equals(Address, other.Address) && string.Equals(Name, other.Name);
 
-        public override bool Equals(object obj)
-        {
-            return obj is not null && obj is AdapterInformation information && Equals(information);
-        }
+        public override bool Equals(object obj) =>
+            obj is not null && obj is AdapterInformation information && Equals(information);
 
         public override int GetHashCode()
         {
@@ -31,19 +27,10 @@ namespace Zeroconf.Models
             }
         }
 
-        public static bool operator ==(AdapterInformation left, AdapterInformation right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(AdapterInformation left, AdapterInformation right) => left.Equals(right);
 
-        public static bool operator !=(AdapterInformation left, AdapterInformation right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(AdapterInformation left, AdapterInformation right) => !left.Equals(right);
 
-        public override string ToString()
-        {
-            return $"{Name}: {Address}";
-        }
+        public override string ToString() => $"{Name}: {Address}";
     }
 }

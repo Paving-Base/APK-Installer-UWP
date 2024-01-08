@@ -22,9 +22,6 @@ namespace Zeroconf.DNS
                 rr.ReadUInt16(),
                 rr.ReadUInt16());
 
-        public override string ToString()
-        {
-            return Address.ToString();
-        }
+        public override string ToString() => Address.ToString();
     }
 }

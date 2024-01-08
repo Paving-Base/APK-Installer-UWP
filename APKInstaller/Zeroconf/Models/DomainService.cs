@@ -13,15 +13,11 @@ namespace Zeroconf.Models
             service = Service;
         }
 
-        public bool Equals(DomainService other)
-        {
-            return string.Equals(Domain, other.Domain) && string.Equals(Service, other.Service);
-        }
+        public bool Equals(DomainService other) =>
+            string.Equals(Domain, other.Domain) && string.Equals(Service, other.Service);
 
-        public override bool Equals(object obj)
-        {
-            return obj is not null && obj is DomainService service && Equals(service);
-        }
+        public override bool Equals(object obj) =>
+            obj is not null && obj is DomainService service && Equals(service);
 
         public override int GetHashCode()
         {
@@ -31,14 +27,8 @@ namespace Zeroconf.Models
             }
         }
 
-        public static bool operator ==(DomainService left, DomainService right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(DomainService left, DomainService right) => left.Equals(right);
 
-        public static bool operator !=(DomainService left, DomainService right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(DomainService left, DomainService right) => !left.Equals(right);
     }
 }

@@ -20,10 +20,8 @@ namespace Zeroconf
         private static readonly AsyncLock ResolverLock = new();
         private static readonly INetworkInterface NetworkInterface = new NetworkInterface();
 
-        private static IEnumerable<string> BrowseResponseParser(Response response)
-        {
-            return response.RecordsPTR.Select(ptr => ptr.PTRDNAME);
-        }
+        private static IEnumerable<string> BrowseResponseParser(Response response) =>
+            response.RecordsPTR.Select(ptr => ptr.PTRDNAME);
 
         private static async Task<IDictionary<string, Response>> ResolveInternal(
             ZeroconfOptions options,
@@ -47,7 +45,7 @@ namespace Zeroconf
                 string name = firstPtr?.PTRDNAME.Split('.')[0] ?? string.Empty;
                 string addrString = address.ToString();
 
-                Debug.WriteLine($"IP: {addrString}, {(string.IsNullOrEmpty(name) ? string.Empty : $"Name: {name}, ")}Bytes: {buffer.Length}, IsResponse: {resp.header.QR}");
+                Debug.WriteLine("IP: {0}, {1}Bytes: {2}, IsResponse: {3}", addrString, new Stringable(() => string.IsNullOrEmpty(name) ? string.Empty : $"Name: {name}, "), buffer.Length, resp.header.QR);
 
                 if (resp.header.QR)
                 {
@@ -61,7 +59,7 @@ namespace Zeroconf
                 }
             }
 
-            Debug.WriteLine($"Looking for {string.Join(", ", options.Protocols)} with scantime {options.ScanTime}");
+            Debug.WriteLine("Looking for {0} with scantime {1}", new Stringable(() => string.Join(", ", options.Protocols)), options.ScanTime);
 
             await NetworkInterface.NetworkRequestAsync(
                 requestBytes,
@@ -79,20 +77,13 @@ namespace Zeroconf
         {
             Request req = new();
             QType queryType = options.ScanQueryType == ScanQueryType.Ptr ? QType.PTR : QType.ANY;
-
-            foreach (string protocol in options.Protocols)
-            {
-                Question question = new(protocol, queryType, QClass.IN);
-
-                req.AddQuestion(question);
-            }
-
+            req.AddQuestions(options.Protocols.Select(protocol => new Question(protocol, queryType, QClass.IN)));
             return req.Data;
         }
 
         private static ZeroconfHost ResponseToZeroconf(Response response, string remoteAddress, ResolveOptions options)
         {
-            List<string> ipv4Adresses = response.Answers
+            IEnumerable<string> ipv4Adresses = response.Answers
                 .Select(r => r.RECORD)
                 .OfType<RecordA>()
                 .Concat(
@@ -100,10 +91,9 @@ namespace Zeroconf
                     .Select(r => r.RECORD)
                     .OfType<RecordA>())
                 .Select(aRecord => aRecord.Address)
-                .Distinct()
-                .ToList();
+                .Distinct();
 
-            List<string> ipv6Adresses = response.Answers
+            IEnumerable<string> ipv6Adresses = response.Answers
                 .Select(r => r.RECORD)
                 .OfType<RecordAAAA>()
                 .Concat(
@@ -111,12 +101,11 @@ namespace Zeroconf
                     .Select(r => r.RECORD)
                     .OfType<RecordAAAA>())
                 .Select(aRecord => aRecord.Address)
-                .Distinct()
-                .ToList();
+                .Distinct();
 
             ZeroconfHost z = new()
             {
-                IPAddresses = ipv4Adresses.Concat(ipv6Adresses).ToList()
+                IPAddresses = ipv4Adresses.Concat(ipv6Adresses).ToArray()
             };
 
             z.Id = z.IPAddresses.FirstOrDefault() ?? remoteAddress;
@@ -136,10 +125,10 @@ namespace Zeroconf
                 }
 
                 // Get the matching service records
-                List<Record> responseRecords = response.RecordsRR
+                Record[] responseRecords = response.RecordsRR
                     .Where(r => r.NAME == ptrRec.PTRDNAME)
                     .Select(r => r.RECORD)
-                    .ToList();
+                    .ToArray();
 
                 RecordSRV srvRec = responseRecords.OfType<RecordSRV>().FirstOrDefault();
                 if (srvRec == null)

@@ -30,19 +30,17 @@ namespace Zeroconf
             int retryDelayMilliseconds = 2000,
             Action<IZeroconfHost> callback = null,
             NetworkInterface[] netInterfacesToSendRequestOn = null,
-            CancellationToken cancellationToken = default)
-        {
-            return string.IsNullOrWhiteSpace(protocol)
+            CancellationToken cancellationToken = default) =>
+            string.IsNullOrWhiteSpace(protocol)
                 ? throw new ArgumentNullException(nameof(protocol))
                 : ResolveAsync(
-                    new[] { protocol },
+                    [protocol],
                     scanTime,
                     retries,
                     retryDelayMilliseconds,
                     callback,
                     netInterfacesToSendRequestOn,
                     cancellationToken);
-        }
 
         /// <summary>
         /// Resolves available ZeroConf services
@@ -55,7 +53,7 @@ namespace Zeroconf
         /// <param name="callback">Called per record returned as they come in.</param>
         /// <param name="netInterfacesToSendRequestOn">The network interfaces/adapters to use. Use all if null</param>
         /// <returns></returns>
-        public static async Task<IReadOnlyList<IZeroconfHost>> ResolveAsync(
+        public static Task<IReadOnlyList<IZeroconfHost>> ResolveAsync(
             IEnumerable<string> protocols,
             TimeSpan scanTime = default,
             int retries = 2,
@@ -86,9 +84,8 @@ namespace Zeroconf
                 ScanTime = scanTime
             };
 
-            return await ResolveAsync(options, callback, netInterfacesToSendRequestOn, cancellationToken).ConfigureAwait(false);
+            return ResolveAsync(options, callback, netInterfacesToSendRequestOn, cancellationToken);
         }
-
 
         /// <summary>
         /// Resolves available ZeroConf services
@@ -97,16 +94,14 @@ namespace Zeroconf
         /// <param name="callback">Called per record returned as they come in.</param>
         /// <param name="netInterfacesToSendRequestOn">The network interfaces/adapters to use. Use all if null</param>
         /// <returns></returns>
-        public static async Task<IReadOnlyList<IZeroconfHost>> ResolveAsync(
+        public static Task<IReadOnlyList<IZeroconfHost>> ResolveAsync(
             ResolveOptions options,
             Action<IZeroconfHost> callback = null,
             NetworkInterface[] netInterfacesToSendRequestOn = null,
-            CancellationToken cancellationToken = default)
-        {
-            return options == null
+            CancellationToken cancellationToken = default) =>
+            options == null
                 ? throw new ArgumentNullException(nameof(options))
-                : await ResolveAsyncOriginal(options, callback, netInterfacesToSendRequestOn, cancellationToken);
-        }
+                : ResolveAsyncOriginal(options, callback, netInterfacesToSendRequestOn, cancellationToken);
 
         internal static async Task<IReadOnlyList<IZeroconfHost>> ResolveAsyncOriginal(
             ResolveOptions options,
@@ -137,9 +132,8 @@ namespace Zeroconf
             return dict.Select(
                 pair => ResponseToZeroconf(pair.Value, pair.Key, options))
                     .Where(zh => zh.Services.Any(s => options.Protocols.Contains(s.Value.Name))) // Ensure we only return records that have matching services
-                    .ToList();
+                    .ToArray();
         }
-
 
         /// <summary>
         /// Returns all available domains with services on them
@@ -151,7 +145,7 @@ namespace Zeroconf
         /// <param name="callback">Called per record returned as they come in.</param>
         /// <param name="netInterfacesToSendRequestOn">The network interfaces/adapters to use. Use all if null</param>
         /// <returns></returns>
-        public static async Task<ILookup<string, string>> BrowseDomainsAsync(
+        public static Task<ILookup<string, string>> BrowseDomainsAsync(
             TimeSpan scanTime = default,
             int retries = 2,
             int retryDelayMilliseconds = 2000,
@@ -182,7 +176,7 @@ namespace Zeroconf
                 ScanTime = scanTime
             };
 
-            return await BrowseDomainsAsync(options, callback, netInterfacesToSendRequestOn, cancellationToken).ConfigureAwait(false);
+            return BrowseDomainsAsync(options, callback, netInterfacesToSendRequestOn, cancellationToken);
         }
 
         /// <summary>
@@ -193,16 +187,14 @@ namespace Zeroconf
         /// <param name="cancellationToken"></param>
         /// <param name="netInterfacesToSendRequestOn">The network interfaces/adapters to use. Use all if null</param>
         /// <returns></returns>
-        public static async Task<ILookup<string, string>> BrowseDomainsAsync(
+        public static Task<ILookup<string, string>> BrowseDomainsAsync(
             BrowseDomainsOptions options,
             Action<string, string> callback = null,
             NetworkInterface[] netInterfacesToSendRequestOn = null,
-            CancellationToken cancellationToken = default)
-        {
-            return options == null
+            CancellationToken cancellationToken = default) =>
+            options == null
                 ? throw new ArgumentNullException(nameof(options))
-                : await BrowseDomainsAsyncOriginal(options, callback, netInterfacesToSendRequestOn, cancellationToken);
-        }
+                : BrowseDomainsAsyncOriginal(options, callback, netInterfacesToSendRequestOn, cancellationToken);
 
         internal static async Task<ILookup<string, string>> BrowseDomainsAsyncOriginal(
             BrowseDomainsOptions options,

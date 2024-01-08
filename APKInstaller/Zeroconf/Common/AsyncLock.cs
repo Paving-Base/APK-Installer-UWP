@@ -19,7 +19,7 @@ namespace Zeroconf.Common
 
         public Task<Releaser> LockAsync([CallerMemberName] string callingMethod = null, [CallerFilePath] string path = null, [CallerLineNumber] int line = 0)
         {
-            Debug.WriteLine($"AsyncLock.LockAsync called by: {callingMethod} in file: {path} : {line}");
+            Debug.WriteLine("AsyncLock.LockAsync called by: {0} in file: {1} : {2}", callingMethod, path, line);
 
             Task wait = m_semaphore.WaitAsync();
 
@@ -34,12 +34,9 @@ namespace Zeroconf.Common
         {
             private readonly AsyncLock m_toRelease;
 
-            internal Releaser(AsyncLock toRelease) { m_toRelease = toRelease; }
+            internal Releaser(AsyncLock toRelease) => m_toRelease = toRelease;
 
-            public void Dispose()
-            {
-                m_toRelease?.m_semaphore.Release();
-            }
+            public void Dispose() => m_toRelease?.m_semaphore.Release();
         }
     }
 }

@@ -18,10 +18,11 @@ namespace Zeroconf.DNS
             questions = [];
         }
 
-        public void AddQuestion(Question question)
-        {
+        public void AddQuestion(Question question) =>
             questions.Add(question);
-        }
+
+        public void AddQuestions(IEnumerable<Question> question) =>
+            questions.AddRange(question);
 
         public byte[] Data
         {

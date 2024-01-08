@@ -451,14 +451,15 @@ namespace APKInstaller.ViewModels.SettingsPages
         {
             if (disposing)
             {
+                DeviceList.Clear();
+                await ThreadSwitcher.ResumeBackgroundAsync();
                 if (ConnectListener != null)
                 {
                     ConnectListener.ServiceLost -= ConnectListener_ServiceLost;
                     ConnectListener.ServiceFound -= ConnectListener_ServiceFound;
                     ConnectListener.Dispose();
                 }
-                DeviceList.Clear();
-                if ((await AdbServer.Instance.GetStatusAsync(CancellationToken.None)).IsRunning)
+                if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
                 {
                     ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
                 }

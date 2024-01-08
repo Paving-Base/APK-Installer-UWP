@@ -11,10 +11,8 @@ namespace Zeroconf
             int pingsUntilRemove = 2,
             TimeSpan scanTime = default,
             int retries = 2,
-            int retryDelayMilliseconds = 2000)
-        {
-            return new ResolverListener(protocols, queryInterval, pingsUntilRemove, scanTime, retries, retryDelayMilliseconds);
-        }
+            int retryDelayMilliseconds = 2000) =>
+            new(protocols, queryInterval, pingsUntilRemove, scanTime, retries, retryDelayMilliseconds);
 
         public static ResolverListener CreateListener(
             string protocol,
@@ -22,10 +20,7 @@ namespace Zeroconf
             int pingsUntilRemove = 2,
             TimeSpan scanTime = default,
             int retries = 2,
-            int retryDelayMilliseconds = 2000)
-        {
-            return CreateListener(new[] { protocol }, queryInterval, pingsUntilRemove, scanTime, retries, retryDelayMilliseconds);
-        }
-
+            int retryDelayMilliseconds = 2000) =>
+            CreateListener([protocol], queryInterval, pingsUntilRemove, scanTime, retries, retryDelayMilliseconds);
     }
 }

@@ -164,10 +164,8 @@ namespace Zeroconf.DNS
             ARCOUNT = rr.ReadUInt16();
         }
 
-        private ushort SetBits(ushort oldValue, int position, int length, bool blnValue)
-        {
-            return SetBits(oldValue, position, length, blnValue ? (ushort)1 : (ushort)0);
-        }
+        private ushort SetBits(ushort oldValue, int position, int length, bool blnValue) =>
+            SetBits(oldValue, position, length, blnValue ? (ushort)1 : (ushort)0);
 
         private ushort SetBits(ushort oldValue, int position, int length, ushort newValue)
         {
@@ -216,15 +214,11 @@ namespace Zeroconf.DNS
             .. WriteShort(ARCOUNT),
         ];
 
-        private byte[] WriteShort(ushort sValue)
-        {
-            return BitConverter.GetBytes(HostToNetworkOrder((short)sValue));
-        }
+        private byte[] WriteShort(ushort sValue) =>
+            BitConverter.GetBytes(HostToNetworkOrder((short)sValue));
 
-        internal static short HostToNetworkOrder(short host)
-        {
-            return (short)(((host & 0xff) << 8) | ((host >> 8) & 0xff));
-        }
+        internal static short HostToNetworkOrder(short host) =>
+            (short)(((host & 0xff) << 8) | ((host >> 8) & 0xff));
 
         /// <summary>
         /// query (false), or a response (true)

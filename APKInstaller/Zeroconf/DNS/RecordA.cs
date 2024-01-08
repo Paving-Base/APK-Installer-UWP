@@ -27,9 +27,6 @@ namespace Zeroconf.DNS
                 rr.ReadByte(),
                 rr.ReadByte());
 
-        public override string ToString()
-        {
-            return Address;
-        }
+        public override string ToString() => Address;
     }
 }

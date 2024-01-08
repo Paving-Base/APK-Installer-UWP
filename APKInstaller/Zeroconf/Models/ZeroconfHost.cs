@@ -38,25 +38,16 @@ namespace Zeroconf.Models
         /// </summary>
         public IReadOnlyDictionary<string, IService> Services => services;
 
-        internal void AddService(IService service)
-        {
+        internal void AddService(IService service) =>
             services[service.ServiceName] = service ?? throw new ArgumentNullException(nameof(service));
-        }
 
-        public bool Equals(IZeroconfHost other)
-        {
-            return Equals(other as ZeroconfHost);
-        }
+        public bool Equals(IZeroconfHost other) => Equals(other as ZeroconfHost);
 
-        public bool Equals(ZeroconfHost other)
-        {
-            return other is not null && (ReferenceEquals(this, other) || (string.Equals(Id, other.Id) && string.Equals(IPAddress, other.IPAddress)));
-        }
+        public bool Equals(ZeroconfHost other) =>
+            other is not null && (ReferenceEquals(this, other) || (string.Equals(Id, other.Id) && string.Equals(IPAddress, other.IPAddress)));
 
-        public override bool Equals(object obj)
-        {
-            return obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals((ZeroconfHost)obj)));
-        }
+        public override bool Equals(object obj) =>
+            obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals((ZeroconfHost)obj)));
 
         public override int GetHashCode()
         {

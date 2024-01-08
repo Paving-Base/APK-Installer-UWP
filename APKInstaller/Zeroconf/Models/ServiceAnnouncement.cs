@@ -14,15 +14,11 @@ namespace Zeroconf.Models
             host = Host;
         }
 
-        public bool Equals(ServiceAnnouncement other)
-        {
-            return AdapterInformation.Equals(other.AdapterInformation) && Equals(Host, other.Host);
-        }
+        public bool Equals(ServiceAnnouncement other) =>
+            AdapterInformation.Equals(other.AdapterInformation) && Equals(Host, other.Host);
 
-        public override bool Equals(object obj)
-        {
-            return obj is not null && obj is ServiceAnnouncement announcement && Equals(announcement);
-        }
+        public override bool Equals(object obj) =>
+            obj is not null && obj is ServiceAnnouncement announcement && Equals(announcement);
 
         public override int GetHashCode()
         {
@@ -32,14 +28,8 @@ namespace Zeroconf.Models
             }
         }
 
-        public static bool operator ==(ServiceAnnouncement left, ServiceAnnouncement right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(ServiceAnnouncement left, ServiceAnnouncement right) => left.Equals(right);
 
-        public static bool operator !=(ServiceAnnouncement left, ServiceAnnouncement right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(ServiceAnnouncement left, ServiceAnnouncement right) => !left.Equals(right);
     }
 }

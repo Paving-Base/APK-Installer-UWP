@@ -116,15 +116,13 @@ namespace Zeroconf.DNS
             RECORD.RR = this;
         }
 
-        public override string ToString()
-        {
-            return string.Format("{0,-32} {1}\t{2}\t{3}\t{4}",
+        public override string ToString() =>
+            string.Format("{0,-32} {1}\t{2}\t{3}\t{4}",
                 NAME,
                 TTL,
                 Class,
                 Type,
                 RECORD);
-        }
     }
 
     internal class AnswerRR(RecordReader br) : RR(br);

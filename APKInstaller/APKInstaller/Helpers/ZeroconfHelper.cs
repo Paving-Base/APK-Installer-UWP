@@ -1,7 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Zeroconf;
 using Zeroconf.Interfaces;
@@ -32,9 +31,9 @@ namespace APKInstaller.Helpers
 
         private static async void ConnectListener_ServiceFound(object sender, IZeroconfHost e)
         {
-            if ((await AdbServer.Instance.GetStatusAsync(CancellationToken.None)).IsRunning)
+            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
             {
-                await new AdbClient().ConnectAsync(e.IPAddress, e.Services.FirstOrDefault().Value.Port);
+                await new AdbClient().ConnectAsync(e.IPAddress, e.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);
             }
         }
 
@@ -42,7 +41,7 @@ namespace APKInstaller.Helpers
         {
             IReadOnlyList<IZeroconfHost> hosts = ConnectListener != null
                 ? ConnectListener.Hosts
-                : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.");
+                : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
             if (hosts?.Count is > 0)
             {
                 AdbClient AdbClient = new();
@@ -58,13 +57,13 @@ namespace APKInstaller.Helpers
             List<string> results = [];
             IReadOnlyList<IZeroconfHost> hosts = ConnectListener != null
                 ? ConnectListener.Hosts
-                : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.");
+                : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
             if (hosts?.Count is > 0)
             {
                 AdbClient AdbClient = new();
                 foreach (IZeroconfHost host in hosts)
                 {
-                    results.Add(await AdbClient.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port));
+                    results.Add(await AdbClient.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port).ConfigureAwait(false));
                 }
             }
             return results;

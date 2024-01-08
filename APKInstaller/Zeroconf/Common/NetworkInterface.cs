@@ -25,7 +25,7 @@ namespace Zeroconf.Common
             IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn = null)
         {
             // populate list with all adapters if none specified
-            if (netInterfacesToSendRequestOn?.Any() == true)
+            if (netInterfacesToSendRequestOn?.Any() != true)
             {
                 netInterfacesToSendRequestOn = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
             }
@@ -87,7 +87,7 @@ namespace Zeroconf.Common
 
             int ifaceIndex = p.Index;
 
-            Debug.WriteLine($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
+            Debug.WriteLine("Scanning on iface {0}, idx {1}, IP: {2}", adapter.Name, ifaceIndex, ipv4Address);
 
             using UdpClient client = new();
             for (int i = 0; i < retries; i++)
@@ -118,10 +118,10 @@ namespace Zeroconf.Common
                     client.ExclusiveAddressUse = false;
 
                     IPEndPoint localEp = new(IPAddress.Any, 5353);
-                    Debug.WriteLine($"Attempting to bind to {localEp} on adapter {adapter.Name}");
+                    Debug.WriteLine("Attempting to bind to {0} on adapter {1}", localEp, adapter.Name);
 
                     socket.Bind(localEp);
-                    Debug.WriteLine($"Bound to {localEp}");
+                    Debug.WriteLine("Bound to {0}", localEp);
 
                     IPAddress multicastAddress = IPAddress.Parse("224.0.0.251");
                     MulticastOption multOpt = new(multicastAddress, ifaceIndex);
@@ -149,11 +149,11 @@ namespace Zeroconf.Common
                     }, cancellationToken);
 
                     IPEndPoint broadcastEp = new(IPAddress.Parse("224.0.0.251"), 5353);
-                    Debug.WriteLine($"About to send on iface {adapter.Name}");
+                    Debug.WriteLine("About to send on iface {0}", [adapter.Name]);
 
                     await client.SendAsync(requestBytes, requestBytes.Length, broadcastEp)
                                 .ConfigureAwait(false);
-                    Debug.WriteLine($"Sent mDNS query on iface {adapter.Name}");
+                    Debug.WriteLine("Sent mDNS query on iface {0}", [adapter.Name]);
 
                     // wait for responses
                     await Task.Delay(scanTime, cancellationToken)
@@ -171,7 +171,7 @@ namespace Zeroconf.Common
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine($"Execption with network request, IP {ipv4Address}\n: {e}");
+                    Debug.WriteLine("Execption with network request, IP {0}\n: {1}", ipv4Address, e);
                     if (i + 1 >= retries) // last one, pass underlying out
                     {
                         // Ensure all inner info is captured                            
@@ -215,7 +215,7 @@ namespace Zeroconf.Common
                     return;
                 }
 
-                Debug.WriteLine($"Scanning on iface {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}");
+                Debug.WriteLine("Scanning on iface {0}, idx {1}, IP: {2}", adapter.Name, ifaceIndex, ipv4Address);
 
                 using UdpClient client = new();
                 Socket socket = client.Client;
@@ -252,7 +252,7 @@ namespace Zeroconf.Common
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine($"Callback threw an exception: {ex}");
+                            Debug.WriteLine("Callback threw an exception: {0}", ex);
                         }
                     }
                     catch when (cancellationToken.IsCancellationRequested)
@@ -261,7 +261,7 @@ namespace Zeroconf.Common
                     }
                 }
 
-                Debug.WriteLine($"Done listening for mDNS packets on {adapter.Name}, idx {ifaceIndex}, IP: {ipv4Address}.");
+                Debug.WriteLine("Done listening for mDNS packets on {0}, idx {1}, IP: {2}.", adapter.Name, ifaceIndex, ipv4Address);
 
                 cancellationToken.ThrowIfCancellationRequested();
             }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
