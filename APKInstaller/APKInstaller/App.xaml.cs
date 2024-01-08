@@ -3,6 +3,7 @@ using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
 using APKInstaller.Pages;
+using APKInstaller.Projection;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -178,6 +179,8 @@ namespace APKInstaller
 
         private static async Task RequestWifiAccessAsync()
         {
+            await ThreadSwitcher.ResumeBackgroundAsync();
+            _ = APKInstallerProjectionFactory.ServerManager.EnableLoopback();
             if (ApiInformation.IsMethodPresent("Windows.Security.Authorization.AppCapabilityAccess.AppCapability", "Create"))
             {
                 AppCapability wifiData = AppCapability.Create("wifiData");

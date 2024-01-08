@@ -1,6 +1,11 @@
 ﻿#include "pch.h"
 #include "ServerManager.h"
 #include "ServerManager.g.cpp"
+#include "networkisolation.h"
+#include "sddl.h"
+#include "winrt/Windows.ApplicationModel.h"
+
+using namespace Windows::ApplicationModel;
 
 namespace winrt::APKInstaller::Metadata::implementation
 {
@@ -276,5 +281,126 @@ namespace winrt::APKInstaller::Metadata::implementation
         CloseHandle(processInfo.hThread);
 
         co_return _exitCode;
+    }
+
+    bool ServerManager::EnableLoopback() const
+    {
+        std::vector<std::wstring> list = std::vector<std::wstring>();
+        HINSTANCE firewallAPI = LoadLibrary(L"FirewallAPI.dll");
+        if (!firewallAPI) { return false; }
+
+        decltype(&NetworkIsolationGetAppContainerConfig) NetworkIsolationGetAppContainerConfig =
+            (decltype(NetworkIsolationGetAppContainerConfig))GetProcAddress(
+                firewallAPI,
+                "NetworkIsolationGetAppContainerConfig");
+
+        if (NetworkIsolationGetAppContainerConfig)
+        {
+            DWORD size = 0;
+            PSID_AND_ATTRIBUTES arrayValue = nullptr;
+
+            if (NetworkIsolationGetAppContainerConfig(&size, &arrayValue) == S_OK)
+            {
+                if (arrayValue != nullptr)
+                {
+                    for (DWORD i = 0; i < size; i++)
+                    {
+                        LPWSTR sid;
+                        const SID_AND_ATTRIBUTES cur = arrayValue[i];
+                        if (cur.Sid != nullptr)
+                        {
+                            ConvertSidToStringSid(cur.Sid, &sid);
+                            if (sid != nullptr)
+                            {
+                                list.push_back(sid);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        LPWSTR currentSid = nullptr;
+
+        decltype(&NetworkIsolationEnumAppContainers) NetworkIsolationEnumAppContainers =
+            (decltype(NetworkIsolationEnumAppContainers))GetProcAddress(
+                firewallAPI,
+                "NetworkIsolationEnumAppContainers");
+
+        if (NetworkIsolationEnumAppContainers)
+        {
+            DWORD size = 0;
+            PINET_FIREWALL_APP_CONTAINER arrayValue = nullptr;
+            hstring fullName = Package::Current().Id().FullName();
+
+            if (NetworkIsolationEnumAppContainers(NETISO_FLAG::NETISO_FLAG_MAX, &size, &arrayValue) == S_OK)
+            {
+                if (arrayValue != nullptr)
+                {
+                    for (DWORD i = 0; i < size; i++)
+                    {
+                        const INET_FIREWALL_APP_CONTAINER cur = arrayValue[i];
+                        if (cur.packageFullName)
+                        {
+                            std::wstring packageFullName = cur.packageFullName;
+                            if (packageFullName.compare(fullName) == 0)
+                            {
+                                ConvertSidToStringSid(cur.appContainerSid, &currentSid);
+                                break;
+                            }
+                        }
+                    }
+
+                    decltype(&NetworkIsolationFreeAppContainers) NetworkIsolationFreeAppContainers =
+                        (decltype(NetworkIsolationFreeAppContainers))GetProcAddress(
+                            firewallAPI,
+                            "NetworkIsolationFreeAppContainers");
+
+                    if (NetworkIsolationFreeAppContainers)
+                    {
+                        NetworkIsolationFreeAppContainers(arrayValue);
+                    }
+                }
+            }
+        }
+
+        if (currentSid)
+        {
+            for (std::wstring left : list)
+            {
+                if (left.compare(currentSid) == 0)
+                {
+                    return true;
+                }
+            }
+
+            decltype(&NetworkIsolationSetAppContainerConfig) NetworkIsolationSetAppContainerConfig =
+                (decltype(NetworkIsolationSetAppContainerConfig))GetProcAddress(
+                    firewallAPI,
+                    "NetworkIsolationSetAppContainerConfig");
+
+            if (NetworkIsolationSetAppContainerConfig)
+            {
+                std::vector<SID_AND_ATTRIBUTES> arr;
+                DWORD count = 0;
+
+                list.push_back(currentSid);
+                for (std::wstring app : list)
+                {
+                    SID_AND_ATTRIBUTES sid{};
+                    sid.Attributes = 0;
+                    //TO DO:
+                    PSID ptr = nullptr;
+                    ConvertStringSidToSid(app.c_str(), &ptr);
+                    sid.Sid = ptr;
+                    arr.push_back(sid);
+                    count++;
+                }
+
+                return NetworkIsolationSetAppContainerConfig(count, arr.data()) == S_OK;
+            }
+        }
+
+        return false;
     }
 }

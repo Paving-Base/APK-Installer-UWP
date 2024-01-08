@@ -21,9 +21,10 @@ namespace winrt::APKInstaller::Metadata::implementation
         unsigned int RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
         IAsyncOperation<unsigned int> RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
         IAsyncOperation<unsigned int> DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode);
+        bool EnableLoopback() const;
 
     private:
-        const size_t defaultBufferSize = 1024;
+        const DWORD defaultBufferSize = 1024;
         event<EventHandler<bool>> m_serverManagerDestructedEvent;
 
         static void CreatePipeWithSecurityAttributes(PHANDLE hReadPipe, PHANDLE hWritePipe, LPSECURITY_ATTRIBUTES lpPipeAttributes, int nSize)
@@ -101,7 +102,7 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         inline void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode) const
         {
-            const size_t bufferLen = defaultBufferSize;
+            const DWORD bufferLen = defaultBufferSize;
             char* buffer = new char[bufferLen];
             memset(buffer, '\0', bufferLen);
             DWORD recLen = 0;
@@ -202,7 +203,7 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         inline bool ReadFromPipe(const HANDLE hPipeRead, DumpDelegate callback, const IVector<hstring> output, const UINT encode) const
         {
-            const size_t bufferLen = defaultBufferSize;
+            const DWORD bufferLen = defaultBufferSize;
             char* buffer = new char[bufferLen];
             memset(buffer, '\0', bufferLen);
             bool terminated = false;
