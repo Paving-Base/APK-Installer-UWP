@@ -2,6 +2,7 @@
 
 #include "ServerManager.g.h"
 
+using namespace std;
 using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -18,13 +19,12 @@ namespace winrt::APKInstaller::Metadata::implementation
         event_token ServerManagerDestructed(EventHandler<bool> const& handler);
         void ServerManagerDestructed(event_token const& token);
 
-        unsigned int RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
-        IAsyncOperation<unsigned int> RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput);
-        IAsyncOperation<unsigned int> DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode);
+        unsigned int RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput) const;
+        IAsyncOperation<unsigned int> RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput) const;
+        IAsyncOperation<unsigned int> DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode) const;
         bool EnableLoopback() const;
 
     private:
-        const DWORD defaultBufferSize = 1024;
         event<EventHandler<bool>> m_serverManagerDestructedEvent;
 
         static void CreatePipeWithSecurityAttributes(PHANDLE hReadPipe, PHANDLE hWritePipe, LPSECURITY_ATTRIBUTES lpPipeAttributes, int nSize)
@@ -89,7 +89,7 @@ namespace winrt::APKInstaller::Metadata::implementation
             }
         }
 
-        inline const hstring BuildCommandLine(const hstring fileName, const hstring command)
+        static const hstring BuildCommandLine(const hstring fileName, const hstring command)
         {
             // Construct a StringBuilder with the appropriate command line
             // to pass to CreateProcess.  If the filename isn't already
@@ -100,15 +100,15 @@ namespace winrt::APKInstaller::Metadata::implementation
             return fileNameIsQuoted ? fileName + ' ' + command : '"' + fileName + L"\" " + command;
         }
 
-        inline void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode) const
+        static void ReadFromPipe(const HANDLE hPipeRead, const IVector<hstring> output, const UINT encode)
         {
-            const DWORD bufferLen = defaultBufferSize;
+            const DWORD bufferLen = 1024;
             char* buffer = new char[bufferLen];
             memset(buffer, '\0', bufferLen);
             DWORD recLen = 0;
             if (output)
             {
-                std::wstringstream line = {};
+                wstringstream line = {};
                 do
                 {
                     if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))
@@ -188,7 +188,7 @@ namespace winrt::APKInstaller::Metadata::implementation
             delete[] buffer;
         }
 
-        inline IAsyncAction ProcessCallback(DumpDelegate callback, hstring line, int index, bool& terminated) const
+        static IAsyncAction ProcessCallback(DumpDelegate callback, hstring line, int index, bool& terminated)
         {
             co_await resume_background();
             try
@@ -201,15 +201,15 @@ namespace winrt::APKInstaller::Metadata::implementation
             catch (...) {}
         }
 
-        inline bool ReadFromPipe(const HANDLE hPipeRead, DumpDelegate callback, const IVector<hstring> output, const UINT encode) const
+        static const bool ReadFromPipe(const HANDLE hPipeRead, DumpDelegate callback, const IVector<hstring> output, const UINT encode)
         {
-            const DWORD bufferLen = defaultBufferSize;
+            const DWORD bufferLen = 1024;
             char* buffer = new char[bufferLen];
             memset(buffer, '\0', bufferLen);
             bool terminated = false;
             DWORD recLen = 0;
             int index = 0;
-            std::wstringstream line = {};
+            wstringstream line = {};
             do
             {
                 if (!ReadFile(hPipeRead, buffer, bufferLen, &recLen, NULL))

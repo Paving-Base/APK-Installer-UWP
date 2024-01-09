@@ -11,7 +11,7 @@
   <Identity
     Name="18184wherewhere.AndroidAppInstaller.UWP"
     Publisher="CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5"
-    Version="0.0.2.0" />
+    Version="0.0.3.0" />
 
   <Properties>
     <DisplayName>APK 安装程序 - UWP</DisplayName>
@@ -98,37 +98,6 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-      </Extensions>
-    </Application>
-    <Application Id="APKInstallerComServer"
-      Executable="APKInstaller.Server\APKInstaller.Server.exe"
-      EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements
-        DisplayName="APK Installer COM Server"
-        Description="The APK Installer COM server."
-        BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        AppListEntry="none" >
-        <uap:DefaultTile
-          Wide310x150Logo="Assets\Wide310x150Logo.png"
-          Square71x71Logo="Assets\SmallTile.png"
-          Square310x310Logo="Assets\LargeTile.png">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile >
-        <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" />
-        <uap:InitialRotationPreference>
-          <uap:Rotation Preference="landscape"/>
-          <uap:Rotation Preference="portrait"/>
-          <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portraitFlipped"/>
-        </uap:InitialRotationPreference>
-      </uap:VisualElements>
-      <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer

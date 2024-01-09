@@ -5,6 +5,7 @@
 #include "sddl.h"
 #include "winrt/Windows.ApplicationModel.h"
 
+using namespace std::chrono;
 using namespace Windows::ApplicationModel;
 
 namespace winrt::APKInstaller::Metadata::implementation
@@ -24,7 +25,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         m_serverManagerDestructedEvent.remove(token);
     }
 
-    unsigned int ServerManager::RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput)
+    unsigned int ServerManager::RunProcess(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput) const
     {
         const hstring commandLine = BuildCommandLine(filename, command);
 
@@ -108,7 +109,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         return _exitCode;
     }
 
-    IAsyncOperation<unsigned int> ServerManager::RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput)
+    IAsyncOperation<unsigned int> ServerManager::RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput) const
     {
         const hstring commandLine = BuildCommandLine(filename, command);
 
@@ -176,7 +177,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         ReadFromPipe(parentOutputPipeHandle, standardOutput, encode);
         ReadFromPipe(parentErrorPipeHandle, errorOutput, encode);
 
-        if (co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5)))
+        if (co_await resume_on_signal(processInfo.hProcess, seconds(5)))
         {
             TerminateProcess(processInfo.hProcess, (UINT)-1);
         }
@@ -192,7 +193,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         co_return _exitCode;
     }
 
-    IAsyncOperation<unsigned int> ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode)
+    IAsyncOperation<unsigned int> ServerManager::DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode) const
     {
         const hstring commandLine = BuildCommandLine(filename, command);
 
@@ -267,7 +268,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         ReadFromPipe(parentErrorPipeHandle, output, encode);
 
     end:
-        if (co_await resume_on_signal(processInfo.hProcess, std::chrono::seconds(5)))
+        if (co_await resume_on_signal(processInfo.hProcess, seconds(5)))
         {
             TerminateProcess(processInfo.hProcess, (UINT)-1);
         }
@@ -285,7 +286,7 @@ namespace winrt::APKInstaller::Metadata::implementation
 
     bool ServerManager::EnableLoopback() const
     {
-        std::vector<std::wstring> list = std::vector<std::wstring>();
+        vector<wstring> list = vector<wstring>();
         HINSTANCE firewallAPI = LoadLibrary(L"FirewallAPI.dll");
         if (!firewallAPI) { return false; }
 
@@ -342,7 +343,7 @@ namespace winrt::APKInstaller::Metadata::implementation
                         const INET_FIREWALL_APP_CONTAINER cur = arrayValue[i];
                         if (cur.packageFullName)
                         {
-                            std::wstring packageFullName = cur.packageFullName;
+                            wstring packageFullName = cur.packageFullName;
                             if (packageFullName.compare(fullName) == 0)
                             {
                                 ConvertSidToStringSid(cur.appContainerSid, &currentSid);
@@ -366,7 +367,7 @@ namespace winrt::APKInstaller::Metadata::implementation
 
         if (currentSid)
         {
-            for (std::wstring left : list)
+            for (wstring left : list)
             {
                 if (left.compare(currentSid) == 0)
                 {
@@ -381,11 +382,11 @@ namespace winrt::APKInstaller::Metadata::implementation
 
             if (NetworkIsolationSetAppContainerConfig)
             {
-                std::vector<SID_AND_ATTRIBUTES> arr;
+                vector<SID_AND_ATTRIBUTES> arr;
                 DWORD count = 0;
 
                 list.push_back(currentSid);
-                for (std::wstring app : list)
+                for (wstring app : list)
                 {
                     SID_AND_ATTRIBUTES sid{};
                     sid.Attributes = 0;

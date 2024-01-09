@@ -163,12 +163,7 @@ namespace AAPTForNet
 
             if (file.FileType.Equals(".apk", StringComparison.OrdinalIgnoreCase))
             {
-                if (!HasDumpOverride ? !file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
-                    : !(file.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
-                    || await file.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024))
-                {
-                    file = await CreateTempApk(file).ConfigureAwait(false);
-                }
+                file = await PrefixStorageFile(file).ConfigureAwait(false);
                 apkList.Add(file.Path);
             }
             else
@@ -248,8 +243,15 @@ namespace AAPTForNet
             return baseApk;
         }
 
-        private static async Task<StorageFile> CreateTempApk(StorageFile sourceFile)
+        protected virtual async Task<StorageFile> PrefixStorageFile(StorageFile sourceFile)
         {
+            if (HasDumpOverride ? sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
+                || await sourceFile.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024
+                : sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return sourceFile;
+            }
+
             if (!Directory.Exists(TempPath))
             {
                 _ = Directory.CreateDirectory(TempPath);
