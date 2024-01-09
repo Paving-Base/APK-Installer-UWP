@@ -4,7 +4,7 @@ namespace APKInstaller.Helpers
 {
     public static class DownloadHelper
     {
-        public static DownloadConfiguration Configuration;
+        public static DownloadConfiguration Configuration { get; }
 
         static DownloadHelper()
         {

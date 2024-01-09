@@ -109,6 +109,5 @@
     <Capability Name="privateNetworkClientServer" />
     <rescap:Capability Name="broadFileSystemAccess" />
     <rescap:Capability Name="confirmAppClose" />
-    <rescap:Capability Name="packageQuery" />
   </Capabilities>
 </Package>

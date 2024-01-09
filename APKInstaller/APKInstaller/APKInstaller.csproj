@@ -168,7 +168,6 @@
     <Compile Include="Helpers\DownloadHelper.cs" />
     <Compile Include="Common\ExceptionHandling.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
-    <Compile Include="Helpers\PackageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
     <Compile Include="Common\ThreadSwitcher.cs" />
