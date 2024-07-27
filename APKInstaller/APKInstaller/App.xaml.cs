@@ -37,10 +37,7 @@ namespace APKInstaller
             LoggerProvider.SetLogProvider(new MetroLoggerFactory());
             Factories.AdbCommandLineClientFactory = path => new AdbCommandClient(path);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.FocusVisualKind", "Reveal"))
-            {
-                FocusVisualKind = AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox" ? FocusVisualKind.Reveal : FocusVisualKind.HighVisibility;
-            }
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox") { FocusVisualKind = FocusVisualKind.Reveal; }
         }
 
         /// <summary>
@@ -53,10 +50,18 @@ namespace APKInstaller
             EnsureWindow(e);
         }
 
+        #region OnActivated
+
         protected override void OnActivated(IActivatedEventArgs e)
         {
             EnsureWindow(e);
             base.OnActivated(e);
+        }
+
+        protected override void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnCachedFileUpdaterActivated(e);
         }
 
         protected override void OnFileActivated(FileActivatedEventArgs e)
@@ -65,11 +70,31 @@ namespace APKInstaller
             base.OnFileActivated(e);
         }
 
+        protected override void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnFileOpenPickerActivated(e);
+        }
+
+        protected override void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnFileSavePickerActivated(e);
+        }
+
+        protected override void OnSearchActivated(SearchActivatedEventArgs e)
+        {
+            EnsureWindow(e);
+            base.OnSearchActivated(e);
+        }
+
         protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs e)
         {
             EnsureWindow(e);
             base.OnShareTargetActivated(e);
         }
+
+        #endregion
 
         private async void EnsureWindow(IActivatedEventArgs e)
         {

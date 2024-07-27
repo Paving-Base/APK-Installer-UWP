@@ -15,7 +15,7 @@ namespace AAPTForNet.Filters
             // Try getting icon name from manifest, may be an image
             string iconName = GetValue("icon=");
 
-            return new ApkInfo()
+            return new ApkInfo
             {
                 AppName = GetValue("label="),
                 Icon = iconName == DefaultEmptyValue ?

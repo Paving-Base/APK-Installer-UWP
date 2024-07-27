@@ -21,7 +21,6 @@ namespace APKInstaller.Helpers
     /// </summary>
     public static class WindowHelper
     {
-        public static bool IsAppWindowSupported { get; } = ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow");
         public static bool IsXamlRootSupported { get; } = ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "XamlRoot");
 
         public static async Task<bool> CreateWindowAsync(Action<Window> launched)
@@ -51,25 +50,13 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static Size GetXAMLRootSize(this UIElement element) =>
-            IsXamlRootSupported && element.XamlRoot != null
-                ? element.XamlRoot.Size
-                : Window.Current is Window window
-                    ? window.Bounds.ToSize()
-                    : CoreApplication.MainView.CoreWindow.Bounds.ToSize();
-
-        public static UIElement GetXAMLRoot(this UIElement element) =>
-            IsXamlRootSupported && element.XamlRoot != null
-                ? element.XamlRoot.Content
-                : Window.Current is Window window
-                    ? window.Content : null;
-
-        public static void SetXAMLRoot(this UIElement element, UIElement target)
+        public static T SetXAMLRoot<T>(this T element, UIElement target) where T : UIElement
         {
             if (IsXamlRootSupported)
             {
                 element.XamlRoot = target?.XamlRoot;
             }
+            return element;
         }
 
         public static Dictionary<CoreDispatcher, Window> ActiveWindows { get; } = [];

@@ -28,7 +28,7 @@ namespace APKInstaller.Common
             }
         }
 
-        protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput) =>
+        protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, int timeout) =>
             (int)ServerManager.RunProcess(filename, command, AsVector(errorOutput), AsVector(standardOutput));
 
         protected override Task<int> RunProcessAsync(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, CancellationToken cancellationToken = default) =>

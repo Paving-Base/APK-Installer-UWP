@@ -349,7 +349,7 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         protected static async void RaisePropertyChangedEvent(params string[] names)
         {
-            if (names?.Length is > 0)
+            if (names?.Length > 0)
             {
                 foreach (KeyValuePair<CoreDispatcher, SettingsViewModel> cache in Caches)
                 {

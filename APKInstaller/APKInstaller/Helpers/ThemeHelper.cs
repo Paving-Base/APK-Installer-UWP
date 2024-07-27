@@ -1,5 +1,6 @@
 ﻿using APKInstaller.Common;
 using Microsoft.Toolkit.Uwp.Helpers;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -21,7 +22,19 @@ namespace APKInstaller.Helpers
         public static UISettings UISettings { get; } = new UISettings();
         public static AccessibilitySettings AccessibilitySettings { get; } = new AccessibilitySettings();
 
-        public static WeakEvent<bool> UISettingChanged { get; } = [];
+        #region UISettingChanged
+
+        private static readonly WeakEvent<bool> actions = [];
+
+        public static event Action<bool> UISettingChanged
+        {
+            add => actions.Add(value);
+            remove => actions.Remove(value);
+        }
+
+        private static void InvokeUISettingChanged(bool value) => actions.Invoke(value);
+
+        #endregion
 
         #region ActualTheme
 
@@ -126,7 +139,7 @@ namespace APKInstaller.Helpers
 
             SettingsHelper.Set(SettingsHelper.SelectedAppTheme, value);
             UpdateSystemCaptionButtonColors();
-            UISettingChanged.Invoke(await IsDarkThemeAsync());
+            InvokeUISettingChanged(await IsDarkThemeAsync());
         }
 
         public static async Task SetRootThemeAsync(ElementTheme value)
@@ -142,7 +155,7 @@ namespace APKInstaller.Helpers
 
             SettingsHelper.Set(SettingsHelper.SelectedAppTheme, value);
             UpdateSystemCaptionButtonColors();
-            UISettingChanged.Invoke(await IsDarkThemeAsync());
+            InvokeUISettingChanged(await IsDarkThemeAsync());
         }
 
         #endregion
@@ -173,7 +186,7 @@ namespace APKInstaller.Helpers
         private static async void UISettings_ColorValuesChanged(UISettings sender, object args)
         {
             UpdateSystemCaptionButtonColors();
-            UISettingChanged.Invoke(await IsDarkThemeAsync());
+            InvokeUISettingChanged(await IsDarkThemeAsync());
         }
 
         public static bool IsDarkTheme()

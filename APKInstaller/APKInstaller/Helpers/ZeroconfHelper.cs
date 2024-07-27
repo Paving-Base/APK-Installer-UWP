@@ -42,7 +42,7 @@ namespace APKInstaller.Helpers
             IReadOnlyList<IZeroconfHost> hosts = ConnectListener != null
                 ? ConnectListener.Hosts
                 : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
-            if (hosts?.Count is > 0)
+            if (hosts?.Count > 0)
             {
                 AdbClient AdbClient = new();
                 foreach (IZeroconfHost host in hosts)
@@ -58,7 +58,7 @@ namespace APKInstaller.Helpers
             IReadOnlyList<IZeroconfHost> hosts = ConnectListener != null
                 ? ConnectListener.Hosts
                 : await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
-            if (hosts?.Count is > 0)
+            if (hosts?.Count > 0)
             {
                 AdbClient AdbClient = new();
                 foreach (IZeroconfHost host in hosts)

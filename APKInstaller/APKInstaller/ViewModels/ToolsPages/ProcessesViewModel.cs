@@ -123,9 +123,10 @@ namespace APKInstaller.ViewModels.ToolsPages
                 switch (sortBy)
                 {
                     case "Name":
+                        string GetName(AndroidProcess item) => item.Name.Split('/').LastOrDefault()?.Split(':').FirstOrDefault()?.Split('@').FirstOrDefault();
                         Processes = ascending
-                            ? new(Processes.OrderBy(item => item.Name.Split('/').Last().Split(':').FirstOrDefault().Split('@').FirstOrDefault()))
-                            : new(Processes.OrderByDescending(item => item.Name.Split('/').Last().Split(':').FirstOrDefault().Split('@').FirstOrDefault()));
+                            ? new(Processes.OrderBy(GetName))
+                            : new(Processes.OrderByDescending(GetName));
                         break;
                     case "ProcessId":
                         Processes = ascending
@@ -162,7 +163,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             try
             {
                 await ThreadSwitcher.ResumeBackgroundAsync();
-                if (devices?.Count is > 0)
+                if (devices?.Count > 0)
                 {
                     _ = Dispatcher.AwaitableRunAsync(() =>
                     {

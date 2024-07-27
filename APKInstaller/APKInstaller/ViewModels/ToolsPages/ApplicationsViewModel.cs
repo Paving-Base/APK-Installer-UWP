@@ -161,7 +161,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             try
             {
                 await ThreadSwitcher.ResumeBackgroundAsync();
-                if (devices?.Count is > 0)
+                if (devices?.Count > 0)
                 {
                     _ = Dispatcher.AwaitableRunAsync(() =>
                     {
