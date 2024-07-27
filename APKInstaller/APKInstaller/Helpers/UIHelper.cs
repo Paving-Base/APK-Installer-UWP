@@ -97,13 +97,6 @@ namespace APKInstaller.Helpers
             return false;
         }
 
-        public static string GetFileDirectory(this string path)
-        {
-            if (string.IsNullOrWhiteSpace(path)) { return string.Empty; }
-            int index = path.LastIndexOf('\\');
-            return index == -1 ? string.Empty : path[..index];
-        }
-
         public static string ExceptionToMessage(this Exception ex)
         {
             StringBuilder builder = new StringBuilder().AppendLine();

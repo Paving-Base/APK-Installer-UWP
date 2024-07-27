@@ -429,7 +429,7 @@ namespace APKInstaller.ViewModels
                 ADBPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
             }
 
-            checkAdb:
+        checkAdb:
             if (force || !await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
                 await Dispatcher.ResumeForegroundAsync();
@@ -461,7 +461,7 @@ namespace APKInstaller.ViewModels
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    downloadAdb:
+                downloadAdb:
                     if (NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     {
                         try
@@ -585,7 +585,7 @@ namespace APKInstaller.ViewModels
                 }
                 downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                 downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                downloadAdb:
+            downloadAdb:
                 WaitProgressText = _loader.GetString("WaitDownload");
                 _ = downloader.DownloadFileTaskAsync("https://dl.google.com/android/repository/platform-tools-latest-windows.zip", ADBTemp).ConfigureAwait(false);
                 while (totalBytesToReceive <= 0)
@@ -605,7 +605,7 @@ namespace APKInstaller.ViewModels
                 }
                 WaitProgressIndeterminate = true;
                 WaitProgressValue = 0;
-                downloadFinish:
+            downloadFinish:
                 if (exception != null)
                 {
                     await Dispatcher.ResumeForegroundAsync();
@@ -683,7 +683,7 @@ namespace APKInstaller.ViewModels
                 {
                     WaitProgressText = _loader.GetString("CheckingADB");
                     await CheckADBAsync().ConfigureAwait(false);
-                    startAdb:
+                startAdb:
                     WaitProgressText = _loader.GetString("StartingADB");
                     try
                     {
@@ -756,7 +756,7 @@ namespace APKInstaller.ViewModels
                 }
                 else
                 {
-                    checkDevice:
+                checkDevice:
                     WaitProgressText = _loader.GetString("Checking");
                     if (await CheckDeviceAsync().ConfigureAwait(false) && _device != null)
                     {
@@ -829,7 +829,7 @@ namespace APKInstaller.ViewModels
                     await ThreadSwitcher.ResumeBackgroundAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        startWSA:
+                    startWSA:
                         CancellationTokenSource tokenSource = new(TimeSpan.FromMinutes(5));
                         try
                         {
@@ -939,7 +939,7 @@ namespace APKInstaller.ViewModels
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_file != null || _url != null)
             {
-                checkDevice:
+            checkDevice:
                 if (await CheckDeviceAsync().ConfigureAwait(false) && _device != null)
                 {
                     await CheckAPKAsync().ConfigureAwait(false);
@@ -1148,7 +1148,7 @@ namespace APKInstaller.ViewModels
                     }
                     downloader.DownloadFileCompleted += OnDownloadFileCompleted;
                     downloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                    downloadApk:
+                downloadApk:
                     ProgressText = _loader.GetString("WaitDownload");
                     _ = downloader.DownloadFileTaskAsync(_url.ToString(), APKTemp);
                     while (totalBytesToReceive <= 0)
@@ -1169,7 +1169,7 @@ namespace APKInstaller.ViewModels
                     ProgressText = _loader.GetString("Loading");
                     AppxInstallBarIndeterminate = true;
                     AppxInstallBarValue = 0;
-                    downloadFinish:
+                downloadFinish:
                     if (exception != null)
                     {
                         await Dispatcher.ResumeForegroundAsync();

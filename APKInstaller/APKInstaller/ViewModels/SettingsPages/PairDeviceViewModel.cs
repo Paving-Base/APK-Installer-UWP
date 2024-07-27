@@ -204,7 +204,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                         else if (pair.StartsWith("failed:", StringComparison.OrdinalIgnoreCase))
                         {
                             ConnectInfoSeverity = InfoBarSeverity.Error;
-                            ConnectInfoTitle = pair[8..];
+                            ConnectInfoTitle = pair.Substring(8);
                             ConnectInfoIsOpen = true;
                         }
                         else if (!string.IsNullOrWhiteSpace(pair))
@@ -291,7 +291,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                         else if (pair.StartsWith("failed:", StringComparison.OrdinalIgnoreCase))
                         {
                             ConnectInfoSeverity = InfoBarSeverity.Error;
-                            ConnectInfoTitle = pair[8..];
+                            ConnectInfoTitle = pair.Substring(8);
                             ConnectInfoIsOpen = true;
                         }
                         else if (!string.IsNullOrWhiteSpace(pair))

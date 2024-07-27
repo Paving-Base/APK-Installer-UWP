@@ -3,6 +3,7 @@ using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.ViewModels.ToolsPages;
 using System;
+using System.IO;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -61,7 +62,7 @@ namespace APKInstaller.Pages.ToolsPages
                     DataTransferHelper.ShareFile(Provider.ApkInfo.PackagePath, Provider.AppLocaleName);
                     break;
                 case "OpenPackageFolder":
-                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Provider.ApkInfo.PackagePath.GetFileDirectory()));
+                    _ = await Launcher.LaunchFolderAsync(await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(Provider.ApkInfo.PackagePath)));
                     break;
                 default:
                     break;

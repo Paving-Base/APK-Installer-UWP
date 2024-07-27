@@ -123,7 +123,7 @@ namespace APKInstaller.ViewModels.ToolsPages
                 switch (sortBy)
                 {
                     case "Name":
-                        string GetName(AndroidProcess item) => item.Name.Split('/').LastOrDefault()?.Split(':').FirstOrDefault()?.Split('@').FirstOrDefault();
+                        static string GetName(AndroidProcess item) => item.Name.Split('/').LastOrDefault()?.Split(':').FirstOrDefault()?.Split('@').FirstOrDefault();
                         Processes = ascending
                             ? new(Processes.OrderBy(GetName))
                             : new(Processes.OrderByDescending(GetName));

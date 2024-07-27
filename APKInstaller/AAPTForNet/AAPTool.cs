@@ -26,7 +26,7 @@ namespace AAPTForNet
 
         protected static string AppPath { get; } = Package.Current.InstalledLocation.Path;
         protected static string TempPath { get; } = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}", "AppPackages");
-        protected static string LocalPath { get; } = ApplicationData.Current.LocalFolder.Path is string path ? path[..path.LastIndexOf('\\')] : string.Empty;
+        protected static string LocalPath { get; } = ApplicationData.Current.LocalFolder.Path is string path ? Path.GetDirectoryName(path) : string.Empty;
 
         protected virtual bool HasDumpOverride { get; } = false;
 

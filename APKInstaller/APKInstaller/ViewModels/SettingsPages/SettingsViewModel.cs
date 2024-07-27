@@ -597,7 +597,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     else if (results.StartsWith("failed:", StringComparison.OrdinalIgnoreCase))
                     {
                         ConnectInfoSeverity = InfoBarSeverity.Error;
-                        ConnectInfoTitle = results[8..];
+                        ConnectInfoTitle = results.Substring(8);
                         ConnectInfoIsOpen = true;
                     }
                     else if (!string.IsNullOrWhiteSpace(results))
