@@ -1035,7 +1035,7 @@ namespace APKInstaller.ViewModels
             DeviceSelectButtonText = _loader.GetString("Devices");
             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
             ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
-        }
+        } 
 
         private void CheckOnlinePackage()
         {
@@ -1345,13 +1345,13 @@ namespace APKInstaller.ViewModels
                             }
                             break;
                         case { IsBundle: true } when IsUploadAPK:
-                            IEnumerable<string> strings = ApkInfo.SplitApks?.Select(x => x.FullPath);
+                            IEnumerable<string> strings = AutoSelectSplit(ApkInfo.SplitApks).Select(x => x.FullPath);
                             await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
                         case { IsBundle: true }:
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
-                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(ApkInfo.SplitApks.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
+                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(AutoSelectSplit(ApkInfo.SplitApks).Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
                                 await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                                 Array.ForEach(splits, x => x.Dispose());
                             }
@@ -1443,6 +1443,32 @@ namespace APKInstaller.ViewModels
             }
         }
 
+        private List<ApkInfo> AutoSelectSplit(List<ApkInfo> apks)
+        {
+            ConsoleOutputReceiver receiverAbi = new();
+            ConsoleOutputReceiver receiverLang = new();
+            AdbClient client = new();
+            if (this._device is DeviceData _device)
+            {
+                client.ExecuteRemoteCommand("getprop ro.product.cpu.abi", _device, receiverAbi);
+                client.ExecuteRemoteCommand("getprop persist.sys.locale", _device, receiverLang);
+                foreach (ApkInfo apk in apks)
+                {
+                    if (apk.SupportLocales.Count > 0 && !apk.SupportLocales.Contains(receiverLang.ToString())) 
+                    {
+                        apks.Remove(apk); 
+                    }
+
+                    if (apk.SupportedABIs.Count > 0 && !apk.SupportedABIs.Contains(receiverAbi.ToString()))
+                    {
+                        apks.Remove(apk);
+                    }
+                    continue;
+                }
+            }
+            return apks;
+        }
+
         public async Task OpenAPKAsync(StorageFile file)
         {
             if (file != null)
@@ -1451,7 +1477,10 @@ namespace APKInstaller.ViewModels
                 await Refresh().ConfigureAwait(false);
             }
         }
-
+        /// <summary>
+        /// 用于处理安装包选取--文件选择器
+        /// </summary>
+        /// <returns></returns>
         public async Task OpenAPKAsync()
         {
             await Dispatcher.ResumeForegroundAsync();
