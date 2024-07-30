@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -1446,28 +1447,40 @@ namespace APKInstaller.ViewModels
         private List<ApkInfo> AutoSelectSplit(List<ApkInfo> apks)
         {
             ConsoleOutputReceiver receiverAbi = new();
-            ConsoleOutputReceiver receiverLang = new();
             AdbClient client = new();
             List<ApkInfo> removed = new();
             if (this._device is DeviceData _device)
             {
                 client.ExecuteRemoteCommand("getprop ro.product.cpu.abi", _device, receiverAbi);
-                client.ExecuteRemoteCommand("getprop persist.sys.locale", _device, receiverLang);
                 foreach (ApkInfo apk in apks)
                 {
-                    if (apk.SupportLocales.Count > 0 && !apk.SupportLocales.Contains(receiverLang.ToString())) 
+                    if (apk.SupportLocales.Count > 0 && !ContainsSystemLang(apk)) 
                     {
                         removed.Add(apk);
+                        continue;
                     }
 
-                    if (apk.SupportedABIs.Count > 0 && !apk.SupportedABIs.Contains(receiverAbi.ToString()))
+                    if (apk.SupportedABIs.Count > 0 && !apk.SupportedABIs.Contains(receiverAbi.ToString().Trim()))
                     {
                         removed.Add(apk);
+                        continue;
                     }
-                    continue;
                 }
             }
             return apks.Except(removed).ToList();
+        }
+
+        private bool ContainsSystemLang(ApkInfo apk)
+        {
+            foreach (var item in apk.SupportLocales)
+            {
+                if (item.Equals(LanguageHelper.GetCurrentLanguage()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public async Task OpenAPKAsync(StorageFile file)
