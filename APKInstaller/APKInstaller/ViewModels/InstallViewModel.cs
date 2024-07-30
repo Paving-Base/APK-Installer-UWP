@@ -1448,6 +1448,7 @@ namespace APKInstaller.ViewModels
             ConsoleOutputReceiver receiverAbi = new();
             ConsoleOutputReceiver receiverLang = new();
             AdbClient client = new();
+            List<ApkInfo> removed = new();
             if (this._device is DeviceData _device)
             {
                 client.ExecuteRemoteCommand("getprop ro.product.cpu.abi", _device, receiverAbi);
@@ -1456,17 +1457,17 @@ namespace APKInstaller.ViewModels
                 {
                     if (apk.SupportLocales.Count > 0 && !apk.SupportLocales.Contains(receiverLang.ToString())) 
                     {
-                        apks.Remove(apk); 
+                        removed.Add(apk);
                     }
 
                     if (apk.SupportedABIs.Count > 0 && !apk.SupportedABIs.Contains(receiverAbi.ToString()))
                     {
-                        apks.Remove(apk);
+                        removed.Add(apk);
                     }
                     continue;
                 }
             }
-            return apks;
+            return apks.Except(removed).ToList();
         }
 
         public async Task OpenAPKAsync(StorageFile file)
