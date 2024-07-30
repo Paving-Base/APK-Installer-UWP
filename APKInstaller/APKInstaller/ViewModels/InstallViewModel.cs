@@ -1448,7 +1448,12 @@ namespace APKInstaller.ViewModels
                 }
             }
         }
-
+        /// <summary>
+        /// 根据安卓设备Soc 架构与Windows语言，排除不被需要的Split
+        /// 使用Windows 语言以规避不同安卓版本语言代码不统一的问题
+        /// </summary>
+        /// <param name="apks"></param>
+        /// <returns>排除后的split列表</returns>
         private async Task<List<ApkInfo>> AutoSelectSplit(List<ApkInfo> apks)
         {
             ConsoleOutputReceiver receiverAbi = new();
@@ -1475,6 +1480,11 @@ namespace APKInstaller.ViewModels
             return apks.Except(removed).ToList();
         }
 
+        /// <summary>
+        /// 使用电脑端的语言代码进行匹配，以解决安卓端语言代码不一致的错误
+        /// </summary>
+        /// <param name="apk">软件包信息</param>
+        /// <returns>如果包含则返回 true 否则为 false</returns>
         private bool ContainsSystemLang(ApkInfo apk)
         {
             foreach (var item in apk.SupportLocales)
