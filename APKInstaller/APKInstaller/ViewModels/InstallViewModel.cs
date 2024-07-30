@@ -1334,6 +1334,9 @@ namespace APKInstaller.ViewModels
                     CancelOperationVisibility = true;
                     ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = false;
                     LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo.LaunchableActivity);
+
+                    List<ApkInfo> selectedSplit = new List<ApkInfo>();
+
                     switch (ApkInfo)
                     {
                         case { IsSplit: true } when IsUploadAPK:
@@ -1346,13 +1349,15 @@ namespace APKInstaller.ViewModels
                             }
                             break;
                         case { IsBundle: true } when IsUploadAPK:
-                            IEnumerable<string> strings = AutoSelectSplit(ApkInfo.SplitApks).Select(x => x.FullPath);
+                            selectedSplit = await AutoSelectSplit(ApkInfo.SplitApks);
+                            IEnumerable<string> strings = selectedSplit.Select(x => x.FullPath);
                             await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
                         case { IsBundle: true }:
+                            selectedSplit = await AutoSelectSplit(ApkInfo.SplitApks);
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
-                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(AutoSelectSplit(ApkInfo.SplitApks).Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
+                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(selectedSplit.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
                                 await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                                 Array.ForEach(splits, x => x.Dispose());
                             }
@@ -1444,14 +1449,14 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private List<ApkInfo> AutoSelectSplit(List<ApkInfo> apks)
+        private async Task<List<ApkInfo>> AutoSelectSplit(List<ApkInfo> apks)
         {
             ConsoleOutputReceiver receiverAbi = new();
             AdbClient client = new();
             List<ApkInfo> removed = new();
             if (this._device is DeviceData _device)
             {
-                client.ExecuteRemoteCommand("getprop ro.product.cpu.abi", _device, receiverAbi);
+                await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiverAbi).ConfigureAwait(false);
                 foreach (ApkInfo apk in apks)
                 {
                     if (apk.SupportLocales.Count > 0 && !ContainsSystemLang(apk)) 
