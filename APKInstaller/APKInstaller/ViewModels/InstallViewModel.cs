@@ -1464,6 +1464,8 @@ namespace APKInstaller.ViewModels
                     await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiverAbi).ConfigureAwait(false);
                     ConsoleOutputReceiver receiverLang = new();
                     await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiverLang).ConfigureAwait(false);
+                    ConsoleOutputReceiver receiverDensity = new();
+                    await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiverDensity).ConfigureAwait(false);
                     foreach (SplitAPKSelector selector in results)
                     {
                         ApkInfo apk = selector.Package;
@@ -1476,6 +1478,10 @@ namespace APKInstaller.ViewModels
                             case { SupportedABIs.Count: > 0 } when apk.SupportedABIs.Exists(x => x.Equals(receiverAbi.ToString().Trim(), StringComparison.OrdinalIgnoreCase)):
                                 goto default;
                             case { SupportedABIs.Count: > 0 }:
+                                continue;
+                            case { SupportDensities.Count: > 0 } when apk.SupportDensities.Exists(x => x >= int.Parse(receiverDensity.ToString().Trim())):
+                                goto default;
+                            case { SupportDensities.Count: > 0 }:
                                 continue;
                             default:
                                 selector.IsSelected = true;

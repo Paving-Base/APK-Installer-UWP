@@ -31,7 +31,7 @@ namespace AAPTForNet.Models
         public List<string> SupportedABIs { get; set; } = [];
         public List<string> SupportLocales { get; set; } = [];
         public List<string> SupportScreens { get; set; } = [];
-        public List<string> SupportDensities { get; set; } = [];
+        public List<int> SupportDensities { get; set; } = [];
         public Dictionary<string, string> LocaleLabels { get; set; } = [];
 
         /// <summary>
