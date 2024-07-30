@@ -12,7 +12,7 @@ namespace AAPTForNet.Filters
 
         public override void AddMessage(string msg) => Segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
 
-        public override ApkInfo GetAPK() => new() { SupportLocales = Segments.Skip(1).ToList() }; // Skip "locales"     
+        public override ApkInfo GetAPK() => new() { SupportLocales = Segments.Skip(1).Where(x => !x.Equals("--_--", StringComparison.OrdinalIgnoreCase)).ToList() }; // Skip "locales:"     
 
         public override void Clear() => throw new NotImplementedException();
     }

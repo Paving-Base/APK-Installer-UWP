@@ -434,19 +434,21 @@ namespace APKInstaller.ViewModels
             if (force || !await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
                 await Dispatcher.ResumeForegroundAsync();
-                StackPanel stackPanel = new();
-                stackPanel.Children.Add(
-                    new TextBlock
+                StackPanel stackPanel = new() {
+                    Children =
                     {
-                        TextWrapping = TextWrapping.Wrap,
-                        Text = _loader.GetString("AboutADB")
-                    });
-                stackPanel.Children.Add(
-                    new HyperlinkButton
-                    {
-                        Content = _loader.GetString("ClickToRead"),
-                        NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
-                    });
+                        new TextBlock
+                        {
+                            TextWrapping = TextWrapping.Wrap,
+                            Text = _loader.GetString("AboutADB")
+                        },
+                        new HyperlinkButton
+                        {
+                            Content = _loader.GetString("ClickToRead"),
+                            NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
+                        }
+                    }
+                };
                 ContentDialogResult result = await new ContentDialog
                 {
                     Title = _loader.GetString("ADBMissing"),
@@ -1335,8 +1337,6 @@ namespace APKInstaller.ViewModels
                     ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = false;
                     LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo.LaunchableActivity);
 
-                    List<ApkInfo> selectedSplit = new List<ApkInfo>();
-
                     switch (ApkInfo)
                     {
                         case { IsSplit: true } when IsUploadAPK:
@@ -1349,15 +1349,13 @@ namespace APKInstaller.ViewModels
                             }
                             break;
                         case { IsBundle: true } when IsUploadAPK:
-                            selectedSplit = await AutoSelectSplit(ApkInfo.SplitApks);
-                            IEnumerable<string> strings = selectedSplit.Select(x => x.FullPath);
+                            IEnumerable<string> strings = await SelectSplitAsync(ApkInfo.SplitApks).ContinueWith(x => x.Result.Select(x => x.FullPath)).ConfigureAwait(false);
                             await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
                         case { IsBundle: true }:
-                            selectedSplit = await AutoSelectSplit(ApkInfo.SplitApks);
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
-                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(selectedSplit.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
+                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(await SelectSplitAsync(ApkInfo.SplitApks).ContinueWith(x => x.Result.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap()))).ConfigureAwait(false);
                                 await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                                 Array.ForEach(splits, x => x.Dispose());
                             }
@@ -1448,57 +1446,42 @@ namespace APKInstaller.ViewModels
                 }
             }
         }
-        /// <summary>
-        /// 根据安卓设备Soc 架构与Windows语言，排除不被需要的Split
-        /// 使用Windows 语言以规避不同安卓版本语言代码不统一的问题
-        /// </summary>
-        /// <param name="apks"></param>
-        /// <returns>排除后的split列表</returns>
-        private async Task<List<ApkInfo>> AutoSelectSplit(List<ApkInfo> apks)
+        
+        private async Task<List<ApkInfo>> SelectSplitAsync(ICollection<ApkInfo> apks)
         {
-            ConsoleOutputReceiver receiverAbi = new();
-            ConsoleOutputReceiver receiverLang = new();
             AdbClient client = new();
-            List<ApkInfo> removed = new();
+            List<ApkInfo> results = new(apks.Count);
             if (this._device is DeviceData _device)
             {
+                ConsoleOutputReceiver receiverAbi = new();
                 await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiverAbi).ConfigureAwait(false);
-                await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale",_device,receiverLang).ConfigureAwait(false);
+                ConsoleOutputReceiver receiverLang = new();
+                await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiverLang).ConfigureAwait(false);
                 foreach (ApkInfo apk in apks)
                 {
-                    if (apk.SupportLocales.Count > 0 && !includeLanguage(apk)) 
+                    switch (apk)
                     {
-                        removed.Add(apk);
-                        continue;
+                        case { SupportLocales.Count: > 0 } when IsIncludeLanguage(apk, receiverLang.ToString().Trim()):
+                            goto default;
+                        case { SupportLocales.Count: > 0 }:
+                            continue;
+                        case { SupportedABIs.Count: > 0 } when apk.SupportedABIs.Exists(x => x.Equals(receiverAbi.ToString().Trim(), StringComparison.OrdinalIgnoreCase)):
+                            goto default;
+                        case { SupportedABIs.Count: > 0 }:
+                            continue;
+                        default:
+                            results.Add(apk);
+                            break;
                     }
 
-                    if (apk.SupportedABIs.Count > 0 && !apk.SupportedABIs.Contains(receiverAbi.ToString().Trim()))
+                    static bool IsIncludeLanguage(ApkInfo apk, string lang)
                     {
-                        removed.Add(apk);
-                        continue;
+                        string country = lang.Split('-').FirstOrDefault();
+                        return !string.IsNullOrWhiteSpace(country) && apk.SupportLocales.Exists(x => x.StartsWith(country, StringComparison.OrdinalIgnoreCase));
                     }
                 }
             }
-
-            bool includeLanguage(ApkInfo apk)
-            {
-                foreach (var item in apk.SupportLocales)
-                {
-
-                    if (item.StartsWith(receiverLang.ToString().Trim().Split('-')[0], StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        return true;
-                    }
-
-                    if (item.StartsWith("en",StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-            return apks.Except(removed).ToList();
+            return results;
         }
 
         public async Task OpenAPKAsync(StorageFile file)
@@ -1510,10 +1493,6 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        /// <summary>
-        /// 用于处理安装包选取--文件选择器
-        /// </summary>
-        /// <returns></returns>
         public async Task OpenAPKAsync()
         {
             await Dispatcher.ResumeForegroundAsync();

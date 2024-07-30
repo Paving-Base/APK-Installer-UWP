@@ -36,10 +36,7 @@ namespace APKInstaller.Controls
                         group.Children.Add(
                             new PathGeometry
                             {
-                                Figures =
-                                [
-                                    CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)
-                                ]
+                                Figures = [CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)]
                             });
                     }
                     else
@@ -79,10 +76,7 @@ namespace APKInstaller.Controls
                         RadiusFilterKind filterKind = GetRadiusFilterKind(xi, yi);
                         PathGeometry geometry = new()
                         {
-                            Figures =
-                                [
-                                    CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)
-                                ]
+                            Figures = [CreateRoundedRectanglePath(x, y, unitsPerModule, filterKind)]
                         };
                         group.Children.Add(geometry);
                         if (CheckIsPositionMarker(xi, yi, drawableModulesCount, positionMarkerCount))
@@ -146,13 +140,13 @@ namespace APKInstaller.Controls
         {
             const int offsetModules = 4;
             return xi >= offsetModules && yi >= offsetModules
-&& ((xi < positionMarkerCount + offsetModules && yi < positionMarkerCount + offsetModules)
-|| (xi >= drawableModulesCount + offsetModules - positionMarkerCount
-                                                    && xi < drawableModulesCount + offsetModules
-                                                    && yi < positionMarkerCount + offsetModules)
+                && ((xi < positionMarkerCount + offsetModules && yi < positionMarkerCount + offsetModules)
+                || (xi >= drawableModulesCount + offsetModules - positionMarkerCount
+                    && xi < drawableModulesCount + offsetModules
+                    && yi < positionMarkerCount + offsetModules)
                 || (yi >= drawableModulesCount + offsetModules - positionMarkerCount
-                                                                    && yi < drawableModulesCount + offsetModules
-                                                                    && xi < positionMarkerCount + offsetModules));
+                    && yi < drawableModulesCount + offsetModules
+                    && xi < positionMarkerCount + offsetModules));
         }
 
         private static PathFigure CreateRoundedRectanglePath(double x, double y, double unitsPerModule, RadiusFilterKind filterKind)

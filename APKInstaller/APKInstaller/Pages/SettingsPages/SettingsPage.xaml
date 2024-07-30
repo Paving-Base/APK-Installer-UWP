@@ -521,7 +521,7 @@
                                             NavigateUri="https://twitter.com/wherewhere7"
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                         <HyperlinkButton
-                                            Content="Bilibili"
+                                            Content="BiliBili"
                                             NavigateUri="https://space.bilibili.com/266112738"
                                             ToolTipService.ToolTip="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}}" />
                                     </StackPanel>
