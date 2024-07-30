@@ -19,6 +19,7 @@ namespace APKInstaller.Controls.Dialogs
 
     public record class SplitAPKSelector(ApkInfo Package)
     {
+        public ApkInfo Package { get; } = Package;
         public bool IsSelected { get; set; }
     }
 }
