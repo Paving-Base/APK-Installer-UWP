@@ -16,7 +16,6 @@
         <ResourceDictionary>
             <converter:DoubleToBoolConverter x:Key="DoubleToBoolConverter" />
             <converter:JoinEnumerableConverter x:Key="JoinEnumerableConverter" />
-            <converter:FileSizeToFriendlyStringConverter x:Key="FileSizeToFriendlyStringConverter" />
         </ResourceDictionary>
     </Page.Resources>
     <Grid>
