@@ -1457,14 +1457,16 @@ namespace APKInstaller.ViewModels
         private async Task<List<ApkInfo>> AutoSelectSplit(List<ApkInfo> apks)
         {
             ConsoleOutputReceiver receiverAbi = new();
+            ConsoleOutputReceiver receiverLang = new();
             AdbClient client = new();
             List<ApkInfo> removed = new();
             if (this._device is DeviceData _device)
             {
                 await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiverAbi).ConfigureAwait(false);
+                await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale",_device,receiverLang).ConfigureAwait(false);
                 foreach (ApkInfo apk in apks)
                 {
-                    if (apk.SupportLocales.Count > 0 && !ContainsSystemLang(apk)) 
+                    if (apk.SupportLocales.Count > 0 && !includeLanguage(apk)) 
                     {
                         removed.Add(apk);
                         continue;
@@ -1477,25 +1479,25 @@ namespace APKInstaller.ViewModels
                     }
                 }
             }
-            return apks.Except(removed).ToList();
-        }
 
-        /// <summary>
-        /// 使用电脑端的语言代码进行匹配，以解决安卓端语言代码不一致的错误
-        /// </summary>
-        /// <param name="apk">软件包信息</param>
-        /// <returns>如果包含则返回 true 否则为 false</returns>
-        private bool ContainsSystemLang(ApkInfo apk)
-        {
-            foreach (var item in apk.SupportLocales)
+            bool includeLanguage(ApkInfo apk)
             {
-                if(item.Equals(LanguageHelper.GetCurrentLanguage()) || item.Equals(LanguageHelper.FallbackLanguageCode))
+                foreach (var item in apk.SupportLocales)
                 {
-                    return true;
-                }
-            }
+                    if (item.StartsWith(receiverLang.ToString().Trim().Substring(0,2),StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return true;
+                    }
 
-            return false;
+                    if (item.StartsWith("en",StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            return apks.Except(removed).ToList();
         }
 
         public async Task OpenAPKAsync(StorageFile file)
@@ -1506,6 +1508,7 @@ namespace APKInstaller.ViewModels
                 await Refresh().ConfigureAwait(false);
             }
         }
+
         /// <summary>
         /// 用于处理安装包选取--文件选择器
         /// </summary>
