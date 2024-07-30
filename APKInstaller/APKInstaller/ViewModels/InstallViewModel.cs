@@ -1474,7 +1474,7 @@ namespace APKInstaller.ViewModels
         {
             foreach (var item in apk.SupportLocales)
             {
-                if (item.Equals(LanguageHelper.GetCurrentLanguage()))
+                if(item.Equals(LanguageHelper.GetCurrentLanguage()) || item.Equals(LanguageHelper.FallbackLanguageCode))
                 {
                     return true;
                 }
