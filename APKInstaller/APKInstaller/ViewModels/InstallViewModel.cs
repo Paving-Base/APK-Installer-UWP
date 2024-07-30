@@ -1484,7 +1484,8 @@ namespace APKInstaller.ViewModels
             {
                 foreach (var item in apk.SupportLocales)
                 {
-                    if (item.StartsWith(receiverLang.ToString().Trim().Substring(0,2),StringComparison.CurrentCultureIgnoreCase))
+
+                    if (item.StartsWith(receiverLang.ToString().Trim().Split('-')[0], StringComparison.CurrentCultureIgnoreCase))
                     {
                         return true;
                     }
