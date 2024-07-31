@@ -1460,55 +1460,98 @@ namespace APKInstaller.ViewModels
                 SplitAPKSelector[] results = apks.Select(x => new SplitAPKSelector(x)).ToArray();
                 try
                 {
-                    ConsoleOutputReceiver receiverAbi = new();
-                    await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiverAbi).ConfigureAwait(false);
-                    ConsoleOutputReceiver receiverLang = new();
-                    await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiverLang).ConfigureAwait(false);
-                    ConsoleOutputReceiver receiverDensity = new();
-                    await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiverDensity).ConfigureAwait(false);
-                    var densityPackage = getDensityPackage(apks, int.Parse(receiverDensity.ToString().Trim()));
+                    int? density = null;
+                    string abi = null, locale = null;
+                    List<(SplitAPKSelector selector, HashSet<int> densities)> densities = [];
                     foreach (SplitAPKSelector selector in results)
                     {
                         ApkInfo apk = selector.Package;
                         switch (apk)
                         {
-                            case { SupportLocales.Count: > 0 } when IsIncludeLanguage(apk, receiverLang.ToString().Trim()):
-                                goto default;
-                            case { SupportLocales.Count: > 0 }:
-                                continue;
-                            case { SupportedABIs.Count: > 0 } when apk.SupportedABIs.Exists(x => x.Equals(receiverAbi.ToString().Trim(), StringComparison.OrdinalIgnoreCase)):
+                            case { SupportedABIs.Count: > 0 } when await IsIncludeABIAsync(apk).ConfigureAwait(false):
                                 goto default;
                             case { SupportedABIs.Count: > 0 }:
                                 continue;
-                            case { SupportDensities.Count: > 0 } when apk.Equals(densityPackage):
+                            case { SupportLocales.Count: > 0 } when await IsIncludeLocaleAsync(apk).ConfigureAwait(false):
                                 goto default;
+                            case { SupportLocales.Count: > 0 }:
+                                continue;
                             case { SupportDensities.Count: > 0 }:
+                                await ProcessDensityAsync(selector).ConfigureAwait(false);
                                 continue;
                             default:
                                 selector.IsSelected = true;
-                                break;
+                                continue;
                         }
 
-                        static bool IsIncludeLanguage(ApkInfo apk, string lang)
+                        async Task<bool> IsIncludeABIAsync(ApkInfo apk)
                         {
-                            string country = lang.Split('-').FirstOrDefault();
+                            if (abi == null)
+                            {
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiver).ConfigureAwait(false);
+                                abi = receiver.ToString().Trim();
+                            }
+                            return apk.SupportedABIs.Exists(x => x.Equals(abi, StringComparison.OrdinalIgnoreCase));
+                        }
+
+                        async Task<bool> IsIncludeLocaleAsync(ApkInfo apk)
+                        {
+                            if (locale == null)
+                            {
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiver).ConfigureAwait(false);
+                                locale = receiver.ToString().Trim();
+                            }
+                            string country = locale.Split('-').FirstOrDefault();
                             return !string.IsNullOrWhiteSpace(country) && apk.SupportLocales.Exists(x => x.StartsWith(country, StringComparison.OrdinalIgnoreCase));
                         }
-                    }
 
-                    static ApkInfo getDensityPackage(ICollection<ApkInfo> apks, int density)
-                    {
-                        var validPackage = apks.Where(apk => apk.SupportDensities.Any(x => x >= density));
-
-                        foreach (var item in validPackage)
+                        async Task ProcessDensityAsync(SplitAPKSelector selector)
                         {
-                            if (item.SupportDensities.Max() == density)
+                            if (density is not int num)
                             {
-                                return item;
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiver).ConfigureAwait(false);
+                                density = int.TryParse(receiver.ToString().Trim(), out num) ? num : 0;
+                            }
+                            if (selector.Package.SupportDensities.Exists(x => int.TryParse(x, out int density) && density >= num))
+                            {
+                                densities.Add((selector, selector.Package.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet()));
                             }
                         }
-
-                        return validPackage.FirstOrDefault(x => x.SupportDensities.Max() > density) ?? validPackage.FirstOrDefault();
+                    }
+                    if (densities.Count > 0)
+                    {
+                        int num = density ?? 0;
+                        List<(SplitAPKSelector selector, HashSet<int> densities)> temp = [];
+                        foreach ((SplitAPKSelector selector, HashSet<int> densities) item in densities)
+                        {
+                            ApkInfo apk = item.selector.Package;
+                            if (item.densities.Max() == num)
+                            {
+                                item.selector.IsSelected = true;
+                                break;
+                            }
+                            else if (item.densities.Contains(num))
+                            {
+                                temp.Add(item);
+                            }
+                        }
+                        if (temp.Count > 0)
+                        {
+                            temp.Select(x => (x.selector, x.densities.Max() - num))
+                                .OrderBy(x => x.Item2)
+                                .FirstOrDefault()
+                                .selector.IsSelected = true;
+                        }
+                        else
+                        {
+                            densities.Select(x => (x.selector, x.densities.Max() - num))
+                                     .OrderBy(x => x.Item2)
+                                     .FirstOrDefault()
+                                     .selector.IsSelected = true;
+                        }
                     }
                 }
                 catch (Exception ex)

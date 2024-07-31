@@ -12,7 +12,7 @@ namespace AAPTForNet.Filters
 
         public override void AddMessage(string msg) => Segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
 
-        public override ApkInfo GetAPK() => new() { SupportDensities = Segments.Skip(1).Select(int.Parse).ToList() }; // Skip "densities"        
+        public override ApkInfo GetAPK() => new() { SupportDensities = Segments.Skip(1).ToList() }; // Skip "densities"        
 
         public override void Clear() => throw new NotImplementedException();
     }
