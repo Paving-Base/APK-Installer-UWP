@@ -1498,7 +1498,7 @@ namespace APKInstaller.ViewModels
 
                     static ApkInfo getDensityPackage(ICollection<ApkInfo> apks, int density)
                     {
-                        var validPackage = apks.Where(apk => apk.SupportDensities.Any(x => x >= density)).ToList();
+                        var validPackage = apks.Where(apk => apk.SupportDensities.Any(x => x >= density));
 
                         foreach (var item in validPackage)
                         {
