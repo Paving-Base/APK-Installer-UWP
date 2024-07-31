@@ -31,6 +31,7 @@
                         <controls:Setting.Icon>
                             <CheckBox
                                 MinWidth="0"
+                                Padding="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />

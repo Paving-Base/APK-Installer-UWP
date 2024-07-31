@@ -1462,7 +1462,7 @@ namespace APKInstaller.ViewModels
                 {
                     int? density = null;
                     string abi = null, locale = null;
-                    List<(SplitAPKSelector selector, HashSet<int> densities)> densities = [];
+                    List<SplitAPKSelector> densities = [];
                     foreach (SplitAPKSelector selector in results)
                     {
                         ApkInfo apk = selector.Package;
@@ -1517,41 +1517,30 @@ namespace APKInstaller.ViewModels
                             }
                             if (selector.Package.SupportDensities.Exists(x => int.TryParse(x, out int density) && density >= num))
                             {
-                                densities.Add((selector, selector.Package.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet()));
+                                densities.Add(selector);
                             }
                         }
                     }
                     if (densities.Count > 0)
                     {
                         int num = density ?? 0;
-                        List<(SplitAPKSelector selector, HashSet<int> densities)> temp = [];
-                        foreach ((SplitAPKSelector selector, HashSet<int> densities) item in densities)
+                        List<SplitAPKSelector> temp = [];
+                        foreach (SplitAPKSelector item in densities)
                         {
-                            ApkInfo apk = item.selector.Package;
-                            if (item.densities.Max() == num)
+                            ApkInfo apk = item.Package;
+                            var supports = apk.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet();
+                            if (supports.Max() == num)
                             {
-                                item.selector.IsSelected = true;
-                                break;
+                                item.IsSelected = true;
+                                goto @break;
                             }
-                            else if (item.densities.Contains(num))
+                            else if (supports.Contains(num))
                             {
                                 temp.Add(item);
                             }
                         }
-                        if (temp.Count > 0)
-                        {
-                            temp.Select(x => (x.selector, x.densities.Max() - num))
-                                .OrderBy(x => x.Item2)
-                                .FirstOrDefault()
-                                .selector.IsSelected = true;
-                        }
-                        else
-                        {
-                            densities.Select(x => (x.selector, x.densities.Max() - num))
-                                     .OrderBy(x => x.Item2)
-                                     .FirstOrDefault()
-                                     .selector.IsSelected = true;
-                        }
+                        (temp.Count > 0 ? temp : densities).ForEach(x => x.IsSelected = true);
+                    @break:;
                     }
                 }
                 catch (Exception ex)
