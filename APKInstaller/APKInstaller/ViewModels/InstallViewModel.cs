@@ -1466,6 +1466,7 @@ namespace APKInstaller.ViewModels
                     await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiverLang).ConfigureAwait(false);
                     ConsoleOutputReceiver receiverDensity = new();
                     await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiverDensity).ConfigureAwait(false);
+                    var densityPackage = getDensityPackage(apks, int.Parse(receiverDensity.ToString().Trim()));
                     foreach (SplitAPKSelector selector in results)
                     {
                         ApkInfo apk = selector.Package;
@@ -1479,7 +1480,7 @@ namespace APKInstaller.ViewModels
                                 goto default;
                             case { SupportedABIs.Count: > 0 }:
                                 continue;
-                            case { SupportDensities.Count: > 0 } when apk.SupportDensities.Exists(x => x >= int.Parse(receiverDensity.ToString().Trim())):
+                            case { SupportDensities.Count: > 0 } when apk.Equals(densityPackage):
                                 goto default;
                             case { SupportDensities.Count: > 0 }:
                                 continue;
@@ -1493,6 +1494,21 @@ namespace APKInstaller.ViewModels
                             string country = lang.Split('-').FirstOrDefault();
                             return !string.IsNullOrWhiteSpace(country) && apk.SupportLocales.Exists(x => x.StartsWith(country, StringComparison.OrdinalIgnoreCase));
                         }
+                    }
+
+                    static ApkInfo getDensityPackage(ICollection<ApkInfo> apks, int density)
+                    {
+                        var validPackage = apks.Where(apk => apk.SupportDensities.Any(x => x >= density)).ToList();
+
+                        foreach (var item in validPackage)
+                        {
+                            if (item.SupportDensities.Max() == density)
+                            {
+                                return item;
+                            }
+                        }
+
+                        return validPackage.FirstOrDefault(x => x.SupportDensities.Max() > density) ?? validPackage.FirstOrDefault();
                     }
                 }
                 catch (Exception ex)
