@@ -19,5 +19,6 @@ namespace APKInstaller.Metadata
         Windows.Foundation.IAsyncOperation<UInt32> RunProcessAsync(String filename, String command, IVector<String> errorOutput, IVector<String> standardOutput);
         Windows.Foundation.IAsyncOperation<UInt32> DumpAsync(String filename, String command, DumpDelegate callback, IVector<String> output, Int32 encode);
         Boolean EnableLoopback();
+        Boolean CreateFileSymbolic(String symlink, String target, String example);
     }
 }

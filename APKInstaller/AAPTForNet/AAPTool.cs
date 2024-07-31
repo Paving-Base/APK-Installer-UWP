@@ -163,7 +163,7 @@ namespace AAPTForNet
 
             if (file.FileType.Equals(".apk", StringComparison.OrdinalIgnoreCase))
             {
-                file = await PrefixStorageFile(file).ConfigureAwait(false);
+                file = await PrefixStorageFileAsync(file).ConfigureAwait(false);
                 apkList.Add(file.Path);
             }
             else
@@ -243,11 +243,9 @@ namespace AAPTForNet
             return baseApk;
         }
 
-        protected virtual async Task<StorageFile> PrefixStorageFile(StorageFile sourceFile)
+        protected async Task<StorageFile> PrefixStorageFileAsync(StorageFile sourceFile)
         {
-            if (HasDumpOverride ? sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase)
-                || await sourceFile.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024
-                : sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase))
+            if (sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase))
             {
                 return sourceFile;
             }
@@ -255,6 +253,16 @@ namespace AAPTForNet
             if (!Directory.Exists(TempPath))
             {
                 _ = Directory.CreateDirectory(TempPath);
+            }
+
+            if (await CreateHardLinkAsync(sourceFile).ConfigureAwait(false) is StorageFile storageFile)
+            {
+                return storageFile;
+            }
+
+            if (HasDumpOverride && await sourceFile.GetBasicPropertiesAsync().AsTask().ContinueWith(x => x.Result.Size) > 500 * 1024 * 1024)
+            {
+                return sourceFile;
             }
 
             try
@@ -268,5 +276,7 @@ namespace AAPTForNet
                 return sourceFile;
             }
         }
+
+        protected virtual Task<StorageFile> CreateHardLinkAsync(StorageFile file) => Task.FromResult<StorageFile>(null);
     }
 }

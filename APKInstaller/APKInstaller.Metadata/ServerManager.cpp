@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ServerManager.h"
 #include "ServerManager.g.cpp"
+#include "aclapi.h"
 #include "networkisolation.h"
 #include "sddl.h"
 #include "winrt/Windows.ApplicationModel.h"
@@ -403,5 +404,17 @@ namespace winrt::APKInstaller::Metadata::implementation
         }
 
         return false;
+    }
+
+    bool ServerManager::CreateFileSymbolic(hstring symlink, hstring target, hstring example) const
+    {
+        std::wstring path = example.c_str();
+        PSECURITY_DESCRIPTOR descriptor = nullptr;
+        PACL dacl = nullptr;
+        GetNamedSecurityInfo(&path[0], SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, &dacl, nullptr, &descriptor);
+
+        path = symlink.c_str();
+        return CreateHardLink(symlink.c_str(), target.c_str(), NULL)
+            && SetNamedSecurityInfo(&path[0], SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, dacl, nullptr) == ERROR_SUCCESS;
     }
 }

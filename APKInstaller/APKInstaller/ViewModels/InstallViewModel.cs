@@ -1079,7 +1079,7 @@ namespace APKInstaller.ViewModels
 
             try
             {
-                ApkInfo = await new AAPTool().DecompileAsync(_file).ConfigureAwait(false);
+                ApkInfo = await new OOPAAPTool().DecompileAsync(_file).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

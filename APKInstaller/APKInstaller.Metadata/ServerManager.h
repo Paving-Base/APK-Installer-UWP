@@ -23,6 +23,7 @@ namespace winrt::APKInstaller::Metadata::implementation
         IAsyncOperation<unsigned int> RunProcessAsync(hstring filename, hstring command, IVector<hstring> errorOutput, IVector<hstring> standardOutput) const;
         IAsyncOperation<unsigned int> DumpAsync(hstring filename, hstring command, DumpDelegate callback, IVector<hstring> output, int encode) const;
         bool EnableLoopback() const;
+        bool CreateFileSymbolic(hstring symlink, hstring target, hstring example) const;
 
     private:
         event<EventHandler<bool>> m_serverManagerDestructedEvent;

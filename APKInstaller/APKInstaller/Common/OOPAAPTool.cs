@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace APKInstaller.Common
 {
@@ -61,6 +62,18 @@ namespace APKInstaller.Common
                     ? output.Count > 2
                     : output.Count > 0;
             return new DumpModel(path, isSuccess, output);
+        }
+
+        protected override async Task<StorageFile> CreateHardLinkAsync(StorageFile file)
+        {
+            StorageFile example = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("example", CreationCollisionOption.OpenIfExists);
+            string path = Path.Combine(TempPath, file.Name);
+            ServerManager.CreateFileSymbolic(path, file.Path, example.Path);
+            if (File.Exists(path))
+            {
+                return await StorageFile.GetFileFromPathAsync(path);
+            }
+            return null;
         }
     }
 }
