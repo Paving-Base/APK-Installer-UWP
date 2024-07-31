@@ -48,7 +48,7 @@ namespace AAPTForNet.Models
 
         public bool IsBundle => SplitApks?.Count > 0;
 
-        internal ApkInfo Merge(params ApkInfo[] apks) => apks.Any(a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
+        internal ApkInfo Merge(params ApkInfo[] apks) => Array.Exists(apks, a => a == null) ? throw new ArgumentNullException(nameof(apks)) : Merge(this, apks);
 
         internal static ApkInfo Merge(IEnumerable<ApkInfo> apks) => Merge(null, apks);
 

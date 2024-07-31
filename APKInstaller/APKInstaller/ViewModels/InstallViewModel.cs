@@ -433,19 +433,21 @@ namespace APKInstaller.ViewModels
             if (force || !await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
                 await Dispatcher.ResumeForegroundAsync();
-                StackPanel stackPanel = new();
-                stackPanel.Children.Add(
-                    new TextBlock
+                StackPanel stackPanel = new() {
+                    Children =
                     {
-                        TextWrapping = TextWrapping.Wrap,
-                        Text = _loader.GetString("AboutADB")
-                    });
-                stackPanel.Children.Add(
-                    new HyperlinkButton
-                    {
-                        Content = _loader.GetString("ClickToRead"),
-                        NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
-                    });
+                        new TextBlock
+                        {
+                            TextWrapping = TextWrapping.Wrap,
+                            Text = _loader.GetString("AboutADB")
+                        },
+                        new HyperlinkButton
+                        {
+                            Content = _loader.GetString("ClickToRead"),
+                            NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
+                        }
+                    }
+                };
                 ContentDialogResult result = await new ContentDialog
                 {
                     Title = _loader.GetString("ADBMissing"),
@@ -1035,7 +1037,7 @@ namespace APKInstaller.ViewModels
             DeviceSelectButtonText = _loader.GetString("Devices");
             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
             ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
-        }
+        } 
 
         private void CheckOnlinePackage()
         {
@@ -1333,45 +1335,52 @@ namespace APKInstaller.ViewModels
                     CancelOperationVisibility = true;
                     ActionVisibility = SecondaryActionVisibility = TextOutputVisibility = InstallOutputVisibility = false;
                     LaunchWhenReadyVisibility = !string.IsNullOrWhiteSpace(ApkInfo.LaunchableActivity);
-                    switch (ApkInfo)
+
+                    switch (ApkInfo, IsUploadAPK)
                     {
-                        case { IsSplit: true } when IsUploadAPK:
+                        case ({ IsSplit: true }, true):
                             await client.InstallMultiplePackageAsync(_device, [ApkInfo.FullPath], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
-                        case { IsSplit: true }:
+                        case ({ IsSplit: true }, false):
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
                                 await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             }
                             break;
-                        case { IsBundle: true } when IsUploadAPK:
-                            IEnumerable<string> strings = ApkInfo.SplitApks?.Select(x => x.FullPath);
+                        case ({ IsBundle: true }, true) when await SelectSplitAsync(ApkInfo.SplitApks).ConfigureAwait(false) is { Length: > 0 } selects:
+                            IEnumerable<string> strings = selects.Select(x => x.FullPath);
                             await client.InstallMultiplePackageAsync(_device, ApkInfo.FullPath, strings, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
-                        case { IsBundle: true }:
+                        case ({ IsBundle: true }, false) when await SelectSplitAsync(ApkInfo.SplitApks).ConfigureAwait(false) is { Length: > 0 } selects:
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
-                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(ApkInfo.SplitApks.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
+                                IRandomAccessStreamWithContentType[] splits = await Task.WhenAll(selects.Select(x => StorageFile.GetFileFromPathAsync(x.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap())).ConfigureAwait(false);
                                 await client.InstallMultipleAsync(_device, apk, splits, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                                 Array.ForEach(splits, x => x.Dispose());
                             }
                             break;
-                        case not null when IsUploadAPK:
+                        case ({ IsBundle: true }, _):
+                            goto default;
+                        case (not null, true):
                             await client.InstallPackageAsync(_device, ApkInfo.FullPath, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
-                        case not null:
+                        case (not null, false):
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
                                 await client.InstallAsync(_device, apk, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             }
                             break;
+                        default:
+                            IsInstalling = false;
+                            _ = CheckAPKAsync();
+                            return;
                     }
                     AppName = string.Format(_loader.GetString("InstalledFormat"), _appLocaleName);
                     if (IsOpenApp && !string.IsNullOrWhiteSpace(ApkInfo?.LaunchableActivity))
                     {
                         _ = Task.Run(async () =>
                         {
-                            await Task.Delay(1000).ConfigureAwait(false);// 据说如果安装完直接启动会崩溃。。。
+                            await Task.Delay(1000).ConfigureAwait(false); // 据说如果安装完直接启动会崩溃。。。
                             await OpenAPPAsync().ConfigureAwait(false);
                             if (IsCloseAPP)
                             {
@@ -1441,6 +1450,123 @@ namespace APKInstaller.ViewModels
                         break;
                 }
             }
+        }
+
+        private async Task<ApkInfo[]> SelectSplitAsync(ICollection<ApkInfo> apks)
+        {
+            if (this._device is DeviceData _device)
+            {
+                AdbClient client = new();
+                SplitAPKSelector[] results = apks.Select(x => new SplitAPKSelector(x)).ToArray();
+                try
+                {
+                    int? density = null;
+                    string abi = null, locale = null;
+                    List<(SplitAPKSelector selector, HashSet<int> densities)> densities = [];
+                    foreach (SplitAPKSelector selector in results)
+                    {
+                        ApkInfo apk = selector.Package;
+                        switch (apk)
+                        {
+                            case { SupportedABIs.Count: > 0 } when await IsIncludeABIAsync(apk).ConfigureAwait(false):
+                                goto default;
+                            case { SupportedABIs.Count: > 0 }:
+                                continue;
+                            case { SupportLocales.Count: > 0 } when await IsIncludeLocaleAsync(apk).ConfigureAwait(false):
+                                goto default;
+                            case { SupportLocales.Count: > 0 }:
+                                continue;
+                            case { SupportDensities.Count: > 0 }:
+                                await ProcessDensityAsync(selector).ConfigureAwait(false);
+                                continue;
+                            default:
+                                selector.IsSelected = true;
+                                continue;
+                        }
+
+                        async Task<bool> IsIncludeABIAsync(ApkInfo apk)
+                        {
+                            if (abi == null)
+                            {
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop ro.product.cpu.abi", _device, receiver).ConfigureAwait(false);
+                                abi = receiver.ToString().Trim();
+                            }
+                            return apk.SupportedABIs.Exists(x => x.Equals(abi, StringComparison.OrdinalIgnoreCase));
+                        }
+
+                        async Task<bool> IsIncludeLocaleAsync(ApkInfo apk)
+                        {
+                            if (locale == null)
+                            {
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop persist.sys.locale", _device, receiver).ConfigureAwait(false);
+                                locale = receiver.ToString().Trim();
+                            }
+                            string country = locale.Split('-').FirstOrDefault();
+                            return !string.IsNullOrWhiteSpace(country) && apk.SupportLocales.Exists(x => x.StartsWith(country, StringComparison.OrdinalIgnoreCase));
+                        }
+
+                        async Task ProcessDensityAsync(SplitAPKSelector selector)
+                        {
+                            if (density is not int num)
+                            {
+                                ConsoleOutputReceiver receiver = new();
+                                await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiver).ConfigureAwait(false);
+                                density = int.TryParse(receiver.ToString().Trim(), out num) ? num : 0;
+                            }
+                            if (selector.Package.SupportDensities.Exists(x => int.TryParse(x, out int density) && density >= num))
+                            {
+                                densities.Add((selector, selector.Package.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet()));
+                            }
+                        }
+                    }
+                    if (densities.Count > 0)
+                    {
+                        int num = density ?? 0;
+                        List<(SplitAPKSelector selector, HashSet<int> densities)> temp = [];
+                        foreach ((SplitAPKSelector selector, HashSet<int> densities) item in densities)
+                        {
+                            ApkInfo apk = item.selector.Package;
+                            if (item.densities.Max() == num)
+                            {
+                                item.selector.IsSelected = true;
+                                break;
+                            }
+                            else if (item.densities.Contains(num))
+                            {
+                                temp.Add(item);
+                            }
+                        }
+                        if (temp.Count > 0)
+                        {
+                            temp.Select(x => (x.selector, x.densities.Max() - num))
+                                .OrderBy(x => x.Item2)
+                                .FirstOrDefault()
+                                .selector.IsSelected = true;
+                        }
+                        else
+                        {
+                            densities.Select(x => (x.selector, x.densities.Max() - num))
+                                     .OrderBy(x => x.Item2)
+                                     .FirstOrDefault()
+                                     .selector.IsSelected = true;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                }
+                await Dispatcher.ResumeForegroundAsync();
+                SplitAPKDialog dialog = new SplitAPKDialog(results).SetXAMLRoot(_page);
+                ContentDialogResult result = await dialog.ShowAsync();
+                await ThreadSwitcher.ResumeBackgroundAsync();
+                return result == ContentDialogResult.Primary
+                    ? results.Where(x => x.IsSelected).Select(x => x.Package).ToArray()
+                    : [];
+            }
+            return null;
         }
 
         public async Task OpenAPKAsync(StorageFile file)

@@ -17,6 +17,7 @@
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:StringVisibilityConverter x:Key="StringVisibilityConverter" />
             <converters:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter" />
+            <converter:FileSizeToFriendlyStringConverter x:Key="FileSizeToFriendlyStringConverter" />
             <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol</FontFamily>
         </ResourceDictionary>
     </Application.Resources>

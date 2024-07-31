@@ -134,6 +134,9 @@
     <Compile Include="Controls\Dialogs\MarkdownDialog.xaml.cs">
       <DependentUpon>MarkdownDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dialogs\SplitAPKDialog.xaml.cs">
+      <DependentUpon>SplitAPKDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\QRCode\QRCode.cs" />
     <Compile Include="Controls\QRCode\QRCode.Properties.cs" />
     <Compile Include="Controls\QRCode\QRCodeTemplateSettings.cs" />
@@ -728,6 +731,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Dialogs\SplitAPKDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\QRCode\QRCode.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -800,6 +807,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Styles\ListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\TextBlock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -819,7 +830,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AdvancedSharpAdbClient">
-      <Version>3.3.12</Version>
+      <Version>3.3.13</Version>
     </PackageReference>
     <PackageReference Include="Downloader">
       <Version>3.1.2</Version>
