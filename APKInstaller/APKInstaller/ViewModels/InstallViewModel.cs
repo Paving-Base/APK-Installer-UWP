@@ -1521,26 +1521,43 @@ namespace APKInstaller.ViewModels
                             }
                         }
                     }
+
+                    static Density getDeviceDensity(int density)
+                    {
+                        Density selectedDensity = Density.MDPI;
+                        foreach (Density item in Enum.GetValues(typeof(Density)))
+                        {
+                            var currentABS = Math.Abs(density - ((int)item));
+                            var previousABS = Math.Abs(density - ((int)selectedDensity));
+
+                            switch (currentABS.CompareTo(previousABS))
+                            {
+                                case 1:
+                                    break;
+                                case 0:
+                                    selectedDensity = ((int)item) > ((int)selectedDensity) ? item : selectedDensity;
+                                    break;
+                                case -1:
+                                    selectedDensity = item;
+                                    break;
+                            }
+                        }
+
+                        return selectedDensity;
+                    }
                     if (densities.Count > 0)
                     {
                         int num = density ?? 0;
-                        List<SplitAPKSelector> temp = [];
+                        Density dpi = getDeviceDensity(num);
                         foreach (SplitAPKSelector item in densities)
                         {
                             ApkInfo apk = item.Package;
-                            var supports = apk.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet();
-                            if (supports.Max() == num)
+                            if (apk.SplitName.Substring(apk.SplitName.Length - dpi.ToString().Length).Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
                                 item.IsSelected = true;
-                                goto @break;
-                            }
-                            else if (supports.Contains(num))
-                            {
-                                temp.Add(item);
+                                break;
                             }
                         }
-                        (temp.Count > 0 ? temp : densities).ForEach(x => x.IsSelected = true);
-                    @break:;
                     }
                 }
                 catch (Exception ex)
@@ -1557,6 +1574,15 @@ namespace APKInstaller.ViewModels
             }
             return null;
         }
+
+        enum Density : int
+        {
+            MDPI = 160,
+            HDPI = 240,
+            XHDPI = 320,
+            XXHDPI = 480,
+            XXXHDPI = 640
+        } 
 
         public async Task OpenAPKAsync(StorageFile file)
         {
