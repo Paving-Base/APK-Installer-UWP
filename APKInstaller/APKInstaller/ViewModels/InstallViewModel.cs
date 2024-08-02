@@ -1575,13 +1575,15 @@ namespace APKInstaller.ViewModels
             return null;
         }
 
-        enum Density : int
+        enum Density
         {
+            LDPI = 120,
             MDPI = 160,
             HDPI = 240,
             XHDPI = 320,
             XXHDPI = 480,
-            XXXHDPI = 640
+            XXXHDPI = 640,
+            TVDPI = 213
         } 
 
         public async Task OpenAPKAsync(StorageFile file)
