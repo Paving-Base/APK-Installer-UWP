@@ -1476,6 +1476,8 @@ namespace APKInstaller.ViewModels
                                 goto default;
                             case { SupportLocales.Count: > 0 }:
                                 continue;
+                            case { SupportDensities.Count: > 0 } when !apk.SplitName.EndsWith("dpi", StringComparison.OrdinalIgnoreCase):
+                                goto default;
                             case { SupportDensities.Count: > 0 }:
                                 await ProcessDensityAsync(selector).ConfigureAwait(false);
                                 continue;
@@ -1552,10 +1554,15 @@ namespace APKInstaller.ViewModels
                         foreach (SplitAPKSelector item in densities)
                         {
                             ApkInfo apk = item.Package;
+
+                            if (apk.IsSupportAnyDensity)
+                            {
+                                item.IsSelected = true;
+                            }
+
                             if (apk.SplitName.Substring(apk.SplitName.Length - dpi.ToString().Length).Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
                                 item.IsSelected = true;
-                                break;
                             }
                         }
                     }
@@ -1565,7 +1572,11 @@ namespace APKInstaller.ViewModels
                     SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
                 }
                 await Dispatcher.ResumeForegroundAsync();
-                SplitAPKDialog dialog = new SplitAPKDialog(results).SetXAMLRoot(_page);
+                SplitAPKDialog dialog = new(results)
+                {
+                    PrimaryButtonText = _loader.GetString("Install"),
+                    CloseButtonText = _loader.GetString("Cancel")
+                };
                 ContentDialogResult result = await dialog.ShowAsync();
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 return result == ContentDialogResult.Primary
