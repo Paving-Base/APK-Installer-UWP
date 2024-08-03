@@ -1555,14 +1555,10 @@ namespace APKInstaller.ViewModels
                         {
                             ApkInfo apk = item.Package;
 
-                            if (apk.IsSupportAnyDensity)
-                            {
-                                item.IsSelected = true;
-                            }
-
                             if (apk.SplitName.Substring(apk.SplitName.Length - dpi.ToString().Length).Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
                                 item.IsSelected = true;
+                                break;
                             }
                         }
                     }
