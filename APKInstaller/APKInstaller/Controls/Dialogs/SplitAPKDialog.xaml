@@ -7,11 +7,8 @@
     xmlns:local="using:APKInstaller.Controls.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:AAPTForNet.Models"
-    Title="Select Split Package"
-    CloseButtonText="Cancel"
     DefaultButton="Primary"
     FullSizeDesired="True"
-    PrimaryButtonText="Install"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
     <Grid>

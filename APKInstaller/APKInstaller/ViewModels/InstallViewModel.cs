@@ -1524,33 +1524,33 @@ namespace APKInstaller.ViewModels
                         }
                     }
 
-                    static Density getDeviceDensity(int density)
+                    static Density GetDeviceDensity(int density)
                     {
                         Density selectedDensity = Density.MDPI;
-                        foreach (Density item in Enum.GetValues(typeof(Density)))
+                        foreach (Density item in Enum.GetValues(typeof(Density)).OfType<Density>())
                         {
-                            var currentABS = Math.Abs(density - ((int)item));
-                            var previousABS = Math.Abs(density - ((int)selectedDensity));
+                            int currentABS = Math.Abs(density - ((int)item));
+                            int previousABS = Math.Abs(density - ((int)selectedDensity));
 
                             switch (currentABS.CompareTo(previousABS))
                             {
                                 case 1:
                                     break;
                                 case 0:
-                                    selectedDensity = ((int)item) > ((int)selectedDensity) ? item : selectedDensity;
+                                    selectedDensity = item > selectedDensity ? item : selectedDensity;
                                     break;
                                 case -1:
                                     selectedDensity = item;
                                     break;
                             }
                         }
-
                         return selectedDensity;
                     }
+
                     if (densities.Count > 0)
                     {
                         int num = density ?? 0;
-                        Density dpi = getDeviceDensity(num);
+                        Density dpi = GetDeviceDensity(num);
                         foreach (SplitAPKSelector item in densities)
                         {
                             ApkInfo apk = item.Package;
@@ -1568,11 +1568,12 @@ namespace APKInstaller.ViewModels
                     SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
                 }
                 await Dispatcher.ResumeForegroundAsync();
-                SplitAPKDialog dialog = new(results)
+                SplitAPKDialog dialog = new SplitAPKDialog(results)
                 {
-                    PrimaryButtonText = _loader.GetString("Install"),
-                    CloseButtonText = _loader.GetString("Cancel")
-                };
+                    Title = _loader.GetString("SelectSplitPackage"),
+                    CloseButtonText = _loader.GetString("Cancel"),
+                    PrimaryButtonText = _loader.GetString("Install")
+                }.SetXAMLRoot(_page);
                 ContentDialogResult result = await dialog.ShowAsync();
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 return result == ContentDialogResult.Primary
@@ -1582,7 +1583,7 @@ namespace APKInstaller.ViewModels
             return null;
         }
 
-        enum Density
+        private enum Density
         {
             LDPI = 120,
             MDPI = 160,
