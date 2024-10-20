@@ -1476,6 +1476,8 @@ namespace APKInstaller.ViewModels
                                 goto default;
                             case { SupportLocales.Count: > 0 }:
                                 continue;
+                            case { SupportDensities.Count: > 0 } when !apk.SplitName.EndsWith("dpi", StringComparison.OrdinalIgnoreCase):
+                                goto default;
                             case { SupportDensities.Count: > 0 }:
                                 await ProcessDensityAsync(selector).ConfigureAwait(false);
                                 continue;
@@ -1521,26 +1523,44 @@ namespace APKInstaller.ViewModels
                             }
                         }
                     }
+
+                    static Density GetDeviceDensity(int density)
+                    {
+                        Density selectedDensity = Density.MDPI;
+                        foreach (Density item in Enum.GetValues(typeof(Density)).OfType<Density>())
+                        {
+                            int currentABS = Math.Abs(density - ((int)item));
+                            int previousABS = Math.Abs(density - ((int)selectedDensity));
+
+                            switch (currentABS.CompareTo(previousABS))
+                            {
+                                case 1:
+                                    break;
+                                case 0:
+                                    selectedDensity = item > selectedDensity ? item : selectedDensity;
+                                    break;
+                                case -1:
+                                    selectedDensity = item;
+                                    break;
+                            }
+                        }
+                        return selectedDensity;
+                    }
+
                     if (densities.Count > 0)
                     {
                         int num = density ?? 0;
-                        List<SplitAPKSelector> temp = [];
+                        Density dpi = GetDeviceDensity(num);
                         foreach (SplitAPKSelector item in densities)
                         {
                             ApkInfo apk = item.Package;
-                            var supports = apk.SupportDensities.Select(x => int.TryParse(x, out int num) ? num : 0).ToHashSet();
-                            if (supports.Max() == num)
+
+                            if (apk.SplitName.Substring(apk.SplitName.Length - dpi.ToString().Length).Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
                                 item.IsSelected = true;
-                                goto @break;
-                            }
-                            else if (supports.Contains(num))
-                            {
-                                temp.Add(item);
+                                break;
                             }
                         }
-                        (temp.Count > 0 ? temp : densities).ForEach(x => x.IsSelected = true);
-                    @break:;
                     }
                 }
                 catch (Exception ex)
@@ -1548,7 +1568,12 @@ namespace APKInstaller.ViewModels
                     SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
                 }
                 await Dispatcher.ResumeForegroundAsync();
-                SplitAPKDialog dialog = new SplitAPKDialog(results).SetXAMLRoot(_page);
+                SplitAPKDialog dialog = new SplitAPKDialog(results)
+                {
+                    Title = _loader.GetString("SelectSplitPackage"),
+                    CloseButtonText = _loader.GetString("Cancel"),
+                    PrimaryButtonText = _loader.GetString("Install")
+                }.SetXAMLRoot(_page);
                 ContentDialogResult result = await dialog.ShowAsync();
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 return result == ContentDialogResult.Primary
@@ -1557,6 +1582,17 @@ namespace APKInstaller.ViewModels
             }
             return null;
         }
+
+        private enum Density
+        {
+            LDPI = 120,
+            MDPI = 160,
+            HDPI = 240,
+            XHDPI = 320,
+            XXHDPI = 480,
+            XXXHDPI = 640,
+            TVDPI = 213
+        } 
 
         public async Task OpenAPKAsync(StorageFile file)
         {
