@@ -1,9 +1,9 @@
 ﻿using APKInstaller.Models;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Web.Http;
@@ -57,7 +57,7 @@ namespace APKInstaller.Helpers
             response.EnsureSuccessStatusCode();
             if (response.StatusCode != HttpStatusCode.OK) { return null; }
             string responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            UpdateInfo result = JsonConvert.DeserializeObject<UpdateInfo>(responseBody);
+            UpdateInfo result = JsonSerializer.Deserialize(responseBody, SourceGenerationContext.Default.UpdateInfo);
 
             if (result != null)
             {

@@ -1,25 +1,25 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace APKInstaller.Models
 {
     public class UpdateInfo
     {
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string ApiUrl { get; set; }
-        [JsonProperty("html_url")]
+        [JsonPropertyName("html_url")]
         public string ReleaseUrl { get; set; }
-        [JsonProperty("tag_name")]
+        [JsonPropertyName("tag_name")]
         public string TagName { get; set; }
-        [JsonProperty("prerelease")]
+        [JsonPropertyName("prerelease")]
         public bool IsPreRelease { get; set; }
-        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
-        [JsonProperty("published_at")]
+        [JsonPropertyName("published_at")]
         public DateTimeOffset PublishedAt { get; set; }
-        [JsonProperty("assets")]
+        [JsonPropertyName("assets")]
         public Asset[] Assets { get; set; }
-        [JsonProperty("body")]
+        [JsonPropertyName("body")]
         public string Changelog { get; set; }
         [JsonIgnore]
         public bool IsExistNewVersion { get; set; }
@@ -29,19 +29,19 @@ namespace APKInstaller.Models
 
     public class Asset
     {
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public int Size { get; set; }
-        [JsonProperty("download_count")]
+        [JsonPropertyName("download_count")]
         public int DownloadCount { get; set; }
-        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
-        [JsonProperty("updated_at")]
+        [JsonPropertyName("updated_at")]
         public DateTimeOffset UpdatedAt { get; set; }
-        [JsonProperty("browser_download_url")]
+        [JsonPropertyName("browser_download_url")]
         public string DownloadUrl { get; set; }
     }
 }

@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 
 namespace APKInstaller.Helpers
 {
     public static partial class UIHelper
     {
         public static bool HasTitleBar => !CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
-        public static bool HasStatusBar { get; } = ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar");
+        public static bool HasStatusBar => ThemeHelper.IsStatusBarSupported;
     }
 
     public static partial class UIHelper

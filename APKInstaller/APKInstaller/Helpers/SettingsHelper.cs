@@ -1,9 +1,13 @@
 ﻿using AdvancedSharpAdbClient.Models;
+using APKInstaller.Models;
 using MetroLog;
 using Microsoft.Toolkit.Uwp.Helpers;
-using Newtonsoft.Json;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.ViewManagement;
@@ -102,10 +106,9 @@ namespace APKInstaller.Helpers
 
     public static partial class SettingsHelper
     {
-        public static UISettings UISettings { get; } = new();
         public static ILogManager LogManager { get; } = LogManagerFactory.CreateLogManager();
         public static OSVersion OperatingSystemVersion => SystemInformation.Instance.OperatingSystemVersion;
-        public static ApplicationDataStorageHelper LocalObject { get; } = ApplicationDataStorageHelper.GetCurrent(new NewtonsoftJsonObjectSerializer());
+        public static ApplicationDataStorageHelper LocalObject { get; } = ApplicationDataStorageHelper.GetCurrent(new SystemTextJsonObjectSerializer());
 
         static SettingsHelper() => SetDefaultSettings();
 
@@ -117,14 +120,37 @@ namespace APKInstaller.Helpers
             if (Info.Version.Major != Package.Current.Id.Version.Major || Info.Version.Minor != Package.Current.Id.Version.Minor || Info.Version.Build != Package.Current.Id.Version.Build) { LogManager.GetLogger("CheckAssembly").Error($"\nAssembly version is wrong.\nThe wrong version is {Info.Version}.\nIt should be {Package.Current.Id.Version.ToFormattedString()}."); };
         }
     }
-
-    public class NewtonsoftJsonObjectSerializer : IObjectSerializer
+    public class SystemTextJsonObjectSerializer : IObjectSerializer
     {
-        // Specify your serialization settings
-        private readonly JsonSerializerSettings settings = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
+        public string Serialize<T>(T value) => value switch
+        {
+            bool => JsonSerializer.Serialize(value, SourceGenerationContext.Default.Boolean),
+            string => JsonSerializer.Serialize(value, SourceGenerationContext.Default.String),
+            DeviceData => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DeviceData),
+            ElementTheme => JsonSerializer.Serialize(value, SourceGenerationContext.Default.ElementTheme),
+            DateTimeOffset => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DateTimeOffset),
+            _ => JsonSerializer.Serialize(value)
+        };
 
-        public string Serialize<T>(T value) => JsonConvert.SerializeObject(value, typeof(T), Formatting.Indented, settings);
-
-        public T Deserialize<T>(string value) => JsonConvert.DeserializeObject<T>(value, settings);
+        public T Deserialize<T>([StringSyntax(StringSyntaxAttribute.Json)] string value)
+        {
+            if (string.IsNullOrEmpty(value)) { return default; }
+            Type type = typeof(T);
+            return type == typeof(bool) ? Deserialize(value, SourceGenerationContext.Default.Boolean)
+                : type == typeof(string) ? Deserialize(value, SourceGenerationContext.Default.String)
+                : type == typeof(DeviceData) ? Deserialize(value, SourceGenerationContext.Default.DeviceData)
+                : type == typeof(ElementTheme) ? Deserialize(value, SourceGenerationContext.Default.ElementTheme)
+                : type == typeof(DateTimeOffset) ? Deserialize(value, SourceGenerationContext.Default.DateTimeOffset)
+                : JsonSerializer.Deserialize<T>(value);
+            static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo) => JsonSerializer.Deserialize(json, jsonTypeInfo) is T value ? value : default;
+        }
     }
+
+    [JsonSerializable(typeof(bool))]
+    [JsonSerializable(typeof(string))]
+    [JsonSerializable(typeof(DeviceData))]
+    [JsonSerializable(typeof(UpdateInfo))]
+    [JsonSerializable(typeof(ElementTheme))]
+    [JsonSerializable(typeof(DateTimeOffset))]
+    public partial class SourceGenerationContext : JsonSerializerContext;
 }
