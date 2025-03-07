@@ -81,4 +81,4 @@ An Android Application Installer for Windows
 - **铺路尚未成功，同志仍需努力！**
 
 ## Star 数量统计
-[![Star 数量统计](https://starchart.cc/Paving-Base/APK-Installer-UWP.svg)](https://starchart.cc/Paving-Base/APK-Installer-UWP "Star 数量统计")
+[![Star 数量统计](https://starchart.cc/Paving-Base/APK-Installer-UWP.svg?variant=adaptive)](https://github.com/Paving-Base/APK-Installer-UWP/stargazers "Star 数量统计")

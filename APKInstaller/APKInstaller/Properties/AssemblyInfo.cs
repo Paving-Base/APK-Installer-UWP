@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("APKInstaller")]
-[assembly: AssemblyCopyright("Copyright © 2017 - 2024 PavingBase. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2017 - 2025 PavingBase. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

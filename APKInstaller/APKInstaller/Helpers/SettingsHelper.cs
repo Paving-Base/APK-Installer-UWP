@@ -120,6 +120,7 @@ namespace APKInstaller.Helpers
             if (Info.Version.Major != Package.Current.Id.Version.Major || Info.Version.Minor != Package.Current.Id.Version.Minor || Info.Version.Build != Package.Current.Id.Version.Build) { LogManager.GetLogger("CheckAssembly").Error($"\nAssembly version is wrong.\nThe wrong version is {Info.Version}.\nIt should be {Package.Current.Id.Version.ToFormattedString()}."); };
         }
     }
+
     public class SystemTextJsonObjectSerializer : IObjectSerializer
     {
         public string Serialize<T>(T value) => value switch

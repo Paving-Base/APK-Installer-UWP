@@ -34,9 +34,9 @@ namespace APKInstaller.Models
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("size")]
-        public int Size { get; set; }
+        public long Size { get; set; }
         [JsonPropertyName("download_count")]
-        public int DownloadCount { get; set; }
+        public long DownloadCount { get; set; }
         [JsonPropertyName("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
         [JsonPropertyName("updated_at")]
