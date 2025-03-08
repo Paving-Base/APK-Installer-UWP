@@ -30,10 +30,9 @@ namespace Zeroconf.Common
                 netInterfacesToSendRequestOn = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
             }
 
-            List<Task> tasks = netInterfacesToSendRequestOn
+            List<Task> tasks = [.. netInterfacesToSendRequestOn
                 .Select(inter =>
-                    NetworkRequestAsync(requestBytes, scanTime, retries, retryDelayMilliseconds, onResponse, inter, cancellationToken))
-                .ToList();
+                    NetworkRequestAsync(requestBytes, scanTime, retries, retryDelayMilliseconds, onResponse, inter, cancellationToken))];
 
             await Task.WhenAll(tasks)
                       .ConfigureAwait(false);

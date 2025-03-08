@@ -129,10 +129,8 @@ namespace Zeroconf
                 cancellationToken,
                 netInterfacesToSendRequestOn).ConfigureAwait(false);
 
-            return dict.Select(
-                pair => ResponseToZeroconf(pair.Value, pair.Key, options))
-                    .Where(zh => zh.Services.Any(s => options.Protocols.Contains(s.Value.Name))) // Ensure we only return records that have matching services
-                    .ToArray();
+            return [.. dict.Select(pair => ResponseToZeroconf(pair.Value, pair.Key, options))
+                           .Where(zh => zh.Services.Any(s => options.Protocols.Contains(s.Value.Name)))]; // Ensure we only return records that have matching services
         }
 
         /// <summary>

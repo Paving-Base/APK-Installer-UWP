@@ -10,9 +10,9 @@ namespace AAPTForNet.Filters
 
         public override bool CanHandle(string msg) => msg.StartsWith("densities:");
 
-        public override void AddMessage(string msg) => Segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
+        public override void AddMessage(string msg) => Segments = msg.Split([' ', '\''], StringSplitOptions.RemoveEmptyEntries);
 
-        public override ApkInfo GetAPK() => new() { SupportDensities = Segments.Skip(1).ToList() }; // Skip "densities"        
+        public override ApkInfo GetAPK() => new() { SupportDensities = [.. Segments.Skip(1)] }; // Skip "densities"        
 
         public override void Clear() => throw new NotImplementedException();
     }

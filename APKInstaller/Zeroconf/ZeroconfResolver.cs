@@ -105,7 +105,7 @@ namespace Zeroconf
 
             ZeroconfHost z = new()
             {
-                IPAddresses = ipv4Adresses.Concat(ipv6Adresses).ToArray()
+                IPAddresses = [.. ipv4Adresses, .. ipv6Adresses]
             };
 
             z.Id = z.IPAddresses.FirstOrDefault() ?? remoteAddress;
@@ -125,10 +125,9 @@ namespace Zeroconf
                 }
 
                 // Get the matching service records
-                Record[] responseRecords = response.RecordsRR
+                Record[] responseRecords = [.. response.RecordsRR
                     .Where(r => r.NAME == ptrRec.PTRDNAME)
-                    .Select(r => r.RECORD)
-                    .ToArray();
+                    .Select(r => r.RECORD)];
 
                 RecordSRV srvRec = responseRecords.OfType<RecordSRV>().FirstOrDefault();
                 if (srvRec == null)

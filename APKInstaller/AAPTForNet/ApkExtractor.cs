@@ -53,20 +53,20 @@ namespace AAPTForNet
 
         private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(string path, string asset)
         {
-            RefStruct<int> startIndex = -1;
+            Ref<int> startIndex = -1;
             Dictionary<string, Icon> output = await DumpMarkupIconAsync(path, asset, startIndex).ConfigureAwait(false);
-            return output.Count == 0 && startIndex < 5
+            return output.Count == 0 && startIndex.Value < 5
                 ? await DumpMarkupIconAsync(path, asset).ConfigureAwait(false)
                 : output;
         }
 
         private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(
-            string path, string asset, RefStruct<int> lastTryIndex, int start = -1)
+            string path, string asset, Ref<int> lastTryIndex, int start = -1)
         {
             // Not found any icon image in package?,
             // it maybe a markup file
             // try getting some images from markup.
-            lastTryIndex = -1;
+            lastTryIndex.Value = -1;
 
             DumpModel tree = await AAPTool.DumpXmlTreeAsync(path, asset).ConfigureAwait(false);
             if (!tree.IsSuccess)
@@ -74,12 +74,11 @@ namespace AAPTForNet
                 return [];
             }
 
-            string msg = string.Empty;
             start = start >= 0 && start < tree.Messages.Count ? start : 0;
             for (int i = start; i < tree.Messages.Count; i++)
             {
-                lastTryIndex = i;
-                msg = tree.Messages[i];
+                lastTryIndex.Value = i;
+                string msg = tree.Messages[i];
 
                 if (Detector.IsBitmapElement(msg))
                 {
@@ -340,12 +339,11 @@ namespace AAPTForNet
             }
         }
 
-        private readonly struct RefStruct<T>(T value)
+        private sealed class Ref<T>(T value)
         {
-            public T Value { get; } = value;
-
-            public static implicit operator T(RefStruct<T> @struct) => @struct.Value;
-            public static implicit operator RefStruct<T>(T value) => new(value);
+            public T Value = value;
+            public static implicit operator T(Ref<T> @struct) => @struct.Value;
+            public static implicit operator Ref<T>(T value) => new(value);
         }
     }
 }

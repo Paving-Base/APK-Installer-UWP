@@ -173,7 +173,7 @@ namespace APKInstaller.ViewModels.ToolsPages
                     AdbClient client = new();
                     int index = await Dispatcher.AwaitableRunAsync(() => { return DeviceComboBox.SelectedIndex; });
                     IEnumerable<AndroidProcess> list = await client.ListProcessesAsync(devices[index]);
-                    Processes = new(list);
+                    Processes = [.. list];
                     _ = Dispatcher.AwaitableRunAsync(() =>
                     {
                         TitleBar.IsRefreshButtonVisible = true;

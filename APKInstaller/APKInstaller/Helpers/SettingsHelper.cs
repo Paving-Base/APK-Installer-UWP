@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using IObjectSerializer = Microsoft.Toolkit.Helpers.IObjectSerializer;
 

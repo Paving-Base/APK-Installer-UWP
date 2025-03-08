@@ -4,8 +4,6 @@ namespace Zeroconf.Common
 {
     internal readonly struct NullDisposable : IDisposable
     {
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

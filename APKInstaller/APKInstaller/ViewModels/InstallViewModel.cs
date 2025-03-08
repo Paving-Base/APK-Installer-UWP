@@ -649,7 +649,7 @@ namespace APKInstaller.ViewModels
                     WaitProgressText = string.Format(_loader.GetString("UnzippingFormat"), ++progressed, totalCount);
                     if (string.IsNullOrWhiteSpace(entry.Name)) { continue; }
                     StorageFolder tempFolder = folder;
-                    string[] parts = entry.FullName.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] parts = entry.FullName.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
                     for (int i = 0; i < parts.Length;)
                     {
                         string part = parts[i];
@@ -1577,7 +1577,7 @@ namespace APKInstaller.ViewModels
                 ContentDialogResult result = await dialog.ShowAsync();
                 await ThreadSwitcher.ResumeBackgroundAsync();
                 return result == ContentDialogResult.Primary
-                    ? results.Where(x => x.IsSelected).Select(x => x.Package).ToArray()
+                    ? [.. results.Where(x => x.IsSelected).Select(x => x.Package)]
                     : [];
             }
             return null;

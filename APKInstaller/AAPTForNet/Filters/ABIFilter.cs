@@ -14,9 +14,9 @@ namespace AAPTForNet.Filters
 
         public override bool CanHandle(string msg) => msg.StartsWith("native-code:");
 
-        public override void AddMessage(string msg) => Segments = msg.Split(new char[2] { ' ', '\'' }, StringSplitOptions.RemoveEmptyEntries);
+        public override void AddMessage(string msg) => Segments = msg.Split([' ', '\''], StringSplitOptions.RemoveEmptyEntries);
 
-        public override ApkInfo GetAPK() => new() { SupportedABIs = Segments.Skip(1).ToList() }; // Skip "native-code"        
+        public override ApkInfo GetAPK() => new() { SupportedABIs = [.. Segments.Skip(1)] }; // Skip "native-code"        
 
         public override void Clear() => throw new NotImplementedException();
     }

@@ -7,8 +7,8 @@ using namespace std::chrono;
 
 const CLSID& Factory::GetCLSID()
 {
-    static const CLSID CLSID_LoopUtil = { 0x4036b695, 0xca92, 0x45ea, { 0x89, 0x65, 0xce, 0x19, 0x47, 0xa6, 0xb2, 0x69 } }; // 4036B695-CA92-45EA-8965-CE1947A6B269
-    return CLSID_LoopUtil;
+    static const CLSID CLSID_ServerManager = { 0x4036b695, 0xca92, 0x45ea, { 0x89, 0x65, 0xce, 0x19, 0x47, 0xa6, 0xb2, 0x69 } }; // 4036B695-CA92-45EA-8965-CE1947A6B269
+    return CLSID_ServerManager;
 }
 
 Windows::Foundation::IAsyncAction Factory::ReleaseServerAsync()

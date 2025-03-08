@@ -72,7 +72,7 @@ namespace APKInstaller.Helpers
 
         private static SystemVersionInfo GetAsVersionInfo(string version)
         {
-            int[] numbs = GetVersionNumbers(version).Split('.').Select(int.Parse).ToArray();
+            int[] numbs = [.. GetVersionNumbers(version).Split('.').Select(int.Parse)];
             return numbs.Length <= 1
                 ? new SystemVersionInfo(numbs[0], 0, 0, 0)
                 : numbs.Length <= 2
@@ -85,7 +85,7 @@ namespace APKInstaller.Helpers
         private static string GetVersionNumbers(string version)
         {
             string allowedChars = "01234567890.";
-            return new string(version.Where(allowedChars.Contains).ToArray());
+            return new string([.. version.Where(allowedChars.Contains)]);
         }
     }
 }

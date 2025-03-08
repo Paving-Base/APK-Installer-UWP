@@ -19,7 +19,7 @@ namespace APKInstaller.Controls
         public GeometryGroup GetGraphic(Size viewBox)
         {
             int drawableModulesCount = GetDrawableModulesCount();
-            int positionMarkerCount = GetPositionMarkerCount(drawableModulesCount);
+            //int positionMarkerCount = GetPositionMarkerCount(drawableModulesCount);
             double unitsPerModule = GetUnitsPerModule(viewBox, drawableModulesCount);
             const int offsetModules = 4;
 

@@ -116,15 +116,15 @@ namespace AAPTForNet
             }
 
         end:
-            _ = Task.Run(() =>
-            {
-                try
-                {
-                    aapt.WaitForExit(5000);
-                    aapt.Dispose();
-                }
-                catch { }
-            });
+            //_ = Task.Run(() =>
+            //{
+            //    try
+            //    {
+            //        aapt.WaitForExit(5000);
+            //        aapt.Dispose();
+            //    }
+            //    catch { }
+            //});
 
             // Dump xml tree get only 1 message when failed, the others are 2.
             bool isSuccess =
@@ -238,7 +238,7 @@ namespace AAPTForNet
 
             IGrouping<string, ApkInfo> package = apkInfo.GroupBy(x => x.PackageName).FirstOrDefault();
             ApkInfo baseApk = package.Where(x => !x.IsSplit).FirstOrDefault();
-            baseApk.SplitApks = package.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode).ToList();
+            baseApk.SplitApks = [.. package.Where(x => x.IsSplit).Where(x => x.VersionCode == baseApk.VersionCode)];
 
             return baseApk;
         }

@@ -52,8 +52,8 @@ namespace Zeroconf
             Hosts = hosts;
             lock (discoveredHosts)
             {
-                HashSet<(string, string)> newHosts = new(discoveredHosts);
-                HashSet<(string, string)> remainingHosts = new(discoveredHosts);
+                HashSet<(string, string)> newHosts = [.. discoveredHosts];
+                HashSet<(string, string)> remainingHosts = [.. discoveredHosts];
 
                 foreach (IZeroconfHost host in hosts)
                 {
