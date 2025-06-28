@@ -72,7 +72,7 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AppxSystemBinary Include="APKInstaller.Metadata.dll"/>
+    <AppxSystemBinary Include="APKInstaller.Metadata.dll" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

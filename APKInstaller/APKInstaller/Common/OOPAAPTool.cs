@@ -1,5 +1,6 @@
 ﻿using AAPTForNet;
 using AAPTForNet.Models;
+using APKInstaller.Helpers;
 using APKInstaller.Metadata;
 using APKInstaller.Projection;
 using System;
@@ -66,12 +67,19 @@ namespace APKInstaller.Common
 
         protected override async Task<StorageFile> CreateHardLinkAsync(StorageFile file)
         {
-            StorageFile example = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("example", CreationCollisionOption.OpenIfExists);
-            string path = Path.Combine(TempPath, file.Name);
-            ServerManager.CreateFileSymbolic(path, file.Path, example.Path);
-            if (File.Exists(path))
+            try
             {
-                return await StorageFile.GetFileFromPathAsync(path);
+                StorageFile example = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("example", CreationCollisionOption.OpenIfExists);
+                string path = Path.Combine(TempPath, file.Name);
+                ServerManager.CreateFileSymbolic(path, file.Path, example.Path);
+                if (File.Exists(path))
+                {
+                    return await StorageFile.GetFileFromPathAsync(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                SettingsHelper.LogManager.GetLogger(nameof(OOPAAPTool)).Warn(ex.ExceptionToMessage(), ex);
             }
             return null;
         }
