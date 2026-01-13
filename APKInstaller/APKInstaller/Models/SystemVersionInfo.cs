@@ -18,7 +18,7 @@ namespace APKInstaller.Models
                             ? Revision.CompareTo(other.Revision)
                             : 0;
 
-        public int CompareTo(object obj) => obj is SystemVersionInfo other ? CompareTo(other) : throw new ArgumentException();
+        public int CompareTo(object obj) => obj is SystemVersionInfo other ? CompareTo(other) : throw new ArgumentException("obj is not SystemVersionInfo", nameof(obj));
 
         public static bool operator <(SystemVersionInfo left, SystemVersionInfo right) => left.CompareTo(right) < 0;
 

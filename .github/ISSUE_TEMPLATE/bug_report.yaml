@@ -1,7 +1,8 @@
 name: Bug report
 description: Create a report to help us improve
-title: "Bug title"
+title: Bug title
 labels: [bug]
+type: Bug
 body:
   - type: textarea
     validations:
@@ -33,10 +34,10 @@ body:
       label: App version
       description: Specify the version of APK Installer you're using.
       options:
-        - "0.0.4"
-        - "0.0.3"
-        - "0.0.2"
-        - "0.0.1"
+        - 0.0.4
+        - 0.0.3
+        - 0.0.2
+        - 0.0.1
   - type: dropdown
     validations:
       required: true
@@ -44,17 +45,17 @@ body:
       label: Windows version
       description: Which Windows versions did you see the issue on?
       options:
-        - "Insider Build (xxxxx)"
-        - "Windows 11 version 22H2 (22621, 2022 Update)"
-        - "Windows 11 version 21H2 (22000)"
-        - "Windows 10 version 22H2 (19045, 2022 Update)"
-        - "Windows 10 version 21H2 (19044, November 2021 Update)"
-        - "Windows 10 version 21H1 (19043, May 2021 Update)"
-        - "Windows 10 version 20H2 (19042, October 2020 Update)"
-        - "Windows 10 version 2004 (19041, May 2020 Update)"
-        - "Windows 10 version 1909 (18363, November 2019 Update)"
-        - "Windows 10 version 1903 (18362, May 2019 Update)"
-        - "Windows 10 version 1809 (17763, October 2018 Update)"
+        - Insider Build (xxxxx)
+        - Windows 11 version 22H2 (22621, 2022 Update)
+        - Windows 11 version 21H2 (22000)
+        - Windows 10 version 22H2 (19045, 2022 Update)
+        - Windows 10 version 21H2 (19044, November 2021 Update)
+        - Windows 10 version 21H1 (19043, May 2021 Update)
+        - Windows 10 version 20H2 (19042, October 2020 Update)
+        - Windows 10 version 2004 (19041, May 2020 Update)
+        - Windows 10 version 1909 (18363, November 2019 Update)
+        - Windows 10 version 1903 (18362, May 2019 Update)
+        - Windows 10 version 1809 (17763, October 2018 Update)
   - type: dropdown
     validations:
       required: true
@@ -62,14 +63,14 @@ body:
       label: Android device
       description: Which kind of Android device did you connect?
       options:
-        - "Windows Subsystem for Android™"
-        - "Android Studio Emulator"
-        - "Anbox - Android in a Box"
-        - "BlueStacks"
-        - "Waydroid"
-        - "华为移动应用引擎"
-        - "Nomal Device"
-        - "Other Emulator"
+        - Windows Subsystem for Android™
+        - Android Studio Emulator
+        - Anbox - Android in a Box
+        - BlueStacks
+        - Waydroid
+        - 华为移动应用引擎
+        - Nomal Device
+        - Other Emulator
   - type: textarea
     attributes:
       label: Additional context

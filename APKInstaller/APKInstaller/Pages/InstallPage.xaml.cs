@@ -110,8 +110,11 @@ namespace APKInstaller.Pages
             if (sender is not FrameworkElement element) { return; }
             switch (element.Name)
             {
-                case nameof(ActionButton):
+                case nameof(ActionButton) when Provider.IsADBReady:
                     _ = Provider.InstallAPPAsync();
+                    break;
+                case "ActionButton":
+                    _ = Provider.InitADBFileAsync();
                     break;
                 case nameof(DownloadButton):
                     _ = Provider.LoadNetAPKAsync();

@@ -22,56 +22,56 @@ pr:
       - APKInstaller/**
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: windows-2022
 
 variables:
-  solution: '*.sln'
-  buildProject: '**/APKInstaller.Package/*.wapproj'
-  buildPlatform: 'x86|x64|ARM|ARM64'
-  buildConfiguration: 'Release'
-  appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
+  solution: "*.sln"
+  buildProject: "**/APKInstaller.Package/*.wapproj"
+  buildPlatform: x86|x64|ARM|ARM64
+  buildConfiguration: Release
+  appxPackageDir: $(build.artifactStagingDirectory)\AppxPackages\\
 
 steps:
-- task: DownloadSecureFile@1
-  name: signingCert
-  displayName: 'Download CA certificate'
-  inputs:
-    secureFile: 'where.pfx'
+  - task: DownloadSecureFile@1
+    name: signingCert
+    displayName: Download CA certificate
+    inputs:
+      secureFile: where.pfx
 
-- task: VSBuild@1
-  displayName: 'Restore Solution'
-  inputs:
-    platform: 'x64'
-    solution: '$(solution)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:restore'
-    msbuildArchitecture: 'x64'
-    maximumCpuCount: true
+  - task: VSBuild@1
+    displayName: Restore Solution
+    inputs:
+      platform: x64
+      solution: $(solution)
+      configuration: $(buildConfiguration)
+      msbuildArgs: /t:restore
+      msbuildArchitecture: x64
+      maximumCpuCount: true
 
-- task: NuGetCommand@2
-  displayName: 'NuGet Restore'
-  inputs:
-    restoreSolution: '$(solution)'
+  - task: NuGetCommand@2
+    displayName: NuGet Restore
+    inputs:
+      restoreSolution: $(solution)
 
-- task: VSBuild@1
-  displayName: 'Build Solution'
-  inputs:
-    platform: 'x64'
-    solution: '$(buildProject)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)"
-                  /p:AppxPackageDir="$(appxPackageDir)"
-                  /p:AppxBundle=Always
-                  /p:UapAppxPackageBuildMode=SideloadOnly
-                  /p:AppxPackageSigningEnabled=true
-                  /p:PackageCertificateThumbprint="0CDF4A03E9BE9DD789894BB3C7AD3DEDECD9AB25"
-                  /p:PackageCertificateKeyFile="$(signingCert.secureFilePath)"
-                  /p:PackageCertificatePassword="$(Password)"'
-    msbuildArchitecture: 'x64'
-    maximumCpuCount: true
+  - task: VSBuild@1
+    displayName: Build Solution
+    inputs:
+      platform: x64
+      solution: $(buildProject)
+      configuration: $(buildConfiguration)
+      msbuildArgs: '/p:AppxBundlePlatforms=$(buildPlatform)
+        /p:AppxPackageDir=$(appxPackageDir)
+        /p:AppxBundle=Always
+        /p:UapAppxPackageBuildMode=SideloadOnly
+        /p:AppxPackageSigningEnabled=true
+        /p:PackageCertificateThumbprint=0CDF4A03E9BE9DD789894BB3C7AD3DEDECD9AB25
+        /p:PackageCertificateKeyFile=$(signingCert.secureFilePath)
+        /p:PackageCertificatePassword=$(Password)'
+      msbuildArchitecture: x64
+      maximumCpuCount: true
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    ArtifactName: 'MSIX Package'
-    PathtoPublish: '$(build.artifactstagingdirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifact
+    inputs:
+      ArtifactName: MSIX Package
+      PathtoPublish: $(build.artifactstagingdirectory)

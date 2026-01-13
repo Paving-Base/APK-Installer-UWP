@@ -488,7 +488,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         public void ChooseDevice()
         {
             DeviceData device = SettingsHelper.Get<DeviceData>(SettingsHelper.DefaultDevice);
-            if (device == null) { return; }
+            if (device is null) { return; }
             foreach (DeviceData data in DeviceList)
             {
                 if (data.Name == device.Name && data.Model == device.Model && data.Product == device.Product)

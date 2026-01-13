@@ -88,7 +88,7 @@ namespace APKInstaller.Controls
                 try
                 {
                     string xaml = await client.GetStringAsync(value);
-                    if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                    if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(content), $"The text fetched from {value} is empty."); }
                     element = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                 }
                 catch
@@ -96,7 +96,7 @@ namespace APKInstaller.Controls
                     try
                     {
                         string xaml = await client.GetStringAsync(contentInfo.FormatURL(GitInfo.JSDELIVR_API));
-                        if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                        if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(content), $"The text fetched from {contentInfo.FormatURL(GitInfo.JSDELIVR_API)} is empty."); }
                         element = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                     }
                     catch
@@ -139,7 +139,7 @@ namespace APKInstaller.Controls
                 try
                 {
                     string xaml = await client.GetStringAsync(contentUri);
-                    if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(xaml)); }
+                    if (string.IsNullOrWhiteSpace(xaml)) { throw new ArgumentNullException(nameof(content), $"The text fetched from {contentUri} is empty."); }
                     element = await DispatcherQueue?.EnqueueAsync(() => { return (UIElement)XamlReader.Load(xaml); });
                 }
                 catch
