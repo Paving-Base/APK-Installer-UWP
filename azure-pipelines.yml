@@ -25,7 +25,7 @@ pool:
   vmImage: windows-latest
 
 variables:
-  solution: "*.sln"
+  solution: "*.slnx"
   buildPlatform: x86|x64|ARM64
   buildConfiguration: Release
   appxPackageDir: $(build.artifactStagingDirectory)\AppxPackages\\
@@ -53,11 +53,11 @@ steps:
       platform: x64
       solution: $(solution)
       configuration: $(buildConfiguration)
-      msbuildArgs: '/p:AppxBundlePlatforms=$(buildPlatform)
+      msbuildArgs: /p:AppxBundlePlatforms=$(buildPlatform)
         /p:AppxPackageDir=$(appxPackageDir)
         /p:AppxBundle=Always
         /p:UapAppxPackageBuildMode=SideloadOnly
-        /p:AppxPackageSigningEnabled=true
+        /p:GenerateAppxPackageOnBuild=true
         /p:AppxPackageSigningEnabled=false
       msbuildArchitecture: x64
       maximumCpuCount: true
