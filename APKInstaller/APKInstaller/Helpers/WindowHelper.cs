@@ -1,6 +1,6 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Metadata;
@@ -19,7 +19,8 @@ namespace APKInstaller.Helpers
     /// </summary>
     public static class WindowHelper
     {
-        public static bool IsXamlRootSupported { get; } = ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "XamlRoot");
+        [SupportedOSPlatformGuard("Windows10.0.18362.0")]
+        public static bool IsXamlRootSupported { get; } = UIHelper.IsWindows10OrGreater && ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "XamlRoot");
 
         public static async Task<bool> CreateWindowAsync(Action<Window> launched)
         {

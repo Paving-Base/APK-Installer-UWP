@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
@@ -38,7 +39,7 @@ namespace AAPTForNet.Models
         /// </summary>
         internal string IconName { get; set; }
 
-        internal Icon(string iconName)
+        internal Icon(string? iconName)
         {
             IconName = iconName ?? string.Empty;
             RealPath = "ms-appx:///Assets/256x256.png";
@@ -68,7 +69,7 @@ namespace AAPTForNet.Models
 
         public override string ToString() => IconName;
 
-        public override bool Equals(object obj) => obj is Icon ic && IconName == ic.IconName;
+        public override bool Equals([NotNullWhen(true)] object? obj) => obj is Icon ic && IconName == ic.IconName;
 
         public override int GetHashCode() => -489061483 + EqualityComparer<string>.Default.GetHashCode(IconName);
     }

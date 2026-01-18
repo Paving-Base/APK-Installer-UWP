@@ -22,21 +22,20 @@ pr:
       - APKInstaller/**
 
 pool:
-  vmImage: windows-2022
+  vmImage: windows-latest
 
 variables:
   solution: "*.sln"
-  buildProject: "**/APKInstaller.Package/*.wapproj"
   buildPlatform: x86|x64|ARM64
   buildConfiguration: Release
   appxPackageDir: $(build.artifactStagingDirectory)\AppxPackages\\
 
 steps:
-  - task: DownloadSecureFile@1
-    name: signingCert
-    displayName: Download CA certificate
+  - task: UseDotNet@2
+    displayName: Setup .NET Core App
     inputs:
-      secureFile: where.pfx
+      packageType: sdk
+      version: 10.0.x
 
   - task: VSBuild@1
     displayName: Restore Solution
@@ -48,25 +47,18 @@ steps:
       msbuildArchitecture: x64
       maximumCpuCount: true
 
-  - task: NuGetCommand@2
-    displayName: NuGet Restore
-    inputs:
-      restoreSolution: $(solution)
-
   - task: VSBuild@1
     displayName: Build Solution
     inputs:
       platform: x64
-      solution: $(buildProject)
+      solution: $(solution)
       configuration: $(buildConfiguration)
       msbuildArgs: '/p:AppxBundlePlatforms=$(buildPlatform)
         /p:AppxPackageDir=$(appxPackageDir)
         /p:AppxBundle=Always
         /p:UapAppxPackageBuildMode=SideloadOnly
         /p:AppxPackageSigningEnabled=true
-        /p:PackageCertificateThumbprint=0CDF4A03E9BE9DD789894BB3C7AD3DEDECD9AB25
-        /p:PackageCertificateKeyFile=$(signingCert.secureFilePath)
-        /p:PackageCertificatePassword=$(Password)'
+        /p:AppxPackageSigningEnabled=false
       msbuildArchitecture: x64
       maximumCpuCount: true
 

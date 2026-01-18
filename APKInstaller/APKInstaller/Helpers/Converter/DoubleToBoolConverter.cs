@@ -1,11 +1,11 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Converters;
+﻿using CommunityToolkit.WinUI.Converters;
 
 namespace APKInstaller.Helpers.Converter
 {
     /// <summary>
     /// This class converts a double value into a Boolean value (if the value is null or empty returns a false value).
     /// </summary>
-    public class DoubleToBoolConverter : DoubleToObjectConverter
+    public partial class DoubleToBoolConverter : DoubleToObjectConverter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DoubleToBoolConverter"/> class.

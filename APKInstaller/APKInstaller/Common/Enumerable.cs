@@ -18,15 +18,8 @@ namespace APKInstaller.Common
         /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="collection"/> is null.</exception>
         public static void AddRange<TSource>(this ICollection<TSource> source, IEnumerable<TSource> collection)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (collection == null)
-            {
-                throw new ArgumentNullException(nameof(collection));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(collection);
 
             if (source is List<TSource> list)
             {
@@ -37,10 +30,10 @@ namespace APKInstaller.Common
                 int count = collection.Count();
                 if (count > 0)
                 {
-                    int _size = Array.FindLastIndex(array, (x) => x != null) + 1;
+                    int _size = Array.FindLastIndex(array, x => x != null) + 1;
                     if (array.Length - _size < count)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(array));
+                        throw new ArgumentOutOfRangeException(nameof(source));
                     }
 
                     if (collection is ICollection<TSource> c)
@@ -73,20 +66,13 @@ namespace APKInstaller.Common
         /// Performs the specified action on each element of the <see cref="IEnumerable{T}"/>.
         /// </summary>
         /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
-        /// <param name="source">The <typeparamref name="IEnumerable{TSource}"/> to be action.</param>
+        /// <param name="source">The <see cref="IEnumerable{TSource}"/> to be action.</param>
         /// <param name="action">The <see cref="Action{T}"/> delegate to perform on each element of the <see cref="List{T}"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="action"/> is null.</exception>
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(action);
 
             if (source is List<TSource> list)
             {

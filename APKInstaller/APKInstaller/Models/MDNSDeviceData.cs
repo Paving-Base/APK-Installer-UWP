@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using APKInstaller.Helpers;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -8,7 +8,7 @@ using Zeroconf.Interfaces;
 
 namespace APKInstaller.Models
 {
-    public class MDNSDeviceData(string name, string address, int port) : INotifyPropertyChanged
+    public partial class MDNSDeviceData(string name, string address, int port) : INotifyPropertyChanged
     {
         public string Name { get; init; } = name;
         public string Address { get; init; } = address;

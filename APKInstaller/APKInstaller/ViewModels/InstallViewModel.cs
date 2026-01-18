@@ -1,5 +1,4 @@
-﻿using AAPTForNet;
-using AAPTForNet.Models;
+﻿using AAPTForNet.Models;
 using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.DeviceCommands.Models;
@@ -11,8 +10,9 @@ using APKInstaller.Helpers;
 using APKInstaller.Models;
 using APKInstaller.Pages;
 using APKInstaller.Pages.SettingsPages;
+using CommunityToolkit.WinUI.Helpers;
 using Downloader;
-using Microsoft.Toolkit.Uwp.Connectivity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,11 +36,13 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using WinRT;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
 namespace APKInstaller.ViewModels
 {
-    public class InstallViewModel : INotifyPropertyChanged
+    [GeneratedBindableCustomProperty([nameof(ApkInfo)], [])]
+    public partial class InstallViewModel : INotifyPropertyChanged
     {
         private DeviceData _device;
         private readonly InstallPage _page;
@@ -53,11 +55,15 @@ namespace APKInstaller.ViewModels
         private StorageFile _file;
         private string _appLocaleName = string.Empty;
 
-        public CoreDispatcher Dispatcher => _page.Dispatcher;
+        public static string InstallFormat => _loader.GetString("InstallFormat");
+        public static string VersionFormat => _loader.GetString("VersionFormat");
+        public static string PackageNameFormat => _loader.GetString("PackageNameFormat");
 
-        public string InstallFormat => _loader.GetString("InstallFormat");
-        public string VersionFormat => _loader.GetString("VersionFormat");
-        public string PackageNameFormat => _loader.GetString("PackageNameFormat");
+        [GeneratedRegex(@":\?source=(.*)")]
+        private static partial Regex SchemaRegex { get; }
+
+        [GeneratedRegex(@"://(.*)")]
+        private static partial Regex URLRegex { get; }
 
         private static bool IsOnlyWSA => SettingsHelper.Get<bool>(SettingsHelper.IsOnlyWSA);
         private static bool IsCloseAPP => SettingsHelper.Get<bool>(SettingsHelper.IsCloseAPP);
@@ -66,7 +72,7 @@ namespace APKInstaller.ViewModels
         private static bool AutoGetNetAPK => SettingsHelper.Get<bool>(SettingsHelper.AutoGetNetAPK);
         private static bool ScanPairedDevice => SettingsHelper.Get<bool>(SettingsHelper.ScanPairedDevice);
 
-        public bool IsADBReady { get; private set; }
+        public CoreDispatcher Dispatcher => _page.Dispatcher;
 
         private ApkInfo _apkInfo = null;
         public ApkInfo ApkInfo
@@ -75,7 +81,7 @@ namespace APKInstaller.ViewModels
             set => SetProperty(ref _apkInfo, value);
         }
 
-        public string ADBPath
+        public static string ADBPath
         {
             get => SettingsHelper.Get<string>(SettingsHelper.ADBPath);
             set => SettingsHelper.Set(SettingsHelper.ADBPath, value);
@@ -393,7 +399,7 @@ namespace APKInstaller.ViewModels
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error during refresh. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 PackageError(ex.Message);
                 IsInstalling = false;
             }
@@ -422,7 +428,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task<bool> CheckADBAsync()
+        private static async Task<bool> CheckADBAsync()
         {
             if (!await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
@@ -446,18 +452,18 @@ namespace APKInstaller.ViewModels
                     StackPanel stackPanel = new()
                     {
                         Children =
-                    {
-                        new TextBlock
                         {
-                            TextWrapping = TextWrapping.Wrap,
-                            Text = _loader.GetString("AboutADB")
-                        },
-                        new HyperlinkButton
-                        {
-                            Content = _loader.GetString("ClickToRead"),
-                            NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
+                            new TextBlock
+                            {
+                                TextWrapping = TextWrapping.Wrap,
+                                Text = _loader.GetString("AboutADB")
+                            },
+                            new HyperlinkButton
+                            {
+                                Content = _loader.GetString("ClickToRead"),
+                                NavigateUri = new Uri("https://developer.android.google.cn/studio/releases/platform-tools")
+                            }
                         }
-                    }
                     };
                     ContentDialog dialog = new ContentDialog
                     {
@@ -489,7 +495,7 @@ namespace APKInstaller.ViewModels
                             }
                             catch (Exception ex)
                             {
-                                SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                                SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error downloading ADB. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                                 await Dispatcher.ResumeForegroundAsync();
                                 ContentDialogResult results = await new ContentDialog
                                 {
@@ -708,7 +714,7 @@ namespace APKInstaller.ViewModels
             if (_file != null || _url != null)
             {
                 IAdbServer ADBServer = AdbServer.Instance;
-                if (!await ADBServer.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+                if (!await ADBHelper.CheckIsRunningAsync().ConfigureAwait(false))
                 {
                     WaitProgressText = _loader.GetString("CheckingADB");
                     if (await CheckADBAsync().ConfigureAwait(false))
@@ -716,22 +722,19 @@ namespace APKInstaller.ViewModels
                         WaitProgressText = _loader.GetString("StartingADB");
                         try
                         {
-                            await ADBServer.StartServerAsync(ADBPath, restartServerIfNewer: false, default).ConfigureAwait(false);
+                            await ADBHelper.StartADBAsync(ADBPath).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
-                            SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Warn(ex.ExceptionToMessage(), ex);
-                            IsADBReady = false;
+                            SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogWarning(ex, "ADB server start failed. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                             return;
                         }
                     }
                     else
                     {
-                        IsADBReady = false;
                         return;
                     }
                 }
-                IsADBReady = true;
                 WaitProgressText = _loader.GetString("Loading");
                 if (!await CheckDeviceAsync().ConfigureAwait(false))
                 {
@@ -775,7 +778,7 @@ namespace APKInstaller.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                        SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error decompiling APK. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                         PackageError(ex.Message);
                         IsInitialized = true;
                         return;
@@ -822,7 +825,7 @@ namespace APKInstaller.ViewModels
                         {
                             CheckOnlinePackage();
                         }
-                        if (IsADBReady)
+                        if (ADBHelper.IsRunning)
                         {
                             if (ShowDialogs && await ShowDeviceDialogAsync())
                             {
@@ -893,7 +896,7 @@ namespace APKInstaller.ViewModels
                         }
                         catch (Exception ex) when (tokenSource.IsCancellationRequested)
                         {
-                            SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                            SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "WSA start timeout. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                             await Dispatcher.ResumeForegroundAsync();
                             ContentDialogResult results = await new ContentDialog
                             {
@@ -911,11 +914,10 @@ namespace APKInstaller.ViewModels
                         }
                         catch (Exception e)
                         {
-                            SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Warn(e.ExceptionToMessage(), e);
+                            SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogWarning(e, "WSA start failed. {message} (0x{hResult:X})", e.GetMessage(), e.HResult);
                             await Dispatcher.ResumeForegroundAsync();
-                            ContentDialog dialogs = new()
+                            ContentDialog dialogs = new ContentDialog()
                             {
-                                XamlRoot = _page?.XamlRoot,
                                 Title = _loader.GetString("CannotConnectWSA"),
                                 DefaultButton = ContentDialogButton.Close,
                                 CloseButtonText = _loader.GetString("IKnow"),
@@ -925,7 +927,7 @@ namespace APKInstaller.ViewModels
                                     Text = e.Message,
                                     IsTextSelectionEnabled = true
                                 },
-                            };
+                            }.SetXAMLRoot(_page);
                             ContentDialogResult results = await dialogs.ShowAsync();
                             await ThreadSwitcher.ResumeBackgroundAsync();
                             if (results == ContentDialogResult.Primary)
@@ -1004,7 +1006,7 @@ namespace APKInstaller.ViewModels
                         AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
                         ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
 
-                        if (IsADBReady)
+                        if (ADBHelper.IsRunning)
                         {
                             if (ShowDialogs && await ShowDeviceDialogAsync().ConfigureAwait(false))
                             {
@@ -1075,7 +1077,7 @@ namespace APKInstaller.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error during check apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 }
             }
             ActionButtonEnable = false;
@@ -1088,7 +1090,7 @@ namespace APKInstaller.ViewModels
 
         private void CheckOnlinePackage()
         {
-            Regex[] uriRegex = [new(@":\?source=(.*)"), new(@"://(.*)")];
+            Regex[] uriRegex = [SchemaRegex, URLRegex];
             string uri = uriRegex[0].IsMatch(_url.ToString()) ? uriRegex[0].Match(_url.ToString()).Groups[1].Value : uriRegex[1].Match(_url.ToString()).Groups[1].Value;
             if (uri.TryGetUri(out Uri url))
             {
@@ -1120,7 +1122,7 @@ namespace APKInstaller.ViewModels
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error downloading apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 PackageError(ex.Message);
                 IsInstalling = false;
                 return;
@@ -1132,7 +1134,7 @@ namespace APKInstaller.ViewModels
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error decompiling apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 PackageError(ex.Message);
                 IsInstalling = false;
                 return;
@@ -1287,7 +1289,7 @@ namespace APKInstaller.ViewModels
         public async Task RegisterDeviceMonitor()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (ADBHelper.IsRunning)
             {
                 ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
                 ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
@@ -1297,7 +1299,7 @@ namespace APKInstaller.ViewModels
         public async Task UnregisterDeviceMonitor()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (ADBHelper.IsRunning)
             { ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged; }
         }
 
@@ -1312,7 +1314,7 @@ namespace APKInstaller.ViewModels
 
         private async Task<bool> CheckDeviceAsync(bool forces = false)
         {
-            if (!IsADBReady) { return false; }
+            if (!ADBHelper.IsRunning) { return false; }
             await ThreadSwitcher.ResumeBackgroundAsync();
             AdbClient client = new();
             IEnumerable<DeviceData> devices = await client.GetDevicesAsync().ConfigureAwait(false);
@@ -1363,15 +1365,14 @@ namespace APKInstaller.ViewModels
                     if (info != default && info.VersionCode >= int.Parse(ApkInfo.VersionCode))
                     {
                         await Dispatcher.ResumeForegroundAsync();
-                        ContentDialog dialog = new()
+                        ContentDialog dialog = new ContentDialog()
                         {
-                            XamlRoot = _page?.XamlRoot,
                             Content = string.Format(_loader.GetString("HasNewerVersionInfo"), info.VersionName, ApkInfo.VersionName),
                             Title = _loader.GetString("HasNewerVersion"),
                             PrimaryButtonText = _loader.GetString("Reinstall"),
                             CloseButtonText = _loader.GetString("Cancel"),
                             DefaultButton = ContentDialogButton.Close
-                        };
+                        }.SetXAMLRoot(_page);
                         ContentDialogResult result = await dialog.ShowAsync();
                         await ThreadSwitcher.ResumeBackgroundAsync();
                         if (result != ContentDialogResult.Primary) { return; }
@@ -1453,7 +1454,7 @@ namespace APKInstaller.ViewModels
                     IsInstalling = false;
                     TextOutput = ex.Message;
                     TextOutputVisibility = InstallOutputVisibility = true;
-                    SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error installing apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                     ActionVisibility = SecondaryActionVisibility = CancelOperationVisibility = LaunchWhenReadyVisibility = false;
                 }
             }
@@ -1505,7 +1506,7 @@ namespace APKInstaller.ViewModels
             if (this._device is DeviceData _device)
             {
                 AdbClient client = new();
-                SplitAPKSelector[] results = apks.Select(x => new SplitAPKSelector(x)).ToArray();
+                SplitAPKSelector[] results = [.. apks.Select(x => new SplitAPKSelector(x))];
                 try
                 {
                     int? density = null;
@@ -1575,7 +1576,7 @@ namespace APKInstaller.ViewModels
                     static Density GetDeviceDensity(int density)
                     {
                         Density selectedDensity = Density.MDPI;
-                        foreach (Density item in Enum.GetValues(typeof(Density)).OfType<Density>())
+                        foreach (Density item in Enum.GetValues<Density>())
                         {
                             int currentABS = Math.Abs(density - ((int)item));
                             int previousABS = Math.Abs(density - ((int)selectedDensity));
@@ -1603,7 +1604,7 @@ namespace APKInstaller.ViewModels
                         {
                             ApkInfo apk = item.Package;
 
-                            if (apk.SplitName.Substring(apk.SplitName.Length - dpi.ToString().Length).Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
+                            if (apk.SplitName[^dpi.ToString().Length..].Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
                                 item.IsSelected = true;
                                 break;
@@ -1613,7 +1614,7 @@ namespace APKInstaller.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Error(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error selecting split apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 }
                 await Dispatcher.ResumeForegroundAsync();
                 SplitAPKDialog dialog = new SplitAPKDialog(results)
@@ -1678,7 +1679,7 @@ namespace APKInstaller.ViewModels
             IsInitialized = false;
             if (items.Count == 1)
             {
-                IStorageItem storageItem = items.FirstOrDefault();
+                IStorageItem storageItem = items[0];
                 await OpenPathAsync(storageItem).ConfigureAwait(false);
                 return;
             }
@@ -1703,7 +1704,7 @@ namespace APKInstaller.ViewModels
                 IReadOnlyList<IStorageItem> items = await data.GetStorageItemsAsync();
                 if (items.Count == 1)
                 {
-                    IStorageItem storageItem = items.FirstOrDefault();
+                    IStorageItem storageItem = items[0];
                     await OpenPathAsync(storageItem).ConfigureAwait(false);
                     return;
                 }
@@ -1764,7 +1765,7 @@ namespace APKInstaller.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Info(ex.ExceptionToMessage(), ex);
+                        SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogInformation(ex, "Error opening APK. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                     }
                     break;
             }
@@ -1798,7 +1799,7 @@ namespace APKInstaller.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    SettingsHelper.LogManager.GetLogger(nameof(InstallViewModel)).Info(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogInformation(ex, "Error reading apks. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                     continue;
                 }
             }
@@ -1855,7 +1856,7 @@ namespace APKInstaller.ViewModels
             ValueSet results = new()
             {
                 ["Result"] = exception != null,
-                ["Exception"] = exception.ExceptionToMessage()
+                ["Exception"] = exception.ToString()
             };
             _operation.ReportCompleted(results);
         }

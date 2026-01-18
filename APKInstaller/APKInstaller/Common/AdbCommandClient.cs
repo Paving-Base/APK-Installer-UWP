@@ -1,78 +1,132 @@
 ﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient.Exceptions;
 using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Metadata;
-using APKInstaller.Projection;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation;
 
 namespace APKInstaller.Common
 {
-    public class AdbCommandClient(string adbPath, bool isForce = false, ILogger<AdbCommandLineClient> logger = null) : AdbCommandLineClient(adbPath, isForce, logger)
+    public partial class AdbCommandClient(string adbPath, bool isForce = false, ILogger<AdbCommandLineClient> logger = null) : AdbCommandLineClient(adbPath, isForce, logger)
     {
-        private ServerManager serverManager = null;
-        private ServerManager ServerManager
+        /// <summary>
+        /// The <see cref="Array"/> of <see cref="char"/>s that represent a new line.
+        /// </summary>
+        private static readonly char[] separator = ['\r', '\n'];
+
+        protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, int timeout)
         {
-            get
-            {
-                if (serverManager?.IsServerRunning == true)
-                {
-                    return serverManager;
-                }
-                serverManager = APKInstallerProjectionFactory.ServerManager;
-                return serverManager;
-            }
+            using IServerManager manager = Factory.TryCreateServerManager();
+            IProcessResult result = manager.RunProcess.RunProcess(filename, command, errorOutput != null, standardOutput != null, timeout);
+            errorOutput?.AddRange(result.ErrorOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
+            standardOutput?.AddRange(result.StandardOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
+            return result.ExitCode;
         }
 
-        protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, int timeout) =>
-            (int)ServerManager.RunProcess(filename, command, AsVector(errorOutput), AsVector(standardOutput));
-
-        protected override Task<int> RunProcessAsync(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, CancellationToken cancellationToken = default) =>
-            ServerManager.RunProcessAsync(filename, command, AsVector(errorOutput), AsVector(standardOutput)).AsTask(cancellationToken).ContinueWith(x => (int)x.Result);
-
-        private IList<T> AsVector<T>(ICollection<T> collection) => collection switch
+        protected override async Task<int> RunProcessAsync(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, CancellationToken cancellationToken = default)
         {
-            IList<T> list => list,
-            not null => new CollectionVector<T>(collection),
-            _ => null,
-        };
+            using IServerManager manager = Factory.TryCreateServerManager();
+            IProcessResult result = await manager.RunProcess.RunProcessAsync(filename, command, errorOutput != null, standardOutput != null).AsTask(cancellationToken).ConfigureAwait(false);
+            errorOutput?.AddRange(result.ErrorOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
+            standardOutput?.AddRange(result.StandardOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
+            return result.ExitCode;
+        }
+    }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly struct CollectionVector<T>(ICollection<T> values) : IList<T>
+    public partial class RunProcess : IRunProcess
+    {
+        public static IRunProcess Instance { get; } = new RunProcess();
+
+        IAsyncOperation<IProcessResult> IRunProcess.RunProcessAsync(string filename, string command, bool errorOutput, bool standardOutput)
         {
-            T IList<T>.this[int index]
+            return AsyncInfo.Run(async (cancellationToken) =>
             {
-                get => values.ElementAt(index);
-                set => throw new NotImplementedException();
+                ProcessStartInfo psi = new(filename, command)
+                {
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    RedirectStandardError = errorOutput,
+                    RedirectStandardOutput = standardOutput
+                };
+
+                using Process process = Process.Start(psi) ?? throw new AdbException($"The adb process could not be started. The process returned null when starting {filename} {command}");
+
+                ProcessResult result = new();
+
+                using (CancellationTokenRegistration registration = cancellationToken.Register(process.Kill))
+                {
+                    if (errorOutput)
+                    {
+                        string standardErrorString = await process.StandardError.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                        result.ErrorOutput = standardErrorString;
+                    }
+
+                    if (standardOutput)
+                    {
+                        string standardOutputString = await process.StandardOutput.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+                        result.StandardOutput = standardOutputString;
+                    }
+
+                    if (!process.HasExited)
+                    {
+                        await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+                    }
+                }
+
+                // get the return code from the process
+                result.ExitCode = process.ExitCode;
+                return result as IProcessResult;
+            });
+        }
+
+        IProcessResult IRunProcess.RunProcess(string filename, string command, bool errorOutput, bool standardOutput, int timeout)
+        {
+            ProcessStartInfo psi = new(filename, command)
+            {
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false,
+                RedirectStandardError = errorOutput,
+                RedirectStandardOutput = standardOutput
+            };
+
+            using Process process = Process.Start(psi) ?? throw new AdbException($"The adb process could not be started. The process returned null when starting {filename} {command}");
+
+            // get the return code from the process
+            if (!process.WaitForExit(timeout))
+            {
+                process.Kill();
             }
 
-            public int Count => values.Count;
+            ProcessResult result = new();
 
-            public bool IsReadOnly => values.IsReadOnly;
+            if (errorOutput)
+            {
+                string standardErrorString = process.StandardError.ReadToEnd();
+                result.ErrorOutput = standardErrorString;
+            }
 
-            public void Add(T item) => values.Add(item);
+            if (standardOutput)
+            {
+                string standardOutputString = process.StandardOutput.ReadToEnd();
+                result.StandardOutput = standardOutputString;
+            }
 
-            public void Clear() => values.Clear();
+            result.ExitCode = process.ExitCode;
+            return result;
+        }
 
-            public bool Contains(T item) => values.Contains(item);
-
-            public void CopyTo(T[] array, int arrayIndex) => values.CopyTo(array, arrayIndex);
-
-            public IEnumerator<T> GetEnumerator() => values.GetEnumerator();
-
-            int IList<T>.IndexOf(T item) => throw new NotImplementedException();
-
-            void IList<T>.Insert(int index, T item) => throw new NotImplementedException();
-
-            public bool Remove(T item) => values.Remove(item);
-
-            void IList<T>.RemoveAt(int index) => throw new NotImplementedException();
-
-            IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)values).GetEnumerator();
+        private partial class ProcessResult : IProcessResult
+        {
+            public int ExitCode { get; set; }
+            public string ErrorOutput { get; set; } = string.Empty;
+            public string StandardOutput { get; set; } = string.Empty;
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using APKInstaller.Common;
 using APKInstaller.Models;
-using Microsoft.Toolkit.Uwp.Connectivity;
-using Microsoft.Toolkit.Uwp.UI.Controls;
+using CommunityToolkit.WinUI.Helpers;
 using System;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -220,7 +218,5 @@ namespace APKInstaller.Controls.Dialogs
             }
             IsInitialized = true;
         }
-
-        private void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri(e.Link));
     }
 }

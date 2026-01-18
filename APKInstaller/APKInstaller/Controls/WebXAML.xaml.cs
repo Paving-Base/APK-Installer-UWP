@@ -1,7 +1,7 @@
 ﻿using APKInstaller.Common;
 using APKInstaller.Models;
-using Microsoft.Toolkit.Uwp;
-using Microsoft.Toolkit.Uwp.Connectivity;
+using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.Helpers;
 using System;
 using System.Net.Http;
 using Windows.System;

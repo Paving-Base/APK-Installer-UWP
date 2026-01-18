@@ -31,7 +31,7 @@ namespace APKInstaller.Helpers
 
         private static async void ConnectListener_ServiceFound(object sender, IZeroconfHost e)
         {
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (ADBHelper.IsRunning)
             {
                 await new AdbClient().ConnectAsync(e.IPAddress, e.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);
             }

@@ -2,32 +2,21 @@
 using AAPTForNet.Models;
 using APKInstaller.Helpers;
 using APKInstaller.Metadata;
-using APKInstaller.Projection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
 namespace APKInstaller.Common
 {
     public class OOPAAPTool : AAPTool
     {
-        private ServerManager serverManager = null;
-        private ServerManager ServerManager
-        {
-            get
-            {
-                if (serverManager?.IsServerRunning == true)
-                {
-                    return serverManager;
-                }
-                serverManager = APKInstallerProjectionFactory.ServerManager;
-                return serverManager;
-            }
-        }
-
         protected override bool HasDumpOverride { get; } = true;
 
         protected override async Task<DumpModel> DumpByOverrideAsync(
@@ -38,7 +27,7 @@ namespace APKInstaller.Common
         {
             string fileName = Path.Combine(AppPath + @"\Tools\aapt.exe");
             List<string> output = [];    // Messages from output stream
-            string arguments = string.Empty;
+            string arguments;
 
             switch (type)
             {
@@ -55,7 +44,10 @@ namespace APKInstaller.Common
                     return new DumpModel(path, false, output);
             }
 
-            await ServerManager.DumpAsync(fileName, arguments, callback == null ? null : new DumpDelegate(callback), output, Encoding.UTF8.CodePage);
+            using (IServerManager manager = Factory.TryCreateServerManager())
+            {
+                await manager.RunProcess.DumpAsync(fileName, arguments, callback == null ? null : new DumpDelegate(callback), output);
+            }
 
             // Dump xml tree get only 1 message when failed, the others are 2.
             bool isSuccess =
@@ -69,9 +61,14 @@ namespace APKInstaller.Common
         {
             try
             {
-                StorageFile example = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("example", CreationCollisionOption.OpenIfExists);
                 string path = Path.Combine(TempPath, file.Name);
-                ServerManager.CreateFileSymbolic(path, file.Path, example.Path);
+                using (IServerManager manager = Factory.TryCreateServerManager())
+                {
+                    if (!manager.Loopback.CreateFileSymbolic(path, file.Path))
+                    {
+                        return null;
+                    }
+                }
                 if (File.Exists(path))
                 {
                     return await StorageFile.GetFileFromPathAsync(path);
@@ -79,9 +76,61 @@ namespace APKInstaller.Common
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(OOPAAPTool)).Warn(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LoggerFactory.CreateLogger<OOPAAPTool>().LogWarning(ex, "Create hard link failed. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
             return null;
+        }
+    }
+
+    public partial class RunProcess : IRunProcess
+    {
+        [AsyncMethodBuilder(typeof(AsyncActionMethodBuilder))]
+        async IAsyncAction IRunProcess.DumpAsync(string filename, string command, DumpDelegate callback, IList<string> output)
+        {
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = filename,
+                Arguments = command,
+                CreateNoWindow = true,
+                UseShellExecute = false, // For read output data
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                StandardOutputEncoding = Encoding.UTF8
+            };
+
+            int index = 0;
+            bool terminated = false;
+            using Process aapt = Process.Start(startInfo);
+            if (callback == null)
+            {
+                string _result = await aapt.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
+                output.AddRange(_result.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries));
+            }
+            else
+            {
+                while (!terminated)
+                {
+                    string msg = await aapt.StandardOutput.ReadLineAsync().ConfigureAwait(false);
+                    if (msg == null) { break; }
+                    output.Add(msg);
+                    if (terminated = callback?.Invoke(msg, index) == true)
+                    {
+                        try
+                        {
+                            aapt.Kill();
+                        }
+                        catch { }
+                        return;
+                    }
+                    else
+                    {
+                        index++;
+                    }
+                }
+            }
+
+            string result = await aapt.StandardError.ReadToEndAsync().ConfigureAwait(false);
+            output.AddRange(result.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }

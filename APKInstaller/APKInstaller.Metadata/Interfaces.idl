@@ -1,0 +1,48 @@
+namespace APKInstaller.Metadata
+{
+    [contractversion(1)]
+    apicontract APKInstallerContract{};
+
+    [contract(APKInstallerContract, 1)]
+    interface IProcessResult
+    {
+        Int32 ExitCode { get; };
+        String ErrorOutput { get; };
+        String StandardOutput { get; };
+    }
+
+    [contract(APKInstallerContract, 1)]
+    delegate Boolean DumpDelegate(String line, Int32 index);
+
+    [contract(APKInstallerContract, 1)]
+    interface IRunProcess
+    {
+        IProcessResult RunProcess(String filename, String command, Boolean errorOutput, Boolean standardOutput, Int32 timeout);
+        Windows.Foundation.IAsyncOperation<IProcessResult> RunProcessAsync(String filename, String command, Boolean errorOutput, Boolean standardOutput);
+        Windows.Foundation.IAsyncAction DumpAsync(String filename, String command, DumpDelegate callback, IVector<String> output);
+    }
+
+    [contract(APKInstallerContract, 1)]
+    interface ILoopback
+    {
+        Boolean EnableLoopback();
+        Boolean CreateFileSymbolic(String lpFileName, String lpExistingFileName);
+    }
+
+    [contract(APKInstallerContract, 1)]
+    delegate Boolean IsAliveHandler();
+
+    [contract(APKInstallerContract, 1)]
+    interface ISetMonitor
+    {
+        void SetMonitor(IsAliveHandler handler, Windows.Foundation.TimeSpan period);
+    }
+
+    [contract(APKInstallerContract, 1)]
+    interface IServerManager requires ISetMonitor, Windows.Foundation.IClosable, Windows.Foundation.IStringable
+    {
+        Boolean IsServerRunning { get; };
+        IRunProcess RunProcess { get; };
+        ILoopback Loopback { get; };
+    }
+}

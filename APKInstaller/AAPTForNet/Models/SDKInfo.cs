@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AAPTForNet.Models
 {
@@ -118,9 +119,9 @@ namespace AAPTForNet.Models
 
         public override int GetHashCode() => 1008763889 + EqualityComparer<string>.Default.GetHashCode(APILevel);
 
-        public override bool Equals(object obj) => obj is SDKInfo another && APILevel == another.APILevel;
+        public override bool Equals([NotNullWhen(true)] object? obj) => obj is SDKInfo another && APILevel == another.APILevel;
 
-        public int CompareTo(object obj) => obj is SDKInfo another
+        public int CompareTo(object? obj) => obj is SDKInfo another
             ? int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver)
             ? ver.CompareTo(anotherver) : 0
             : throw new ArgumentException(null, nameof(obj));

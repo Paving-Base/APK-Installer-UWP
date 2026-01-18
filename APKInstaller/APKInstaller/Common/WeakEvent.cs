@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace APKInstaller.Common
 {
-    public class WeakEvent<TEventArgs> : IList<Action<TEventArgs>>
+    public partial class WeakEvent<TEventArgs> : IList<Action<TEventArgs>>
     {
         private class Method(Action<TEventArgs> callback) : IEquatable<Method>, IEquatable<Action<TEventArgs>>
         {
@@ -20,7 +20,7 @@ namespace APKInstaller.Common
             {
                 if (!IsDead)
                 {
-                    _method.Invoke(_reference.Target, [arg]);
+                    _ = _method.Invoke(_reference.Target, [arg]);
                 }
             }
 
@@ -45,7 +45,7 @@ namespace APKInstaller.Common
 
             public static implicit operator Method(Action<TEventArgs> callback) => new(callback);
 
-            public static explicit operator Action<TEventArgs>(Method method) => method.IsDead ? null : method._method.CreateDelegate(typeof(Action<TEventArgs>), method._reference.Target) as Action<TEventArgs>;
+            public static explicit operator Action<TEventArgs>(Method method) => method.IsDead ? null : method._method.CreateDelegate<Action<TEventArgs>>(method._reference.Target);
         }
 
         private readonly List<Method> _list;
@@ -165,16 +165,8 @@ namespace APKInstaller.Common
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public static WeakEvent<TEventArgs> operator +(WeakEvent<TEventArgs> weakEvent, Action<TEventArgs> callback)
-        {
-            weakEvent.Add(callback);
-            return weakEvent;
-        }
+        //public void operator +=(Action<TEventArgs> callback) => Add(callback);
 
-        public static WeakEvent<TEventArgs> operator -(WeakEvent<TEventArgs> weakEvent, Action<TEventArgs> callback)
-        {
-            weakEvent.Remove(callback);
-            return weakEvent;
-        }
+        //public void operator -=(Action<TEventArgs> callback) => Remove(callback);
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Detector = AAPTForNet.ResourceDetector;
@@ -14,10 +15,9 @@ namespace AAPTForNet
     internal class ApkExtractor(AAPTool AAPTool)
     {
         private static int id = 0;
-        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Process.GetCurrentProcess().Id}");
+        private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}");
 
-        public Task<DumpModel> ExtractManifestAsync(string path) =>
-            AAPTool.DumpManifestAsync(path);
+        public Task<DumpModel> ExtractManifestAsync(string path) => AAPTool.DumpManifestAsync(path);
 
         /// <summary>
         /// Find the icon with maximum config (largest), then extract to file
@@ -34,14 +34,14 @@ namespace AAPTForNet
 
             if (iconTable.Values.All(i => i.IsReference))
             {
-                string refID = iconTable.Values.FirstOrDefault().IconName;
+                string refID = iconTable.Values.First().IconName;
                 iconTable = await ExtractIconTableAsync(path, refID).ConfigureAwait(false);
             }
 
             if (iconTable.Values.All(i => i.IsMarkup))
             {
                 // Try dumping markup asset and get icon
-                string asset = iconTable.Values.FirstOrDefault().IconName;
+                string asset = iconTable.Values.First().IconName;
                 iconTable = await DumpMarkupIconAsync(path, asset).ConfigureAwait(false);
             }
 
@@ -53,7 +53,7 @@ namespace AAPTForNet
 
         private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(string path, string asset)
         {
-            Ref<int> startIndex = -1;
+            StrongBox<int> startIndex = new(-1);
             Dictionary<string, Icon> output = await DumpMarkupIconAsync(path, asset, startIndex).ConfigureAwait(false);
             return output.Count == 0 && startIndex.Value < 5
                 ? await DumpMarkupIconAsync(path, asset).ConfigureAwait(false)
@@ -61,7 +61,7 @@ namespace AAPTForNet
         }
 
         private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(
-            string path, string asset, Ref<int> lastTryIndex, int start = -1)
+            string path, string asset, StrongBox<int> lastTryIndex, int start = -1)
         {
             // Not found any icon image in package?,
             // it maybe a markup file
@@ -121,7 +121,7 @@ namespace AAPTForNet
                 {
                     if (iconIndex == -1)
                     {
-                        _ = source.TrySetResult(null);
+                        _ = source.TrySetResult(null!);
                     }
                 });
 
@@ -173,7 +173,7 @@ namespace AAPTForNet
         // Create table like below
         //  configs  |    mdpi           hdpi    ...    anydpi
         //  icon     |    icon1          icon2   ...    icon4
-        private Dictionary<string, Icon> CreateIconTable(ICollection<int> positions, IList<string> messages)
+        private static Dictionary<string, Icon> CreateIconTable(List<int> positions, List<string> messages)
         {
             if (positions.Count == 0 || messages.Count <= 2)    // If dump failed
             {
@@ -184,16 +184,17 @@ namespace AAPTForNet
             // Prevent duplicate key when add to Dictionary,
             // because comparison statement with 'hdpi' in config's values,
             // reverse list and get first elem with LINQ
-            IEnumerable<string> configNames = Enum.GetNames(typeof(Configs)).Reverse();
+            IEnumerable<string> configNames = Enum.GetNames<Configs>().Reverse();
             Dictionary<string, Icon> iconTable = [];
-            void AddIcon2Table(string cfg, string iconName)
+            void AddIcon2Table(string cfg, string? iconName)
             {
                 if (!iconTable.ContainsKey(cfg))
                 {
                     iconTable[cfg] = new Icon(iconName);
                 }
             }
-            string msg, resValue, config;
+            string msg, resValue;
+            string? config;
 
             foreach (int index in positions)
             {
@@ -215,19 +216,22 @@ namespace AAPTForNet
 
                         config = configNames.FirstOrDefault(msg.Contains);
 
-                        if (Detector.IsResourceValue(resValue))
+                        if (config != null)
                         {
-                            // Resource value is icon url
-                            string iconName = resValue.Split(separator)
-                                .FirstOrDefault(n => n.Contains('/'));
-                            AddIcon2Table(config, iconName);
-                            break;
-                        }
-                        if (Detector.IsReference(resValue))
-                        {
-                            string iconID = resValue.Trim().Split(' ')[1];
-                            AddIcon2Table(config, iconID);
-                            break;
+                            if (Detector.IsResourceValue(resValue))
+                            {
+                                // Resource value is icon url
+                                string? iconName = resValue.Split(separator)
+                                    .FirstOrDefault(n => n.Contains('/'));
+                                AddIcon2Table(config, iconName);
+                                break;
+                            }
+                            if (Detector.IsReference(resValue))
+                            {
+                                string iconID = resValue.Trim().Split(' ')[1];
+                                AddIcon2Table(config, iconID);
+                                break;
+                            }
                         }
 
                         break;
@@ -243,7 +247,7 @@ namespace AAPTForNet
         /// <param name="path">path to apk file</param>
         /// <param name="icon"></param>
         /// <returns>Absolute path to extracted image</returns>
-        public async Task<string> ExtractIconImageAsync(string path, Icon icon)
+        public static async Task<string> ExtractIconImageAsync(string path, Icon icon)
         {
             if (Icon.Default.Equals(icon))
             {
@@ -261,7 +265,7 @@ namespace AAPTForNet
             return IconPath;
         }
 
-        private async Task TryExtractIconImageAsync(string path, string iconName, string desFile)
+        private static async Task TryExtractIconImageAsync(string path, string iconName, string desFile)
         {
             try
             {
@@ -276,7 +280,7 @@ namespace AAPTForNet
         /// <param name="path"></param>
         /// <param name="iconName"></param>
         /// <param name="desFile"></param>
-        private async Task ExtractIconImageAsync(string path, string iconName, string desFile)
+        private static async Task ExtractIconImageAsync(string path, string iconName, string desFile)
         {
             if (iconName.EndsWith(".xml"))
             {
@@ -298,15 +302,15 @@ namespace AAPTForNet
             }
         }
 
-        private Icon ExtractLargestIcon(Dictionary<string, Icon> iconTable)
+        private static Icon ExtractLargestIcon(Dictionary<string, Icon> iconTable)
         {
             if (iconTable.Count == 0)
             {
                 return Icon.Default;
             }
 
-            Icon icon = Icon.Default;
-            string[] configNames = Enum.GetNames(typeof(Configs));
+            Icon? icon = Icon.Default;
+            string[] configNames = Enum.GetNames<Configs>();
             Array.Sort(configNames, new ConfigComparer());
 
             foreach (string cfg in configNames)
@@ -331,19 +335,12 @@ namespace AAPTForNet
         /// </summary>
         private class ConfigComparer : IComparer<string>
         {
-            public int Compare(string x, string y)
+            public int Compare(string? x, string? y)
             {
                 _ = Enum.TryParse(x, out Configs ex);
                 _ = Enum.TryParse(y, out Configs ey);
                 return ex > ey ? -1 : 1;
             }
-        }
-
-        private sealed class Ref<T>(T value)
-        {
-            public T Value = value;
-            public static implicit operator T(Ref<T> @struct) => @struct.Value;
-            public static implicit operator Ref<T>(T value) => new(value);
         }
     }
 }

@@ -35,7 +35,7 @@
                             x:Uid="/InstallPage/IconFlyoutItem"
                             Click="CopyBitmapItem_Click"
                             Tag="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}"
-                            ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                            ToolTipService.ToolTip="{x:Bind Provider.ApkInfo.Icon.RealPath, Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xECAA;" />
                             </MenuFlyoutItem.Icon>
@@ -101,9 +101,9 @@
                         <MenuFlyoutItem
                             x:Uid="/InstallPage/APKFileFlyoutItem"
                             Click="ShareFileItem_Click"
-                            IsEnabled="{Binding Tag, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource StringToBoolConverter}}"
+                            IsEnabled="{x:Bind Provider.ApkInfo.PackagePath, Converter={StaticResource StringToBoolConverter}, Mode=OneWay}"
                             Tag="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}"
-                            ToolTipService.ToolTip="{Binding Tag, RelativeSource={RelativeSource Mode=Self}}">
+                            ToolTipService.ToolTip="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
                             </MenuFlyoutItem.Icon>
@@ -203,7 +203,7 @@
                         HorizontalAlignment="Left"
                         x:Load="{x:Bind Provider.AppPublisherVisibility, Mode=OneWay}"
                         MaxLines="2"
-                        Text="{x:Bind x:String.Format(Provider.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
+                        Text="{x:Bind x:String.Format(viewmodels:InstallViewModel.PackageNameFormat, Provider.ApkInfo.PackageName), Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{x:Bind AppPublisher.Text, Mode=OneWay}" />
                     <TextBlock
@@ -211,7 +211,7 @@
                         Grid.Row="3"
                         HorizontalAlignment="Left"
                         x:Load="{x:Bind Provider.AppVersionVisibility, Mode=OneWay}"
-                        Text="{x:Bind x:String.Format(Provider.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
+                        Text="{x:Bind x:String.Format(viewmodels:InstallViewModel.VersionFormat, Provider.ApkInfo.VersionName), Mode=OneWay}"
                         ToolTipService.ToolTip="{x:Bind AppVersion.Text, Mode=OneWay}" />
                     <Grid Grid.Row="4" Margin="0,24,0,0">
                         <controls:CapabilitiesInfoControl
@@ -250,7 +250,7 @@
                     FontWeight="SemiBold"
                     MaxLines="2"
                     OpticalMarginAlignment="TrimSideBearings"
-                    Text="{x:Bind x:String.Format(Provider.InstallFormat, Provider.ApkInfo.AppName), Mode=OneWay}"
+                    Text="{x:Bind x:String.Format(viewmodels:InstallViewModel.InstallFormat, Provider.ApkInfo.AppName), Mode=OneWay}"
                     TextTrimming="CharacterEllipsis"
                     ToolTipService.ToolTip="{x:Bind AppBigPictureMainContentText.Text}" />
                 <Image
@@ -545,7 +545,7 @@
                         VerticalContentAlignment="Top"
                         x:Load="{x:Bind Provider.LaunchWhenReadyVisibility, Mode=OneWay}"
                         FocusVisualMargin="-7,-3"
-                        IsChecked="{Binding IsOpenApp, Mode=TwoWay}"
+                        IsChecked="{x:Bind viewmodels:InstallViewModel.IsOpenApp, Mode=TwoWay}"
                         ToolTipService.ToolTip="{x:Bind LaunchWhenReadyCheckbox.Content}"
                         UseSystemFocusVisuals="True" />
                     <StackPanel

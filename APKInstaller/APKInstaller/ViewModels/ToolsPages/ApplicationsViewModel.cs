@@ -6,7 +6,7 @@ using AdvancedSharpAdbClient.Receivers;
 using APKInstaller.Common;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
-using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public class ApplicationsViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
+    public partial class ApplicationsViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
     {
         public TitleBar TitleBar;
         public ComboBox DeviceComboBox;
@@ -114,7 +114,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ApplicationsViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ApplicationsViewModel>().LogError(ex, "Error getting devices. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
         }
 
@@ -152,7 +152,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ApplicationsViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ApplicationsViewModel>().LogError(ex, "Error checking applications. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
         }
 
@@ -181,7 +181,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ApplicationsViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ApplicationsViewModel>().LogError(ex, "Error getting applications. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 _ = Dispatcher.AwaitableRunAsync(() =>
                 {
                     TitleBar.IsRefreshButtonVisible = true;
@@ -191,7 +191,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         }
     }
 
-    public class ApplicationConverter : IValueConverter
+    public partial class ApplicationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

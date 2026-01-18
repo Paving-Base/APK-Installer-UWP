@@ -1,0 +1,5 @@
+﻿CreateHardLink
+ConvertSidToStringSid
+ConvertStringSidToSid
+NetworkIsolationGetAppContainerConfig
+NetworkIsolationSetAppContainerConfig

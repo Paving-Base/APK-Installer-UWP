@@ -3,15 +3,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:APKInstaller.Controls"
-    xmlns:cwuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:cwuc="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:Microsoft.Toolkit.Uwp.Helpers"
     xmlns:interopservices="using:System.Runtime.InteropServices"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:AdvancedSharpAdbClient.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:settingspages="using:APKInstaller.ViewModels.SettingsPages"
-    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     d:DataContext="{d:DesignInstance Type=settingspages:SettingsViewModel}"
     DataContext="{x:Bind Provider}"
     NavigationCacheMode="Enabled"
@@ -298,7 +297,9 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
+
                             <TextBlock
                                 x:Uid="/SettingsPage/ADBVersionTextBlock"
                                 Grid.Row="0"
@@ -313,6 +314,7 @@
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind Provider.ADBVersion, Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
+
                             <TextBlock
                                 x:Uid="/SettingsPage/FrameworkTextBlock"
                                 Grid.Row="1"
@@ -327,72 +329,89 @@
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind interopservices:RuntimeInformation.FrameworkDescription}"
                                 TextWrapping="Wrap" />
+
                             <TextBlock
                                 Grid.Row="2"
+                                Grid.Column="0"
+                                Padding="0,0,0,8"
+                                Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                Text="CS/WinRT" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Padding="32,0,0,8"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind settingspages:SettingsViewModel.WinRTVersion}"
+                                TextWrapping="WrapWholeWords" />
+
+                            <TextBlock
+                                Grid.Row="3"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                 Text="Community Toolkit" />
                             <TextBlock
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind settingspages:SettingsViewModel.ToolkitVersion}"
                                 TextWrapping="WrapWholeWords" />
+
                             <TextBlock
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                 Text="Sharp ADB Client" />
                             <TextBlock
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind settingspages:SettingsViewModel.SharpAdbClientVersion}"
                                 TextWrapping="WrapWholeWords" />
+
                             <TextBlock
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}"
                                 Text="Device Family" />
                             <TextBlock
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind settingspages:SettingsViewModel.DeviceFamily}"
                                 TextWrapping="WrapWholeWords" />
+
                             <TextBlock
                                 x:Uid="/SettingsPage/OSPlatformTextBlock"
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 IsTextSelectionEnabled="True"
-                                TextWrapping="Wrap">
-                                <Run Text="{x:Bind interopservices:RuntimeInformation.OSDescription}" />
-                                <Run Text="{x:Bind helpers:SystemInformation.Instance.OperatingSystemVersion}" />
-                            </TextBlock>
+                                Text="{x:Bind interopservices:RuntimeInformation.OSDescription}"
+                                TextWrapping="Wrap" />
+
                             <TextBlock
                                 x:Uid="/SettingsPage/OSArchitectureTextBlock"
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
                             <TextBlock
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="1"
                                 HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -469,11 +488,13 @@
                         </controls:SettingExpander.ActionContent>
                         <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
                             <cwuc:MarkdownTextBlock
+                                x:Name="AboutMarkdown"
                                 HorizontalAlignment="Left"
-                                Background="{ThemeResource SystemControlTransparentBrush}"
-                                LinkClicked="MarkdownText_LinkClicked"
-                                LinkForeground="{ThemeResource HyperlinkForeground}"
-                                Text="{x:Bind Provider.AboutTextBlockText, Mode=OneWay}" />
+                                Text="{x:Bind Provider.AboutTextBlockText, Mode=OneWay}">
+                                <cwuc:MarkdownTextBlock.Config>
+                                    <cwuc:MarkdownConfig />
+                                </cwuc:MarkdownTextBlock.Config>
+                            </cwuc:MarkdownTextBlock>
                         </Grid>
                     </controls:SettingExpander>
                     <muxc:InfoBar

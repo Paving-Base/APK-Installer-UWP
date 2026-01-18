@@ -2,9 +2,12 @@
 using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
+using APKInstaller.Metadata;
 using APKInstaller.Pages;
-using APKInstaller.Projection;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -12,6 +15,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authorization.AppCapabilityAccess;
+using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -25,6 +29,9 @@ namespace APKInstaller
     /// </summary>
     public sealed partial class App : Application
     {
+        [SupportedOSPlatformGuard("Windows10.0.18362.0")]
+        public static bool IsAppCapabilitySupported { get; } = UIHelper.IsWindows10OrGreater && ApiInformation.IsTypePresent("Windows.Security.Authorization.AppCapabilityAccess.AppCapability");
+
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -38,6 +45,16 @@ namespace APKInstaller
             Factories.AdbCommandLineClientFactory = path => new AdbCommandClient(path);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox") { FocusVisualKind = FocusVisualKind.Reveal; }
+        }
+
+        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        {
+            if (SynchronizationContext.Current == null)
+            {
+                DispatcherQueueSynchronizationContext context = new(args.Window.CoreWindow.DispatcherQueue);
+                SynchronizationContext.SetSynchronizationContext(context);
+            }
+            base.OnWindowCreated(args);
         }
 
         /// <summary>
@@ -98,10 +115,11 @@ namespace APKInstaller
 
         private async void EnsureWindow(IActivatedEventArgs e)
         {
+            RegisterExceptionHandlingSynchronizationContext();
+
             if (!isLoaded)
             {
                 _ = RequestWifiAccessAsync();
-                RegisterExceptionHandlingSynchronizationContext();
                 isLoaded = true;
             }
 
@@ -205,8 +223,11 @@ namespace APKInstaller
         private static async Task RequestWifiAccessAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            _ = APKInstallerProjectionFactory.ServerManager.EnableLoopback();
-            if (ApiInformation.IsMethodPresent("Windows.Security.Authorization.AppCapabilityAccess.AppCapability", "Create"))
+            using (IServerManager manager = Factory.TryCreateServerManager())
+            {
+                _ = manager.Loopback.EnableLoopback();
+            }
+            if (IsAppCapabilitySupported)
             {
                 AppCapability wifiData = AppCapability.Create("wifiData");
                 switch (wifiData.CheckAccess())
@@ -222,31 +243,38 @@ namespace APKInstaller
 
         private static void Application_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            SettingsHelper.LogManager.GetLogger("Unhandled Exception - Application").Error(e.Exception.ExceptionToMessage(), e.Exception);
+            if (e.Exception is Exception ex)
+            {
+                SettingsHelper.LoggerFactory.CreateLogger("Unhandled Exception - Application").LogError(ex, "Unhandled exception. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+            }
             e.Handled = true;
         }
 
         private static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is Exception Exception)
+            if (e.ExceptionObject is Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger("Unhandled Exception - CurrentDomain").Error(Exception.ExceptionToMessage(), Exception);
+                SettingsHelper.LoggerFactory.CreateLogger("Unhandled Exception - CurrentDomain").LogError(ex, "Unhandled exception. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
         }
 
         /// <summary>
-        /// Should be called from OnActivated and OnLaunched
+        /// Should be called from OnActivated and OnLaunched.
         /// </summary>
         private static void RegisterExceptionHandlingSynchronizationContext()
         {
-            ExceptionHandlingSynchronizationContext
-                .Register()
-                .UnhandledException += SynchronizationContext_UnhandledException;
+            if (ExceptionHandlingSynchronizationContext.TryRegister(out ExceptionHandlingSynchronizationContext context))
+            {
+                context.UnhandledException += SynchronizationContext_UnhandledException;
+            }
         }
 
         private static void SynchronizationContext_UnhandledException(object sender, Common.UnhandledExceptionEventArgs e)
         {
-            SettingsHelper.LogManager.GetLogger("Unhandled Exception - SynchronizationContext").Error(e.Exception.ExceptionToMessage(), e.Exception);
+            if (e.Exception is Exception ex)
+            {
+                SettingsHelper.LoggerFactory.CreateLogger("Unhandled Exception - SynchronizationContext").LogError(ex, "Unhandled exception. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+            }
             e.Handled = true;
         }
 

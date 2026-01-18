@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -11,8 +12,9 @@ namespace APKInstaller.Helpers
 {
     public static partial class UIHelper
     {
+        [SupportedOSPlatformGuard("windows10.0.10240.0")]
+        public static bool IsWindows10OrGreater { get; } = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240);
         public static bool HasTitleBar => !CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar;
-        public static bool HasStatusBar => ThemeHelper.IsStatusBarSupported;
     }
 
     public static partial class UIHelper
@@ -62,7 +64,7 @@ namespace APKInstaller.Helpers
             }
             catch (Exception e)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Warn(e.ExceptionToMessage(), e);
+                SettingsHelper.LoggerFactory.CreateLogger(typeof(UIHelper)).LogWarning(e, "\"{permission}\" is not found. {message} (0x{hResult:X})", permission, e.GetMessage(), e.HResult);
                 return permission;
             }
         }
@@ -91,20 +93,12 @@ namespace APKInstaller.Helpers
             }
             catch (FormatException ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(UIHelper)).Warn(ex.ExceptionToMessage(), ex);
+                SettingsHelper.LoggerFactory.CreateLogger(typeof(UIHelper)).LogWarning(ex, "\"{url}\" is not a URL. {message} (0x{hResult:X})", url, ex.GetMessage(), ex.HResult);
             }
             return false;
         }
 
-        public static string ExceptionToMessage(this Exception ex)
-        {
-            StringBuilder builder = new StringBuilder().AppendLine();
-            if (!string.IsNullOrWhiteSpace(ex.Message)) { _ = builder.AppendLine($"Message: {ex.Message}"); }
-            _ = builder.AppendLine($"HResult: {ex.HResult} (0x{ex.HResult:X})");
-            if (!string.IsNullOrWhiteSpace(ex.StackTrace)) { _ = builder.AppendLine(ex.StackTrace); }
-            if (!string.IsNullOrWhiteSpace(ex.HelpLink)) { _ = builder.Append($"HelperLink: {ex.HelpLink}"); }
-            return builder.ToString();
-        }
+        public static object GetMessage(this Exception ex) => ex.Message is { Length: > 0 } message ? message : ex.GetType();
 
         public static TResult AwaitByTaskCompleteSource<TResult>(this Task<TResult> function, CancellationToken cancellationToken = default)
         {
@@ -141,7 +135,7 @@ namespace APKInstaller.Helpers
                 {
                     taskCompletionSource.SetException(e);
                 }
-            });
+            }, cancellationToken);
             TResult taskResult = task.Result;
             return taskResult;
         }

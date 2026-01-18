@@ -2,8 +2,7 @@
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.ViewModels.SettingsPages;
-using Microsoft.Toolkit.Uwp.UI;
-using Microsoft.Toolkit.Uwp.UI.Controls;
+using CommunityToolkit.WinUI;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -145,7 +144,5 @@ namespace APKInstaller.Pages.SettingsPages
         public Task Refresh(bool reset = false) => Provider.Refresh(reset);
 
         private void GotoUpdate_Click(object sender, RoutedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri((sender as FrameworkElement).Tag.ToString()));
-
-        private void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e) => _ = Launcher.LaunchUriAsync(new Uri(e.Link));
     }
 }

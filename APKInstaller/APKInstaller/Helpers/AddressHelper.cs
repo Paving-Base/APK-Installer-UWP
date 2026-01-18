@@ -1,5 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
-using APKInstaller.Projection;
+using APKInstaller.Common;
+using APKInstaller.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -13,9 +14,9 @@ namespace APKInstaller.Helpers
         {
             List<string> addresses = [];
             Regex Regex = new($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
-            List<string> lines = [];
-            _ = await APKInstallerProjectionFactory.ServerManager.RunProcessAsync("powershell.exe", $"arp -a|findstr {mac}", null, lines);
-            foreach (string line in lines)
+            using IServerManager manager = Factory.TryCreateServerManager();
+            IProcessResult result = await manager.RunProcess.RunProcessAsync("powershell.exe", $"arp -a|findstr {mac}", false, true);
+            foreach (string line in result.StandardOutput.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
             {
                 if (Regex.IsMatch(line))
                 {

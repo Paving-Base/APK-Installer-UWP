@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Converters;
+﻿using CommunityToolkit.WinUI.Converters;
 using Windows.UI.Xaml;
 
 namespace APKInstaller.Helpers.Converter
@@ -6,7 +6,7 @@ namespace APKInstaller.Helpers.Converter
     /// <summary>
     /// This class converts a object value into a Visibility value (if the value is null or empty returns a collapsed value).
     /// </summary>
-    public class EmptyObjectToVisibilityConverter : EmptyObjectToObjectConverter
+    public partial class EmptyObjectToVisibilityConverter : EmptyObjectToObjectConverter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EmptyObjectToVisibilityConverter"/> class.

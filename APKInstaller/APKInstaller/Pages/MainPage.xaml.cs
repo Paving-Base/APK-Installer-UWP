@@ -68,7 +68,7 @@ namespace APKInstaller.Pages
             deferral.Complete();
         }
 
-        private async Task CleanCachesAsync()
+        private static async Task CleanCachesAsync()
         {
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.AppInstance")
                 && AppInstance.GetInstances().Count > 1)
@@ -78,7 +78,7 @@ namespace APKInstaller.Pages
             else
             {
                 CachesHelper.CleanAllCaches(true);
-                if (SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
+                if (ADBHelper.IsRunning && SettingsHelper.Get<bool>(SettingsHelper.IsCloseADB))
                 {
                     try { await new AdbClient().KillAdbAsync(); } catch { }
                 }

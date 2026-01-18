@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WinRT;
 
 namespace AAPTForNet.Models
 {
-    public class ApkInfo
+    [GeneratedBindableCustomProperty([nameof(AppName), nameof(PackageName), nameof(VersionCode), nameof(PackagePath)], [])]
+    public partial class ApkInfo
     {
         public string AppName { get; set; } = string.Empty;
         public string SplitName { get; set; } = string.Empty;
@@ -52,17 +54,17 @@ namespace AAPTForNet.Models
 
         internal static ApkInfo Merge(IEnumerable<ApkInfo> apks) => Merge(null, apks);
 
-        internal static ApkInfo Merge(ApkInfo init, IEnumerable<ApkInfo> apks)
+        internal static ApkInfo Merge(ApkInfo? init, IEnumerable<ApkInfo> apks)
         {
             init ??= new ApkInfo();
 
-            ApkInfo appApk = apks.FirstOrDefault(a => a.AppName.Length > 0);
+            ApkInfo? appApk = apks.FirstOrDefault(a => a.AppName.Length > 0);
             if (appApk != null)
             {
                 init.AppName = appApk.AppName;
             }
 
-            ApkInfo pckApk = apks.FirstOrDefault(a => a.PackageName.Length > 0);
+            ApkInfo? pckApk = apks.FirstOrDefault(a => a.PackageName.Length > 0);
             if (pckApk != null)
             {
                 init.SplitName = pckApk.SplitName;
@@ -71,68 +73,68 @@ namespace AAPTForNet.Models
                 init.PackageName = pckApk.PackageName;
             }
 
-            ApkInfo lauApk = apks.FirstOrDefault(a => a.LaunchableActivity.Length > 0);
+            ApkInfo? lauApk = apks.FirstOrDefault(a => a.LaunchableActivity.Length > 0);
             if (lauApk != null)
             {
                 init.LaunchableActivity = lauApk.LaunchableActivity;
             }
 
-            ApkInfo sdkApk = apks.FirstOrDefault(a => !SDKInfo.Unknown.Equals(a.MinSDK));
+            ApkInfo? sdkApk = apks.FirstOrDefault(a => !SDKInfo.Unknown.Equals(a.MinSDK));
             if (sdkApk != null)
             {
                 init.MinSDK = sdkApk.MinSDK;
                 init.TargetSDK = sdkApk.TargetSDK;
             }
 
-            ApkInfo feaApk = apks.FirstOrDefault(a => a.Features.Count > 0);
+            ApkInfo? feaApk = apks.FirstOrDefault(a => a.Features.Count > 0);
             if (feaApk != null)
             {
                 init.Features = feaApk.Features;
             }
 
-            ApkInfo perApk = apks.FirstOrDefault(a => a.Permissions.Count > 0);
+            ApkInfo? perApk = apks.FirstOrDefault(a => a.Permissions.Count > 0);
             if (perApk != null)
             {
                 init.Permissions = perApk.Permissions;
             }
 
-            ApkInfo labApk = apks.FirstOrDefault(a => a.LocaleLabels.Count > 0);
+            ApkInfo? labApk = apks.FirstOrDefault(a => a.LocaleLabels.Count > 0);
             if (labApk != null)
             {
                 init.LocaleLabels = labApk.LocaleLabels;
             }
 
-            ApkInfo abiApk = apks.FirstOrDefault(a => a.SupportedABIs.Count > 0);
+            ApkInfo? abiApk = apks.FirstOrDefault(a => a.SupportedABIs.Count > 0);
             if (abiApk != null)
             {
                 init.SupportedABIs = abiApk.SupportedABIs;
             }
 
-            ApkInfo locApk = apks.FirstOrDefault(a => a.SupportLocales.Count > 0);
+            ApkInfo? locApk = apks.FirstOrDefault(a => a.SupportLocales.Count > 0);
             if (locApk != null)
             {
                 init.SupportLocales = locApk.SupportLocales;
             }
 
-            ApkInfo scrApk = apks.FirstOrDefault(a => a.SupportScreens.Count > 0);
+            ApkInfo? scrApk = apks.FirstOrDefault(a => a.SupportScreens.Count > 0);
             if (scrApk != null)
             {
                 init.SupportScreens = scrApk.SupportScreens;
             }
 
-            ApkInfo denApk = apks.FirstOrDefault(a => a.SupportDensities.Count > 0);
+            ApkInfo? denApk = apks.FirstOrDefault(a => a.SupportDensities.Count > 0);
             if (denApk != null)
             {
                 init.SupportDensities = denApk.SupportDensities;
             }
 
-            ApkInfo iconApk = apks.FirstOrDefault(a => !Icon.Default.Equals(a.Icon));
+            ApkInfo? iconApk = apks.FirstOrDefault(a => !Icon.Default.Equals(a.Icon));
             if (iconApk != null)
             {
                 init.Icon = iconApk.Icon;
             }
 
-            ApkInfo pathApk = apks.FirstOrDefault(a => a.FullPath.Length > 0);
+            ApkInfo? pathApk = apks.FirstOrDefault(a => a.FullPath.Length > 0);
             if (pathApk != null)
             {
                 init.FullPath = pathApk.FullPath;

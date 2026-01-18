@@ -5,8 +5,9 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap uap5 rescap mp">
+  IgnorableNamespaces="uap uap5 com rescap mp">
 
   <Identity
     Name="18184wherewhere.AndroidAppInstaller.UWP"
@@ -99,6 +100,17 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer
+              Executable="APKInstaller.exe"
+              Arguments="-RegisterProcessAsComServer"
+              DisplayName="APK Installer Server"
+              LaunchAndActivationPermission="O:SYG:SYD:(A;;11;;;WD)(A;;11;;;RC)(A;;11;;;AC)(A;;11;;;AN)S:P(ML;;NX;;;S-1-16-0)">
+              <com:Class Id="4036B695-CA92-45EA-8965-CE1947A6B269" DisplayName="APK Installer Server" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -109,5 +121,6 @@
     <Capability Name="privateNetworkClientServer" />
     <rescap:Capability Name="broadFileSystemAccess" />
     <rescap:Capability Name="confirmAppClose" />
+    <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>

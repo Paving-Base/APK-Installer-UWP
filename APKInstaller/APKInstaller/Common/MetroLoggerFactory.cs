@@ -1,56 +1,36 @@
 ﻿using AdvancedSharpAdbClient.Logs;
 using APKInstaller.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
 
 namespace APKInstaller.Common
 {
-    public class MetroLoggerFactory : ILoggerFactory
+    public class MetroLoggerFactory : AdvancedSharpAdbClient.Logs.ILoggerFactory
     {
-        public ILogger CreateLogger(string categoryName) => new MetroLogger(categoryName);
+        public AdvancedSharpAdbClient.Logs.ILogger CreateLogger(string categoryName) => new MetroLogger(categoryName);
 
-        public ILogger<T> CreateLogger<T>() => new MetroLogger<T>();
+        public AdvancedSharpAdbClient.Logs.ILogger<T> CreateLogger<T>() => new MetroLogger<T>();
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class MetroLogger(string name) : ILogger
+    public interface IMetroLogger : AdvancedSharpAdbClient.Logs.ILogger
     {
-        public virtual MetroLog.ILogger Logger { get; } = SettingsHelper.LogManager.GetLogger(name);
+        public Microsoft.Extensions.Logging.ILogger Logger { get; }
 
-        public void Log(LogLevel logLevel, Exception exception, string message, params object[] args)
-        {
-            switch (logLevel)
-            {
-                case LogLevel.Trace:
-                    Logger.Trace(string.Format(message, args), exception);
-                    break;
-                case LogLevel.Debug:
-                    Logger.Debug(string.Format(message, args), exception);
-                    break;
-                case LogLevel.Information:
-                    Logger.Info(string.Format(message, args), exception);
-                    break;
-                case LogLevel.Warning:
-                    Logger.Warn(string.Format(message, args), exception);
-                    break;
-                case LogLevel.Error:
-                    Logger.Error(string.Format(message, args), exception);
-                    break;
-                case LogLevel.Critical:
-                    Logger.Fatal(string.Format(message, args), exception);
-                    break;
-                case LogLevel.None:
-                default:
-                    break;
-            }
-        }
+        void AdvancedSharpAdbClient.Logs.ILogger.Log(AdvancedSharpAdbClient.Logs.LogLevel logLevel, Exception exception, string message, params object[] args) =>
+            Logger.Log((Microsoft.Extensions.Logging.LogLevel)logLevel, exception, message, args);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class MetroLogger<T> : MetroLogger, ILogger<T>
+    public class MetroLogger(string name) : IMetroLogger
     {
-        public override MetroLog.ILogger Logger { get; } = SettingsHelper.LogManager.GetLogger<T>();
+        public Microsoft.Extensions.Logging.ILogger Logger { get; } = SettingsHelper.LoggerFactory.CreateLogger(name);
+    }
 
-        public MetroLogger() : base(typeof(T).Name) { }
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public class MetroLogger<T> : IMetroLogger, AdvancedSharpAdbClient.Logs.ILogger<T>
+    {
+        public Microsoft.Extensions.Logging.ILogger Logger { get; } = SettingsHelper.LoggerFactory.CreateLogger<T>();
     }
 }

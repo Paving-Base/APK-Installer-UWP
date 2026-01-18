@@ -5,7 +5,7 @@ using AdvancedSharpAdbClient.Models;
 using APKInstaller.Common;
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
-using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public class ProcessesViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
+    public partial class ProcessesViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
     {
         public TitleBar TitleBar;
         public ComboBox DeviceComboBox;
@@ -110,7 +110,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ProcessesViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ProcessesViewModel>().LogError(ex, "Error getting devices. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
         }
 
@@ -154,7 +154,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ProcessesViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ProcessesViewModel>().LogError(ex, "Error sorting data. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
         }
 
@@ -183,7 +183,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
             catch (Exception ex)
             {
-                SettingsHelper.LogManager.GetLogger(nameof(ProcessesViewModel)).Error(ex.ExceptionToMessage());
+                SettingsHelper.LoggerFactory.CreateLogger<ProcessesViewModel>().LogError(ex, "Error getting processes. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                 _ = Dispatcher.AwaitableRunAsync(() =>
                 {
                     TitleBar.IsRefreshButtonVisible = true;
@@ -193,7 +193,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         }
     }
 
-    public class ProcessConverter : IValueConverter
+    public partial class ProcessConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

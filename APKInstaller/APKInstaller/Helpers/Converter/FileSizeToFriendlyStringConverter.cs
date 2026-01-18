@@ -1,11 +1,11 @@
-﻿using Microsoft.Toolkit;
+﻿using CommunityToolkit.Common;
 using System;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
 
 namespace APKInstaller.Helpers.Converter
 {
-    public class FileSizeToFriendlyStringConverter : IValueConverter
+    public partial class FileSizeToFriendlyStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

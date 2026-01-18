@@ -1,7 +1,7 @@
 ﻿using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.Pages.ToolsPages;
-using Microsoft.Toolkit.Uwp.UI;
+using CommunityToolkit.WinUI;
 using System;
 using System.Globalization;
 using Windows.ApplicationModel;

@@ -2,7 +2,7 @@
 using APKInstaller.Controls;
 using APKInstaller.Helpers;
 using APKInstaller.ViewModels.ToolsPages;
-using Microsoft.Toolkit.Uwp.UI.Controls;
+using CommunityToolkit.WinUI.Controls;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

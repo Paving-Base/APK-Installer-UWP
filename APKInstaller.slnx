@@ -1,0 +1,22 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Libs/">
+    <Project Path="APKInstaller/AAPTForNet/AAPTForNet.csproj" />
+    <Project Path="APKInstaller/Zeroconf/Zeroconf.csproj" />
+  </Folder>
+  <Folder Name="/Libs/CommunityToolkit/">
+    <Project Path="APKInstaller/CommunityToolkit/DataGrid/CommunityToolkit.WinUI.Controls.DataGrid.csproj" />
+  </Folder>
+  <Project Path="APKInstaller/APKInstaller.Metadata/APKInstaller.Metadata.vcxproj" Id="909e1397-b1b9-4772-9266-34833a0b277c" />
+  <Project Path="APKInstaller/APKInstaller/APKInstaller.csproj">
+    <BuildDependency Project="APKInstaller/APKInstaller.Metadata/APKInstaller.Metadata.vcxproj" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
+</Solution>

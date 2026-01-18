@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Converters;
+﻿using CommunityToolkit.WinUI.Converters;
 using System;
 using System.Text.RegularExpressions;
 using Windows.UI.Xaml;
@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Markup;
 
 namespace APKInstaller.Helpers.Converter
 {
-    public class StringRegexToObjectConverter : DependencyObject, IValueConverter
+    public partial class StringRegexToObjectConverter : DependencyObject, IValueConverter
     {
         /// <summary>
         /// Identifies the <see cref="MatchValue"/> property.

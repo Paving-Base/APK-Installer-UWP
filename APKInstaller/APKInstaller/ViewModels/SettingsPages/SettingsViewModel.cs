@@ -3,8 +3,9 @@ using AdvancedSharpAdbClient.Models;
 using APKInstaller.Common;
 using APKInstaller.Helpers;
 using APKInstaller.Models;
-using Microsoft.Toolkit.Uwp;
-using Microsoft.Toolkit.Uwp.Helpers;
+using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.Helpers;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,11 @@ using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using WinRT;
 
 namespace APKInstaller.ViewModels.SettingsPages
 {
-    public class SettingsViewModel : INotifyPropertyChanged
+    public partial class SettingsViewModel : INotifyPropertyChanged
     {
         private static readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
 
@@ -35,6 +37,8 @@ namespace APKInstaller.ViewModels.SettingsPages
         public static GitInfo GitInfo { get; } = new GitInfo("Paving-Base", "APK-Installer", "screenshots", "Documents/Announcements", "Announcements.xaml");
 
         public static string DeviceFamily { get; } = AnalyticsInfo.VersionInfo.DeviceFamily.Replace('.', ' ');
+
+        public static string WinRTVersion { get; } = Assembly.GetAssembly(typeof(TrustLevel)).GetName().Version.ToString(3);
 
         public static string ToolkitVersion { get; } = Assembly.GetAssembly(typeof(HsvColor)).GetName().Version.ToString(3);
 
@@ -319,14 +323,14 @@ namespace APKInstaller.ViewModels.SettingsPages
             set => SetProperty(ref _aboutTextBlockText, value);
         }
 
-        public static ListViewSelectionMode _deviceSelectionMode = ListViewSelectionMode.None;
+        private static ListViewSelectionMode _deviceSelectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode DeviceSelectionMode
         {
             get => _deviceSelectionMode;
             set => SetProperty(ref _deviceSelectionMode, value);
         }
 
-        public static DeviceData _selectedDevice;
+        private static DeviceData _selectedDevice;
         public DeviceData SelectedDevice
         {
             get => _selectedDevice;
@@ -423,7 +427,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         public async Task RegisterDeviceMonitor()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (await ADBHelper.CheckIsRunningAsync().ConfigureAwait(false))
             {
                 ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
                 ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
@@ -433,7 +437,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         public async Task UnregisterDeviceMonitor()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (await ADBHelper.CheckIsRunningAsync().ConfigureAwait(false))
             { ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged; }
         }
 
@@ -510,13 +514,13 @@ namespace APKInstaller.ViewModels.SettingsPages
                 {
                     try
                     {
-                        await ADBServer.StartServerAsync(ADBPath, false, default).ConfigureAwait(false);
+                        await ADBHelper.StartADBAsync(ADBPath).ConfigureAwait(false);
                         ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
                         ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
                     }
                     catch (Exception ex)
                     {
-                        SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                        SettingsHelper.LoggerFactory.CreateLogger<SettingsViewModel>().LogWarning(ex, "Error starting ADB server. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                         ConnectInfoSeverity = InfoBarSeverity.Warning;
                         ConnectInfoTitle = ResourceLoader.GetForViewIndependentUse("InstallPage").GetString("ADBMissing");
                         ConnectInfoIsOpen = true;
@@ -548,7 +552,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                 }
                 catch (Exception ex)
                 {
-                    SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<SettingsViewModel>().LogWarning(ex, "Error connecting device. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                     ConnectInfoSeverity = InfoBarSeverity.Error;
                     ConnectInfoTitle = ex.Message;
                     ConnectInfoIsOpen = true;
@@ -571,13 +575,13 @@ namespace APKInstaller.ViewModels.SettingsPages
                 {
                     try
                     {
-                        await ADBServer.StartServerAsync(ADBPath, false, default).ConfigureAwait(false);
+                        await ADBHelper.StartADBAsync(ADBPath).ConfigureAwait(false);
                         ADBHelper.Monitor.DeviceListChanged -= OnDeviceListChanged;
                         ADBHelper.Monitor.DeviceListChanged += OnDeviceListChanged;
                     }
                     catch (Exception ex)
                     {
-                        SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                        SettingsHelper.LoggerFactory.CreateLogger<SettingsViewModel>().LogWarning(ex, "Error starting ADB server. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                         ConnectInfoSeverity = InfoBarSeverity.Warning;
                         ConnectInfoTitle = ResourceLoader.GetForViewIndependentUse("InstallPage").GetString("ADBMissing");
                         ConnectInfoIsOpen = true;
@@ -597,7 +601,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                     else if (results.StartsWith("failed:", StringComparison.OrdinalIgnoreCase))
                     {
                         ConnectInfoSeverity = InfoBarSeverity.Error;
-                        ConnectInfoTitle = results.Substring(8);
+                        ConnectInfoTitle = results[8..];
                         ConnectInfoIsOpen = true;
                     }
                     else if (!string.IsNullOrWhiteSpace(results))
@@ -609,7 +613,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                 }
                 catch (Exception ex)
                 {
-                    SettingsHelper.LogManager.GetLogger(nameof(SettingsViewModel)).Warn(ex.ExceptionToMessage(), ex);
+                    SettingsHelper.LoggerFactory.CreateLogger<SettingsViewModel>().LogWarning(ex, "Error pairing device. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                     ConnectInfoSeverity = InfoBarSeverity.Error;
                     ConnectInfoTitle = ex.Message;
                     ConnectInfoIsOpen = true;
@@ -658,7 +662,7 @@ namespace APKInstaller.ViewModels.SettingsPages
 
             await ThreadSwitcher.ResumeBackgroundAsync();
 
-            if (await AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => x.Result.IsRunning).ConfigureAwait(false))
+            if (await ADBHelper.CheckIsRunningAsync().ConfigureAwait(false))
             {
                 DeviceList = await new AdbClient().GetDevicesAsync().ContinueWith(x => x.Result.Where(x => x.State != DeviceState.Offline).ToArray()).ConfigureAwait(false);
             }

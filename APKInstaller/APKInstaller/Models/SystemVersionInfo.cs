@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Numerics;
 using Windows.ApplicationModel;
 
 namespace APKInstaller.Models
 {
-    public readonly record struct SystemVersionInfo(int Major, int Minor, int Build, int Revision = 0) : IComparable, IComparable<SystemVersionInfo>
+    public readonly record struct SystemVersionInfo(int Major, int Minor, int Build, int Revision = 0) : IComparable, IComparable<SystemVersionInfo>, IComparisonOperators<SystemVersionInfo, SystemVersionInfo, bool>
     {
         public override int GetHashCode() => HashCode.Combine(Major, Minor, Build, Revision);
 

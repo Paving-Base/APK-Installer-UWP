@@ -1,8 +1,5 @@
 ﻿using AdvancedSharpAdbClient;
-using APKInstaller.Metadata;
-using APKInstaller.Projection;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -11,6 +8,8 @@ namespace APKInstaller.Helpers
 {
     public static class ADBHelper
     {
+        public static bool IsRunning { get; private set; }
+
         private static DeviceMonitor _monitor;
         public static DeviceMonitor Monitor
         {
@@ -25,8 +24,9 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static Task DumpAsync(string filename, string command, Func<string, int, bool> callback, IList<string> output, int encode) =>
-            APKInstallerProjectionFactory.ServerManager.DumpAsync(filename, command, callback == null ? null : new DumpDelegate(callback), output, encode).AsTask();
+        public static Task<bool> CheckIsRunningAsync() => AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => IsRunning = x.Result.IsRunning);
+
+        public static Task StartADBAsync(string path) => AdbServer.Instance.StartServerAsync(path, restartServerIfNewer: false, default).ContinueWith(continuationAction: x => IsRunning = true);
 
         public static async Task<bool> CheckFileExistsAsync(string path)
         {

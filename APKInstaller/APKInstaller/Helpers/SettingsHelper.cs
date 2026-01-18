@@ -1,7 +1,9 @@
 ﻿using AdvancedSharpAdbClient.Models;
 using APKInstaller.Models;
-using MetroLog;
-using Microsoft.Toolkit.Uwp.Helpers;
+using CommunityToolkit.Common.Helpers;
+using CommunityToolkit.WinUI.Helpers;
+using Karambolo.Extensions.Logging.File;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -10,8 +12,8 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Storage;
 using Windows.UI.Xaml;
-using IObjectSerializer = Microsoft.Toolkit.Helpers.IObjectSerializer;
 
 namespace APKInstaller.Helpers
 {
@@ -50,7 +52,7 @@ namespace APKInstaller.Helpers
             }
             if (!LocalObject.KeyExists(IsOnlyWSA))
             {
-                LocalObject.Save(IsOnlyWSA, OperatingSystemVersion.Build >= 22000);
+                LocalObject.Save(IsOnlyWSA, OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000));
             }
             if (!LocalObject.KeyExists(UpdateDate))
             {
@@ -105,18 +107,31 @@ namespace APKInstaller.Helpers
 
     public static partial class SettingsHelper
     {
-        public static ILogManager LogManager { get; } = LogManagerFactory.CreateLogManager();
-        public static OSVersion OperatingSystemVersion => SystemInformation.Instance.OperatingSystemVersion;
+        public static ILoggerFactory LoggerFactory { get; } = CreateLoggerFactory();
         public static ApplicationDataStorageHelper LocalObject { get; } = ApplicationDataStorageHelper.GetCurrent(new SystemTextJsonObjectSerializer());
 
         static SettingsHelper() => SetDefaultSettings();
 
+        public static ILoggerFactory CreateLoggerFactory() =>
+            Microsoft.Extensions.Logging.LoggerFactory.Create(x => _ = x.AddFile(x =>
+            {
+                x.RootPath = ApplicationData.Current.LocalFolder.Path;
+                x.IncludeScopes = true;
+                x.BasePath = "Logs";
+                x.Files = [
+                    new LogFileOptions()
+                    {
+                        Path = "Log - <date>.log"
+                    }
+                ];
+            }).AddDebug());
+
         public static void CheckAssembly()
         {
-            LogManager.GetLogger("Hello World!").Info("\nThis is a hello from the author @wherewhere.\nIf you can't find this hello in your installed version, that means you have installed a piracy one.\nRemember, the author is @wherewhere. If not, you possible install a modified one too.");
-            AssemblyName Info = Assembly.GetExecutingAssembly().GetName();
-            if (Info.Name != $"{"APK"}{"Installer"}") { LogManager.GetLogger("Check Assembly").Error($"\nAssembly name is wrong.\nThe wrong name is {Info.Name}.\nIt should be {$"{"APK"}{"Installer"}"}."); };
-            if (Info.Version.Major != Package.Current.Id.Version.Major || Info.Version.Minor != Package.Current.Id.Version.Minor || Info.Version.Build != Package.Current.Id.Version.Build) { LogManager.GetLogger("CheckAssembly").Error($"\nAssembly version is wrong.\nThe wrong version is {Info.Version}.\nIt should be {Package.Current.Id.Version.ToFormattedString()}."); };
+            LoggerFactory.CreateLogger("Hello World!").LogInformation("\nThis is a hello from the author @wherewhere.\nIf you can't find this hello in your installed version, that means you have installed a piracy one.\nRemember, the author is @wherewhere. If not, you possible install a modified one too.");
+            AssemblyName info = Assembly.GetExecutingAssembly().GetName();
+            if (info.Name != $"{"APK"}{"Installer"}") { LoggerFactory.CreateLogger("Check Assembly").LogError("\nAssembly name is wrong.\nThe wrong name is {name}.\nIt should be {APK}{Installer}.", info.Name, "APK", "Installer"); };
+            if (info.Version.Major != Package.Current.Id.Version.Major || info.Version.Minor != Package.Current.Id.Version.Minor || info.Version.Build != Package.Current.Id.Version.Build) { LoggerFactory.CreateLogger("CheckAssembly").LogError("\nAssembly version is wrong.\nThe wrong version is {assembly}.\nIt should be {package}.", info.Version, Package.Current.Id.Version.ToFormattedString()); };
         }
     }
 
@@ -129,7 +144,7 @@ namespace APKInstaller.Helpers
             DeviceData => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DeviceData),
             ElementTheme => JsonSerializer.Serialize(value, SourceGenerationContext.Default.ElementTheme),
             DateTimeOffset => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DateTimeOffset),
-            _ => JsonSerializer.Serialize(value)
+            _ => JsonSerializer.Serialize(value, typeof(T), SourceGenerationContext.Default)
         };
 
         public T Deserialize<T>([StringSyntax(StringSyntaxAttribute.Json)] string value)
@@ -141,7 +156,7 @@ namespace APKInstaller.Helpers
                 : type == typeof(DeviceData) ? Deserialize(value, SourceGenerationContext.Default.DeviceData)
                 : type == typeof(ElementTheme) ? Deserialize(value, SourceGenerationContext.Default.ElementTheme)
                 : type == typeof(DateTimeOffset) ? Deserialize(value, SourceGenerationContext.Default.DateTimeOffset)
-                : JsonSerializer.Deserialize<T>(value);
+                : JsonSerializer.Deserialize(value, type, SourceGenerationContext.Default) is T result ? result : default;
             static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo) => JsonSerializer.Deserialize(json, jsonTypeInfo) is T value ? value : default;
         }
     }
