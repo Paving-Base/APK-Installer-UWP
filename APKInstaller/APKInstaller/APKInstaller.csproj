@@ -15,7 +15,7 @@
     <PublishAot>True</PublishAot>
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <UseUwp>True</UseUwp>
     <VersionPrefix>0.1.28</VersionPrefix>

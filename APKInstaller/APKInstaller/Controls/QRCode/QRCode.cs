@@ -33,11 +33,17 @@ namespace APKInstaller.Controls
         {
             base.OnApplyTemplate();
 
-            QRCodePath?.SizeChanged -= OnSizeChanged;
+            if (QRCodePath != null)
+            {
+                QRCodePath.SizeChanged -= OnSizeChanged;
+            }
 
             QRCodePath = GetTemplateChild(QRCodePathName) as Path;
 
-            QRCodePath?.SizeChanged += OnSizeChanged;
+            if (QRCodePath != null)
+            {
+                QRCodePath.SizeChanged += OnSizeChanged;
+            }
 
             UpdateQRCodeData();
         }

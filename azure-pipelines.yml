@@ -59,6 +59,7 @@ steps:
         /p:UapAppxPackageBuildMode=SideloadOnly
         /p:GenerateAppxPackageOnBuild=true
         /p:AppxPackageSigningEnabled=false
+        /p:IsPackable=false
       msbuildArchitecture: x64
       maximumCpuCount: true
 

@@ -42,7 +42,7 @@ namespace APKInstaller.Common
                 {
                     if (PInvoke.ConvertSidToStringSid(sidAndAttributes.Sid, out PWSTR stringSid))
                     {
-                        if (currentSid.Equals(stringSid.AsSpan(), StringComparison.OrdinalIgnoreCase))
+                        if (((ReadOnlySpan<char>)currentSid).Equals(stringSid.AsSpan(), StringComparison.OrdinalIgnoreCase))
                         {
                             return true;
                         }

@@ -165,8 +165,8 @@ namespace APKInstaller.Common
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void operator +=(Action<TEventArgs> callback) => Add(callback);
+        //public void operator +=(Action<TEventArgs> callback) => Add(callback);
 
-        public void operator -=(Action<TEventArgs> callback) => Remove(callback);
+        //public void operator -=(Action<TEventArgs> callback) => Remove(callback);
     }
 }
