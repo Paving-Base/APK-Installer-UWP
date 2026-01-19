@@ -3,6 +3,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Threading;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.System.Com;
 using WinRT;
 
 namespace APKInstaller.Common
@@ -27,16 +30,16 @@ namespace APKInstaller.Common
 
         private uint co_cookie;
 
-        public void CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject)
+        public unsafe void CreateInstance(object pUnkOuter, Guid* riid, out nint ppvObject)
         {
             ppvObject = 0;
 
-            if (pUnkOuter != 0)
+            if (pUnkOuter != null)
             {
                 Marshal.ThrowExceptionForHR(CLASS_E_NOAGGREGATION);
             }
 
-            if (riid == _iid || riid == Factory.CLSID_IUnknown)
+            if (*riid == _iid || *riid == Factory.CLSID_IUnknown)
             {
                 // Create the instance of the .NET object
                 ppvObject = MarshalInspectable<IServerManager>.FromManaged(new ServerManager());
@@ -49,26 +52,17 @@ namespace APKInstaller.Common
             }
         }
 
-        public void LockServer([MarshalAs(UnmanagedType.Bool)] bool fLock)
-        {
-        }
+        void IClassFactory.LockServer(BOOL fLock) { }
 
-        public void RevokeClassObject()
-        {
-            int hresult = Factory.CoRevokeClassObject(co_cookie);
-            if (hresult < 0)
-            {
-                Marshal.ThrowExceptionForHR(hresult);
-            }
-        }
+        public void RevokeClassObject() => PInvoke.CoRevokeClassObject(co_cookie).ThrowOnFailure();
 
         public void RegisterClassObject()
         {
-            int hresult = CoRegisterClassObject(
+            int hresult = PInvoke.CoRegisterClassObject(
                 Factory.CLSID_IServerManager,
                 this,
-                CLSCTX_LOCAL_SERVER,
-                REGCLS_MULTIPLEUSE,
+                CLSCTX.CLSCTX_LOCAL_SERVER,
+                REGCLS.REGCLS_MULTIPLEUSE,
                 out co_cookie);
             if (hresult < 0)
             {
@@ -76,49 +70,31 @@ namespace APKInstaller.Common
             }
         }
 
-        [LibraryImport("api-ms-win-core-com-l1-1-0.dll")]
-        private static partial int CoRegisterClassObject(in Guid rclsid, IClassFactory pUnk, uint dwClsContext, int flags, out uint lpdwRegister);
-
         private delegate nint DllGetActivationFactory([In] nint activatableClassId, [Out] out nint factory);
     }
 
     public static partial class Factory
     {
-        /// <summary>
-        /// The CLSCTX enumeration specifies the context in which the code that manages a class object will run.
-        /// </summary>
-        private const uint CLSCTX_ALL = 1 | 2 | 4 | 16;
-
         public static readonly Guid CLSID_IServerManager = new("4036B695-CA92-45EA-8965-CE1947A6B269");
         public static readonly Guid CLSID_IUnknown = new("00000000-0000-0000-C000-000000000046");
 
         private static bool IsAlive() => true;
 
         public static IServerManager TryCreateServerManager() =>
-            TryCreateInstance<IServerManager>(CLSID_IServerManager, CLSCTX_ALL, TimeSpan.FromSeconds(30));
+            TryCreateInstance<IServerManager>(CLSID_IServerManager, CLSCTX.CLSCTX_ALL, TimeSpan.FromSeconds(30));
 
-        internal static T TryCreateInstance<T>(in Guid rclsid, uint dwClsContext = 1)
+        internal static T TryCreateInstance<T>(in Guid rclsid, CLSCTX dwClsContext = CLSCTX.CLSCTX_INPROC_SERVER)
         {
-            int hresult = CoCreateInstance(rclsid, 0, dwClsContext, CLSID_IUnknown, out nint result);
-            if (hresult < 0)
-            {
-                return default;
-            }
-            return Marshaler<T>.FromAbi(result);
+            HRESULT hresult = PInvoke.CoCreateInstance(rclsid, null, dwClsContext, CLSID_IUnknown, out nint result);
+            return hresult.Succeeded ? Marshaler<T>.FromAbi(result) : default;
         }
 
-        internal static T TryCreateInstance<T>(in Guid rclsid, uint dwClsContext, in TimeSpan period) where T : ISetMonitor
+        internal static T TryCreateInstance<T>(in Guid rclsid, CLSCTX dwClsContext, in TimeSpan period) where T : ISetMonitor
         {
             T results = TryCreateInstance<T>(rclsid, dwClsContext);
             results?.SetMonitor(IsAlive, period);
             return results;
         }
-
-        [LibraryImport("api-ms-win-core-com-l1-1-0.dll")]
-        private static partial int CoCreateInstance(in Guid rclsid, nint pUnkOuter, uint dwClsContext, in Guid riid, out nint ppv);
-
-        [LibraryImport("api-ms-win-core-com-l1-1-0.dll")]
-        internal static partial int CoRevokeClassObject(uint dwRegister);
     }
 
     /// <summary>
@@ -190,15 +166,5 @@ namespace APKInstaller.Common
                 GC.SuppressFinalize(this);
             }
         }
-    }
-
-    // https://docs.microsoft.com/windows/win32/api/unknwn/nn-unknwn-iclassfactory
-    [GeneratedComInterface]
-    [Guid("00000001-0000-0000-C000-000000000046")]
-    public partial interface IClassFactory
-    {
-        void CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject);
-
-        void LockServer([MarshalAs(UnmanagedType.Bool)] bool fLock);
     }
 }

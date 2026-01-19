@@ -430,10 +430,16 @@ namespace APKInstaller.ViewModels
 
         private static async Task<bool> CheckADBAsync()
         {
-            if (!await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
+            const string sdk = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
+            string path = ADBPath;
+            if (path != "adb" && !await ADBHelper.CheckFileExistsAsync(path).ConfigureAwait(false))
             {
-                ADBPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
-                return await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false);
+                if (path != sdk)
+                {
+                    ADBPath = sdk;
+                    return await ADBHelper.CheckFileExistsAsync(sdk).ConfigureAwait(false);
+                }
+                return false;
             }
             return true;
         }

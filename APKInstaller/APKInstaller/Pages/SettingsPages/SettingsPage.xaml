@@ -63,7 +63,7 @@
                     <ListView
                         x:Name="SelectDeviceBox"
                         x:FieldModifier="public"
-                        ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
+                        ItemContainerStyle="{StaticResource ListViewItemSettingsCardStyle}"
                         ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}"
                         SelectedItem="{x:Bind Provider.SelectedDevice, Mode=OneWay}"
                         SelectionChanged="SelectDeviceBox_SelectionChanged"
@@ -75,23 +75,23 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:DeviceData">
-                                <controls:Setting
+                                <controls:SettingsCard
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"
-                                    Icon="&#xE8EA;"
+                                    HeaderIcon="&#xE8EA;"
                                     Style="{StaticResource ListViewItemContentSettingStyle}" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <controls:SettingExpander
+                    <controls:SettingsExpander
                         x:Uid="/SettingsPage/OnlyWSASettings"
-                        Icon="&#xE975;"
+                        HeaderIcon="&#xE975;"
                         IsExpanded="{x:Bind Provider.IsOnlyWSA, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
-                        <controls:SettingExpander.ActionContent>
+                        <controls:SettingsExpander.ActionContent>
                             <ToggleSwitch IsOn="{x:Bind Provider.IsOnlyWSA, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                        </controls:SettingExpander.ActionContent>
-                        <controls:Setting x:Uid="/SettingsPage/ConnectDevice" Style="{StaticResource DefaultSettingExpanderItemStyle}">
-                            <Grid MinWidth="{StaticResource SettingCardContentMinWidth}" ColumnSpacing="8">
+                        </controls:SettingsExpander.ActionContent>
+                        <controls:SettingsCard x:Uid="/SettingsPage/ConnectDevice">
+                            <Grid MinWidth="{StaticResource SettingsCardContentMinWidth}" ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
@@ -123,9 +123,9 @@
                                         Tag="Connect" />
                                 </Grid>
                             </Grid>
-                        </controls:Setting>
-                        <controls:Setting x:Uid="/SettingsPage/PairDevice" Style="{StaticResource DefaultSettingExpanderItemStyle}">
-                            <Grid MinWidth="{StaticResource SettingCardContentMinWidth}" ColumnSpacing="8">
+                        </controls:SettingsCard>
+                        <controls:SettingsCard x:Uid="/SettingsPage/PairDevice">
+                            <Grid MinWidth="{StaticResource SettingsCardContentMinWidth}" ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
@@ -156,8 +156,8 @@
                                         Tag="Pair" />
                                 </Grid>
                             </Grid>
-                        </controls:Setting>
-                        <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
+                        </controls:SettingsCard>
+                        <Grid>
                             <Grid.Resources>
                                 <Style BasedOn="{StaticResource CaptionTextBlockStyle}" TargetType="TextBlock">
                                     <Style.Setters>
@@ -193,7 +193,7 @@
                                 </ScrollViewer>
                             </muxc:ItemsRepeaterScrollHost>
                         </Grid>
-                    </controls:SettingExpander>
+                    </controls:SettingsExpander>
                     <muxc:InfoBar
                         x:Name="ConnectInfo"
                         Title="{x:Bind Provider.ConnectInfoTitle, Mode=OneWay}"
@@ -201,67 +201,67 @@
                         IsOpen="{x:Bind Provider.ConnectInfoIsOpen, Mode=TwoWay}"
                         Loaded="InfoBar_Loaded"
                         Severity="{x:Bind Provider.ConnectInfoSeverity, Mode=OneWay}" />
-                    <controls:Setting
+                    <controls:SettingsCard
                         x:Uid="/SettingsPage/PairDeviceSettings"
                         Click="Button_Click"
-                        Icon="&#xE836;"
+                        HeaderIcon="&#xE836;"
                         IsClickEnabled="True"
                         Tag="PairDevice" />
-                    <controls:Setting x:Uid="/SettingsPage/ScanPairedDeviceSettings" Icon="&#xE70C;">
+                    <controls:SettingsCard x:Uid="/SettingsPage/ScanPairedDeviceSettings" HeaderIcon="&#xE70C;">
                         <ToggleSwitch IsOn="{x:Bind Provider.ScanPairedDevice, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/DisplaySettingsHeader">
-                    <controls:Setting x:Uid="/SettingsPage/ShowDialogsSettings" Icon="&#xE82F;">
+                    <controls:SettingsCard x:Uid="/SettingsPage/ShowDialogsSettings" HeaderIcon="&#xE82F;">
                         <ToggleSwitch IsOn="{x:Bind Provider.ShowDialogs, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/ShowMessagesSettings" Icon="&#xE789;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ShowMessagesSettings" HeaderIcon="&#xE789;">
                         <ToggleSwitch IsOn="{x:Bind Provider.ShowMessages, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/ShowProgressSettings" Icon="&#xF16A;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ShowProgressSettings" HeaderIcon="&#xF16A;">
                         <ToggleSwitch IsOn="{x:Bind Provider.ShowProgress, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ThemesSettingsHeader">
-                    <controls:Setting x:Uid="/SettingsPage/ThemeSettings" Icon="&#xE790;">
-                        <controls:Setting.Description>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ThemeSettings" HeaderIcon="&#xE790;">
+                        <controls:SettingsCard.Description>
                             <HyperlinkButton
                                 x:Uid="/SettingsPage/WindowsColorButton"
                                 Click="HyperlinkButton_Click"
                                 Tag="WindowsColor" />
-                        </controls:Setting.Description>
+                        </controls:SettingsCard.Description>
                         <ComboBox SelectedIndex="{x:Bind Provider.SelectedTheme, Mode=TwoWay}">
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeDark" />
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeLight" />
                             <ComboBoxItem x:Uid="/SettingsPage/RadioThemeDefault" />
                         </ComboBox>
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ContentSettingsHeader">
-                    <controls:Setting x:Uid="/SettingsPage/AutoGetNetAPKSettings" Icon="&#xE896;">
+                    <controls:SettingsCard x:Uid="/SettingsPage/AutoGetNetAPKSettings" HeaderIcon="&#xE896;">
                         <ToggleSwitch IsOn="{x:Bind Provider.AutoGetNetAPK, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/CloseAPPSettings" Icon="&#xEDAE;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/CloseAPPSettings" HeaderIcon="&#xEDAE;">
                         <ToggleSwitch IsOn="{x:Bind Provider.IsCloseAPP, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/CloseADBSettings" Icon="&#xE756;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/CloseADBSettings" HeaderIcon="&#xE756;">
                         <ToggleSwitch IsOn="{x:Bind Provider.IsCloseADB, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ConfigsSettingsHeader">
-                    <controls:Setting x:Uid="/SettingsPage/ADBPathSettings" Icon="&#xE8B7;">
-                        <controls:Setting.Description>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ADBPathSettings" HeaderIcon="&#xE8B7;">
+                        <controls:SettingsCard.Description>
                             <HyperlinkButton
                                 Click="HyperlinkButton_Click"
                                 Content="{x:Bind Provider.ADBPath, Mode=OneWay}"
                                 Tag="ADBPath" />
-                        </controls:Setting.Description>
+                        </controls:SettingsCard.Description>
                         <Button
                             x:Uid="/SettingsPage/Change"
                             Click="Button_Click"
                             Tag="ADBPath" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/ResetSettings" Icon="&#xE777;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ResetSettings" HeaderIcon="&#xE777;">
                         <Button Name="Reset" x:Uid="/SettingsPage/ResetSettingsButton">
                             <Button.Flyout>
                                 <Flyout>
@@ -278,13 +278,12 @@
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
-                    </controls:Setting>
-                    <controls:SettingExpander x:Uid="/SettingsPage/FrameworkSettings" Icon="&#xE950;">
+                    </controls:SettingsCard>
+                    <controls:SettingsExpander x:Uid="/SettingsPage/FrameworkSettings" HeaderIcon="&#xE950;">
                         <Grid
                             Margin="0,0,0,8"
                             ColumnSpacing="32"
-                            RowSpacing="8"
-                            Style="{StaticResource SettingExpanderContentGridStyle}">
+                            RowSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -305,7 +304,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -320,7 +319,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"
@@ -333,14 +332,15 @@
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
-                                Padding="0,0,0,8"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                HorizontalAlignment="Left"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Text="CS/WinRT" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                Padding="32,0,0,8"
+                                HorizontalAlignment="Left"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
                                 Text="{x:Bind settingspages:SettingsViewModel.WinRTVersion}"
                                 TextWrapping="WrapWholeWords" />
 
@@ -348,7 +348,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Text="Community Toolkit" />
                             <TextBlock
                                 Grid.Row="3"
@@ -363,7 +363,7 @@
                                 Grid.Row="4"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Text="Sharp ADB Client" />
                             <TextBlock
                                 Grid.Row="4"
@@ -378,7 +378,7 @@
                                 Grid.Row="5"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Text="Device Family" />
                             <TextBlock
                                 Grid.Row="5"
@@ -394,7 +394,7 @@
                                 Grid.Row="6"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="1"
@@ -409,7 +409,7 @@
                                 Grid.Row="7"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="7"
                                 Grid.Column="1"
@@ -419,11 +419,11 @@
                                 Text="{x:Bind interopservices:RuntimeInformation.OSArchitecture}"
                                 TextWrapping="WrapWholeWords" />
                         </Grid>
-                    </controls:SettingExpander>
+                    </controls:SettingsExpander>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/AboutSettingsHeader">
-                    <controls:SettingExpander Header="{x:Bind settingspages:SettingsViewModel.VersionTextBlockText}" Icon="&#xE117;">
-                        <controls:SettingExpander.Description>
+                    <controls:SettingsExpander Header="{x:Bind settingspages:SettingsViewModel.VersionTextBlockText}" HeaderIcon="&#xE117;">
+                        <controls:SettingsExpander.Description>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Style="{StaticResource SecondaryTextStyle}" TextWrapping="WrapWholeWords">
                                     <Run x:Uid="/SettingsPage/LastChecked" />
@@ -458,8 +458,8 @@
                                     </StackPanel>
                                 </ScrollViewer>
                             </StackPanel>
-                        </controls:SettingExpander.Description>
-                        <controls:SettingExpander.ActionContent>
+                        </controls:SettingsExpander.Description>
+                        <controls:SettingsExpander.ActionContent>
                             <StackPanel
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal"
@@ -485,8 +485,8 @@
                                     Click="Button_Click"
                                     Tag="CheckUpdate" />
                             </StackPanel>
-                        </controls:SettingExpander.ActionContent>
-                        <Grid Style="{StaticResource SettingExpanderContentGridStyle}">
+                        </controls:SettingsExpander.ActionContent>
+                        <Grid>
                             <cwuc:MarkdownTextBlock
                                 x:Name="AboutMarkdown"
                                 HorizontalAlignment="Left"
@@ -496,7 +496,7 @@
                                 </cwuc:MarkdownTextBlock.Config>
                             </cwuc:MarkdownTextBlock>
                         </Grid>
-                    </controls:SettingExpander>
+                    </controls:SettingsExpander>
                     <muxc:InfoBar
                         x:Name="UpdateState"
                         Title="{x:Bind Provider.UpdateStateTitle, Mode=OneWay}"
@@ -516,8 +516,8 @@
                                 Visibility="{x:Bind Provider.GotoUpdateVisibility, Mode=OneWay}" />
                         </muxc:InfoBar.ActionButton>
                     </muxc:InfoBar>
-                    <controls:Setting x:Uid="/SettingsPage/ContactMeSettings" Icon="&#xE779;">
-                        <controls:Setting.Description>
+                    <controls:SettingsCard x:Uid="/SettingsPage/ContactMeSettings" HeaderIcon="&#xE779;">
+                        <controls:SettingsCard.Description>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     x:Uid="/SettingsPage/ContactMeTextBlock"
@@ -548,14 +548,14 @@
                                     </StackPanel>
                                 </ScrollViewer>
                             </StackPanel>
-                        </controls:Setting.Description>
+                        </controls:SettingsCard.Description>
                         <Button
                             x:Uid="/SettingsPage/Group"
                             Click="Button_Click"
                             Tag="Group" />
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/SettingsPage/DonateSettings" Icon="&#xEB51;">
-                        <controls:Setting.Description>
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/SettingsPage/DonateSettings" HeaderIcon="&#xEB51;">
+                        <controls:SettingsCard.Description>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     x:Uid="/SettingsPage/DonateTextBlock"
@@ -578,19 +578,19 @@
                                     </StackPanel>
                                 </ScrollViewer>
                             </StackPanel>
-                        </controls:Setting.Description>
+                        </controls:SettingsCard.Description>
                         <Button
                             x:Uid="/SettingsPage/Rate"
                             Click="Button_Click"
                             Tag="Rate" />
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/OthersSettingsHeader">
-                    <controls:Setting
+                    <controls:SettingsCard
                         x:Name="GoToTestPage"
                         x:Uid="/SettingsPage/GoToTestPage"
                         Click="Button_Click"
-                        Icon="&#xEC7A;"
+                        HeaderIcon="&#xEC7A;"
                         IsClickEnabled="True"
                         Tag="TestPage" />
                 </controls:SettingsGroup>

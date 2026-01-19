@@ -17,7 +17,7 @@ namespace APKInstaller.Common
 {
     public class OOPAAPTool : AAPTool
     {
-        protected override bool HasDumpOverride { get; } = true;
+        protected override bool HasDumpOverride => true;
 
         protected override async Task<DumpModel> DumpByOverrideAsync(
             string path,
@@ -62,6 +62,10 @@ namespace APKInstaller.Common
             try
             {
                 string path = Path.Combine(TempPath, file.Name);
+                if (File.Exists(file.Path) && Loopback.Instance.CreateFileSymbolic(path, file.Path))
+                {
+                    goto end;
+                }
                 using (IServerManager manager = Factory.TryCreateServerManager())
                 {
                     if (!manager.Loopback.CreateFileSymbolic(path, file.Path))
@@ -69,6 +73,7 @@ namespace APKInstaller.Common
                         return null;
                     }
                 }
+                end:
                 if (File.Exists(path))
                 {
                     return await StorageFile.GetFileFromPathAsync(path);

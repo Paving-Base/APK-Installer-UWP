@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 using Windows.UI.Xaml;
 
 namespace APKInstaller.Controls
 {
-    public partial class SettingExpander
+    public partial class SettingsExpander
     {
         #region Header
 
@@ -14,7 +15,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(Header),
                 typeof(object),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(null));
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(Description),
                 typeof(object),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(null));
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(ActionContent),
                 typeof(object),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(null));
 
         /// <summary>
@@ -77,25 +78,25 @@ namespace APKInstaller.Controls
 
         #endregion
 
-        #region Icon
+        #region HeaderIcon
 
         /// <summary>
-        /// Identifies the <see cref="Icon"/> dependency property.
+        /// Identifies the <see cref="HeaderIcon"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IconProperty =
+        public static readonly DependencyProperty HeaderIconProperty =
             DependencyProperty.Register(
-                nameof(Icon),
+                nameof(HeaderIcon),
                 typeof(object),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(default(string)));
 
         /// <summary>
         /// Gets or sets the icon on the left.
         /// </summary>
-        public object Icon
+        public object HeaderIcon
         {
-            get => GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
+            get => GetValue(HeaderIconProperty);
+            set => SetValue(HeaderIconProperty, value);
         }
 
         #endregion
@@ -109,7 +110,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(ContentAlignment),
                 typeof(ContentAlignment),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(ContentAlignment.Right));
 
         /// <summary>
@@ -132,7 +133,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(ItemsHeader),
                 typeof(UIElement),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(null));
 
         /// <summary>
@@ -155,7 +156,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(ItemsFooter),
                 typeof(UIElement),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(null));
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace APKInstaller.Controls
             DependencyProperty.Register(
                 nameof(IsExpanded),
                 typeof(bool),
-                typeof(SettingExpander),
+                typeof(SettingsExpander),
                 new PropertyMetadata(false));
 
         /// <summary>
@@ -188,6 +189,29 @@ namespace APKInstaller.Controls
         {
             get => (bool)GetValue(IsExpandedProperty);
             set => SetValue(IsExpandedProperty, value);
+        }
+
+        #endregion
+
+        #region ExpandDirection
+
+        /// <summary>
+        /// Identifies the <see cref="ExpandDirection"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ExpandDirectionProperty =
+            DependencyProperty.Register(
+                nameof(ExpandDirection),
+                typeof(ExpandDirection),
+                typeof(SettingsExpander),
+                new PropertyMetadata(ExpandDirection.Down));
+
+        /// <summary>
+        /// Gets or sets a value that indicates the direction in which the content area expands.
+        /// </summary>
+        public ExpandDirection ExpandDirection
+        {
+            get => (ExpandDirection)GetValue(ExpandDirectionProperty);
+            set => SetValue(ExpandDirectionProperty, value);
         }
 
         #endregion

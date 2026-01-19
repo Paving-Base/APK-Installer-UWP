@@ -54,9 +54,9 @@
                             IsTextSelectionEnabled="True"
                             TextWrapping="WrapWholeWords">
                             <Paragraph>
-                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{x:Bind Provider.AppLocaleName, Mode=OneWay}" />
-                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="-" />
-                                <Run Foreground="{ThemeResource CardPrimaryForegroundBrush}" Text="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}" />
+                                <Run Foreground="{ThemeResource TextFillColorPrimaryBrush}" Text="{x:Bind Provider.AppLocaleName, Mode=OneWay}" />
+                                <Run Foreground="{ThemeResource TextFillColorPrimaryBrush}" Text="-" />
+                                <Run Foreground="{ThemeResource TextFillColorPrimaryBrush}" Text="{x:Bind Provider.ApkInfo.PackageName, Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('v{0}', Provider.ApkInfo.VersionName), Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('({0})', Provider.ApkInfo.VersionCode), Mode=OneWay}" />
                             </Paragraph>
@@ -68,7 +68,7 @@
                             <Paragraph Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                 <Run x:Uid="/InfosPage/PermissionsCount" />
                                 <Run Text="{x:Bind Provider.ApkInfo.Permissions.Count, Mode=OneWay}" />
-                                <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text="|" />
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text="|" />
                                 <Run x:Uid="/InfosPage/PackageSize" />
                                 <Run Text="{x:Bind Provider.ApkInfo.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}, Mode=OneWay}" />
                             </Paragraph>
@@ -93,15 +93,14 @@
                     </StackPanel>
                 </Grid>
                 <controls:SettingsGroup>
-                    <controls:SettingExpander
+                    <controls:SettingsExpander
                         x:Uid="/InfosPage/BasicInfoSettings"
-                        Icon="&#xE783;"
+                        HeaderIcon="&#xE783;"
                         IsExpanded="True">
                         <Grid
                             Margin="0,0,0,8"
                             ColumnSpacing="32"
-                            RowSpacing="8"
-                            Style="{StaticResource SettingExpanderContentGridStyle}">
+                            RowSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -123,7 +122,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -137,7 +136,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"
@@ -151,7 +150,7 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
@@ -167,7 +166,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="1"
@@ -181,7 +180,7 @@
                                 Grid.Row="4"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="4"
                                 Grid.Column="1"
@@ -197,7 +196,7 @@
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportedABIs.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 x:Name="SupportedABIs"
                                 Grid.Row="5"
@@ -213,7 +212,7 @@
                                 Grid.Row="6"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="1"
@@ -229,7 +228,7 @@
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportDensities.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 x:Name="SupportDensities"
                                 Grid.Row="7"
@@ -245,7 +244,7 @@
                                 Grid.Row="8"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 Grid.Row="8"
                                 Grid.Column="1"
@@ -261,7 +260,7 @@
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
                                 x:Load="{x:Bind Provider.ApkInfo.SupportLocales.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
-                                Foreground="{ThemeResource CardPrimaryForegroundBrush}" />
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                             <TextBlock
                                 x:Name="SupportLocales"
                                 Grid.Row="9"
@@ -273,68 +272,68 @@
                                 Text="{x:Bind Provider.ApkInfo.SupportLocales, Converter={StaticResource JoinEnumerableConverter}, ConverterParameter=', ', Mode=OneWay}"
                                 TextWrapping="WrapWholeWords" />
                         </Grid>
-                    </controls:SettingExpander>
-                    <controls:SettingExpander
+                    </controls:SettingsExpander>
+                    <controls:SettingsExpander
                         x:Name="PermissionInfoSettings"
                         x:Load="{x:Bind Provider.ApkInfo.Permissions.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                         Header="{x:Bind x:String.Format(Provider.PermissionsHeaderFormat, Provider.ApkInfo.Permissions.Count), Mode=OneWay}"
-                        Icon="&#xEA0D;">
-                        <Grid MinHeight="{ThemeResource ExpanderMinHeight}" Style="{StaticResource SettingExpanderContentGridStyle}">
+                        HeaderIcon="&#xEA0D;">
+                        <Grid MinHeight="{ThemeResource ExpanderMinHeight}">
                             <ScrollViewer
                                 VerticalAlignment="Center"
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Disabled">
                                 <TextBlock
                                     HorizontalAlignment="Left"
-                                    Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Provider.Permissions, Mode=OneWay}" />
                             </ScrollViewer>
                         </Grid>
-                    </controls:SettingExpander>
-                    <controls:SettingExpander
+                    </controls:SettingsExpander>
+                    <controls:SettingsExpander
                         x:Name="FeatureInfoSettings"
                         x:Load="{x:Bind Provider.ApkInfo.Features.Count, Converter={StaticResource DoubleToBoolConverter}, Mode=OneWay}"
                         Header="{x:Bind x:String.Format(Provider.FeaturesHeaderFormat, Provider.ApkInfo.Features.Count), Mode=OneWay}"
-                        Icon="&#xEA0D;">
-                        <Grid MinHeight="{ThemeResource ExpanderMinHeight}" Style="{StaticResource SettingExpanderContentGridStyle}">
+                        HeaderIcon="&#xEA0D;">
+                        <Grid MinHeight="{ThemeResource ExpanderMinHeight}">
                             <ScrollViewer
                                 VerticalAlignment="Center"
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Disabled">
                                 <TextBlock
                                     HorizontalAlignment="Left"
-                                    Foreground="{ThemeResource CardPrimaryForegroundBrush}"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Provider.Features, Mode=OneWay}" />
                             </ScrollViewer>
                         </Grid>
-                    </controls:SettingExpander>
-                    <controls:SettingExpander
+                    </controls:SettingsExpander>
+                    <controls:SettingsExpander
                         x:Name="BundleInfoSettings"
                         x:Load="{x:Bind Provider.ApkInfo.IsBundle, Mode=OneWay}"
                         Header="{x:Bind x:String.Format(Provider.DependenciesHeaderFormat, Provider.ApkInfo.SplitApks.Count), Mode=OneWay}"
-                        Icon="&#xE74C;"
+                        HeaderIcon="&#xE74C;"
                         ItemsSource="{x:Bind Provider.ApkInfo.SplitApks, Mode=OneWay}">
-                        <controls:SettingExpander.ItemTemplate>
+                        <controls:SettingsExpander.ItemTemplate>
                             <DataTemplate x:DataType="models:ApkInfo">
-                                <controls:Setting Header="{x:Bind AppName}" Style="{StaticResource DefaultSettingExpanderItemStyle}">
-                                    <controls:Setting.Icon>
+                                <controls:SettingsCard Header="{x:Bind AppName}">
+                                    <controls:SettingsCard.HeaderIcon>
                                         <muxc:ImageIcon Source="{x:Bind Icon.RealPath}" />
-                                    </controls:Setting.Icon>
-                                    <controls:Setting.Description>
+                                    </controls:SettingsCard.HeaderIcon>
+                                    <controls:SettingsCard.Description>
                                         <TextBlock>
                                             <Run Text="{x:Bind VersionName}" />
-                                            <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                            <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                             <Run Text="{x:Bind PackageName}" />
-                                            <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                            <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                             <Run Text="{x:Bind PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}}" />
                                         </TextBlock>
-                                    </controls:Setting.Description>
-                                </controls:Setting>
+                                    </controls:SettingsCard.Description>
+                                </controls:SettingsCard>
                             </DataTemplate>
-                        </controls:SettingExpander.ItemTemplate>
-                    </controls:SettingExpander>
+                        </controls:SettingsExpander.ItemTemplate>
+                    </controls:SettingsExpander>
                 </controls:SettingsGroup>
             </StackPanel>
         </ScrollViewer>

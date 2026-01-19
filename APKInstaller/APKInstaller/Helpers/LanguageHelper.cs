@@ -117,34 +117,39 @@ namespace APKInstaller.Helpers
 
         public static string GetLocaleLabel(this ApkInfo info)
         {
-            if (info.LocaleLabels?.Count > 0)
+            switch (info)
             {
-                int index = -1;
-                string language = ApplicationLanguages.PrimaryLanguageOverride;
-                if (string.IsNullOrWhiteSpace(language))
-                {
-                    IReadOnlyList<string> languages = GlobalizationPreferences.Languages;
-                    foreach (string lang in languages)
+                case null:
+                    return string.Empty;
+                case { LocaleLabels.Count: > 0 }:
+                    int index = -1;
+                    string language = ApplicationLanguages.PrimaryLanguageOverride;
+                    if (string.IsNullOrWhiteSpace(language))
                     {
-                        index = FindIndexFromSupportLanguageCodes(lang);
-                        if (index != -1) { break; }
+                        IReadOnlyList<string> languages = GlobalizationPreferences.Languages;
+                        foreach (string lang in languages)
+                        {
+                            index = FindIndexFromSupportLanguageCodes(lang);
+                            if (index != -1) { break; }
+                        }
                     }
-                }
-                else
-                {
-                    index = FindIndexFromSupportLanguageCodes(language);
-                }
-                if (index != -1)
-                {
-                    string[] code = SupportLanguageCodes[index];
-                    KeyValuePair<string, string> label = info.LocaleLabels.FirstOrDefault(x => Array.Exists(code, code => code.Equals(x.Key, StringComparison.OrdinalIgnoreCase)));
-                    if (!string.IsNullOrWhiteSpace(label.Value))
+                    else
                     {
-                        return label.Value;
+                        index = FindIndexFromSupportLanguageCodes(language);
                     }
-                }
+                    if (index != -1)
+                    {
+                        string[] code = SupportLanguageCodes[index];
+                        KeyValuePair<string, string> label = info.LocaleLabels.FirstOrDefault(x => Array.Exists(code, code => code.Equals(x.Key, StringComparison.OrdinalIgnoreCase)));
+                        if (!string.IsNullOrWhiteSpace(label.Value))
+                        {
+                            return label.Value;
+                        }
+                    }
+                    goto default;
+                default:
+                    return info.AppName;
             }
-            return info.AppName;
         }
     }
 }

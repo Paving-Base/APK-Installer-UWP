@@ -24,25 +24,25 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:SplitAPKSelector">
-                    <controls:Setting Header="{x:Bind Package.AppName}" WrapNoIconThreshold="0">
-                        <controls:Setting.Icon>
+                    <controls:SettingsCard Header="{x:Bind Package.AppName}" WrapNoIconThreshold="0">
+                        <controls:SettingsCard.HeaderIcon>
                             <CheckBox
                                 MinWidth="0"
                                 Padding="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                        </controls:Setting.Icon>
-                        <controls:Setting.Description>
+                        </controls:SettingsCard.HeaderIcon>
+                        <controls:SettingsCard.Description>
                             <TextBlock>
                                 <Run Text="{x:Bind Package.VersionName}" />
-                                <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                 <Run Text="{x:Bind Package.PackageName}" />
-                                <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                 <Run Text="{x:Bind Package.PackageSize, Converter={StaticResource FileSizeToFriendlyStringConverter}}" />
                             </TextBlock>
-                        </controls:Setting.Description>
-                    </controls:Setting>
+                        </controls:SettingsCard.Description>
+                    </controls:SettingsCard>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

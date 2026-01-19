@@ -63,16 +63,10 @@ namespace APKInstaller.Controls
             //}
 
             Button backButton = (Button)GetTemplateChild("BackButton");
-            if (backButton != null)
-            {
-                backButton.Click += OnBackButtonClick;
-            }
+            backButton?.Click += OnBackButtonClick;
 
             Button refreshButton = (Button)GetTemplateChild("RefreshButton");
-            if (refreshButton != null)
-            {
-                refreshButton.Click += OnRefreshButtonClick;
-            }
+            refreshButton?.Click += OnRefreshButtonClick;
 
             UpdateHeight();
             UpdateBackButton();

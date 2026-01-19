@@ -42,7 +42,7 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public static string ToolkitVersion { get; } = Assembly.GetAssembly(typeof(HsvColor)).GetName().Version.ToString(3);
 
-        public static string SharpAdbClientVersion { get; } = Assembly.GetAssembly(typeof(IAdbClient)).GetName().Version.ToString();
+        public static string SharpAdbClientVersion { get; } = Assembly.GetAssembly(typeof(IAdbClient)).GetName().Version.ToString(3);
 
         public static string VersionTextBlockText { get; } = $"{ResourceLoader.GetForViewIndependentUse().GetString("AppName") ?? Package.Current.DisplayName} v{Package.Current.Id.Version.ToFormattedString(3)}";
 
@@ -390,7 +390,7 @@ namespace APKInstaller.ViewModels.SettingsPages
         public async Task GetADBVersionAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
-            string version = "Unknown";
+            string version = "Not Running";
             if (await ADBHelper.CheckFileExistsAsync(ADBPath).ConfigureAwait(false))
             {
                 AdbServerStatus info = await AdbServer.Instance.GetStatusAsync(default).ConfigureAwait(false);

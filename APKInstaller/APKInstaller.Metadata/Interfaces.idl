@@ -26,7 +26,7 @@ namespace APKInstaller.Metadata
     interface ILoopback
     {
         Boolean EnableLoopback();
-        Boolean CreateFileSymbolic(String lpFileName, String lpExistingFileName);
+        Boolean CreateFileSymbolic(String path, String pathToTarget);
     }
 
     [contract(APKInstallerContract, 1)]

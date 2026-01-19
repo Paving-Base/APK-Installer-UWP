@@ -135,7 +135,7 @@
                                     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
-                            <Grid MinWidth="{StaticResource SettingActionControlMinWidth}">
+                            <Grid MinWidth="{StaticResource SettingsCardContentMinWidth}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
@@ -261,10 +261,10 @@
                         Visibility="{x:Bind Provider.ConnectedList, Converter={StaticResource CollectionVisibilityConverter}, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
                             <DataTemplate x:DataType="sacm:DeviceData">
-                                <controls:Setting
+                                <controls:SettingsCard
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"
-                                    Icon="&#xE8EA;" />
+                                    HeaderIcon="&#xE8EA;" />
                             </DataTemplate>
                         </controls:SettingsGroup.ItemTemplate>
                     </controls:SettingsGroup>
@@ -281,15 +281,15 @@
                     <controls:SettingsGroup Header="{x:Bind x:String.Format(Provider.DeviceListFormat, Provider.DeviceList.Count), Mode=OneWay}" ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}">
                         <controls:SettingsGroup.ItemTemplate>
                             <DataTemplate x:DataType="models:MDNSDeviceData">
-                                <controls:Setting Header="{x:Bind Name}" Icon="&#xE8EA;">
-                                    <controls:Setting.Description>
+                                <controls:SettingsCard Header="{x:Bind Name}" HeaderIcon="&#xE8EA;">
+                                    <controls:SettingsCard.Description>
                                         <TextBlock IsTextSelectionEnabled="True">
                                             <Run x:Uid="/PairDevicePage/AddressRun" />
                                             <Run Text="{x:Bind Address}" />
                                             <Run x:Uid="/PairDevicePage/PortRun" />
                                             <Run Text="{x:Bind Port}" />
                                         </TextBlock>
-                                    </controls:Setting.Description>
+                                    </controls:SettingsCard.Description>
                                     <Grid>
                                         <muxc:ProgressRing
                                             Width="24"
@@ -308,7 +308,7 @@
                                             Tag="{x:Bind}"
                                             Visibility="{x:Bind ConnectingDevice, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='true', Mode=OneWay}" />
                                     </Grid>
-                                </controls:Setting>
+                                </controls:SettingsCard>
                             </DataTemplate>
                         </controls:SettingsGroup.ItemTemplate>
                     </controls:SettingsGroup>
@@ -316,7 +316,7 @@
             </ScrollViewer>
             <Grid
                 Grid.Row="2"
-                MinWidth="{StaticResource SettingCardContentMinWidth}"
+                MinWidth="{StaticResource SettingsCardContentMinWidth}"
                 Padding="16,8"
                 HorizontalAlignment="Right"
                 ColumnSpacing="12">

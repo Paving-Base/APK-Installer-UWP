@@ -26,7 +26,11 @@ namespace APKInstaller.Helpers
 
         public static Task<bool> CheckIsRunningAsync() => AdbServer.Instance.GetStatusAsync(default).ContinueWith(x => IsRunning = x.Result.IsRunning);
 
-        public static Task StartADBAsync(string path) => AdbServer.Instance.StartServerAsync(path, restartServerIfNewer: false, default).ContinueWith(continuationAction: x => IsRunning = true);
+        public static async Task StartADBAsync(string path)
+        {
+            await AdbServer.Instance.StartServerAsync(path, restartServerIfNewer: false, default);
+            IsRunning = true;
+        }
 
         public static async Task<bool> CheckFileExistsAsync(string path)
         {

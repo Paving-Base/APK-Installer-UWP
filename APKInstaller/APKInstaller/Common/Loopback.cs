@@ -15,14 +15,14 @@ namespace APKInstaller.Common
     {
         public static ILoopback Instance { get; } = new Loopback();
 
-        public bool CreateFileSymbolic(string lpFileName, string lpExistingFileName)
+        public bool CreateFileSymbolic(string path, string pathToTarget)
         {
-            if (PInvoke.CreateHardLink(lpFileName, lpExistingFileName))
+            if (PInvoke.CreateHardLink(path, pathToTarget))
             {
                 Span<char> sidString = GetCurrentPackageSid(out _);
                 if (!sidString.IsEmpty)
                 {
-                    FileInfo info = new(lpFileName);
+                    FileInfo info = new(path);
                     FileSecurity security = info.GetAccessControl();
                     security.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(sidString.ToString()), FileSystemRights.ReadAndExecute, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow));
                     info.SetAccessControl(security);
@@ -37,12 +37,12 @@ namespace APKInstaller.Common
             if (PInvoke.NetworkIsolationGetAppContainerConfig(out uint size, out SID_AND_ATTRIBUTES* arrayValue) == 0)
             {
                 ReadOnlySpan<SID_AND_ATTRIBUTES> list = new(arrayValue, (int)size);
-                Span<char> currentSid = GetCurrentPackageSid(out nint sid);
+                Span<char> currentSid = GetCurrentPackageSid(out PSID sid);
                 foreach (SID_AND_ATTRIBUTES sidAndAttributes in list)
                 {
                     if (PInvoke.ConvertSidToStringSid(sidAndAttributes.Sid, out PWSTR stringSid))
                     {
-                        if (((ReadOnlySpan<char>)currentSid).Equals(stringSid.AsSpan(), StringComparison.OrdinalIgnoreCase))
+                        if (currentSid.Equals(stringSid.AsSpan(), StringComparison.OrdinalIgnoreCase))
                         {
                             return true;
                         }
@@ -52,7 +52,7 @@ namespace APKInstaller.Common
                     ..list,
                     new SID_AND_ATTRIBUTES
                     {
-                        Sid = new PSID(sid),
+                        Sid = sid,
                         Attributes = 0
                     }
                 ]) == 0;
@@ -60,11 +60,11 @@ namespace APKInstaller.Common
             return false;
         }
 
-        private static Span<char> GetCurrentPackageSid(out nint sid)
+        private static Span<char> GetCurrentPackageSid(out PSID sid)
         {
             if (PackageSidFromFamilyName(Package.Current.Id.FamilyName, out sid) == 0)
             {
-                if (PInvoke.ConvertSidToStringSid(new PSID(sid), out PWSTR stringSid))
+                if (PInvoke.ConvertSidToStringSid(sid, out PWSTR stringSid))
                 {
                     return stringSid.AsSpan();
                 }
@@ -73,6 +73,6 @@ namespace APKInstaller.Common
         }
 
         [LibraryImport("kernel.appcore.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        private static partial uint PackageSidFromFamilyName(string packageFamilyName, out nint sid);
+        private static partial uint PackageSidFromFamilyName(string packageFamilyName, out PSID sid);
     }
 }

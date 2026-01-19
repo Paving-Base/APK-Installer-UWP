@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Authors>wherewhere</Authors>
     <Copyright>Copyright © 2017 - 2026 PavingBase. All Rights Reserved.</Copyright>
-    <LangVersion>13</LangVersion>
+    <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/Paving-Base/APK-Installer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Paving-Base/APK-Installer</RepositoryUrl>
   </PropertyGroup>

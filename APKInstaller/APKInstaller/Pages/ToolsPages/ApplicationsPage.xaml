@@ -38,7 +38,7 @@
             x:Name="ListView"
             Grid.Row="1"
             Padding="12,0,12,12"
-            ItemContainerStyle="{StaticResource ListViewItemSettingStyle}"
+            ItemContainerStyle="{StaticResource ListViewItemSettingsCardStyle}"
             ItemsSource="{x:Bind Provider.Applications, Mode=OneWay}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -69,33 +69,33 @@
                                     Tag="{x:Bind Name}" />
                             </MenuFlyout>
                         </Border.Resources>
-                        <controls:Setting
+                        <controls:SettingsCard
                             ContextFlyout="{StaticResource MenuFlyout}"
                             Header="{x:Bind Name}"
-                            Icon="{x:Bind Icon}"
+                            HeaderIcon="{x:Bind Icon}"
                             Style="{StaticResource ListViewItemContentSettingStyle}">
-                            <controls:Setting.Description>
+                            <controls:SettingsCard.Description>
                                 <Grid>
                                     <TextBlock x:Name="InfoText" x:Load="{x:Bind PackageName, Converter={StaticResource StringToBoolConverter}}">
                                         <Run Text="{x:Bind VersionInfo.VersionName}" />
-                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                         <Run Text="{x:Bind PackageName}" />
-                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                         <Run Text="{x:Bind IsActive, Converter={StaticResource ApplicationConverter}, ConverterParameter='State'}" />
                                     </TextBlock>
                                     <TextBlock x:Name="InfoTextWithoutName" x:Load="{x:Bind PackageName, Converter={StaticResource StringToBoolConverter}, ConverterParameter='true'}">
                                         <Run Text="{x:Bind VersionInfo.VersionName}" />
-                                        <Run Foreground="{StaticResource CardPrimaryForegroundBrush}" Text=" | " />
+                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text=" | " />
                                         <Run Text="{x:Bind IsActive, Converter={StaticResource ApplicationConverter}, ConverterParameter='State'}" />
                                     </TextBlock>
                                 </Grid>
-                            </controls:Setting.Description>
+                            </controls:SettingsCard.Description>
                             <Button
                                 Width="{ThemeResource SettingCardActionButtonWidth}"
                                 Height="{ThemeResource SettingCardActionButtonHeight}"
                                 Flyout="{StaticResource MenuFlyout}"
                                 Style="{StaticResource TitleBarSettingsButtonStyle}" />
-                        </controls:Setting>
+                        </controls:SettingsCard>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>

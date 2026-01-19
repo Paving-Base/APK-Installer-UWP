@@ -28,7 +28,7 @@ namespace AAPTForNet
         protected static string TempPath { get; } = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}", "AppPackages");
         protected static string LocalPath { get; } = Path.GetDirectoryName(ApplicationData.Current.LocalFolder.Path) ?? string.Empty;
 
-        protected virtual bool HasDumpOverride { get; } = false;
+        protected virtual bool HasDumpOverride => false;
 
         protected virtual Task<DumpModel> DumpAsync(
             string path,

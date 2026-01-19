@@ -50,26 +50,26 @@
                     </muxc:InfoBar>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/TestPage/UITestSettingsHeader">
-                    <controls:Setting x:Uid="/TestPage/TitleBarSettings" Icon="&#xE737;">
+                    <controls:SettingsCard x:Uid="/TestPage/TitleBarSettings" HeaderIcon="&#xE737;">
                         <ToggleSwitch IsOn="{x:Bind IsExtendsTitleBar, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                    </controls:Setting>
-                    <controls:SettingExpander x:Uid="/TestPage/ProgressSettings" Icon="&#xF16A;">
-                        <controls:SettingExpander.ActionContent>
+                    </controls:SettingsCard>
+                    <controls:SettingsExpander x:Uid="/TestPage/ProgressSettings" HeaderIcon="&#xF16A;">
+                        <controls:SettingsExpander.ActionContent>
                             <ToggleSwitch IsOn="{x:Bind IsShowProgressRing, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                        </controls:SettingExpander.ActionContent>
-                        <controls:Setting x:Uid="/TestPage/SetProgressValue" Style="{StaticResource DefaultSettingExpanderItemStyle}">
+                        </controls:SettingsExpander.ActionContent>
+                        <controls:SettingsCard x:Uid="/TestPage/SetProgressValue">
                             <Slider
                                 Width="180"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Maximum="100"
                                 Value="{x:Bind ProgressValue, Mode=TwoWay}" />
-                        </controls:Setting>
-                        <controls:Setting x:Uid="/TestPage/ShowRefreshButton" Style="{StaticResource DefaultSettingExpanderItemStyle}">
+                        </controls:SettingsCard>
+                        <controls:SettingsCard x:Uid="/TestPage/ShowRefreshButton">
                             <ToggleSwitch IsOn="{x:Bind TitleBar.IsRefreshButtonVisible, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
-                        </controls:Setting>
-                    </controls:SettingExpander>
-                    <controls:Setting x:Uid="/TestPage/LanguageSettings" Icon="&#xF2B7;">
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander>
+                    <controls:SettingsCard x:Uid="/TestPage/LanguageSettings" HeaderIcon="&#xF2B7;">
                         <ComboBox
                             ItemsSource="{x:Bind helper:LanguageHelper.SupportCultures}"
                             Loaded="ComboBox_Loaded"
@@ -83,8 +83,8 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                    </controls:Setting>
-                    <controls:Setting x:Uid="/TestPage/CompactOverlaySettings" Icon="&#xE944;">
+                    </controls:SettingsCard>
+                    <controls:SettingsCard x:Uid="/TestPage/CompactOverlaySettings" HeaderIcon="&#xE944;">
                         <StackPanel
                             Margin="0,2"
                             Orientation="Horizontal"
@@ -98,19 +98,19 @@
                                 Click="Button_Click"
                                 Tag="OutPIP" />
                         </StackPanel>
-                    </controls:Setting>
+                    </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/TestPage/AndroidTestSettingsHeader">
-                    <controls:Setting
+                    <controls:SettingsCard
                         x:Uid="/TestPage/ApplicationsSettings"
                         Click="Button_Click"
-                        Icon="&#xE7B8;"
+                        HeaderIcon="&#xE7B8;"
                         IsClickEnabled="True"
                         Tag="Applications" />
-                    <controls:Setting
+                    <controls:SettingsCard
                         x:Uid="/TestPage/ProcessesSettings"
                         Click="Button_Click"
-                        Icon="&#xE9D9;"
+                        HeaderIcon="&#xE9D9;"
                         IsClickEnabled="True"
                         Tag="Processes" />
                 </controls:SettingsGroup>

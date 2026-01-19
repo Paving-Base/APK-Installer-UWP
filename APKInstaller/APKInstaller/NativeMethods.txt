@@ -1,5 +1,10 @@
-﻿CreateHardLink
+﻿IClassFactory
+
+CoCreateInstance
+CoRegisterClassObject
+CoRevokeClassObject
 ConvertSidToStringSid
 ConvertStringSidToSid
+CreateHardLink
 NetworkIsolationGetAppContainerConfig
 NetworkIsolationSetAppContainerConfig
