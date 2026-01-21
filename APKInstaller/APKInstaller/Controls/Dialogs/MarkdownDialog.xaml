@@ -21,7 +21,11 @@
                 HorizontalAlignment="Left"
                 Text="# Helper">
                 <cwuc:MarkdownTextBlock.Config>
-                    <cwuc:MarkdownConfig />
+                    <cwuc:MarkdownConfig>
+                        <cwuc:MarkdownConfig.Themes>
+                            <cwuc:MarkdownThemes />
+                        </cwuc:MarkdownConfig.Themes>
+                    </cwuc:MarkdownConfig>
                 </cwuc:MarkdownTextBlock.Config>
             </cwuc:MarkdownTextBlock>
         </ScrollViewer>

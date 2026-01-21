@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -157,7 +158,12 @@ namespace APKInstaller.Helpers
                 : type == typeof(ElementTheme) ? Deserialize(value, SourceGenerationContext.Default.ElementTheme)
                 : type == typeof(DateTimeOffset) ? Deserialize(value, SourceGenerationContext.Default.DateTimeOffset)
                 : JsonSerializer.Deserialize(value, type, SourceGenerationContext.Default) is T result ? result : default;
-            static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo) => JsonSerializer.Deserialize(json, jsonTypeInfo) is T value ? value : default;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo)
+            {
+                TValue value = JsonSerializer.Deserialize(json, jsonTypeInfo);
+                return Unsafe.As<TValue, T>(ref value);
+            }
         }
     }
 
