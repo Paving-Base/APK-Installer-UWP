@@ -43,7 +43,7 @@ namespace Zeroconf.DNS
             StringBuilder sb = new();
             foreach (string txt in TXT)
             {
-                sb.AppendFormat("\"{0}\" ", txt);
+                sb.Append($"\"{txt}\" ");
             }
 
             return sb.ToString().TrimEnd();

@@ -28,7 +28,7 @@ namespace Zeroconf.Models
             set => retries = value < 0 ? throw new ArgumentOutOfRangeException(nameof(value)) : value;
         }
 
-        protected ZeroconfOptions(string protocol) : this(new[] { protocol })
+        protected ZeroconfOptions(string protocol) : this([protocol])
         {
         }
 

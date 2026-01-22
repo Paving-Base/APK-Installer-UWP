@@ -52,7 +52,7 @@ namespace Zeroconf.DNS
             set
             {
                 m_QName = value;
-                if (!m_QName.EndsWith(".", StringComparison.Ordinal))
+                if (!m_QName.EndsWith('.'))
                 {
                     m_QName += ".";
                 }
@@ -75,9 +75,9 @@ namespace Zeroconf.DNS
             QClass = (QClass)rr.ReadUInt16();
         }
 
-        private byte[] WriteName(string src)
+        private static byte[] WriteName(string src)
         {
-            if (!src.EndsWith(".", StringComparison.Ordinal))
+            if (!src.EndsWith('.'))
             {
                 src += ".";
             }
@@ -99,13 +99,13 @@ namespace Zeroconf.DNS
                     intJ = -1;
                 }
             }
-            sb[sb.Length - 1] = '\0';
+            sb[^1] = '\0';
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
 
         public byte[] Data => [.. WriteName(QName), .. WriteShort((ushort)QType), .. WriteShort((ushort)QClass)];
 
-        private byte[] WriteShort(ushort sValue) =>
+        private static byte[] WriteShort(ushort sValue) =>
             BitConverter.GetBytes(Header.HostToNetworkOrder((short)sValue));
 
         public override string ToString() =>

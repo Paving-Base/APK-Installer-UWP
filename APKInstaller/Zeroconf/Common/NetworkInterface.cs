@@ -22,7 +22,7 @@ namespace Zeroconf.Common
             int retryDelayMilliseconds,
             Action<IPAddress, byte[]> onResponse,
             CancellationToken cancellationToken,
-            IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn = null)
+            params IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn)
         {
             // populate list with all adapters if none specified
             if (netInterfacesToSendRequestOn?.Any() != true)
@@ -38,7 +38,7 @@ namespace Zeroconf.Common
                       .ConfigureAwait(false);
         }
 
-        private async Task NetworkRequestAsync(
+        private static async Task NetworkRequestAsync(
             byte[] requestBytes,
             TimeSpan scanTime,
             int retries,
@@ -196,7 +196,7 @@ namespace Zeroconf.Common
                     .Select(inter => ListenForAnnouncementsAsync(inter, callback, cancellationToken)));
         }
 
-        private Task ListenForAnnouncementsAsync(System.Net.NetworkInformation.NetworkInterface adapter, Action<AdapterInformation, string, byte[]> callback, CancellationToken cancellationToken)
+        private static Task ListenForAnnouncementsAsync(System.Net.NetworkInformation.NetworkInterface adapter, Action<AdapterInformation, string, byte[]> callback, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(async () =>
             {

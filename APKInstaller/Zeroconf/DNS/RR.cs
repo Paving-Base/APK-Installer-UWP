@@ -117,12 +117,7 @@ namespace Zeroconf.DNS
         }
 
         public override string ToString() =>
-            string.Format("{0,-32} {1}\t{2}\t{3}\t{4}",
-                NAME,
-                TTL,
-                Class,
-                Type,
-                RECORD);
+            $"{NAME,-32} {TTL}\t{Class}\t{Type}\t{RECORD}";
     }
 
     internal class AnswerRR(RecordReader br) : RR(br);

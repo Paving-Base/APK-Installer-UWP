@@ -57,7 +57,7 @@ namespace APKInstaller.Common
             return new DumpModel(path, isSuccess, output);
         }
 
-        protected override async Task<StorageFile> CreateHardLinkAsync(StorageFile file)
+        protected override async ValueTask<StorageFile> CreateHardLinkAsync(StorageFile file)
         {
             try
             {

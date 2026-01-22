@@ -16,7 +16,7 @@ namespace Zeroconf.Interfaces
             int retryDelayMilliseconds,
             Action<IPAddress, byte[]> onResponse,
             CancellationToken cancellationToken,
-            IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn);
+            params IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn);
 
         Task ListenForAnnouncementsAsync(Action<AdapterInformation, string, byte[]> callback, CancellationToken cancellationToken);
     }

@@ -12,15 +12,7 @@ namespace Zeroconf.DNS
     internal class RecordAAAA(RecordReader rr) : Record
     {
         public string Address =
-            string.Format("{0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}:{6:x}:{7:x}",
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16(),
-                rr.ReadUInt16());
+            $"{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}";
 
         public override string ToString() => Address.ToString();
     }

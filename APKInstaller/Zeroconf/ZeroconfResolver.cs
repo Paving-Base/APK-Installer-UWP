@@ -23,7 +23,7 @@ namespace Zeroconf
         private static IEnumerable<string> BrowseResponseParser(Response response) =>
             response.RecordsPTR.Select(ptr => ptr.PTRDNAME);
 
-        private static async Task<IDictionary<string, Response>> ResolveInternal(
+        private static async ValueTask<IDictionary<string, Response>> ResolveInternal(
             ZeroconfOptions options,
             Action<string, Response> callback,
             CancellationToken cancellationToken,

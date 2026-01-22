@@ -164,10 +164,10 @@ namespace Zeroconf.DNS
             ARCOUNT = rr.ReadUInt16();
         }
 
-        private ushort SetBits(ushort oldValue, int position, int length, bool blnValue) =>
+        private static ushort SetBits(ushort oldValue, int position, int length, bool blnValue) =>
             SetBits(oldValue, position, length, blnValue ? (ushort)1 : (ushort)0);
 
-        private ushort SetBits(ushort oldValue, int position, int length, ushort newValue)
+        private static ushort SetBits(ushort oldValue, int position, int length, ushort newValue)
         {
             // sanity check
             if (length <= 0 || position >= 16)
@@ -186,7 +186,7 @@ namespace Zeroconf.DNS
             return oldValue;
         }
 
-        private ushort GetBits(ushort oldValue, int position, int length)
+        private static ushort GetBits(ushort oldValue, int position, int length)
         {
             // sanity check
             if (length <= 0 || position >= 16)
@@ -214,7 +214,7 @@ namespace Zeroconf.DNS
             .. WriteShort(ARCOUNT),
         ];
 
-        private byte[] WriteShort(ushort sValue) =>
+        private static byte[] WriteShort(ushort sValue) =>
             BitConverter.GetBytes(HostToNetworkOrder((short)sValue));
 
         internal static short HostToNetworkOrder(short host) =>

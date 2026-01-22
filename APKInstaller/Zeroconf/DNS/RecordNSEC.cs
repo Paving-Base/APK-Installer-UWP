@@ -12,6 +12,6 @@ namespace Zeroconf.DNS
             RDATA = rr.ReadBytes(RDLENGTH);
         }
 
-        public override string ToString() => string.Format("not-used");
+        public override string ToString() => "not-used";
     }
 }

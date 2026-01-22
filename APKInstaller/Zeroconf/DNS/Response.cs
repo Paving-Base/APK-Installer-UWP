@@ -105,17 +105,17 @@ namespace Zeroconf.DNS
         /// <summary>
         /// List of RecordTXT in Response.Answers
         /// </summary>
-        public RecordTXT[] RecordsTXT => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordTXT>().ToArray();
+        public RecordTXT[] RecordsTXT => [.. Answers.Select(answerRR => answerRR.RECORD).OfType<RecordTXT>()];
 
         /// <summary>
         /// List of RecordA in Response.Answers
         /// </summary>
-        public RecordA[] RecordsA => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordA>().ToArray();
+        public RecordA[] RecordsA => [.. Answers.Select(answerRR => answerRR.RECORD).OfType<RecordA>()];
 
         /// <summary>
         /// List of RecordPTR in Response.Answers
         /// </summary>
-        public RecordPTR[] RecordsPTR => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordPTR>().ToArray();
+        public RecordPTR[] RecordsPTR => [.. Answers.Select(answerRR => answerRR.RECORD).OfType<RecordPTR>()];
 
         ///// <summary>
         ///// List of RecordCNAME in Response.Answers
@@ -125,7 +125,7 @@ namespace Zeroconf.DNS
         /// <summary>
         /// List of RecordAAAA in Response.Answers
         /// </summary>
-        public RecordAAAA[] RecordsAAAA => Answers.Select(answerRR => answerRR.RECORD).OfType<RecordAAAA>().ToArray();
+        public RecordAAAA[] RecordsAAAA => [.. Answers.Select(answerRR => answerRR.RECORD).OfType<RecordAAAA>()];
 
         ///// <summary>
         ///// List of RecordNS in Response.Answers

@@ -74,10 +74,6 @@ namespace Zeroconf.DNS
         public string TARGET = rr.ReadDomainName();
 
         public override string ToString() =>
-            string.Format("{0} {1} {2} {3}",
-                PRIORITY,
-                WEIGHT,
-                PORT,
-                TARGET);
+            $"{PRIORITY} {WEIGHT} {PORT} {TARGET}";
     }
 }

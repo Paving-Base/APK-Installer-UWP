@@ -118,7 +118,7 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
         }
 
-        public async Task CheckAPPAsync(Dictionary<string, string> apps, int index)
+        public async ValueTask CheckAPPAsync(Dictionary<string, string> apps, int index)
         {
             try
             {

@@ -21,11 +21,7 @@ namespace Zeroconf.DNS
     internal class RecordA(RecordReader rr) : Record
     {
         public string Address =
-            string.Format("{0}.{1}.{2}.{3}",
-                rr.ReadByte(),
-                rr.ReadByte(),
-                rr.ReadByte(),
-                rr.ReadByte());
+            $"{rr.ReadByte()}.{rr.ReadByte()}.{rr.ReadByte()}.{rr.ReadByte()}";
 
         public override string ToString() => Address;
     }

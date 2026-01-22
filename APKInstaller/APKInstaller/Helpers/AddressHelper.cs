@@ -10,7 +10,7 @@ namespace APKInstaller.Helpers
 {
     public class AddressHelper
     {
-        public static async Task<List<string>> GetAddressID(string mac)
+        public static async ValueTask<List<string>> GetAddressID(string mac)
         {
             List<string> addresses = [];
             Regex Regex = new($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
@@ -36,7 +36,7 @@ namespace APKInstaller.Helpers
             }
         }
 
-        public static async Task<List<string>> ConnectHyperVAsync()
+        public static async ValueTask<List<string>> ConnectHyperVAsync()
         {
             AdbClient AdbClient = new();
             List<string> addresses = await GetAddressID("00-15-5d");

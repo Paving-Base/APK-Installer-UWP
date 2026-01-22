@@ -402,7 +402,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             ADBVersion = version;
         }
 
-        private async Task GetAboutTextBlockTextAsync(bool reset)
+        private async ValueTask GetAboutTextBlockTextAsync(bool reset)
         {
             if (reset || string.IsNullOrWhiteSpace(_aboutTextBlockText))
             {

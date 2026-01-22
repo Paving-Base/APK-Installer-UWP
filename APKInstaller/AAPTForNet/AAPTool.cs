@@ -145,7 +145,7 @@ namespace AAPTForNet
         /// </summary>
         /// <param name="path">Absolute path to .apk file</param>
         /// <returns>Filled apk if dump process is not failed</returns>
-        public async Task<ApkInfo?> DecompileAsync(StorageFile file)
+        public async ValueTask<ApkInfo?> DecompileAsync(StorageFile file)
         {
             List<string> apkList = [];
 
@@ -231,7 +231,7 @@ namespace AAPTForNet
             return baseApk;
         }
 
-        protected async Task<StorageFile> PrefixStorageFileAsync(StorageFile sourceFile)
+        protected async ValueTask<StorageFile> PrefixStorageFileAsync(StorageFile sourceFile)
         {
             if (sourceFile.Path.StartsWith(LocalPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -265,6 +265,6 @@ namespace AAPTForNet
             }
         }
 
-        protected abstract Task<StorageFile> CreateHardLinkAsync(StorageFile file);
+        protected abstract ValueTask<StorageFile> CreateHardLinkAsync(StorageFile file);
     }
 }

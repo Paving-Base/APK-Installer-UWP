@@ -23,7 +23,7 @@ namespace AAPTForNet
         /// Find the icon with maximum config (largest), then extract to file
         /// </summary>
         /// <param name="path"></param>
-        public async Task<Icon> ExtractLargestIconAsync(string path)
+        public async ValueTask<Icon> ExtractLargestIconAsync(string path)
         {
             Dictionary<string, Icon> iconTable = await ExtractIconTableAsync(path).ConfigureAwait(false);
 
@@ -51,7 +51,7 @@ namespace AAPTForNet
             return largestIcon;
         }
 
-        private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(string path, string asset)
+        private async ValueTask<Dictionary<string, Icon>> DumpMarkupIconAsync(string path, string asset)
         {
             StrongBox<int> startIndex = new(-1);
             Dictionary<string, Icon> output = await DumpMarkupIconAsync(path, asset, startIndex).ConfigureAwait(false);
@@ -60,7 +60,7 @@ namespace AAPTForNet
                 : output;
         }
 
-        private async Task<Dictionary<string, Icon>> DumpMarkupIconAsync(
+        private async ValueTask<Dictionary<string, Icon>> DumpMarkupIconAsync(
             string path, string asset, StrongBox<int> lastTryIndex, int start = -1)
         {
             // Not found any icon image in package?,
@@ -90,7 +90,7 @@ namespace AAPTForNet
             return [];
         }
 
-        private async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path)
+        private async ValueTask<Dictionary<string, Icon>> ExtractIconTableAsync(string path)
         {
             string iconID = await ExtractIconIDAsync(path).ConfigureAwait(false);
             return await ExtractIconTableAsync(path, iconID).ConfigureAwait(false);
@@ -101,7 +101,7 @@ namespace AAPTForNet
         /// </summary>
         /// <param name="path"></param>
         /// <returns>icon id</returns>
-        private async Task<string> ExtractIconIDAsync(string path)
+        private async ValueTask<string> ExtractIconIDAsync(string path)
         {
             int iconIndex = -1;
             TaskCompletionSource<string> source = new();
@@ -130,7 +130,7 @@ namespace AAPTForNet
             return iconIndex == -1 ? string.Empty : msg.Split('@')[1];
         }
 
-        private async Task<Dictionary<string, Icon>> ExtractIconTableAsync(string path, string iconID)
+        private async ValueTask<Dictionary<string, Icon>> ExtractIconTableAsync(string path, string iconID)
         {
             if (string.IsNullOrEmpty(iconID))
             {
@@ -247,7 +247,7 @@ namespace AAPTForNet
         /// <param name="path">path to apk file</param>
         /// <param name="icon"></param>
         /// <returns>Absolute path to extracted image</returns>
-        public static async Task<string> ExtractIconImageAsync(string path, Icon icon)
+        public static async ValueTask<string> ExtractIconImageAsync(string path, Icon icon)
         {
             if (Icon.Default.Equals(icon))
             {
@@ -265,7 +265,7 @@ namespace AAPTForNet
             return IconPath;
         }
 
-        private static async Task TryExtractIconImageAsync(string path, string iconName, string desFile)
+        private static async ValueTask TryExtractIconImageAsync(string path, string iconName, string desFile)
         {
             try
             {
@@ -280,7 +280,7 @@ namespace AAPTForNet
         /// <param name="path"></param>
         /// <param name="iconName"></param>
         /// <param name="desFile"></param>
-        private static async Task ExtractIconImageAsync(string path, string iconName, string desFile)
+        private static async ValueTask ExtractIconImageAsync(string path, string iconName, string desFile)
         {
             if (iconName.EndsWith(".xml"))
             {

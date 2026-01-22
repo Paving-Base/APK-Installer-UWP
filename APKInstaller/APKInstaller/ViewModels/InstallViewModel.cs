@@ -405,7 +405,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task OnFirstRunAsync()
+        private async ValueTask OnFirstRunAsync()
         {
             if (SettingsHelper.Get<bool>(SettingsHelper.IsFirstRun))
             {
@@ -428,7 +428,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private static async Task<bool> CheckADBAsync()
+        private static async ValueTask<bool> CheckADBAsync()
         {
             const string sdk = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
             string path = ADBPath;
@@ -585,7 +585,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task DownloadADBAsync()
+        private async ValueTask DownloadADBAsync()
         {
             await Dispatcher.ResumeForegroundAsync();
             FolderPicker folderPicker = new()
@@ -713,7 +713,7 @@ namespace APKInstaller.ViewModels
             ADBPath = Path.Combine(folder.Path, @"platform-tools\adb.exe");
         }
 
-        private async Task InitializeADBAsync()
+        private async ValueTask InitializeADBAsync()
         {
             WaitProgressText = _loader.GetString("Loading");
             await ThreadSwitcher.ResumeBackgroundAsync();
@@ -768,7 +768,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task InitializeUIAsync()
+        private async ValueTask InitializeUIAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_file != null || _url != null)
@@ -860,7 +860,7 @@ namespace APKInstaller.ViewModels
             IsInitialized = true;
         }
 
-        private async Task<bool> ShowDeviceDialogAsync()
+        private async ValueTask<bool> ShowDeviceDialogAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (IsOnlyWSA)
@@ -985,7 +985,7 @@ namespace APKInstaller.ViewModels
             return false;
         }
 
-        private async Task ReinitializeUIAsync()
+        private async ValueTask ReinitializeUIAsync()
         {
             WaitProgressText = _loader.GetString("Loading");
             await ThreadSwitcher.ResumeBackgroundAsync();
@@ -1096,7 +1096,7 @@ namespace APKInstaller.ViewModels
 
         private void CheckOnlinePackage()
         {
-            Regex[] uriRegex = [SchemaRegex, URLRegex];
+            ReadOnlySpan<Regex> uriRegex = [SchemaRegex, URLRegex];
             string uri = uriRegex[0].IsMatch(_url.ToString()) ? uriRegex[0].Match(_url.ToString()).Groups[1].Value : uriRegex[1].Match(_url.ToString()).Groups[1].Value;
             if (uri.TryGetUri(out Uri url))
             {
@@ -1170,7 +1170,7 @@ namespace APKInstaller.ViewModels
             IsInstalling = false;
         }
 
-        private async Task DownloadAPKAsync()
+        private async ValueTask DownloadAPKAsync()
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_url != null)
@@ -1318,7 +1318,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task<bool> CheckDeviceAsync(bool forces = false)
+        private async ValueTask<bool> CheckDeviceAsync(bool forces = false)
         {
             if (!ADBHelper.IsRunning) { return false; }
             await ThreadSwitcher.ResumeBackgroundAsync();
@@ -1507,7 +1507,7 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        private async Task<ApkInfo[]> SelectSplitAsync(ICollection<ApkInfo> apks)
+        private async ValueTask<ApkInfo[]> SelectSplitAsync(ICollection<ApkInfo> apks)
         {
             if (this._device is DeviceData _device)
             {
@@ -1541,7 +1541,7 @@ namespace APKInstaller.ViewModels
                                 continue;
                         }
 
-                        async Task<bool> IsIncludeABIAsync(ApkInfo apk)
+                        async ValueTask<bool> IsIncludeABIAsync(ApkInfo apk)
                         {
                             if (abi == null)
                             {
@@ -1552,7 +1552,7 @@ namespace APKInstaller.ViewModels
                             return apk.SupportedABIs.Exists(x => x.Equals(abi, StringComparison.OrdinalIgnoreCase));
                         }
 
-                        async Task<bool> IsIncludeLocaleAsync(ApkInfo apk)
+                        async ValueTask<bool> IsIncludeLocaleAsync(ApkInfo apk)
                         {
                             if (locale == null)
                             {
@@ -1564,7 +1564,7 @@ namespace APKInstaller.ViewModels
                             return !string.IsNullOrWhiteSpace(country) && apk.SupportLocales.Exists(x => x.StartsWith(country, StringComparison.OrdinalIgnoreCase));
                         }
 
-                        async Task ProcessDensityAsync(SplitAPKSelector selector)
+                        async ValueTask ProcessDensityAsync(SplitAPKSelector selector)
                         {
                             if (density is not int num)
                             {
@@ -1649,7 +1649,7 @@ namespace APKInstaller.ViewModels
             TVDPI = 213
         } 
 
-        public async Task OpenAPKAsync(StorageFile file)
+        public async ValueTask OpenAPKAsync(StorageFile file)
         {
             if (file != null)
             {
@@ -1739,7 +1739,7 @@ namespace APKInstaller.ViewModels
             IsInitialized = true;
         }
 
-        private async Task OpenPathAsync(IStorageItem storageItem)
+        private async ValueTask OpenPathAsync(IStorageItem storageItem)
         {
             switch (storageItem)
             {
@@ -1778,7 +1778,7 @@ namespace APKInstaller.ViewModels
             IsInitialized = true;
         }
 
-        private async Task CreateAPKSAsync(IReadOnlyList<IStorageItem> items)
+        private async ValueTask CreateAPKSAsync(IReadOnlyList<IStorageItem> items)
         {
             await ThreadSwitcher.ResumeBackgroundAsync();
             List<StorageFile> apkList = [];
@@ -1845,11 +1845,8 @@ namespace APKInstaller.ViewModels
                     }
                 }
 
-                await StorageFile.GetFileFromPathAsync(temp)
-                                 .AsTask()
-                                 .ContinueWith(x => OpenAPKAsync(x.Result))
-                                 .Unwrap()
-                                 .ConfigureAwait(false);
+                StorageFile file = await StorageFile.GetFileFromPathAsync(temp);
+                await OpenAPKAsync(file).ConfigureAwait(false);
                 return;
             }
 
@@ -1873,7 +1870,7 @@ namespace APKInstaller.ViewModels
             await ExitApplicationAsync().ConfigureAwait(false);
         }
 
-        private async Task ExitApplicationAsync()
+        private async ValueTask ExitApplicationAsync()
         {
             await Dispatcher.ResumeForegroundAsync();
             if (MainPage.WindowCount > 1)

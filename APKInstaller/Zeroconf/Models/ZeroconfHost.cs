@@ -26,7 +26,7 @@ namespace Zeroconf.Models
         /// <summary>
         /// IP Address (alias for IPAddresses.First())
         /// </summary>
-        public string IPAddress => IPAddresses.FirstOrDefault();
+        public string IPAddress => IPAddresses is [string value, ..] ? value : default;
 
         /// <summary>
         /// IP Addresses

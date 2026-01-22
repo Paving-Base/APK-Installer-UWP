@@ -45,7 +45,7 @@ namespace AAPTForNet.Models
             RealPath = "ms-appx:///Assets/256x256.png";
         }
 
-        internal async Task<bool> IsHighDensityAsync()
+        internal async ValueTask<bool> IsHighDensityAsync()
         {
             if (!IsImage || !File.Exists(RealPath))
             {

@@ -15,7 +15,7 @@ namespace Zeroconf
         private readonly Timer timer;
         private readonly int pingsUntilRemove;
         private HashSet<(string, string)> discoveredHosts = [];
-        private readonly IDictionary<(string, string), int> toRemove = new Dictionary<(string, string), int>();
+        private readonly Dictionary<(string, string), int> toRemove = [];
 
         public IReadOnlyList<IZeroconfHost> Hosts { get; private set; }
 
@@ -69,16 +69,13 @@ namespace Zeroconf
                             ServiceFound?.Invoke(this, host);
                             newHosts.Add(keyValue);
                         }
-                        if (toRemove.ContainsKey(keyValue))
-                        {
-                            toRemove.Remove(keyValue);
-                        }
+                        toRemove.Remove(keyValue);
                     }
                 }
 
                 foreach ((string, string) service in remainingHosts)
                 {
-                    if (toRemove.ContainsKey(service))
+                    if (!toRemove.TryAdd(service, 0))
                     {
                         //zeroconf sometimes reports missing hosts incorrectly. 
                         //after pingsUntilRemove missing hosts reports, we'll remove the service from the list.
@@ -88,10 +85,6 @@ namespace Zeroconf
                             newHosts.Remove(service);
                             ServiceLost?.Invoke(this, new ZeroconfHost { DisplayName = service.Item1, Id = service.Item2 });
                         }
-                    }
-                    else
-                    {
-                        toRemove.Add(service, 0);
                     }
                 }
 
