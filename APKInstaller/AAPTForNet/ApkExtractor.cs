@@ -1,7 +1,6 @@
 ﻿using AAPTForNet.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,7 +11,7 @@ using Detector = AAPTForNet.ResourceDetector;
 
 namespace AAPTForNet
 {
-    internal class ApkExtractor(AAPTool AAPTool)
+    internal sealed class ApkExtractor(AAPTool AAPTool)
     {
         private static int id = 0;
         private static readonly string TempPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, @"Caches", $"{Environment.ProcessId}");

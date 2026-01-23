@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Zeroconf.DNS
 {
-    internal class Request
+    internal sealed class Request
     {
         public Header header;
         private readonly List<Question> questions;

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Zeroconf.DNS
 {
-    internal class Response
+    internal sealed class Response
     {
         /// <summary>
         /// List of Question records

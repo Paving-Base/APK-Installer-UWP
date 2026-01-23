@@ -2,7 +2,7 @@
 
 namespace AAPTForNet.Models
 {
-    public class DumpModel(string path, bool success, List<string> msg)
+    public sealed class DumpModel(string path, bool success, List<string> msg)
     {
         public string FilePath { get; } = path;
         public bool IsSuccess { get; } = success;

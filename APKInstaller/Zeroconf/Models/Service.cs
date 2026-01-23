@@ -5,16 +5,16 @@ using Zeroconf.Interfaces;
 
 namespace Zeroconf.Models
 {
-    internal class Service : IService
+    internal sealed class Service : IService
     {
-        private readonly List<IReadOnlyDictionary<string, string>> properties = [];
+        private readonly List<IReadOnlyDictionary<string, string?>> properties = [];
 
-        public string Name { get; set; }
-        public string ServiceName { get; set; }
+        public required string Name { get; set; }
+        public required string ServiceName { get; set; }
         public int Port { get; set; }
         public int Ttl { get; set; }
 
-        public IReadOnlyList<IReadOnlyDictionary<string, string>> Properties => properties;
+        public IReadOnlyList<IReadOnlyDictionary<string, string?>> Properties => properties;
 
         public override string ToString()
         {
@@ -32,7 +32,7 @@ namespace Zeroconf.Models
                     sb.AppendLine();
                     sb.AppendLine("\t\t| -------------------");
 
-                    foreach (KeyValuePair<string, string> kvp in properties[i])
+                    foreach (KeyValuePair<string, string?> kvp in properties[i])
                     {
                         sb.AppendLine($"\t\t| {kvp.Key} = {kvp.Value}");
                     }
@@ -43,13 +43,9 @@ namespace Zeroconf.Models
             return sb.ToString();
         }
 
-        internal void AddPropertySet(IReadOnlyDictionary<string, string> set)
+        internal void AddPropertySet(IReadOnlyDictionary<string, string?> set)
         {
-            if (set == null)
-            {
-                throw new ArgumentNullException(nameof(set));
-            }
-
+            ArgumentNullException.ThrowIfNull(set);
             properties.Add(set);
         }
     }

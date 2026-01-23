@@ -8,7 +8,7 @@ namespace AAPTForNet.Filters
     /// Application Binary Interface Filter
     /// </summary>
     /// <remarks>https://developer.android.com/ndk/guides/abis</remarks>
-    internal class ABIFilter : BaseFilter
+    internal sealed class ABIFilter : BaseFilter
     {
         private string[] Segments = [];
 

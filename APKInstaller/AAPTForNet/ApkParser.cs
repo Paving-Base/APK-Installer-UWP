@@ -1,5 +1,6 @@
 ﻿using AAPTForNet.Filters;
 using AAPTForNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace AAPTForNet
     /// <summary>
     /// Parse output messages from AAPTool
     /// </summary>
-    internal class ApkParser
+    internal sealed class ApkParser
     {
         public static ApkInfo Parse(DumpModel model)
         {
@@ -17,7 +18,7 @@ namespace AAPTForNet
                 return new ApkInfo();
             }
 
-            List<BaseFilter> filters = [
+            BaseFilter[] filters = [
                 new PermissionFilter(),
                 new LabelFilter(),
                 new FeatureFilter(),

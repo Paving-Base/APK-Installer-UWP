@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AAPTForNet.Filters
 {
-    internal class LocaleFilter : BaseFilter
+    internal sealed class LocaleFilter : BaseFilter
     {
         private string[] Segments = [];
 

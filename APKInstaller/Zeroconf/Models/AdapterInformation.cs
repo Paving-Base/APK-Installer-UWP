@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Zeroconf.Models
 {
@@ -16,8 +17,8 @@ namespace Zeroconf.Models
         public bool Equals(AdapterInformation other) =>
             string.Equals(Address, other.Address) && string.Equals(Name, other.Name);
 
-        public override bool Equals(object obj) =>
-            obj is not null && obj is AdapterInformation information && Equals(information);
+        public override bool Equals([NotNullWhen(true)] object? obj) =>
+            obj is AdapterInformation information && Equals(information);
 
         public override int GetHashCode()
         {

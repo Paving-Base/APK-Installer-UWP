@@ -184,7 +184,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                                 while (!tokenSource.Token.IsCancellationRequested)
                                 {
                                     IReadOnlyList<IZeroconfHost> hosts = await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
-                                    IZeroconfHost host = hosts.FirstOrDefault((x) => x.IPAddress == deviceData.Address);
+                                    IZeroconfHost host = hosts.FirstOrDefault(x => x.IPAddress == deviceData.Address);
                                     if (host != null)
                                     {
                                         string connect = await client.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);
@@ -271,7 +271,7 @@ namespace APKInstaller.ViewModels.SettingsPages
                                 while (!tokenSource.Token.IsCancellationRequested)
                                 {
                                     IReadOnlyList<IZeroconfHost> hosts = await ZeroconfResolver.ResolveAsync("_adb-tls-connect._tcp.local.").ConfigureAwait(false);
-                                    IZeroconfHost _host = hosts.FirstOrDefault((x) => host.StartsWith(x.IPAddress));
+                                    IZeroconfHost _host = hosts.FirstOrDefault(x => host.StartsWith(x.IPAddress));
                                     if (_host != null)
                                     {
                                         string connect = await client.ConnectAsync(_host.IPAddress, _host.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);

@@ -9,7 +9,7 @@
 
 namespace Zeroconf.DNS
 {
-    internal class RecordAAAA(RecordReader rr) : Record
+    internal sealed class RecordAAAA(RecordReader rr) : Record
     {
         public string Address =
             $"{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}:{rr.ReadUInt16():x}";

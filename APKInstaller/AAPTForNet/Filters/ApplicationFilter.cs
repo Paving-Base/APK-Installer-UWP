@@ -2,7 +2,7 @@
 
 namespace AAPTForNet.Filters
 {
-    internal class ApplicationFilter : BaseFilter
+    internal sealed class ApplicationFilter : BaseFilter
     {
         private string[] Segments = [];
 

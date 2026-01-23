@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Zeroconf.Interfaces;
 
 namespace Zeroconf.Models
@@ -17,8 +18,8 @@ namespace Zeroconf.Models
         public bool Equals(ServiceAnnouncement other) =>
             AdapterInformation.Equals(other.AdapterInformation) && Equals(Host, other.Host);
 
-        public override bool Equals(object obj) =>
-            obj is not null && obj is ServiceAnnouncement announcement && Equals(announcement);
+        public override bool Equals([NotNullWhen(true)] object? obj) =>
+            obj is ServiceAnnouncement announcement && Equals(announcement);
 
         public override int GetHashCode()
         {

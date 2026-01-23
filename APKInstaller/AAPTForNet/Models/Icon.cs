@@ -9,7 +9,7 @@ using Windows.Storage.Streams;
 
 namespace AAPTForNet.Models
 {
-    public class Icon
+    public sealed class Icon
     {
         private const int hdpiWidth = 72;
         public const string DefaultName = "ic_launcher.png";

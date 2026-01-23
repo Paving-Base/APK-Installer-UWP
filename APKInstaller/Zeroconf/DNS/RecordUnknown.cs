@@ -1,6 +1,6 @@
 namespace Zeroconf.DNS
 {
-    internal class RecordUnknown : Record
+    internal sealed class RecordUnknown : Record
     {
         public byte[] RDATA;
         public RecordUnknown(RecordReader rr)

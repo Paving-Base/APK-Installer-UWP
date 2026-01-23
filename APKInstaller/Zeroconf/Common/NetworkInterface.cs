@@ -13,7 +13,7 @@ using Zeroconf.Models;
 
 namespace Zeroconf.Common
 {
-    internal class NetworkInterface : INetworkInterface
+    internal sealed class NetworkInterface : INetworkInterface
     {
         public async Task NetworkRequestAsync(
             byte[] requestBytes,
@@ -22,7 +22,7 @@ namespace Zeroconf.Common
             int retryDelayMilliseconds,
             Action<IPAddress, byte[]> onResponse,
             CancellationToken cancellationToken,
-            params IEnumerable<System.Net.NetworkInformation.NetworkInterface> netInterfacesToSendRequestOn)
+            params IEnumerable<System.Net.NetworkInformation.NetworkInterface>? netInterfacesToSendRequestOn)
         {
             // populate list with all adapters if none specified
             if (netInterfacesToSendRequestOn?.Any() != true)
@@ -76,7 +76,7 @@ namespace Zeroconf.Common
                 return; // IPv4 is not configured on this adapter
             }
 
-            IPAddress ipv4Address = adapter.GetIPProperties().UnicastAddresses
+            IPAddress? ipv4Address = adapter.GetIPProperties().UnicastAddresses
                 .FirstOrDefault(ua => ua.Address.AddressFamily == AddressFamily.InterNetwork)?.Address;
 
             if (ipv4Address == null)
@@ -200,7 +200,7 @@ namespace Zeroconf.Common
         {
             return Task.Factory.StartNew(async () =>
             {
-                IPAddress ipv4Address = adapter.GetIPProperties().UnicastAddresses
+                IPAddress? ipv4Address = adapter.GetIPProperties().UnicastAddresses
                 .First(ua => ua.Address.AddressFamily == AddressFamily.InterNetwork)?.Address;
 
                 if (ipv4Address == null)

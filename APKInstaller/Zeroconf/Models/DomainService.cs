@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Zeroconf.Models
 {
@@ -16,8 +17,8 @@ namespace Zeroconf.Models
         public bool Equals(DomainService other) =>
             string.Equals(Domain, other.Domain) && string.Equals(Service, other.Service);
 
-        public override bool Equals(object obj) =>
-            obj is not null && obj is DomainService service && Equals(service);
+        public override bool Equals([NotNullWhen(true)] object? obj) =>
+            obj is DomainService service && Equals(service);
 
         public override int GetHashCode()
         {

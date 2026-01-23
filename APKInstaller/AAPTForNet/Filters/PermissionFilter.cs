@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AAPTForNet.Filters
 {
-    internal class PermissionFilter : BaseFilter
+    internal sealed class PermissionFilter : BaseFilter
     {
         private readonly List<string> Permissions = [];
 

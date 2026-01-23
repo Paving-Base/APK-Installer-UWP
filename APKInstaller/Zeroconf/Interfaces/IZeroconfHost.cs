@@ -20,12 +20,12 @@ namespace Zeroconf.Interfaces
         /// <summary>
         /// IP Address (alias for IPAddresses.First())
         /// </summary>
-        string IPAddress { get; }
+        string? IPAddress { get; }
 
         /// <summary>
         /// IP Addresses
         /// </summary>
-        IReadOnlyList<string> IPAddresses { get; }
+        IReadOnlyList<string>? IPAddresses { get; }
 
 
         /// <summary>

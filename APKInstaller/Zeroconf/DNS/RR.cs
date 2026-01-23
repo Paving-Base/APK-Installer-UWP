@@ -112,17 +112,16 @@ namespace Zeroconf.DNS
             Class = (Class)rr.ReadUInt16();
             TTL = rr.ReadUInt32();
             RDLENGTH = rr.ReadUInt16();
-            RECORD = rr.ReadRecord(Type, RDLENGTH);
-            RECORD.RR = this;
+            RECORD = rr.ReadRecord(Type, RDLENGTH, this);
         }
 
         public override string ToString() =>
             $"{NAME,-32} {TTL}\t{Class}\t{Type}\t{RECORD}";
     }
 
-    internal class AnswerRR(RecordReader br) : RR(br);
+    internal sealed class AnswerRR(RecordReader br) : RR(br);
 
-    internal class AuthorityRR(RecordReader br) : RR(br);
+    internal sealed class AuthorityRR(RecordReader br) : RR(br);
 
-    internal class AdditionalRR(RecordReader br) : RR(br);
+    internal sealed class AdditionalRR(RecordReader br) : RR(br);
 }

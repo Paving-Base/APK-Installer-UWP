@@ -66,7 +66,7 @@
 
 namespace Zeroconf.DNS
 {
-    internal class RecordSRV(RecordReader rr) : Record
+    internal sealed class RecordSRV(RecordReader rr) : Record
     {
         public ushort PRIORITY = rr.ReadUInt16();
         public ushort WEIGHT = rr.ReadUInt16();

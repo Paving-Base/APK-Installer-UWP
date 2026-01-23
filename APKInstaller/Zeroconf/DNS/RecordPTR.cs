@@ -21,7 +21,7 @@ description of the IN-ADDR.ARPA domain for an example.
 
 namespace Zeroconf.DNS
 {
-    internal class RecordPTR(RecordReader rr) : Record
+    internal sealed class RecordPTR(RecordReader rr) : Record
     {
         public string PTRDNAME = rr.ReadDomainName();
 

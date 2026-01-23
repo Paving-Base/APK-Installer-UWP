@@ -1,11 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace AAPTForNet
 {
-    internal class ResourceDetector
+    internal static partial class ResourceDetector
     {
         private static readonly string config =
-            string.Join("|", System.Enum.GetNames(typeof(Models.Configs)));
+            string.Join("|", Enum.GetNames<Models.Configs>());
 
         /// <summary>
         /// </summary>
@@ -13,7 +14,7 @@ namespace AAPTForNet
         public static bool IsResource(string input, string id = "")
         {
             // id is a word (\w)
-            id = string.Empty.Equals(id) ? @"\w*" : id;
+            id = string.IsNullOrEmpty(id) ? @"\w*" : id;
             return Regex.IsMatch(input, $"^\\s*resource\\s{id}");
         }
         /// <summary>
@@ -22,7 +23,7 @@ namespace AAPTForNet
         public static bool IsResourceValue(string input)
         {
             // Start with space, then (string?)
-            return Regex.IsMatch(input, @"^\s*\((string\d*)\)*");
+            return ResourceValueRegex.IsMatch(input);
         }
         /// <summary>
         /// Determines resource is reference (to another)
@@ -30,14 +31,14 @@ namespace AAPTForNet
         public static bool IsReference(string input)
         {
             // Start with space, then (reference)
-            return Regex.IsMatch(input, @"^\s*\((reference)\)*");
+            return ReferenceRegex.IsMatch(input);
         }
         /// <summary>
         /// Determines resource is a bitmap resource
         /// </summary>
         public static bool IsBitmapElement(string input)
         {
-            return Regex.IsMatch(input, @"^\s*E:\sbitmap");
+            return BitmapRegex.IsMatch(input);
         }
 
         public static bool IsConfig(string input)
@@ -49,7 +50,19 @@ namespace AAPTForNet
         public static bool IsEntryType(string input)
         {
             // type x configCount=xx entryCount=xxx
-            return Regex.IsMatch(input, $"^\\s*type\\s\\d*\\sconfigCount=\\d*\\sentryCount=\\d*$");
+            return EntryTypeRegex.IsMatch(input);
         }
+
+        [GeneratedRegex(@"^\s*\((string\d*)\)*")]
+        private static partial Regex ResourceValueRegex { get; }
+
+        [GeneratedRegex(@"^\s*\((reference)\)*")]
+        private static partial Regex ReferenceRegex { get; }
+
+        [GeneratedRegex(@"^\s*E:\sbitmap")]
+        private static partial Regex BitmapRegex { get; }
+
+        [GeneratedRegex(@"^\s*type\s\d*\sconfigCount=\d*\sentryCount=\d*$")]
+        private static partial Regex EntryTypeRegex { get; }
     }
 }

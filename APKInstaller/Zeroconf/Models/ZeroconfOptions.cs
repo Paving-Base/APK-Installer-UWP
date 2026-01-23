@@ -44,9 +44,9 @@ namespace Zeroconf.Models
 
     }
 
-    public class BrowseDomainsOptions() : ZeroconfOptions("_services._dns-sd._udp.local.");
+    public sealed class BrowseDomainsOptions() : ZeroconfOptions("_services._dns-sd._udp.local.");
 
-    public class ResolveOptions : ZeroconfOptions
+    public sealed class ResolveOptions : ZeroconfOptions
     {
         public ResolveOptions(string protocol) : base(protocol)
         {

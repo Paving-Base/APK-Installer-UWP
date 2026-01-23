@@ -7,6 +7,6 @@ namespace Zeroconf.DNS
         /// <summary>
         /// The Resource Record this RDATA record belongs to
         /// </summary>
-        public RR RR;
+        public required RR RR;
     }
 }

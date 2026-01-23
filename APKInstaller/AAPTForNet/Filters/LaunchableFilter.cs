@@ -2,7 +2,7 @@
 
 namespace AAPTForNet.Filters
 {
-    internal class LaunchableFilter : BaseFilter
+    internal sealed class LaunchableFilter : BaseFilter
     {
         private string LaunchableActivity = string.Empty;
 

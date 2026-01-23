@@ -31,9 +31,10 @@ namespace APKInstaller.Helpers
 
         private static async void ConnectListener_ServiceFound(object sender, IZeroconfHost e)
         {
-            if (ADBHelper.IsRunning)
+            string address = e.IPAddress;
+            if (!string.IsNullOrEmpty(address) && ADBHelper.IsRunning)
             {
-                await new AdbClient().ConnectAsync(e.IPAddress, e.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);
+                await new AdbClient().ConnectAsync(address, e.Services.FirstOrDefault().Value.Port).ConfigureAwait(false);
             }
         }
 
@@ -47,7 +48,11 @@ namespace APKInstaller.Helpers
                 AdbClient AdbClient = new();
                 foreach (IZeroconfHost host in hosts)
                 {
-                    _ = AdbClient.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port);
+                    string address = host.IPAddress;
+                    if (!string.IsNullOrEmpty(address))
+                    {
+                        _ = AdbClient.ConnectAsync(address, host.Services.FirstOrDefault().Value.Port);
+                    }
                 }
             }
         }
@@ -63,7 +68,11 @@ namespace APKInstaller.Helpers
                 AdbClient AdbClient = new();
                 foreach (IZeroconfHost host in hosts)
                 {
-                    results.Add(await AdbClient.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port).ConfigureAwait(false));
+                    string address = host.IPAddress;
+                    if (!string.IsNullOrEmpty(address))
+                    {
+                        results.Add(await AdbClient.ConnectAsync(host.IPAddress, host.Services.FirstOrDefault().Value.Port).ConfigureAwait(false));
+                    }
                 }
             }
             return results;

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Zeroconf.DNS
 {
-    internal class RecordReader
+    internal sealed class RecordReader
     {
         private readonly byte[] m_Data;
 
@@ -92,17 +92,17 @@ namespace Zeroconf.DNS
             return list;
         }
 
-        public Record ReadRecord(Type type, int Length)
+        public Record ReadRecord(Type type, int Length, RR rr)
         {
             return type switch
             {
-                Type.A => new RecordA(this),
-                Type.PTR => new RecordPTR(this),
-                Type.TXT => new RecordTXT(this, Length),
-                Type.AAAA => new RecordAAAA(this),
-                Type.SRV => new RecordSRV(this),
-                Type.NSEC => new RecordNSEC(this),
-                _ => new RecordUnknown(this),
+                Type.A => new RecordA(this) { RR = rr },
+                Type.PTR => new RecordPTR(this) { RR = rr },
+                Type.TXT => new RecordTXT(this, Length) { RR = rr },
+                Type.AAAA => new RecordAAAA(this) { RR = rr },
+                Type.SRV => new RecordSRV(this) { RR = rr },
+                Type.NSEC => new RecordNSEC(this) { RR = rr },
+                _ => new RecordUnknown(this) { RR = rr }
             };
         }
     }

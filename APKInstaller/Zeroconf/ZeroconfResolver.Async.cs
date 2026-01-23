@@ -28,8 +28,8 @@ namespace Zeroconf
             TimeSpan scanTime = default,
             int retries = 2,
             int retryDelayMilliseconds = 2000,
-            Action<IZeroconfHost> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<IZeroconfHost>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default) =>
             string.IsNullOrWhiteSpace(protocol)
                 ? throw new ArgumentNullException(nameof(protocol))
@@ -58,19 +58,12 @@ namespace Zeroconf
             TimeSpan scanTime = default,
             int retries = 2,
             int retryDelayMilliseconds = 2000,
-            Action<IZeroconfHost> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<IZeroconfHost>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default)
         {
-            if (retries <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(retries));
-            }
-
-            if (retryDelayMilliseconds <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(retryDelayMilliseconds));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(retries);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(retryDelayMilliseconds);
 
             if (scanTime == default)
             {
@@ -96,8 +89,8 @@ namespace Zeroconf
         /// <returns></returns>
         public static ValueTask<IReadOnlyList<IZeroconfHost>> ResolveAsync(
             ResolveOptions options,
-            Action<IZeroconfHost> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<IZeroconfHost>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default) =>
             options == null
                 ? throw new ArgumentNullException(nameof(options))
@@ -105,11 +98,11 @@ namespace Zeroconf
 
         internal static async ValueTask<IReadOnlyList<IZeroconfHost>> ResolveAsyncOriginal(
             ResolveOptions options,
-            Action<IZeroconfHost> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<IZeroconfHost>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default)
         {
-            Action<string, Response> wrappedAction = null;
+            Action<string, Response>? wrappedAction = null;
 
             if (callback != null)
             {
@@ -147,8 +140,8 @@ namespace Zeroconf
             TimeSpan scanTime = default,
             int retries = 2,
             int retryDelayMilliseconds = 2000,
-            Action<string, string> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<string, string>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default)
 
         {
@@ -180,8 +173,8 @@ namespace Zeroconf
         /// <returns></returns>
         public static ValueTask<ILookup<string, string>> BrowseDomainsAsync(
             BrowseDomainsOptions options,
-            Action<string, string> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<string, string>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default) =>
             options == null
                 ? throw new ArgumentNullException(nameof(options))
@@ -189,11 +182,11 @@ namespace Zeroconf
 
         internal static async ValueTask<ILookup<string, string>> BrowseDomainsAsyncOriginal(
             BrowseDomainsOptions options,
-            Action<string, string> callback = null,
-            NetworkInterface[] netInterfacesToSendRequestOn = null,
+            Action<string, string>? callback = null,
+            NetworkInterface[]? netInterfacesToSendRequestOn = null,
             CancellationToken cancellationToken = default)
         {
-            Action<string, Response> wrappedAction = null;
+            Action<string, Response>? wrappedAction = null;
             if (callback != null)
             {
                 wrappedAction = (address, response) =>

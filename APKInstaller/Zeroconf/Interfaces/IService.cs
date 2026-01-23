@@ -30,7 +30,7 @@ namespace Zeroconf.Interfaces
         /// <summary>
         /// Properties of the object. Most services have a single set of properties, but some service may return multiple sets of properties
         /// </summary>
-        IReadOnlyList<IReadOnlyDictionary<string, string>> Properties { get; }
+        IReadOnlyList<IReadOnlyDictionary<string, string?>> Properties { get; }
     }
 
 }

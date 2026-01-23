@@ -120,7 +120,7 @@ namespace Zeroconf.DNS
         */
     #endregion
 
-    internal class Header
+    internal sealed class Header
     {
         /// <summary>
         /// An identifier assigned by the program

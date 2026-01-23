@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 
 namespace AAPTForNet.Models
 {
-    public class SDKInfo : IComparable
+    public readonly struct SDKInfo(string level, string ver, string code) : IComparable<SDKInfo>, IComparisonOperators<SDKInfo, SDKInfo, bool>
     {
-        internal static readonly SDKInfo Unknown = new("0", "0", "0");
+        internal static readonly SDKInfo Unknown = new();
 
         // https://source.android.com/setup/start/build-numbers
         private static readonly string[] AndroidCodeNames = [
@@ -97,16 +98,11 @@ namespace AAPTForNet.Models
             "20"        // API level 40
         ];
 
-        public string APILevel { get; }
-        public string Version { get; }
-        public string CodeName { get; }
+        public string APILevel { get; } = level;
+        public string Version { get; } = ver;
+        public string CodeName { get; } = code;
 
-        protected SDKInfo(string level, string ver, string code)
-        {
-            APILevel = level;
-            Version = ver;
-            CodeName = code;
-        }
+        public SDKInfo() : this("0", "0", "0") { }
 
         public static SDKInfo GetInfo(int sdkVer)
         {
@@ -121,10 +117,8 @@ namespace AAPTForNet.Models
 
         public override bool Equals([NotNullWhen(true)] object? obj) => obj is SDKInfo another && APILevel == another.APILevel;
 
-        public int CompareTo(object? obj) => obj is SDKInfo another
-            ? int.TryParse(APILevel, out int ver) && int.TryParse(another.APILevel, out int anotherver)
-            ? ver.CompareTo(anotherver) : 0
-            : throw new ArgumentException(null, nameof(obj));
+        public int CompareTo(SDKInfo other) =>
+            int.TryParse(APILevel, out int ver) && int.TryParse(other.APILevel, out int anotherver) ? ver.CompareTo(anotherver) : 0;
 
         public static bool operator ==(SDKInfo left, SDKInfo right) => left.Equals(right);
 
@@ -135,7 +129,6 @@ namespace AAPTForNet.Models
         public static bool operator <=(SDKInfo left, SDKInfo right) => left.CompareTo(right) <= 0;
 
         public static bool operator >(SDKInfo left, SDKInfo right) => left.CompareTo(right) > 0;
-
         public static bool operator >=(SDKInfo left, SDKInfo right) => left.CompareTo(right) >= 0;
 
         public override string ToString() => this == Unknown

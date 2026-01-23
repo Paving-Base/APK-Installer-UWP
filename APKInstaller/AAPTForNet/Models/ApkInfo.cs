@@ -6,7 +6,7 @@ using WinRT;
 namespace AAPTForNet.Models
 {
     [GeneratedBindableCustomProperty([nameof(AppName), nameof(PackageName), nameof(VersionCode), nameof(PackagePath)], [])]
-    public partial class ApkInfo
+    public sealed partial class ApkInfo
     {
         public string AppName { get; set; } = string.Empty;
         public string SplitName { get; set; } = string.Empty;

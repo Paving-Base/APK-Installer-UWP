@@ -64,22 +64,18 @@
                         x:Name="SelectDeviceBox"
                         x:FieldModifier="public"
                         ItemContainerStyle="{StaticResource ListViewItemSettingsCardStyle}"
+                        ItemsPanel="{StaticResource ListViewSettingsCardItemsPanelTemplate}"
                         ItemsSource="{x:Bind Provider.DeviceList, Mode=OneWay}"
                         SelectedItem="{x:Bind Provider.SelectedDevice, Mode=OneWay}"
                         SelectionChanged="SelectDeviceBox_SelectionChanged"
                         SelectionMode="{x:Bind Provider.DeviceSelectionMode, Mode=OneWay}">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" Spacing="2" />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:DeviceData">
                                 <controls:SettingsCard
                                     Description="{x:Bind State}"
                                     Header="{x:Bind Name}"
                                     HeaderIcon="&#xE8EA;"
-                                    Style="{StaticResource ListViewItemContentSettingStyle}" />
+                                    Style="{StaticResource ListViewItemContentSettingsCardStyle}" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -166,7 +162,7 @@
                                 </Style>
                                 <Style BasedOn="{StaticResource TextButtonStyle}" TargetType="HyperlinkButton">
                                     <Style.Setters>
-                                        <Setter Property="FontSize" Value="{ThemeResource SettingCardDescriptionFontSize}" />
+                                        <Setter Property="FontSize" Value="{ThemeResource SettingsCardDescriptionFontSize}" />
                                         <Setter Property="Padding" Value="0,0,0,0" />
                                     </Style.Setters>
                                 </Style>

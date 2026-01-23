@@ -25,9 +25,9 @@ namespace Zeroconf
 
         private static async ValueTask<IDictionary<string, Response>> ResolveInternal(
             ZeroconfOptions options,
-            Action<string, Response> callback,
+            Action<string, Response>? callback,
             CancellationToken cancellationToken,
-            System.Net.NetworkInformation.NetworkInterface[] netInterfacesToSendRequestOn = null)
+            params System.Net.NetworkInformation.NetworkInterface[]? netInterfacesToSendRequestOn)
         {
             byte[] requestBytes = GetRequestBytes(options);
 
@@ -41,7 +41,7 @@ namespace Zeroconf
             void Converter(IPAddress address, byte[] buffer)
             {
                 Response resp = new(buffer);
-                RecordPTR firstPtr = resp.RecordsPTR.FirstOrDefault();
+                RecordPTR? firstPtr = resp.RecordsPTR.FirstOrDefault();
                 string name = firstPtr?.PTRDNAME.Split('.')[0] ?? string.Empty;
                 string addrString = address.ToString();
 
@@ -81,7 +81,7 @@ namespace Zeroconf
             return req.Data;
         }
 
-        private static ZeroconfHost ResponseToZeroconf(Response response, string remoteAddress, ResolveOptions options)
+        private static ZeroconfHost ResponseToZeroconf(Response response, string remoteAddress, ResolveOptions? options)
         {
             IEnumerable<string> ipv4Adresses = response.Answers
                 .Select(r => r.RECORD)
@@ -103,12 +103,12 @@ namespace Zeroconf
                 .Select(aRecord => aRecord.Address)
                 .Distinct();
 
+            IReadOnlyList<string> adresses = [.. ipv4Adresses, .. ipv6Adresses];
             ZeroconfHost z = new()
             {
-                IPAddresses = [.. ipv4Adresses, .. ipv6Adresses]
+                Id = adresses is [string value, ..] ? value : remoteAddress,
+                IPAddresses = adresses
             };
-
-            z.Id = z.IPAddresses.FirstOrDefault() ?? remoteAddress;
 
             bool dispNameSet = false;
 
@@ -129,7 +129,7 @@ namespace Zeroconf
                     .Where(r => r.NAME == ptrRec.PTRDNAME)
                     .Select(r => r.RECORD)];
 
-                RecordSRV srvRec = responseRecords.OfType<RecordSRV>().FirstOrDefault();
+                RecordSRV? srvRec = responseRecords.OfType<RecordSRV>().FirstOrDefault();
                 if (srvRec == null)
                 {
                     continue; // Missing the SRV record, not valid
@@ -146,7 +146,7 @@ namespace Zeroconf
                 // There may be 0 or more text records - property sets
                 foreach (RecordTXT txtRec in responseRecords.OfType<RecordTXT>())
                 {
-                    Dictionary<string, string> set = [];
+                    Dictionary<string, string?> set = [];
                     foreach (string txt in txtRec.TXT)
                     {
                         string[] split = txt.Split(['='], 2);

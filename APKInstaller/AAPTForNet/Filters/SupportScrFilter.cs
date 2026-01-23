@@ -2,7 +2,7 @@
 
 namespace AAPTForNet.Filters
 {
-    internal class SupportScrFilter : BaseFilter
+    internal sealed class SupportScrFilter : BaseFilter
     {
         public const string SmallScreen = "small";
         public const string NormalScreen = "normal";

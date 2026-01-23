@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Zeroconf.Interfaces;
@@ -9,29 +10,29 @@ namespace Zeroconf.Models
     /// <summary>
     /// A ZeroConf record response
     /// </summary>
-    internal class ZeroconfHost : IZeroconfHost, IEquatable<ZeroconfHost>, IEquatable<IZeroconfHost>
+    internal sealed class ZeroconfHost : IZeroconfHost, IEquatable<ZeroconfHost>, IEquatable<IZeroconfHost>
     {
         private readonly Dictionary<string, IService> services = [];
 
         /// <summary>
         /// Id, possibly different than the display name
         /// </summary>
-        public string Id { get; set; }
+        public required string Id { get; set; }
 
         /// <summary>
         /// Display Name
         /// </summary>
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
 
         /// <summary>
         /// IP Address (alias for IPAddresses.First())
         /// </summary>
-        public string IPAddress => IPAddresses is [string value, ..] ? value : default;
+        public string? IPAddress => IPAddresses is [string value, ..] ? value : default;
 
         /// <summary>
         /// IP Addresses
         /// </summary>
-        public IReadOnlyList<string> IPAddresses { get; set; }
+        public IReadOnlyList<string>? IPAddresses { get; set; }
 
         /// <summary>
         /// Collection of services provided by the host
@@ -41,13 +42,12 @@ namespace Zeroconf.Models
         internal void AddService(IService service) =>
             services[service.ServiceName] = service ?? throw new ArgumentNullException(nameof(service));
 
-        public bool Equals(IZeroconfHost other) => Equals(other as ZeroconfHost);
+        public bool Equals(IZeroconfHost? other) => Equals(other as ZeroconfHost);
 
-        public bool Equals(ZeroconfHost other) =>
-            other is not null && (ReferenceEquals(this, other) || (string.Equals(Id, other.Id) && string.Equals(IPAddress, other.IPAddress)));
+        public bool Equals([NotNullWhen(true)] ZeroconfHost? other) =>
+            this == other || (other is not null && string.Equals(Id, other.Id) && string.Equals(IPAddress, other.IPAddress));
 
-        public override bool Equals(object obj) =>
-            obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals((ZeroconfHost)obj)));
+        public override bool Equals([NotNullWhen(true)] object? obj) => Equals(obj as ZeroconfHost);
 
         public override int GetHashCode()
         {
@@ -68,7 +68,7 @@ namespace Zeroconf.Models
             sb.AppendLine("| ----------------------------------------------");
             sb.AppendLine("| HOST");
             sb.AppendLine("| ----------------------------------------------");
-            sb.AppendLine($"| Id: {Id}\n| DisplayName: {DisplayName}\n| IPs: {string.Join(", ", IPAddresses)}\n| Services: {services.Count}");
+            sb.AppendLine($"| Id: {Id}\n| DisplayName: {DisplayName}\n| IPs: {string.Join(", ", IPAddresses ?? [])}\n| Services: {services.Count}");
 
             if (services.Count > 0)
             {

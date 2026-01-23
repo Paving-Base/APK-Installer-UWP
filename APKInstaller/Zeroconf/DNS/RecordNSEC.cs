@@ -1,6 +1,6 @@
 namespace Zeroconf.DNS
 {
-    internal class RecordNSEC : Record
+    internal sealed class RecordNSEC : Record
     {
         public byte[] RDATA;
 

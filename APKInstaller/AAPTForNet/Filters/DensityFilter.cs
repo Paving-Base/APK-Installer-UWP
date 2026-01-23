@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AAPTForNet.Filters
 {
-    internal class DensityFilter : BaseFilter
+    internal sealed class DensityFilter : BaseFilter
     {
         private string[] Segments = [];
 

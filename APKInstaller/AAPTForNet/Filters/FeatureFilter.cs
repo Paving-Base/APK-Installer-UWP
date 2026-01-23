@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AAPTForNet.Filters
 {
-    internal class FeatureFilter : BaseFilter
+    internal sealed class FeatureFilter : BaseFilter
     {
         private readonly List<string> Features = [];
 

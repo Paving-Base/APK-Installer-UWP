@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AAPTForNet.Filters
 {
-    internal class SDKFilter : BaseFilter
+    internal sealed class SDKFilter : BaseFilter
     {
         private readonly List<string> Messages = [];
         private string[] Segments => string.Join(string.Empty, Messages).Split(Separator);

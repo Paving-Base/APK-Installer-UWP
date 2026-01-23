@@ -21,7 +21,7 @@ depends on the domain where it is found.
 
 namespace Zeroconf.DNS
 {
-    internal class RecordTXT : Record
+    internal sealed class RecordTXT : Record
     {
         public List<string> TXT;
 

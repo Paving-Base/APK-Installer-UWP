@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Zeroconf.DNS
@@ -43,12 +44,13 @@ namespace Zeroconf.DNS
     */
     #endregion
 
-    internal class Question
+    internal sealed class Question
     {
         private string m_QName;
         public string QName
         {
             get => m_QName;
+            [MemberNotNull(nameof(m_QName))]
             set
             {
                 m_QName = value;

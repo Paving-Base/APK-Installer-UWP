@@ -18,7 +18,7 @@ records.
 
 namespace Zeroconf.DNS
 {
-    internal class RecordA(RecordReader rr) : Record
+    internal sealed class RecordA(RecordReader rr) : Record
     {
         public string Address =
             $"{rr.ReadByte()}.{rr.ReadByte()}.{rr.ReadByte()}.{rr.ReadByte()}";

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Zeroconf.Interfaces;
 using Zeroconf.Models;
 
 namespace Zeroconf
 {
-    public class ResolverListener : IDisposable
+    public sealed class ResolverListener : IDisposable
     {
         private readonly IEnumerable<string> protocols;
         private readonly TimeSpan scanTime;
@@ -17,11 +18,11 @@ namespace Zeroconf
         private HashSet<(string, string)> discoveredHosts = [];
         private readonly Dictionary<(string, string), int> toRemove = [];
 
-        public IReadOnlyList<IZeroconfHost> Hosts { get; private set; }
+        public IReadOnlyList<IZeroconfHost>? Hosts { get; private set; }
 
-        public event EventHandler<IZeroconfHost> ServiceFound;
-        public event EventHandler<IZeroconfHost> ServiceLost;
-        public event EventHandler<Exception> Error;
+        public event EventHandler<IZeroconfHost>? ServiceFound;
+        public event EventHandler<IZeroconfHost>? ServiceLost;
+        public event EventHandler<Exception>? Error;
 
         internal ResolverListener(IEnumerable<string> protocols, int queryInterval, int pingsUntilRemove, TimeSpan scanTime, int retries, int retryDelayMilliseconds)
         {
@@ -33,13 +34,13 @@ namespace Zeroconf
             timer = new Timer(DiscoverHosts, this, 0, queryInterval);
         }
 
-        private async void DiscoverHosts(object state)
+        private async void DiscoverHosts(object? state)
         {
             try
             {
-                ResolverListener instance = state as ResolverListener;
+                ResolverListener? instance = state as ResolverListener;
                 IReadOnlyList<IZeroconfHost> hosts = await ZeroconfResolver.ResolveAsync(protocols, scanTime, retries, retryDelayMilliseconds).ConfigureAwait(false);
-                instance.OnResolved(hosts);
+                instance?.OnResolved(hosts);
             }
             catch (Exception ex)
             {
@@ -47,6 +48,7 @@ namespace Zeroconf
             }
         }
 
+        [MemberNotNull(nameof(Hosts))]
         private void OnResolved(IReadOnlyList<IZeroconfHost> hosts)
         {
             Hosts = hosts;
@@ -98,7 +100,7 @@ namespace Zeroconf
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {
