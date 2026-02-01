@@ -87,7 +87,7 @@ namespace APKInstaller.Helpers
             try
             {
                 return Uri.TryCreate(
-                    url.Contains("://") ? url
+                    url.Contains(":/") | url.Contains(":\\") ? url
                     : url.Contains("//") ? url.Replace("//", "://")
                     : $"http://{url}", UriKind.RelativeOrAbsolute, out uri);
             }

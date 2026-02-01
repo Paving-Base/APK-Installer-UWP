@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -58,6 +61,26 @@ namespace APKInstaller.Helpers
             return element;
         }
 
+        public static void SetDeferral(this IActivatedEventArgs args)
+        {
+            switch (args.Kind)
+            {
+                case ActivationKind.CommandLineLaunch when args is CommandLineActivatedEventArgs commandLineActivatedEventArgs:
+                    Deferrals.AddOrUpdate(args, commandLineActivatedEventArgs.Operation.GetDeferral());
+                    break;
+            }
+        }
+
+        public static void CompleteDeferral(this IActivatedEventArgs args)
+        {
+            if (Deferrals.TryGetValue(args, out Deferral deferral))
+            {
+                deferral?.Complete();
+            }
+        }
+
         public static Dictionary<CoreDispatcher, Window> ActiveWindows { get; } = [];
+
+        public static ConditionalWeakTable<IActivatedEventArgs, Deferral> Deferrals { get; } = [];
     }
 }

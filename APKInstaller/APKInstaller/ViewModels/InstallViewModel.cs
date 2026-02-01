@@ -16,15 +16,16 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Collections;
@@ -58,12 +59,6 @@ namespace APKInstaller.ViewModels
         public static string InstallFormat => _loader.GetString("InstallFormat");
         public static string VersionFormat => _loader.GetString("VersionFormat");
         public static string PackageNameFormat => _loader.GetString("PackageNameFormat");
-
-        [GeneratedRegex(@":\?source=(.*)")]
-        private static partial Regex SchemaRegex { get; }
-
-        [GeneratedRegex(@"://(.*)")]
-        private static partial Regex URLRegex { get; }
 
         private static bool IsOnlyWSA => SettingsHelper.Get<bool>(SettingsHelper.IsOnlyWSA);
         private static bool IsCloseAPP => SettingsHelper.Get<bool>(SettingsHelper.IsCloseAPP);
@@ -773,6 +768,7 @@ namespace APKInstaller.ViewModels
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_file != null || _url != null)
             {
+                checkadb:
                 WaitProgressText = _loader.GetString("Loading");
                 if (_file != null)
                 {
@@ -812,7 +808,10 @@ namespace APKInstaller.ViewModels
                         else
                         {
                             ResetUI();
-                            CheckOnlinePackage();
+                            if (await CheckOnlinePackageAsync().ConfigureAwait(false))
+                            {
+                                goto checkadb;
+                            }
                         }
                     }
                     else
@@ -827,9 +826,9 @@ namespace APKInstaller.ViewModels
                             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
                             ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
                         }
-                        else
+                        else if (await CheckOnlinePackageAsync().ConfigureAwait(false))
                         {
-                            CheckOnlinePackage();
+                            goto checkadb;
                         }
                         if (ADBHelper.IsRunning)
                         {
@@ -1092,29 +1091,46 @@ namespace APKInstaller.ViewModels
             DeviceSelectButtonText = _loader.GetString("Devices");
             AppName = string.Format(_loader.GetString("WaitingForInstallFormat"), _appLocaleName);
             ActionVisibility = DeviceSelectVisibility = MessagesToUserVisibility = true;
-        } 
+        }
 
-        private void CheckOnlinePackage()
+        private async Task<bool> CheckOnlinePackageAsync()
         {
-            ReadOnlySpan<Regex> uriRegex = [SchemaRegex, URLRegex];
-            string uri = uriRegex[0].IsMatch(_url.ToString()) ? uriRegex[0].Match(_url.ToString()).Groups[1].Value : uriRegex[1].Match(_url.ToString()).Groups[1].Value;
-            if (uri.TryGetUri(out Uri url))
+            try
             {
-                _url = url;
-                AppName = _loader.GetString("OnlinePackage");
-                DownloadButtonText = _loader.GetString("Download");
-                CancelOperationButtonText = _loader.GetString("Close");
-                DownloadVisibility = CancelOperationVisibility = true;
-                AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
-                if (AutoGetNetAPK)
+                if (_url is null) { return false; }
+                if (_url.Scheme == "apkinstaller")
                 {
-                    _ = LoadNetAPKAsync();
+                    NameValueCollection query = HttpUtility.ParseQueryString(_url.Query);
+                    if (query["source"] is { Length: > 0 } source && source.TryGetUri(out Uri url))
+                    {
+                        _url = url;
+                    }
+                }
+                switch (_url)
+                {
+                    case { IsFile: true }:
+                        _file = await StorageFile.GetFileFromPathAsync(_url.LocalPath);
+                        return true;
+                    case { Scheme: "http" or "https" }:
+                        AppName = _loader.GetString("OnlinePackage");
+                        DownloadButtonText = _loader.GetString("Download");
+                        CancelOperationButtonText = _loader.GetString("Close");
+                        DownloadVisibility = CancelOperationVisibility = true;
+                        AppVersionVisibility = AppPublisherVisibility = AppCapabilitiesVisibility = false;
+                        if (AutoGetNetAPK)
+                        {
+                            _ = LoadNetAPKAsync();
+                        }
+                        goto end;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                PackageError(_loader.GetString("InvalidURL"));
+                SettingsHelper.LoggerFactory.CreateLogger<InstallViewModel>().LogError(ex, "Error checking online apk. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
             }
+            PackageError(_loader.GetString("InvalidURL"));
+        end:
+            return false;
         }
 
         public async Task LoadNetAPKAsync()

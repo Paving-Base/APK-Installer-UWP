@@ -100,6 +100,14 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <uap5:Extension
+          Category="windows.appExecutionAlias"
+          Executable="APKInstaller.exe"
+          EntryPoint="APKInstaller.App">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="APKInstaller.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
             <com:ExeServer
