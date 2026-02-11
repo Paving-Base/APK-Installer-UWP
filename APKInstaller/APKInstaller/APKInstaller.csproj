@@ -18,7 +18,7 @@
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <UseUwp>True</UseUwp>
-    <VersionPrefix>0.1.28</VersionPrefix>
+    <VersionPrefix>0.1.6</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
