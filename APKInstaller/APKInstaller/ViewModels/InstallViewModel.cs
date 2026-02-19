@@ -1531,7 +1531,6 @@ namespace APKInstaller.ViewModels
                 SplitAPKSelector[] results = [.. apks.Select(x => new SplitAPKSelector(x))];
                 try
                 {
-                    int? density = null;
                     string abi = null, locale = null;
                     List<SplitAPKSelector> densities = [];
                     foreach (SplitAPKSelector selector in results)
@@ -1547,8 +1546,6 @@ namespace APKInstaller.ViewModels
                                 goto default;
                             case { SupportLocales.Count: > 0 }:
                                 continue;
-                            case { SupportDensities.Count: > 0 } when !apk.SplitName.EndsWith("dpi", StringComparison.OrdinalIgnoreCase):
-                                goto default;
                             case { SupportDensities.Count: > 0 }:
                                 await ProcessDensityAsync(selector).ConfigureAwait(false);
                                 continue;
@@ -1582,56 +1579,59 @@ namespace APKInstaller.ViewModels
 
                         async ValueTask ProcessDensityAsync(SplitAPKSelector selector)
                         {
-                            if (density is not int num)
+                            // 1. 获取设备 DPI
+                            var receiver = new ConsoleOutputReceiver();
+                            await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiver);
+                            if (int.TryParse(receiver.ToString().Trim(), out int density))
                             {
-                                ConsoleOutputReceiver receiver = new();
-                                await client.ExecuteRemoteCommandAsync("getprop ro.sf.lcd_density", _device, receiver).ConfigureAwait(false);
-                                density = int.TryParse(receiver.ToString().Trim(), out num) ? num : 0;
-                            }
-                            if (selector.Package.SupportDensities.Exists(x => int.TryParse(x, out int density) && density >= num))
-                            {
-                                densities.Add(selector);
+                                // 2. 映射设备 DPI → bucket
+                                Density deviceBucket = GetDeviceDensity(density);
+
+                                // 3. 解析 split 的 density 列表
+                                List<Density> splitBuckets = ParseSplitDensities(selector.Package);
+
+                                // 4. 如果 split 支持该 bucket → 选中
+                                Density best = SelectBestSplitDensity(splitBuckets, deviceBucket);
+
+                                if (best == deviceBucket)
+                                    selector.IsSelected = true;
                             }
                         }
                     }
 
-                    static Density GetDeviceDensity(int density)
+                    List<Density> ParseSplitDensities(ApkInfo apk)
                     {
-                        Density selectedDensity = Density.MDPI;
-                        foreach (Density item in Enum.GetValues<Density>())
-                        {
-                            int currentABS = Math.Abs(density - ((int)item));
-                            int previousABS = Math.Abs(density - ((int)selectedDensity));
+                        var result = new List<Density>();
 
-                            switch (currentABS.CompareTo(previousABS))
+                        foreach (var d in apk.SupportDensities)
+                        {
+                            if (Enum.TryParse<Density>(d.ToUpper(), out var bucket))
                             {
-                                case 1:
-                                    break;
-                                case 0:
-                                    selectedDensity = item > selectedDensity ? item : selectedDensity;
-                                    break;
-                                case -1:
-                                    selectedDensity = item;
-                                    break;
+                                result.Add(bucket);
+                            }
+                            else if (int.TryParse(d, out int dpi))
+                            {
+                                result.Add(GetDeviceDensity(dpi));
                             }
                         }
-                        return selectedDensity;
+
+                        return result;
                     }
 
-                    if (densities.Count > 0)
+                    static Density GetDeviceDensity(int dpi)
                     {
-                        int num = density ?? 0;
-                        Density dpi = GetDeviceDensity(num);
-                        foreach (SplitAPKSelector item in densities)
-                        {
-                            ApkInfo apk = item.Package;
+                        return Enum.GetValues<Density>()
+                            .OrderBy(d => Math.Abs((int)d - dpi))   // 差值最小
+                            .ThenByDescending(d => (int)d)          // 差值相同选更大
+                            .First();
+                    }
 
-                            if (apk.SplitName[^dpi.ToString().Length..].Equals(dpi.ToString(), StringComparison.OrdinalIgnoreCase))
-                            {
-                                item.IsSelected = true;
-                                break;
-                            }
-                        }
+                    static Density SelectBestSplitDensity(IEnumerable<Density> splitBuckets, Density deviceBucket)
+                    {
+                        return splitBuckets
+                            .OrderBy(b => Math.Abs((int)b - (int)deviceBucket))  // 差值最小
+                            .ThenByDescending(b => (int)b)                       // 差值相同选更大
+                            .First();
                     }
                 }
                 catch (Exception ex)
