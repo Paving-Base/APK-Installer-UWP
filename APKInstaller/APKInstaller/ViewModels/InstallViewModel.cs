@@ -1603,10 +1603,6 @@ namespace APKInstaller.ViewModels
                     {
                         var result = new List<Density>();
 
-                        // 1. 如果没有 density 字段 → 支持所有 density
-                        if (apk.SupportDensities == null || apk.SupportDensities.Count == 0)
-                            return Enum.GetValues<Density>().ToList();
-
                         foreach (var d in apk.SupportDensities)
                         {
                             if (Enum.TryParse<Density>(d.ToUpper(), out var bucket))
