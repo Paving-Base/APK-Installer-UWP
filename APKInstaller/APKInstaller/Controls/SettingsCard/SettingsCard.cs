@@ -190,7 +190,6 @@ namespace APKInstaller.Controls
             _ = VisualStateManager.GoToState(this, IsEnabled ? NormalState : DisabledState, true);
         }
 
-
         public void OnButtonIconChanged()
         {
             _ = VisualStateManager.GoToState(this, IsClickEnabled && ActionIcon != null ? "ActionIconVisible" : "ActionIconCollapsed", false);

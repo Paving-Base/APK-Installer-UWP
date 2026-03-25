@@ -157,7 +157,6 @@ namespace APKInstaller.Common
             return exWrapper.Handled;
         }
 
-
         /// <summary>
         /// Listen to this event to catch any unhandled exceptions and allow for handling them
         /// so they don't crash your application.

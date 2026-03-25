@@ -10,6 +10,7 @@ trigger:
       - perview
   paths:
     include:
+      - azure-pipelines.yml
       - APKInstaller/**
 
 pr:
@@ -17,9 +18,6 @@ pr:
     include:
       - main
       - perview
-  paths:
-    include:
-      - APKInstaller/**
 
 strategy:
   matrix:
