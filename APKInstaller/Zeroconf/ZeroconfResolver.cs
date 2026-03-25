@@ -18,7 +18,7 @@ namespace Zeroconf
     public static partial class ZeroconfResolver
     {
         private static readonly AsyncLock ResolverLock = new();
-        private static readonly INetworkInterface NetworkInterface = new NetworkInterface();
+        private static readonly NetworkInterface NetworkInterface = new();
 
         private static IEnumerable<string> BrowseResponseParser(Response response) =>
             response.RecordsPTR.Select(ptr => ptr.PTRDNAME);

@@ -63,10 +63,11 @@ namespace APKInstaller.Helpers
 
         public static void SetDeferral(this IActivatedEventArgs args)
         {
+            if (args == null || Deferrals.ContainsKey(args)) { return; }
             switch (args.Kind)
             {
                 case ActivationKind.CommandLineLaunch when args is CommandLineActivatedEventArgs commandLineActivatedEventArgs:
-                    Deferrals.AddOrUpdate(args, commandLineActivatedEventArgs.Operation.GetDeferral());
+                    Deferrals[args] = commandLineActivatedEventArgs.Operation.GetDeferral();
                     break;
             }
         }
@@ -76,11 +77,12 @@ namespace APKInstaller.Helpers
             if (Deferrals.TryGetValue(args, out Deferral deferral))
             {
                 deferral?.Complete();
+                _ = Deferrals.Remove(args);
             }
         }
 
         public static Dictionary<CoreDispatcher, Window> ActiveWindows { get; } = [];
 
-        public static ConditionalWeakTable<IActivatedEventArgs, Deferral> Deferrals { get; } = [];
+        public static Dictionary<IActivatedEventArgs, Deferral> Deferrals { get; } = [];
     }
 }

@@ -526,7 +526,7 @@ namespace APKInstaller.ViewModels
             {
                 Directory.Delete(ADBTemp, true);
             }
-            using (DownloadService downloader = new(DownloadHelper.Configuration))
+            using (DownloadService downloader = new(DownloadHelper.Configuration, SettingsHelper.LoggerFactory))
             {
                 bool isCompleted = false;
                 Exception exception = null;
@@ -1126,7 +1126,7 @@ namespace APKInstaller.ViewModels
                 {
                     Directory.Delete(APKTemp, true);
                 }
-                using (DownloadService downloader = new(DownloadHelper.Configuration))
+                using (DownloadService downloader = new(DownloadHelper.Configuration, SettingsHelper.LoggerFactory))
                 {
                     bool isCompleted = false;
                     Exception exception = null;

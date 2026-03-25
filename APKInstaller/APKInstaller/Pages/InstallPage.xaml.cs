@@ -57,113 +57,121 @@ namespace APKInstaller.Pages
             }
             else if (e.Parameter is IActivatedEventArgs args)
             {
-                switch (args?.Kind)
+                try
                 {
-                    case ActivationKind.File when args is IFileActivatedEventArgs fileActivatedEventArgs:
-                        Provider = new InstallViewModel(file: null, this);
-                        _ = Provider.OpenAPKAsync(fileActivatedEventArgs.Files);
-                        return;
-                    case ActivationKind.ShareTarget when args is IShareTargetActivatedEventArgs shareTargetEventArgs:
-                        Provider = new InstallViewModel(file: null, this);
-                        _ = Provider.OpenAPKAsync(shareTargetEventArgs.ShareOperation.Data);
-                        return;
-                    case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
-                        ValueSet protocolData = protocolArgs.Data;
-                        if (protocolData?.Count >= 1)
-                        {
-                            if (protocolData.TryGetValue("Url", out object url))
+                    switch (args?.Kind)
+                    {
+                        case ActivationKind.File when args is IFileActivatedEventArgs fileActivatedEventArgs:
+                            Provider = new InstallViewModel(file: null, this);
+                            _ = Provider.OpenAPKAsync(fileActivatedEventArgs.Files);
+                            return;
+                        case ActivationKind.ShareTarget when args is IShareTargetActivatedEventArgs shareTargetEventArgs:
+                            Provider = new InstallViewModel(file: null, this);
+                            _ = Provider.OpenAPKAsync(shareTargetEventArgs.ShareOperation.Data);
+                            return;
+                        case ActivationKind.Protocol when args is ProtocolActivatedEventArgs protocolArgs:
+                            ValueSet protocolData = protocolArgs.Data;
+                            if (protocolData?.Count >= 1)
                             {
-                                Provider = new InstallViewModel(url as Uri, this);
-                                break;
+                                if (protocolData.TryGetValue("Url", out object url))
+                                {
+                                    Provider = new InstallViewModel(url as Uri, this);
+                                    break;
 
-                            }
-                            else if (protocolData.TryGetValue("FilePath", out object filePath))
-                            {
-                                try
-                                {
-                                    StorageFile file = await StorageFile.GetFileFromPathAsync(filePath?.ToString());
-                                    Provider = new InstallViewModel(file, this);
-                                    break;
                                 }
-                                catch (Exception ex)
-                                {
-                                    SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in protocol activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
-                                }
-                            }
-                        }
-                        Provider = new InstallViewModel(protocolArgs.Uri, this);
-                        break;
-                    case ActivationKind.ProtocolForResults when args is ProtocolForResultsActivatedEventArgs protocolForResultsArgs:
-                        ValueSet ProtocolForResultsData = protocolForResultsArgs.Data;
-                        if (ProtocolForResultsData?.Count >= 1)
-                        {
-                            if (ProtocolForResultsData.TryGetValue("Url", out object url))
-                            {
-                                Provider = new InstallViewModel(url as Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
-                                break;
-                            }
-                            else if (ProtocolForResultsData.TryGetValue("FilePath", out object filePath))
-                            {
-                                try
-                                {
-                                    StorageFile file = await StorageFile.GetFileFromPathAsync(filePath?.ToString());
-                                    Provider = new InstallViewModel(file, this, protocolForResultsArgs.ProtocolForResultsOperation);
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in protocol activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
-                                }
-                            }
-                        }
-                        Provider = new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
-                        break;
-                    case ActivationKind.CommandLineLaunch when args is ICommandLineActivatedEventArgs commandLineActivatedEventArgs:
-                        try
-                        {
-                            CommandLineActivationOperation operation = commandLineActivatedEventArgs.Operation;
-                            string[] arguments = operation.Arguments?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                            if (arguments is [.., { Length: > 0 } path])
-                            {
-                                path = path.Trim('\'', '"');
-                                if (!string.IsNullOrWhiteSpace(path))
+                                else if (protocolData.TryGetValue("FilePath", out object filePath))
                                 {
                                     try
                                     {
-                                        string basePath = operation.CurrentDirectoryPath;
-                                        if (basePath[^1] != '\\')
-                                        {
-                                            basePath += "\\";
-                                        }
-                                        if (Uri.TryCreate(basePath, UriKind.Absolute, out Uri baseUri) && baseUri.IsFile)
-                                        {
-                                            if (Uri.TryCreate(baseUri, path, out Uri uri) && uri.IsFile)
-                                            {
-                                                StorageFile file = await StorageFile.GetFileFromPathAsync(uri.AbsoluteUri);
-                                                Provider = new InstallViewModel(file, this);
-                                            }
-                                            else if (Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.Scheme is "http" or "https")
-                                            {
-                                                Provider = new InstallViewModel(uri, this);
-                                            }
-                                        }
+                                        StorageFile file = await StorageFile.GetFileFromPathAsync(filePath?.ToString());
+                                        Provider = new InstallViewModel(file, this);
                                         break;
                                     }
                                     catch (Exception ex)
                                     {
-                                        SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in command line activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+                                        SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in protocol activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                                     }
                                 }
                             }
-                        }
-                        finally
-                        {
-                            commandLineActivatedEventArgs.CompleteDeferral();
-                        }
-                        goto default;
-                    default:
-                        Provider = new InstallViewModel(file: null, this);
-                        break;
+                            Provider = new InstallViewModel(protocolArgs.Uri, this);
+                            break;
+                        case ActivationKind.ProtocolForResults when args is ProtocolForResultsActivatedEventArgs protocolForResultsArgs:
+                            ValueSet ProtocolForResultsData = protocolForResultsArgs.Data;
+                            if (ProtocolForResultsData?.Count >= 1)
+                            {
+                                if (ProtocolForResultsData.TryGetValue("Url", out object url))
+                                {
+                                    Provider = new InstallViewModel(url as Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
+                                    break;
+                                }
+                                else if (ProtocolForResultsData.TryGetValue("FilePath", out object filePath))
+                                {
+                                    try
+                                    {
+                                        StorageFile file = await StorageFile.GetFileFromPathAsync(filePath?.ToString());
+                                        Provider = new InstallViewModel(file, this, protocolForResultsArgs.ProtocolForResultsOperation);
+                                        break;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in protocol activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+                                    }
+                                }
+                            }
+                            Provider = new InstallViewModel(protocolForResultsArgs.Uri, this, protocolForResultsArgs.ProtocolForResultsOperation);
+                            break;
+                        case ActivationKind.CommandLineLaunch when args is ICommandLineActivatedEventArgs commandLineActivatedEventArgs:
+                            try
+                            {
+                                CommandLineActivationOperation operation = commandLineActivatedEventArgs.Operation;
+                                string[] arguments = operation.Arguments?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                if (arguments is [.., { Length: > 0 } path])
+                                {
+                                    path = path.Trim('\'', '"');
+                                    if (!string.IsNullOrWhiteSpace(path))
+                                    {
+                                        try
+                                        {
+                                            string basePath = operation.CurrentDirectoryPath;
+                                            if (basePath[^1] != '\\')
+                                            {
+                                                basePath += "\\";
+                                            }
+                                            if (Uri.TryCreate(basePath, UriKind.Absolute, out Uri baseUri) && baseUri.IsFile)
+                                            {
+                                                if (Uri.TryCreate(baseUri, path, out Uri uri) && uri.IsFile)
+                                                {
+                                                    StorageFile file = await StorageFile.GetFileFromPathAsync(uri.AbsoluteUri);
+                                                    Provider = new InstallViewModel(file, this);
+                                                }
+                                                else if (Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.Scheme is "http" or "https")
+                                                {
+                                                    Provider = new InstallViewModel(uri, this);
+                                                }
+                                            }
+                                            break;
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in command line activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+                                        }
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                commandLineActivatedEventArgs.CompleteDeferral();
+                            }
+                            goto default;
+                        default:
+                            Provider = new InstallViewModel(file: null, this);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to initialize InstallViewModel with activation arguments. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
+                    Provider = new InstallViewModel(file: null, this);
                 }
             }
             else
