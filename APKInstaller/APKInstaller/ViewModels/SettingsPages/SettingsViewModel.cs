@@ -51,15 +51,14 @@ namespace APKInstaller.ViewModels.SettingsPages
             || (Package.Current.Id.PublisherId != "4v4sx105x6y4r" && Package.Current.Id.PublisherId != "d0s2e6z6qkbn0")
             || (Package.Current.Id.Publisher != "CN=2C3A37C0-35FC-4839-B08C-751C1C1AFBF5" && Package.Current.Id.Publisher != "CN=where");
 
-        private DeviceData[] _deviceList;
         public DeviceData[] DeviceList
         {
-            get => _deviceList;
+            get;
             set
             {
-                if (_deviceList != value)
+                if (field != value)
                 {
-                    _deviceList = value;
+                    field = value;
                     RaisePropertyChangedEvent();
                     if (!IsOnlyWSA) { ChooseDevice(); }
                 }

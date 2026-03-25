@@ -10,17 +10,16 @@ namespace APKInstaller.Helpers
     {
         public static bool IsRunning { get; private set; }
 
-        private static DeviceMonitor _monitor;
         public static DeviceMonitor Monitor
         {
             get
             {
-                if (_monitor == null && AdbServer.Instance.GetStatus().IsRunning)
+                if (field == null && AdbServer.Instance.GetStatus().IsRunning)
                 {
-                    _monitor = new(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)));
-                    _ = _monitor.StartAsync();
+                    field = new(new AdbSocket(new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort)));
+                    _ = field.StartAsync();
                 }
-                return _monitor;
+                return field;
             }
         }
 

@@ -73,7 +73,7 @@ namespace APKInstaller.Common
                         return null;
                     }
                 }
-                end:
+            end:
                 if (File.Exists(path))
                 {
                     return await StorageFile.GetFileFromPathAsync(path);

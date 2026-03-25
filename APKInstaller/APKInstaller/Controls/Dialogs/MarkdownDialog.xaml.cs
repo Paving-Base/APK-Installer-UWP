@@ -107,11 +107,10 @@ namespace APKInstaller.Controls.Dialogs
 
         #endregion
 
-        private bool isInitialized;
         internal bool IsInitialized
         {
-            get => isInitialized;
-            private set => SetProperty(ref isInitialized, value);
+            get;
+            private set => SetProperty(ref field, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

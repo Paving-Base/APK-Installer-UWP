@@ -131,8 +131,8 @@ namespace APKInstaller.Helpers
         {
             LoggerFactory.CreateLogger("Hello World!").LogInformation("\nThis is a hello from the author @wherewhere.\nIf you can't find this hello in your installed version, that means you have installed a piracy one.\nRemember, the author is @wherewhere. If not, you possible install a modified one too.");
             AssemblyName info = Assembly.GetExecutingAssembly().GetName();
-            if (info.Name != $"{"APK"}{"Installer"}") { LoggerFactory.CreateLogger("Check Assembly").LogError("\nAssembly name is wrong.\nThe wrong name is {name}.\nIt should be {APK}{Installer}.", info.Name, "APK", "Installer"); };
-            if (info.Version.Major != Package.Current.Id.Version.Major || info.Version.Minor != Package.Current.Id.Version.Minor || info.Version.Build != Package.Current.Id.Version.Build) { LoggerFactory.CreateLogger("CheckAssembly").LogError("\nAssembly version is wrong.\nThe wrong version is {assembly}.\nIt should be {package}.", info.Version, Package.Current.Id.Version.ToFormattedString()); };
+            if (info.Name != $"{"APK"}{"Installer"}") { LoggerFactory.CreateLogger("Check Assembly").LogError("\nAssembly name is wrong.\nThe wrong name is {name}.\nIt should be {APK}{Installer}.", info.Name, "APK", "Installer"); }
+            if (info.Version.Major != Package.Current.Id.Version.Major || info.Version.Minor != Package.Current.Id.Version.Minor || info.Version.Build != Package.Current.Id.Version.Build) { LoggerFactory.CreateLogger("CheckAssembly").LogError("\nAssembly version is wrong.\nThe wrong version is {assembly}.\nIt should be {package}.", info.Version, Package.Current.Id.Version.ToFormattedString()); }
         }
     }
 

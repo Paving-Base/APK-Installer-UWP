@@ -35,68 +35,50 @@ namespace APKInstaller.ViewModels.SettingsPages
         public Action HideQRScanFlyout { get; set; }
 
         public ObservableCollection<MDNSDeviceData> DeviceList { get; } = [];
-
-        private string _code = string.Empty;
         public string Code
         {
-            get => _code;
-            set => SetProperty(ref _code, value);
-        }
-
-        private string _IPAddress = string.Empty;
+            get;
+            set => SetProperty(ref field, value);
+        } = string.Empty;
         public string IPAddress
         {
-            get => _IPAddress;
-            set => SetProperty(ref _IPAddress, value);
-        }
-
-        private List<DeviceData> _connectedList;
+            get;
+            set => SetProperty(ref field, value);
+        } = string.Empty;
         public List<DeviceData> ConnectedList
         {
-            get => _connectedList;
-            set => SetProperty(ref _connectedList, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _connectInfoIsOpen;
         public bool ConnectInfoIsOpen
         {
-            get => _connectInfoIsOpen;
-            set => SetProperty(ref _connectInfoIsOpen, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private InfoBarSeverity _connectInfoSeverity;
         public InfoBarSeverity ConnectInfoSeverity
         {
-            get => _connectInfoSeverity;
-            set => SetProperty(ref _connectInfoSeverity, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _connectInfoTitle;
         public string ConnectInfoTitle
         {
-            get => _connectInfoTitle;
-            set => SetProperty(ref _connectInfoTitle, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _connectingDevice;
         public bool ConnectingDevice
         {
-            get => _connectingDevice;
-            set => SetProperty(ref _connectingDevice, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _connectLogText;
         public string ConnectLogText
         {
-            get => _connectLogText;
-            set => SetProperty(ref _connectLogText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _QRCodeText;
         public string QRCodeText
         {
-            get => _QRCodeText;
-            set => SetProperty(ref _QRCodeText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

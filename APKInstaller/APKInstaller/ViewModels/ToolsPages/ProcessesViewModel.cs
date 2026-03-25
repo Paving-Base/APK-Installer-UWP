@@ -28,20 +28,16 @@ namespace APKInstaller.ViewModels.ToolsPages
 
         public string CachedSortedColumn { get; set; }
         public CoreDispatcher Dispatcher { get; } = dispatcher;
-
-        private ObservableCollection<string> deviceList = [];
         public ObservableCollection<string> DeviceList
         {
-            get => deviceList;
-            set => SetProperty(ref deviceList, value);
-        }
-
-        private ObservableCollection<AndroidProcess> processes = [];
+            get;
+            set => SetProperty(ref field, value);
+        } = [];
         public ObservableCollection<AndroidProcess> Processes
         {
-            get => processes;
-            set => SetProperty(ref processes, value);
-        }
+            get;
+            set => SetProperty(ref field, value);
+        } = [];
 
         public event PropertyChangedEventHandler PropertyChanged;
 

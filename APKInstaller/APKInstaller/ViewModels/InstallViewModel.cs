@@ -69,12 +69,11 @@ namespace APKInstaller.ViewModels
 
         public CoreDispatcher Dispatcher => _page.Dispatcher;
 
-        private ApkInfo _apkInfo = null;
         public ApkInfo ApkInfo
         {
-            get => _apkInfo;
-            set => SetProperty(ref _apkInfo, value);
-        }
+            get;
+            set => SetProperty(ref field, value);
+        } = null;
 
         public static string ADBPath
         {
@@ -87,257 +86,185 @@ namespace APKInstaller.ViewModels
             get => SettingsHelper.Get<bool>(SettingsHelper.IsOpenApp);
             set => SettingsHelper.Set(SettingsHelper.IsOpenApp, value);
         }
-
-        private bool _isInstalling;
         public bool IsInstalling
         {
-            get => _isInstalling;
-            set => SetProperty(ref _isInstalling, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _isInitialized;
         public bool IsInitialized
         {
-            get => _isInitialized;
-            set => SetProperty(ref _isInitialized, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _appName;
         public string AppName
         {
-            get => _appName;
-            set => SetProperty(ref _appName, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _textOutput;
         public string TextOutput
         {
-            get => _textOutput;
-            set => SetProperty(ref _textOutput, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _infoMessage;
         public string InfoMessage
         {
-            get => _infoMessage;
-            set => SetProperty(ref _infoMessage, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _progressText;
         public string ProgressText
         {
-            get => _progressText;
-            set => SetProperty(ref _progressText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _actionButtonEnable;
         public bool ActionButtonEnable
         {
-            get => _actionButtonEnable;
-            set => SetProperty(ref _actionButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _secondaryActionButtonEnable;
         public bool SecondaryActionButtonEnable
         {
-            get => _secondaryActionButtonEnable;
-            set => SetProperty(ref _secondaryActionButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _fileSelectButtonEnable;
         public bool FileSelectButtonEnable
         {
-            get => _fileSelectButtonEnable;
-            set => SetProperty(ref _fileSelectButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _downloadButtonEnable;
         public bool DownloadButtonEnable
         {
-            get => _downloadButtonEnable;
-            set => SetProperty(ref _downloadButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _deviceSelectButtonEnable;
         public bool DeviceSelectButtonEnable
         {
-            get => _deviceSelectButtonEnable;
-            set => SetProperty(ref _deviceSelectButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _cancelOperationButtonEnable;
         public bool CancelOperationButtonEnable
         {
-            get => _cancelOperationButtonEnable;
-            set => SetProperty(ref _cancelOperationButtonEnable, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _waitProgressText;
         public string WaitProgressText
         {
-            get => _waitProgressText;
-            set => SetProperty(ref _waitProgressText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private double _waitProgressValue = 0;
         public double WaitProgressValue
         {
-            get => _waitProgressValue;
-            set => SetProperty(ref _waitProgressValue, value);
-        }
-
-        private double _appxInstallBarValue = 0;
+            get;
+            set => SetProperty(ref field, value);
+        } = 0;
         public double AppxInstallBarValue
         {
-            get => _appxInstallBarValue;
-            set => SetProperty(ref _appxInstallBarValue, value);
-        }
-
-        private bool _waitProgressIndeterminate = true;
+            get;
+            set => SetProperty(ref field, value);
+        } = 0;
         public bool WaitProgressIndeterminate
         {
-            get => _waitProgressIndeterminate;
-            set => SetProperty(ref _waitProgressIndeterminate, value);
-        }
-
-        private bool _appxInstallBarIndeterminate = true;
+            get;
+            set => SetProperty(ref field, value);
+        } = true;
         public bool AppxInstallBarIndeterminate
         {
-            get => _appxInstallBarIndeterminate;
-            set => SetProperty(ref _appxInstallBarIndeterminate, value);
-        }
-
-        private string _actionButtonText;
+            get;
+            set => SetProperty(ref field, value);
+        } = true;
         public string ActionButtonText
         {
-            get => _actionButtonText;
-            set => SetProperty(ref _actionButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _secondaryActionButtonText;
         public string SecondaryActionButtonText
         {
-            get => _secondaryActionButtonText;
-            set => SetProperty(ref _secondaryActionButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _fileSelectButtonText;
         public string FileSelectButtonText
         {
-            get => _fileSelectButtonText;
-            set => SetProperty(ref _fileSelectButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _downloadButtonText;
         public string DownloadButtonText
         {
-            get => _downloadButtonText;
-            set => SetProperty(ref _downloadButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _deviceSelectButtonText;
         public string DeviceSelectButtonText
         {
-            get => _deviceSelectButtonText;
-            set => SetProperty(ref _deviceSelectButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _cancelOperationButtonText;
         public string CancelOperationButtonText
         {
-            get => _cancelOperationButtonText;
-            set => SetProperty(ref _cancelOperationButtonText, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _textOutputVisibility = false;
         public bool TextOutputVisibility
         {
-            get => _textOutputVisibility;
-            set => SetProperty(ref _textOutputVisibility, value);
-        }
-
-        private bool _installOutputVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool InstallOutputVisibility
         {
-            get => _installOutputVisibility;
-            set => SetProperty(ref _installOutputVisibility, value);
-        }
-
-        private bool _actionVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool ActionVisibility
         {
-            get => _actionVisibility;
-            set => SetProperty(ref _actionVisibility, value);
-        }
-
-        private bool _secondaryActionVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool SecondaryActionVisibility
         {
-            get => _secondaryActionVisibility;
-            set => SetProperty(ref _secondaryActionVisibility, value);
-        }
-
-        private bool _fileSelectVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool FileSelectVisibility
         {
-            get => _fileSelectVisibility;
-            set => SetProperty(ref _fileSelectVisibility, value);
-        }
-
-        private bool _downloadVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool DownloadVisibility
         {
-            get => _downloadVisibility;
-            set => SetProperty(ref _downloadVisibility, value);
-        }
-
-        private bool _deviceSelectVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool DeviceSelectVisibility
         {
-            get => _deviceSelectVisibility;
-            set => SetProperty(ref _deviceSelectVisibility, value);
-        }
-
-        private bool _cancelOperationVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool CancelOperationVisibility
         {
-            get => _cancelOperationVisibility;
-            set => SetProperty(ref _cancelOperationVisibility, value);
-        }
-
-        private bool _messagesToUserVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool MessagesToUserVisibility
         {
-            get => _messagesToUserVisibility;
-            set => SetProperty(ref _messagesToUserVisibility, value);
-        }
-
-        private bool _launchWhenReadyVisibility = false;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool LaunchWhenReadyVisibility
         {
-            get => _launchWhenReadyVisibility;
-            set => SetProperty(ref _launchWhenReadyVisibility, value);
-        }
-
-        private bool _appVersionVisibility;
+            get;
+            set => SetProperty(ref field, value);
+        } = false;
         public bool AppVersionVisibility
         {
-            get => _appVersionVisibility;
-            set => SetProperty(ref _appVersionVisibility, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _appPublisherVisibility;
         public bool AppPublisherVisibility
         {
-            get => _appPublisherVisibility;
-            set => SetProperty(ref _appPublisherVisibility, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private bool _appCapabilitiesVisibility;
         public bool AppCapabilitiesVisibility
         {
-            get => _appCapabilitiesVisibility;
-            set => SetProperty(ref _appCapabilitiesVisibility, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -768,7 +695,7 @@ namespace APKInstaller.ViewModels
             await ThreadSwitcher.ResumeBackgroundAsync();
             if (_file != null || _url != null)
             {
-                checkadb:
+            checkadb:
                 WaitProgressText = _loader.GetString("Loading");
                 if (_file != null)
                 {
@@ -1663,7 +1590,7 @@ namespace APKInstaller.ViewModels
             XXHDPI = 480,
             XXXHDPI = 640,
             TVDPI = 213
-        } 
+        }
 
         public async ValueTask OpenAPKAsync(StorageFile file)
         {

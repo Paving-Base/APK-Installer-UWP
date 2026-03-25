@@ -86,11 +86,9 @@ namespace Zeroconf.DNS
         /// </summary>
         public uint TTL
         {
-            get => (uint)Math.Max(0, m_TTL - TimeLived);
-            set => m_TTL = value;
+            get => (uint)Math.Max(0, field - TimeLived);
+            set;
         }
-
-        private uint m_TTL;
 
         /// <summary>
         /// 

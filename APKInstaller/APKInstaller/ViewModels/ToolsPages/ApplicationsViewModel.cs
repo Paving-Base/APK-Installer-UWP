@@ -28,20 +28,16 @@ namespace APKInstaller.ViewModels.ToolsPages
         public List<DeviceData> devices;
 
         public CoreDispatcher Dispatcher { get; } = dispatcher;
-
-        private ObservableCollection<string> deviceList = [];
         public ObservableCollection<string> DeviceList
         {
-            get => deviceList;
-            set => SetProperty(ref deviceList, value);
-        }
-
-        private ObservableCollection<APKInfo> applications = [];
+            get;
+            set => SetProperty(ref field, value);
+        } = [];
         public ObservableCollection<APKInfo> Applications
         {
-            get => applications;
-            set => SetProperty(ref applications, value);
-        }
+            get;
+            set => SetProperty(ref field, value);
+        } = [];
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -148,7 +144,7 @@ namespace APKInstaller.ViewModels.ToolsPages
                             });
                         });
                     }
-                };
+                }
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace APKInstaller.Common
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IMetroLogger : AdvancedSharpAdbClient.Logs.ILogger
     {
-        public Microsoft.Extensions.Logging.ILogger Logger { get; }
+        Microsoft.Extensions.Logging.ILogger Logger { get; }
 
         void AdvancedSharpAdbClient.Logs.ILogger.Log(AdvancedSharpAdbClient.Logs.LogLevel logLevel, Exception exception, string message, params object[] args) =>
             Logger.Log((Microsoft.Extensions.Logging.LogLevel)logLevel, exception, message, args);

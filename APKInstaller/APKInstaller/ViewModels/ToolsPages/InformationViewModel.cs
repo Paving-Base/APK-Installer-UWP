@@ -15,40 +15,34 @@ namespace APKInstaller.ViewModels.ToolsPages
         public string PermissionsHeaderFormat => _loader.GetString("PermissionsHeaderFormat");
         public string DependenciesHeaderFormat => _loader.GetString("DependenciesHeaderFormat");
 
-        private ApkInfo _apkInfo = null;
         public ApkInfo ApkInfo
         {
-            get => _apkInfo;
+            get;
             set
             {
-                if (_apkInfo != value)
+                if (field != value)
                 {
-                    _apkInfo = value;
+                    field = value;
                     UpdateInfos(value);
                     RaisePropertyChangedEvent();
                 }
             }
-        }
+        } = null;
 
-        private string _features;
         public string Features
         {
-            get => _features;
-            set => SetProperty(ref _features, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _permissions;
         public string Permissions
         {
-            get => _permissions;
-            set => SetProperty(ref _permissions, value);
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        private string _appLocaleName;
         public string AppLocaleName
         {
-            get => _appLocaleName;
-            set => SetProperty(ref _appLocaleName, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -11,7 +11,11 @@ namespace Zeroconf.Models
 
     public abstract class ZeroconfOptions
     {
-        private int retries;
+        public int Retries
+        {
+            get;
+            set => field = value < 0 ? throw new ArgumentOutOfRangeException(nameof(value)) : value;
+        }
 
         public TimeSpan ScanTime { get; set; }
         public TimeSpan RetryDelay { get; set; }
@@ -21,12 +25,6 @@ namespace Zeroconf.Models
         public bool AllowOverlappedQueries { get; set; }
 
         public ScanQueryType ScanQueryType { get; set; }
-
-        public int Retries
-        {
-            get => retries;
-            set => retries = value < 0 ? throw new ArgumentOutOfRangeException(nameof(value)) : value;
-        }
 
         protected ZeroconfOptions(string protocol) : this([protocol])
         {
@@ -41,7 +39,6 @@ namespace Zeroconf.Models
             ScanTime = TimeSpan.FromSeconds(2);
             ScanQueryType = ScanQueryType.Ptr;
         }
-
     }
 
     public sealed class BrowseDomainsOptions() : ZeroconfOptions("_services._dns-sd._udp.local.");

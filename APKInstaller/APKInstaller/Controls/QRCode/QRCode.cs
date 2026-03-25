@@ -1,7 +1,6 @@
 ﻿using QRCoder;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,17 +32,11 @@ namespace APKInstaller.Controls
         {
             base.OnApplyTemplate();
 
-            if (QRCodePath != null)
-            {
-                QRCodePath.SizeChanged -= OnSizeChanged;
-            }
+            QRCodePath?.SizeChanged -= OnSizeChanged;
 
             QRCodePath = GetTemplateChild(QRCodePathName) as Path;
 
-            if (QRCodePath != null)
-            {
-                QRCodePath.SizeChanged += OnSizeChanged;
-            }
+            QRCodePath?.SizeChanged += OnSizeChanged;
 
             UpdateQRCodeData();
         }

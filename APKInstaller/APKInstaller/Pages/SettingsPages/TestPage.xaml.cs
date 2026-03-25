@@ -35,27 +35,25 @@ namespace APKInstaller.Pages.SettingsPages
             }
         }
 
-        private double progressValue = 0;
         internal double ProgressValue
         {
-            get => progressValue;
+            get;
             set
             {
-                if (progressValue != value)
+                if (field != value)
                 {
                     TitleBar.SetProgressValue(value);
-                    progressValue = value;
+                    field = value;
                 }
             }
-        }
+        } = 0;
 
-        private bool isShowProgressRing = false;
         internal bool IsShowProgressRing
         {
-            get => isShowProgressRing;
+            get;
             set
             {
-                if (isShowProgressRing != value)
+                if (field != value)
                 {
                     if (value)
                     {
@@ -65,10 +63,10 @@ namespace APKInstaller.Pages.SettingsPages
                     {
                         TitleBar.HideProgressRing();
                     }
-                    isShowProgressRing = value;
+                    field = value;
                 }
             }
-        }
+        } = false;
 
         internal bool IsDevelopment { get; } = Package.Current.IsDevelopmentMode
             || Package.Current.SignatureKind != PackageSignatureKind.Store

@@ -4,8 +4,6 @@ using APKInstaller.Pages.ToolsPages;
 using APKInstaller.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
-using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
@@ -87,7 +85,7 @@ namespace APKInstaller.Pages
                                     Provider = new InstallViewModel(file, this);
                                     break;
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     SettingsHelper.LoggerFactory.CreateLogger<InstallPage>().LogError(ex, "Failed to get file from path in protocol activation. {message} (0x{hResult:X})", ex.GetMessage(), ex.HResult);
                                 }

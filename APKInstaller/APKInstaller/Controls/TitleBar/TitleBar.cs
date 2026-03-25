@@ -63,16 +63,10 @@ namespace APKInstaller.Controls
             //}
 
             Button backButton = (Button)GetTemplateChild("BackButton");
-            if (backButton != null)
-            {
-                backButton.Click += OnBackButtonClick;
-            }
+            backButton?.Click += OnBackButtonClick;
 
             Button refreshButton = (Button)GetTemplateChild("RefreshButton");
-            if (refreshButton != null)
-            {
-                refreshButton.Click += OnRefreshButtonClick;
-            }
+            refreshButton?.Click += OnRefreshButtonClick;
 
             UpdateHeight();
             UpdateBackButton();
@@ -142,48 +136,38 @@ namespace APKInstaller.Controls
 
         public void OnWindowActivated(object sender, WindowActivatedEventArgs args)
         {
-            VisualStateManager.GoToState(this, (args.WindowActivationState == CoreWindowActivationState.Deactivated) ? "Deactivated" : "Activated", false);
+            _ = VisualStateManager.GoToState(this, (args.WindowActivationState == CoreWindowActivationState.Deactivated) ? "Deactivated" : "Activated", false);
         }
 
         public void UpdateBackButton()
         {
-            VisualStateManager.GoToState(this, IsBackButtonVisible ? "BackButtonVisible" : "BackButtonCollapsed", false);
+            _ = VisualStateManager.GoToState(this, IsBackButtonVisible ? "BackButtonVisible" : "BackButtonCollapsed", false);
         }
 
         public void UpdateRefreshButton()
         {
-            VisualStateManager.GoToState(this, IsRefreshButtonVisible ? "RefreshButtonVisible" : "RefreshButtonCollapsed", false);
+            _ = VisualStateManager.GoToState(this, IsRefreshButtonVisible ? "RefreshButtonVisible" : "RefreshButtonCollapsed", false);
         }
 
         public void UpdateHeight()
         {
-            VisualStateManager.GoToState(this, (CustomContent == null && AutoSuggestBox == null && PaneFooter == null) ? "CompactHeight" : "ExpandedHeight", false);
+            _ = VisualStateManager.GoToState(this, (CustomContent == null && AutoSuggestBox == null && PaneFooter == null) ? "CompactHeight" : "ExpandedHeight", false);
         }
 
         public void UpdateIcon()
         {
             UIElement source = IconSource;
-            if (source != null)
-            {
-                VisualStateManager.GoToState(this, "IconVisible", false);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "IconCollapsed", false);
-            }
+            _ = source != null
+                ? VisualStateManager.GoToState(this, "IconVisible", false)
+                : VisualStateManager.GoToState(this, "IconCollapsed", false);
         }
 
         public void UpdateTitle()
         {
             string titleText = Title;
-            if (string.IsNullOrEmpty(titleText))
-            {
-                VisualStateManager.GoToState(this, "TitleTextCollapsed", false);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, "TitleTextVisible", false);
-            }
+            _ = string.IsNullOrEmpty(titleText)
+                ? VisualStateManager.GoToState(this, "TitleTextCollapsed", false)
+                : VisualStateManager.GoToState(this, "TitleTextVisible", false);
         }
     }
 }

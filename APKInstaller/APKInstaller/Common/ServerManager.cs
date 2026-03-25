@@ -1,12 +1,8 @@
 ﻿using APKInstaller.Metadata;
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Win32;
 
 namespace APKInstaller.Common
 {

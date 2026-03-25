@@ -16,11 +16,10 @@ namespace APKInstaller.Models
 
         public string Host => $"{Address}:{Host}";
 
-        private bool _connectingDevice;
         public bool ConnectingDevice
         {
-            get => _connectingDevice;
-            set => SetProperty(ref _connectingDevice, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,7 +1,5 @@
 ﻿using AAPTForNet.Filters;
 using AAPTForNet.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AAPTForNet
