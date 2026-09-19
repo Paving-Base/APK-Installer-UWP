@@ -2,7 +2,7 @@
 
 namespace APKInstaller.Controls
 {
-    public partial class TitleBarTemplateSettings : DependencyObject
+    public sealed partial class TitleBarTemplateSettings : DependencyObject
     {
         public static readonly DependencyProperty ProgressValueProperty =
             DependencyProperty.Register(

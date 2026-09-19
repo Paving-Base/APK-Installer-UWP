@@ -231,13 +231,9 @@ namespace APKInstaller
             if (IsAppCapabilitySupported)
             {
                 AppCapability wifiData = AppCapability.Create("wifiData");
-                switch (wifiData.CheckAccess())
+                if (wifiData.CheckAccess() == AppCapabilityAccessStatus.UserPromptRequired)
                 {
-                    case AppCapabilityAccessStatus.DeniedByUser:
-                    case AppCapabilityAccessStatus.DeniedBySystem:
-                        // Do something
-                        await AppCapability.Create("wifiData").RequestAccessAsync();
-                        break;
+                    await wifiData.RequestAccessAsync();
                 }
             }
         }

@@ -3,10 +3,11 @@ using APKInstaller.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APKInstaller.Common
 {
-    public class MetroLoggerFactory : AdvancedSharpAdbClient.Logs.ILoggerFactory
+    public sealed class MetroLoggerFactory : AdvancedSharpAdbClient.Logs.ILoggerFactory
     {
         public AdvancedSharpAdbClient.Logs.ILogger CreateLogger(string categoryName) => new MetroLogger(categoryName);
 
@@ -18,18 +19,18 @@ namespace APKInstaller.Common
     {
         Microsoft.Extensions.Logging.ILogger Logger { get; }
 
-        void AdvancedSharpAdbClient.Logs.ILogger.Log(AdvancedSharpAdbClient.Logs.LogLevel logLevel, Exception exception, string message, params object[] args) =>
+        void AdvancedSharpAdbClient.Logs.ILogger.Log(AdvancedSharpAdbClient.Logs.LogLevel logLevel, Exception exception, [StringSyntax(StringSyntaxAttribute.CompositeFormat)] string message, params object[] args) =>
             Logger.Log((Microsoft.Extensions.Logging.LogLevel)logLevel, exception, message, args);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class MetroLogger(string name) : IMetroLogger
+    public sealed class MetroLogger(string name) : IMetroLogger
     {
         public Microsoft.Extensions.Logging.ILogger Logger { get; } = SettingsHelper.LoggerFactory.CreateLogger(name);
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class MetroLogger<T> : IMetroLogger, AdvancedSharpAdbClient.Logs.ILogger<T>
+    public sealed class MetroLogger<T> : IMetroLogger, AdvancedSharpAdbClient.Logs.ILogger<T>
     {
         public Microsoft.Extensions.Logging.ILogger Logger { get; } = SettingsHelper.LoggerFactory.CreateLogger<T>();
     }

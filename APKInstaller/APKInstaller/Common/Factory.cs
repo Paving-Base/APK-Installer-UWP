@@ -86,7 +86,7 @@ namespace APKInstaller.Common
         internal static T TryCreateInstance<T>(in Guid rclsid, CLSCTX dwClsContext = CLSCTX.CLSCTX_INPROC_SERVER)
         {
             HRESULT hresult = PInvoke.CoCreateInstance(rclsid, null, dwClsContext, CLSID_IUnknown, out nint result);
-            return hresult.Succeeded ? Marshaler<T>.FromAbi(result) : default;
+            return hresult.Succeeded ? MarshalInterface<T>.FromAbi(result) : default;
         }
 
         internal static T TryCreateInstance<T>(in Guid rclsid, CLSCTX dwClsContext, in TimeSpan period) where T : ISetMonitor

@@ -20,7 +20,7 @@ using Zeroconf.Interfaces;
 
 namespace APKInstaller.ViewModels.SettingsPages
 {
-    public partial class PairDeviceViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged, IDisposable, IAsyncDisposable
+    public sealed partial class PairDeviceViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged, IDisposable, IAsyncDisposable
     {
         private string ssid;
         private string password;
@@ -83,7 +83,7 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
@@ -92,9 +92,9 @@ namespace APKInstaller.ViewModels.SettingsPages
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);
@@ -429,7 +429,7 @@ namespace APKInstaller.ViewModels.SettingsPages
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async Task DisposeAsync(bool disposing)
+        private async Task DisposeAsync(bool disposing)
         {
             if (disposing)
             {

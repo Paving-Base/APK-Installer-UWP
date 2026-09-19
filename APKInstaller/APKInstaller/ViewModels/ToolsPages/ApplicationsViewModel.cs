@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public partial class ApplicationsViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
+    public sealed partial class ApplicationsViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
     {
         public TitleBar TitleBar;
         public ComboBox DeviceComboBox;
@@ -41,7 +41,7 @@ namespace APKInstaller.ViewModels.ToolsPages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
@@ -50,9 +50,9 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);
@@ -187,7 +187,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         }
     }
 
-    public partial class ApplicationConverter : IValueConverter
+    public sealed partial class ApplicationConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -201,7 +201,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         public object ConvertBack(object value, Type targetType, object parameter, string language) => (Visibility)value == Visibility.Visible;
     }
 
-    public class APKInfo
+    public sealed class APKInfo
     {
         public string Name { get; set; }
         public IconElement Icon { get; set; }

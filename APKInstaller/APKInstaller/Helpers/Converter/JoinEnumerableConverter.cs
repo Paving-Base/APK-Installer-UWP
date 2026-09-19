@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Markup;
 
 namespace APKInstaller.Helpers.Converter
 {
-    public partial class JoinEnumerableConverter : IValueConverter
+    public sealed partial class JoinEnumerableConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

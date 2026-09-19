@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -26,7 +27,7 @@ using WinRT;
 
 namespace APKInstaller.ViewModels.SettingsPages
 {
-    public partial class SettingsViewModel : INotifyPropertyChanged
+    public sealed partial class SettingsViewModel : INotifyPropertyChanged
     {
         private static readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("SettingsPage");
 
@@ -338,33 +339,32 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected static async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private static void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
                 foreach (KeyValuePair<CoreDispatcher, SettingsViewModel> cache in Caches)
                 {
-                    await cache.Key.ResumeForegroundAsync();
-                    cache.Value.PropertyChanged?.Invoke(cache.Value, new PropertyChangedEventArgs(name));
+                    _ = cache.Key.AwaitableRunAsync(() => cache.Value.PropertyChanged?.Invoke(cache.Value, new PropertyChangedEventArgs(name)));
                 }
             }
         }
 
-        protected static async void RaisePropertyChangedEvent(params string[] names)
+        private static void RaisePropertyChangedEvent(params string[] names)
         {
             if (names?.Length > 0)
             {
                 foreach (KeyValuePair<CoreDispatcher, SettingsViewModel> cache in Caches)
                 {
-                    await cache.Key.ResumeForegroundAsync();
-                    names.ForEach(name => cache.Value.PropertyChanged?.Invoke(cache.Value, new PropertyChangedEventArgs(name)));
+                    _ = cache.Key.AwaitableRunAsync(() => names.ForEach(name => cache.Value.PropertyChanged?.Invoke(cache.Value, new PropertyChangedEventArgs(name))));
                 }
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        [SuppressMessage("Performance", "CA1822:将成员标记为 static", Justification = "<挂起>")]
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);
@@ -490,6 +490,7 @@ namespace APKInstaller.ViewModels.SettingsPages
 
         public void ChooseDevice()
         {
+            if (DeviceList?.Length is not > 0) { return; }
             DeviceData device = SettingsHelper.Get<DeviceData>(SettingsHelper.DefaultDevice);
             if (device is null) { return; }
             foreach (DeviceData data in DeviceList)

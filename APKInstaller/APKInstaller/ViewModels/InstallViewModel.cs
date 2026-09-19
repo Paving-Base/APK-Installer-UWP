@@ -43,7 +43,7 @@ using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEvent
 namespace APKInstaller.ViewModels
 {
     [GeneratedBindableCustomProperty([nameof(ApkInfo)], [])]
-    public partial class InstallViewModel : INotifyPropertyChanged
+    public sealed partial class InstallViewModel : INotifyPropertyChanged
     {
         private DeviceData _device;
         private readonly InstallPage _page;
@@ -269,7 +269,7 @@ namespace APKInstaller.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
@@ -278,9 +278,9 @@ namespace APKInstaller.ViewModels
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);

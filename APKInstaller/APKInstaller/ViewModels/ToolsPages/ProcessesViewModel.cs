@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Data;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public partial class ProcessesViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
+    public sealed partial class ProcessesViewModel(CoreDispatcher dispatcher) : INotifyPropertyChanged
     {
         public TitleBar TitleBar;
         public ComboBox DeviceComboBox;
@@ -41,7 +41,7 @@ namespace APKInstaller.ViewModels.ToolsPages
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private async void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
@@ -50,9 +50,9 @@ namespace APKInstaller.ViewModels.ToolsPages
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);
@@ -189,7 +189,7 @@ namespace APKInstaller.ViewModels.ToolsPages
         }
     }
 
-    public partial class ProcessConverter : IValueConverter
+    public sealed partial class ProcessConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

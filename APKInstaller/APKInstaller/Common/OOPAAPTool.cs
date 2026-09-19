@@ -15,7 +15,7 @@ using Windows.Storage;
 
 namespace APKInstaller.Common
 {
-    public class OOPAAPTool : AAPTool
+    public sealed class OOPAAPTool : AAPTool
     {
         protected override bool HasDumpOverride => true;
 
@@ -87,7 +87,7 @@ namespace APKInstaller.Common
         }
     }
 
-    public partial class RunProcess : IRunProcess
+    public sealed partial class RunProcess : IRunProcess
     {
         [AsyncMethodBuilder(typeof(AsyncActionMethodBuilder))]
         async IAsyncAction IRunProcess.DumpAsync(string filename, string command, DumpDelegate callback, IList<string> output)

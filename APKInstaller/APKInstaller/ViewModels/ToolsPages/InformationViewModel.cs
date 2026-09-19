@@ -6,7 +6,7 @@ using Windows.ApplicationModel.Resources;
 
 namespace APKInstaller.ViewModels.ToolsPages
 {
-    public partial class InformationViewModel : INotifyPropertyChanged
+    public sealed partial class InformationViewModel : INotifyPropertyChanged
     {
         private readonly ResourceLoader _loader = ResourceLoader.GetForViewIndependentUse("InfosPage");
 
@@ -52,9 +52,9 @@ namespace APKInstaller.ViewModels.ToolsPages
             if (name != null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);

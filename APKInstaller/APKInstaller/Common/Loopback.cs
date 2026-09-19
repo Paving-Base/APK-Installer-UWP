@@ -11,7 +11,7 @@ using Windows.Win32.Security;
 
 namespace APKInstaller.Common
 {
-    public partial class Loopback : ILoopback
+    public sealed partial class Loopback : ILoopback
     {
         public static ILoopback Instance { get; } = new Loopback();
 

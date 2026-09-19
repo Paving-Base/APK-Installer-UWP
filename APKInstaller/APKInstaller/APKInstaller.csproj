@@ -23,22 +23,22 @@
 
   <ItemGroup>
     <PackageReference Include="AdvancedSharpAdbClient" Version="3.6.16" />
-    <PackageReference Include="CommunityToolkit.Labs.Uwp.Controls.MarkdownTextBlock" Version="0.1.260319-build.2547" />
+    <PackageReference Include="CommunityToolkit.Labs.Uwp.Controls.MarkdownTextBlock" Version="0.1.260915-build.2673" />
     <PackageReference Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.Uwp.Triggers" Version="8.2.251219" />
-    <PackageReference Include="Downloader" Version="5.1.0" />
-    <PackageReference Include="Karambolo.Extensions.Logging.File" Version="4.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
+    <PackageReference Include="Downloader" Version="5.9.6" />
+    <PackageReference Include="Karambolo.Extensions.Logging.File" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.269" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="QRCoder" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.333" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+    <PackageReference Include="QRCoder" Version="1.8.0" />
   </ItemGroup>
   
   <ItemGroup>
-    <CsWinRTInputs Include="..\..\WinMD\$(Platform)\$(Configuration)\APKInstaller.Metadata.winmd" />
-    <Content Include="..\..\WinMD\$(Platform)\$(Configuration)\APKInstaller.Metadata.winmd" Visible="False">
+    <CsWinRTInputs Include="..\..\WinMD\$(PlatformTarget)\$(Configuration)\APKInstaller.Metadata.winmd" />
+    <Content Include="..\..\WinMD\$(PlatformTarget)\$(Configuration)\APKInstaller.Metadata.winmd" Visible="False">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

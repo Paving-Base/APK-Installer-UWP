@@ -15,7 +15,7 @@ namespace APKInstaller.Controls
     [TemplatePart(Name = "DragRegion", Type = typeof(Grid))]
     [TemplatePart(Name = "BackButton", Type = typeof(Button))]
     [TemplatePart(Name = "Icon", Type = typeof(Viewbox))]
-    public partial class TitleBar : Control
+    public sealed partial class TitleBar : Control
     {
         //private Grid m_layoutRoot;
         //private TextBlock m_titleTextBlock;

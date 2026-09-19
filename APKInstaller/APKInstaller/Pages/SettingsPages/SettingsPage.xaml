@@ -84,7 +84,7 @@
                         HeaderIcon="&#xE975;"
                         IsExpanded="{x:Bind Provider.IsOnlyWSA, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
                         <controls:SettingsExpander.ActionContent>
-                            <ToggleSwitch IsOn="{x:Bind Provider.IsOnlyWSA, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                            <ToggleSwitch IsOn="{x:Bind Provider.IsOnlyWSA, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                         </controls:SettingsExpander.ActionContent>
                         <controls:SettingsCard x:Uid="/SettingsPage/ConnectDevice">
                             <Grid MinWidth="{StaticResource SettingsCardContentMinWidth}" ColumnSpacing="8">
@@ -204,18 +204,18 @@
                         IsClickEnabled="True"
                         Tag="PairDevice" />
                     <controls:SettingsCard x:Uid="/SettingsPage/ScanPairedDeviceSettings" HeaderIcon="&#xE70C;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.ScanPairedDevice, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ScanPairedDevice, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/DisplaySettingsHeader">
                     <controls:SettingsCard x:Uid="/SettingsPage/ShowDialogsSettings" HeaderIcon="&#xE82F;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.ShowDialogs, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowDialogs, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                     <controls:SettingsCard x:Uid="/SettingsPage/ShowMessagesSettings" HeaderIcon="&#xE789;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.ShowMessages, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowMessages, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                     <controls:SettingsCard x:Uid="/SettingsPage/ShowProgressSettings" HeaderIcon="&#xF16A;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.ShowProgress, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.ShowProgress, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ThemesSettingsHeader">
@@ -235,13 +235,13 @@
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ContentSettingsHeader">
                     <controls:SettingsCard x:Uid="/SettingsPage/AutoGetNetAPKSettings" HeaderIcon="&#xE896;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.AutoGetNetAPK, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.AutoGetNetAPK, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                     <controls:SettingsCard x:Uid="/SettingsPage/CloseAPPSettings" HeaderIcon="&#xEDAE;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseAPP, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseAPP, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                     <controls:SettingsCard x:Uid="/SettingsPage/CloseADBSettings" HeaderIcon="&#xE756;">
-                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseADB, Mode=TwoWay}" Style="{StaticResource ToggleSwitchSettingStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Provider.IsCloseADB, Mode=TwoWay}" Style="{StaticResource RightAlignedCompactToggleSwitchStyle}" />
                     </controls:SettingsCard>
                 </controls:SettingsGroup>
                 <controls:SettingsGroup x:Uid="/SettingsPage/ConfigsSettingsHeader">

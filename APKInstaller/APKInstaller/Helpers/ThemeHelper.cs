@@ -31,7 +31,7 @@ namespace APKInstaller.Helpers
         public static event Action<bool> UISettingChanged
         {
             add => actions.Add(value);
-            remove => actions.Remove(value);
+            remove => _ = actions.Remove(value);
         }
 
         private static void InvokeUISettingChanged(bool value) => actions.Invoke(value);

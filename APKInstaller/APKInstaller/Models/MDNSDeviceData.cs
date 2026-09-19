@@ -8,7 +8,7 @@ using Zeroconf.Interfaces;
 
 namespace APKInstaller.Models
 {
-    public partial class MDNSDeviceData(string name, string address, int port) : INotifyPropertyChanged
+    public sealed partial class MDNSDeviceData(string name, string address, int port) : INotifyPropertyChanged
     {
         public string Name { get; init; } = name;
         public string Address { get; init; } = address;
@@ -24,7 +24,7 @@ namespace APKInstaller.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChangedEvent([CallerMemberName] string name = null)
+        private void RaisePropertyChangedEvent([CallerMemberName] string name = null)
         {
             if (name != null)
             {
@@ -32,9 +32,9 @@ namespace APKInstaller.Models
             }
         }
 
-        protected void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
+        private void SetProperty<TProperty>(ref TProperty property, TProperty value, [CallerMemberName] string name = null)
         {
-            if (property == null ? value != null : !property.Equals(value))
+            if (!property?.Equals(value) ?? (value != null))
             {
                 property = value;
                 RaisePropertyChangedEvent(name);

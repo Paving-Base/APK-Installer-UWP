@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace APKInstaller.Models
 {
-    public class UpdateInfo
+    public sealed class UpdateInfo
     {
         [JsonPropertyName("url")]
         public string ApiUrl { get; init; }
@@ -27,7 +27,7 @@ namespace APKInstaller.Models
         public SystemVersionInfo Version { get; set; }
     }
 
-    public class Asset
+    public sealed class Asset
     {
         [JsonPropertyName("url")]
         public string Url { get; init; }

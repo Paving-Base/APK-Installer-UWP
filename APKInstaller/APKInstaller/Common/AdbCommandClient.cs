@@ -12,7 +12,7 @@ using Windows.Foundation;
 
 namespace APKInstaller.Common
 {
-    public partial class AdbCommandClient(string adbPath, bool isForce = false, ILogger<AdbCommandLineClient> logger = null) : AdbCommandLineClient(adbPath, isForce, logger)
+    public sealed partial class AdbCommandClient(string adbPath, bool isForce = false, ILogger<AdbCommandLineClient> logger = null) : AdbCommandLineClient(adbPath, isForce, logger)
     {
         /// <summary>
         /// The <see cref="Array"/> of <see cref="char"/>s that represent a new line.
@@ -38,7 +38,7 @@ namespace APKInstaller.Common
         }
     }
 
-    public partial class RunProcess : IRunProcess
+    public sealed partial class RunProcess : IRunProcess
     {
         public static IRunProcess Instance { get; } = new RunProcess();
 
@@ -122,7 +122,7 @@ namespace APKInstaller.Common
             return result;
         }
 
-        private partial class ProcessResult : IProcessResult
+        private sealed partial class ProcessResult : IProcessResult
         {
             public int ExitCode { get; set; }
             public string ErrorOutput { get; set; } = string.Empty;

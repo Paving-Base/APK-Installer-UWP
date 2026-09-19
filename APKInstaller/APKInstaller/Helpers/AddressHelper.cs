@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace APKInstaller.Helpers
 {
-    public class AddressHelper
+    public sealed class AddressHelper
     {
         public static async ValueTask<List<string>> GetAddressID(string mac)
         {

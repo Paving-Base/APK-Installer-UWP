@@ -13,7 +13,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Storage;
 using Windows.UI.Xaml;
 
 namespace APKInstaller.Helpers
@@ -108,15 +107,15 @@ namespace APKInstaller.Helpers
 
     public static partial class SettingsHelper
     {
-        public static ILoggerFactory LoggerFactory { get; } = CreateLoggerFactory();
         public static ApplicationDataStorageHelper LocalObject { get; } = ApplicationDataStorageHelper.GetCurrent(new SystemTextJsonObjectSerializer());
+        public static ILoggerFactory LoggerFactory { get; } = CreateLoggerFactory();
 
         static SettingsHelper() => SetDefaultSettings();
 
         public static ILoggerFactory CreateLoggerFactory() =>
             Microsoft.Extensions.Logging.LoggerFactory.Create(x => _ = x.AddFile(x =>
             {
-                x.RootPath = ApplicationData.Current.LocalFolder.Path;
+                x.RootPath = LocalObject.Folder.Path;
                 x.IncludeScopes = true;
                 x.BasePath = "Logs";
                 x.Files = [
@@ -136,33 +135,52 @@ namespace APKInstaller.Helpers
         }
     }
 
-    public class SystemTextJsonObjectSerializer : IObjectSerializer
+    public sealed class SystemTextJsonObjectSerializer : IObjectSerializer
     {
-        public string Serialize<T>(T value) => value switch
+        public string Serialize<T>(T value)
         {
-            bool => JsonSerializer.Serialize(value, SourceGenerationContext.Default.Boolean),
-            string => JsonSerializer.Serialize(value, SourceGenerationContext.Default.String),
-            DeviceData => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DeviceData),
-            ElementTheme => JsonSerializer.Serialize(value, SourceGenerationContext.Default.ElementTheme),
-            DateTimeOffset => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DateTimeOffset),
-            _ => JsonSerializer.Serialize(value, typeof(T), SourceGenerationContext.Default)
-        };
+            try
+            {
+                return value switch
+                {
+                    bool => JsonSerializer.Serialize(value, SourceGenerationContext.Default.Boolean),
+                    string => JsonSerializer.Serialize(value, SourceGenerationContext.Default.String),
+                    DeviceData => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DeviceData),
+                    ElementTheme => JsonSerializer.Serialize(value, SourceGenerationContext.Default.ElementTheme),
+                    DateTimeOffset => JsonSerializer.Serialize(value, SourceGenerationContext.Default.DateTimeOffset),
+                    _ => JsonSerializer.Serialize(value, typeof(T), SourceGenerationContext.Default)
+                };
+            }
+            catch (Exception ex)
+            {
+                SettingsHelper.LoggerFactory.CreateLogger<SystemTextJsonObjectSerializer>().LogError(ex, "Failed to serialize object of type {type}. {message} (0x{hResult:X})", typeof(T), ex.GetMessage(), ex.HResult);
+                return string.Empty;
+            }
+        }
 
         public T Deserialize<T>([StringSyntax(StringSyntaxAttribute.Json)] string value)
         {
             if (string.IsNullOrEmpty(value)) { return default; }
             Type type = typeof(T);
-            return type == typeof(bool) ? Deserialize(value, SourceGenerationContext.Default.Boolean)
-                : type == typeof(string) ? Deserialize(value, SourceGenerationContext.Default.String)
-                : type == typeof(DeviceData) ? Deserialize(value, SourceGenerationContext.Default.DeviceData)
-                : type == typeof(ElementTheme) ? Deserialize(value, SourceGenerationContext.Default.ElementTheme)
-                : type == typeof(DateTimeOffset) ? Deserialize(value, SourceGenerationContext.Default.DateTimeOffset)
-                : JsonSerializer.Deserialize(value, type, SourceGenerationContext.Default) is T result ? result : default;
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo)
+            try
             {
-                TValue value = JsonSerializer.Deserialize(json, jsonTypeInfo);
-                return Unsafe.As<TValue, T>(ref value);
+                return type == typeof(bool) ? Deserialize(value, SourceGenerationContext.Default.Boolean)
+                    : type == typeof(string) ? Deserialize(value, SourceGenerationContext.Default.String)
+                    : type == typeof(DeviceData) ? Deserialize(value, SourceGenerationContext.Default.DeviceData)
+                    : type == typeof(ElementTheme) ? Deserialize(value, SourceGenerationContext.Default.ElementTheme)
+                    : type == typeof(DateTimeOffset) ? Deserialize(value, SourceGenerationContext.Default.DateTimeOffset)
+                    : JsonSerializer.Deserialize(value, type, SourceGenerationContext.Default) is T result ? result : default;
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                static T Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string json, JsonTypeInfo<TValue> jsonTypeInfo)
+                {
+                    TValue value = JsonSerializer.Deserialize(json, jsonTypeInfo);
+                    return Unsafe.As<TValue, T>(ref value);
+                }
+            }
+            catch (Exception ex)
+            {
+                SettingsHelper.LoggerFactory.CreateLogger<SystemTextJsonObjectSerializer>().LogError(ex, "Failed to deserialize object of type {type}. {message} (0x{hResult:X})", type, ex.GetMessage(), ex.HResult);
+                return default;
             }
         }
     }
@@ -173,5 +191,5 @@ namespace APKInstaller.Helpers
     [JsonSerializable(typeof(UpdateInfo))]
     [JsonSerializable(typeof(ElementTheme))]
     [JsonSerializable(typeof(DateTimeOffset))]
-    public partial class SourceGenerationContext : JsonSerializerContext;
+    public sealed partial class SourceGenerationContext : JsonSerializerContext;
 }
