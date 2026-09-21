@@ -22,7 +22,7 @@ namespace APKInstaller.Common
         protected override int RunProcess(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, int timeout)
         {
             using IServerManager manager = Factory.TryCreateServerManager();
-            IProcessResult result = manager.RunProcess.RunProcess(filename, command, errorOutput != null, standardOutput != null, timeout);
+            IProcessResult result = manager.RunProcess().RunProcess(filename, command, errorOutput != null, standardOutput != null, timeout);
             errorOutput?.AddRange(result.ErrorOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
             standardOutput?.AddRange(result.StandardOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
             return result.ExitCode;
@@ -31,7 +31,7 @@ namespace APKInstaller.Common
         protected override async Task<int> RunProcessAsync(string filename, string command, ICollection<string> errorOutput, ICollection<string> standardOutput, CancellationToken cancellationToken = default)
         {
             using IServerManager manager = Factory.TryCreateServerManager();
-            IProcessResult result = await manager.RunProcess.RunProcessAsync(filename, command, errorOutput != null, standardOutput != null).AsTask(cancellationToken).ConfigureAwait(false);
+            IProcessResult result = await manager.RunProcess().RunProcessAsync(filename, command, errorOutput != null, standardOutput != null).AsTask(cancellationToken).ConfigureAwait(false);
             errorOutput?.AddRange(result.ErrorOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
             standardOutput?.AddRange(result.StandardOutput.Split(separator, StringSplitOptions.RemoveEmptyEntries));
             return result.ExitCode;

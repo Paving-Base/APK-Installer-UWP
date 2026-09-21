@@ -95,6 +95,8 @@ namespace APKInstaller.Common
             results?.SetMonitor(IsAlive, period);
             return results;
         }
+
+        public static IRunProcess RunProcess(this IServerManager manager) => manager?.RunProcess ?? Common.RunProcess.Instance;
     }
 
     /// <summary>

@@ -15,7 +15,7 @@ namespace APKInstaller.Helpers
             List<string> addresses = [];
             Regex Regex = new($@"\s*(\d+.\d+.\d+.\d+)\s*{mac}\S*\s*\w+");
             using IServerManager manager = Factory.TryCreateServerManager();
-            IProcessResult result = await manager.RunProcess.RunProcessAsync("powershell.exe", $"arp -a|findstr {mac}", false, true);
+            IProcessResult result = await manager.RunProcess().RunProcessAsync("powershell.exe", $"arp -a|findstr {mac}", false, true);
             foreach (string line in result.StandardOutput.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
             {
                 if (Regex.IsMatch(line))

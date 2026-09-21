@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using Windows.Storage.Streams;
 
 namespace AAPTForNet.Models
 {
-    public sealed class Icon
+    public sealed class Icon : IEquatable<Icon>
     {
         private const int hdpiWidth = 72;
         public const string DefaultName = "ic_launcher.png";
@@ -69,8 +68,10 @@ namespace AAPTForNet.Models
 
         public override string ToString() => IconName;
 
-        public override bool Equals([NotNullWhen(true)] object? obj) => obj is Icon ic && IconName == ic.IconName;
+        public bool Equals([NotNullWhen(true)] Icon? other) => this == other || (other is not null && IconName == other.IconName);
 
-        public override int GetHashCode() => -489061483 + EqualityComparer<string>.Default.GetHashCode(IconName);
+        public override bool Equals([NotNullWhen(true)] object? obj) => Equals(obj as Icon);
+
+        public override int GetHashCode() => HashCode.Combine(IconName);
     }
 }

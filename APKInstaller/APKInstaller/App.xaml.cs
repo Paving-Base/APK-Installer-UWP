@@ -226,7 +226,7 @@ namespace APKInstaller
             await ThreadSwitcher.ResumeBackgroundAsync();
             using (IServerManager manager = Factory.TryCreateServerManager())
             {
-                _ = manager.Loopback.EnableLoopback();
+                _ = manager?.Loopback.EnableLoopback();
             }
             if (IsAppCapabilitySupported)
             {

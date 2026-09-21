@@ -60,12 +60,12 @@
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('v{0}', Provider.ApkInfo.VersionName), Mode=OneWay}" />
                                 <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind x:String.Format('({0})', Provider.ApkInfo.VersionCode), Mode=OneWay}" />
                             </Paragraph>
-                            <Paragraph Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                            <Paragraph FontSize="{StaticResource SecondaryTextFontSize}" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                 <Run Text="{x:Bind Provider.ApkInfo.MinSDK, Mode=OneWay}" />
                                 <Run Text="-" />
                                 <Run Text="{x:Bind Provider.ApkInfo.TargetSDK, Mode=OneWay}" />
                             </Paragraph>
-                            <Paragraph Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                            <Paragraph FontSize="{StaticResource SecondaryTextFontSize}" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                                 <Run x:Uid="/InfosPage/PermissionsCount" />
                                 <Run Text="{x:Bind Provider.ApkInfo.Permissions.Count, Mode=OneWay}" />
                                 <Run Foreground="{StaticResource TextFillColorPrimaryBrush}" Text="|" />
@@ -74,18 +74,18 @@
                             </Paragraph>
                         </RichTextBlock>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
                                 <HyperlinkButton
                                     x:Uid="/InfosPage/OpenPackageFolder"
-                                    Margin="0,0,6,0"
                                     Click="HyperlinkButton_Click"
+                                    FontSize="{StaticResource SecondaryTextFontSize}"
                                     Style="{StaticResource TextButtonStyle}"
                                     Tag="OpenPackageFolder"
                                     ToolTipService.ToolTip="{x:Bind Provider.ApkInfo.PackagePath, Mode=OneWay}" />
                                 <HyperlinkButton
                                     x:Uid="/InfosPage/SharePackage"
-                                    Margin="6,0"
                                     Click="HyperlinkButton_Click"
+                                    FontSize="{StaticResource SecondaryTextFontSize}"
                                     Style="{StaticResource TextButtonStyle}"
                                     Tag="SharePackage" />
                             </StackPanel>

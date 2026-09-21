@@ -46,7 +46,7 @@ namespace APKInstaller.Common
 
             using (IServerManager manager = Factory.TryCreateServerManager())
             {
-                await manager.RunProcess.DumpAsync(fileName, arguments, callback == null ? null : new DumpDelegate(callback), output);
+                await manager.RunProcess().DumpAsync(fileName, arguments, callback == null ? null : new DumpDelegate(callback), output);
             }
 
             // Dump xml tree get only 1 message when failed, the others are 2.
@@ -68,7 +68,7 @@ namespace APKInstaller.Common
                 }
                 using (IServerManager manager = Factory.TryCreateServerManager())
                 {
-                    if (!manager.Loopback.CreateFileSymbolic(path, file.Path))
+                    if (manager?.Loopback.CreateFileSymbolic(path, file.Path) != true)
                     {
                         return null;
                     }
