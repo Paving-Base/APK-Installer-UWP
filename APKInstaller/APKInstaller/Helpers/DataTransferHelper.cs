@@ -26,7 +26,7 @@ namespace APKInstaller.Helpers
             StorageFile file = await (filePath.StartsWith("ms-", StringComparison.OrdinalIgnoreCase) && filePath.TryGetUri(out Uri uri)
                 ? StorageFile.GetFileFromApplicationUriAsync(uri)
                 : StorageFile.GetFileFromPathAsync(filePath));
-            IEnumerable<IStorageFile> files = [file];
+            IStorageFile[] files = [file];
 
             DataPackage dataPackage = new();
             dataPackage.SetStorageItems(files);

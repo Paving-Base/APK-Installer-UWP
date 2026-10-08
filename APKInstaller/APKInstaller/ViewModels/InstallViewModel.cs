@@ -718,7 +718,7 @@ namespace APKInstaller.ViewModels
                 {
                     ApkInfo ??= new ApkInfo();
                 }
-                if (ApkInfo?.IsEmpty == true && _file != null)
+                if (ApkInfo?.IsEmpty != false && _file != null)
                 {
                     PackageError(_loader.GetString("InvalidPackage"));
                 }
@@ -1089,7 +1089,7 @@ namespace APKInstaller.ViewModels
                 return;
             }
 
-            if (string.IsNullOrEmpty(ApkInfo?.PackageName))
+            if (ApkInfo?.IsEmpty != false)
             {
                 PackageError(_loader.GetString("InvalidPackage"));
             }
@@ -1307,7 +1307,7 @@ namespace APKInstaller.ViewModels
                 {
                     AdbClient client = new();
                     VersionInfo info = default;
-                    if (ApkInfo != null && !ApkInfo.IsEmpty)
+                    if (ApkInfo?.IsEmpty == false)
                     {
                         info = await client.GetPackageVersionAsync(_device, ApkInfo.PackageName).ConfigureAwait(false);
                     }
@@ -1337,12 +1337,12 @@ namespace APKInstaller.ViewModels
                     switch (ApkInfo, IsUploadAPK)
                     {
                         case ({ IsSplit: true }, true):
-                            await client.InstallMultiplePackageAsync(_device, [ApkInfo.FullPath], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
+                            await client.InstallMultiplePackageAsync(_device, (string[])[ApkInfo.FullPath], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             break;
                         case ({ IsSplit: true }, false):
                             using (IRandomAccessStreamWithContentType apk = await StorageFile.GetFileFromPathAsync(ApkInfo.FullPath).AsTask().ContinueWith(x => x.Result.OpenReadAsync().AsTask()).Unwrap().ConfigureAwait(false))
                             {
-                                await client.InstallMultipleAsync(_device, [apk], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
+                                await client.InstallMultipleAsync(_device, (IRandomAccessStreamWithContentType[])[apk], ApkInfo.PackageName, OnInstallProgressChanged, default, "-r", "-t").ConfigureAwait(false);
                             }
                             break;
                         case ({ IsBundle: true }, true) when await SelectSplitAsync(ApkInfo.SplitApks).ConfigureAwait(false) is { Length: > 0 } selects:
