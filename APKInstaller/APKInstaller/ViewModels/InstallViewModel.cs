@@ -924,7 +924,7 @@ namespace APKInstaller.ViewModels
                 }
                 else
                 {
-                    if (ApkInfo == null)
+                    if (ApkInfo?.IsEmpty != false)
                     {
                         await InitializeUIAsync().ConfigureAwait(false);
                     }
